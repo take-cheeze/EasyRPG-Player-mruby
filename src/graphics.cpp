@@ -20,7 +20,9 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <iomanip>
 
+#include "output.h"
 #include "graphics.h"
 #include "bitmap.h"
 #include "bitmap_screen.h"
@@ -34,18 +36,21 @@ namespace Graphics {
 	bool fps_on_screen;
 	uint32_t drawable_id;
 
-	void InternUpdate1(bool reset = false);
-	void InternUpdate2(bool reset = false);
-	void UpdateTitle();
+	void InternUpdate();
+	void UpdateTitle(double fps);
 	void DrawFrame();
 	void DrawOverlay();
 
 	bool overlay_visible;
-	int fps;
+	double current_fps_;
 	int framerate;
 	int framecount;
-	int fps_mode;
 	uint32_t timer_wait;
+	double frame_interval;
+
+	unsigned next_fps_calculation_time;
+	unsigned fps_draw_counter;
+	double expected_next_frame_end_time;
 
 	void UpdateTransition();
 
@@ -69,23 +74,21 @@ namespace Graphics {
 	};
 	EASYRPG_SHARED_PTR<State> state;
 	std::vector<EASYRPG_SHARED_PTR<State> > stack;
-	void Push();
-	void Pop();
 
 	bool SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second);
 }
 
-unsigned SecondToFrame(float const second) {
-	return(second * Graphics::framerate);
+unsigned Graphics::SecondToFrame(float const second) {
+	return(second * framerate);
 }
 
 void Graphics::Init() {
 	overlay_visible = true;
 	fps_on_screen = false;
-	fps = 0;
+	current_fps_ = 0;
 	framerate = DEFAULT_FPS;
+	frame_interval = 1000.0 / framerate;
 	framecount = 0;
-	fps_mode = 0;
 	timer_wait = 0;
 	frozen_screen = BitmapScreen::Create();
 
@@ -98,6 +101,10 @@ void Graphics::Init() {
 	drawable_id = 0;
 	state.reset(new State());
 	screen_erased = false;
+
+	FrameReset();
+
+	UpdateTitle(0);
 }
 
 void Graphics::Quit() {
@@ -120,138 +127,25 @@ void Graphics::Quit() {
 void Graphics::Update() {
 	if (frozen) return;
 
-	switch(fps_mode) {
-		case 1:
-			InternUpdate2();
-			return;
-		default:
-			InternUpdate1();
-	}
+	InternUpdate();
 }
 
-void Graphics::InternUpdate1(bool reset) {
-	// FIXME: This method needs more comments.
-	static const double framerate_interval = 1000.0 / framerate;
-	static uint32_t current_time = 0;
-	static double last_time = 0;
-	static double wait_frames = 0.0;
-	static double cycles_leftover = 0.0;
-	static uint32_t frames = 0;
-	static uint32_t next_fps_time = DisplayUi->GetTicks() + 1000;
+void Graphics::UpdateTitle(double const fps) {
+	current_fps_ = fps;
 
-	if (reset) {
-		last_time = DisplayUi->GetTicks();
-		next_fps_time = (uint32_t)last_time + 1000;
-		frames = 0;
-		return;
-	}
-
-	if (wait_frames >= 1) {
-		wait_frames -= 1;
-		return;
-	}
-
-	for (;;) {
-		current_time = DisplayUi->GetTicks();
-
-		if ((current_time - last_time) >= framerate_interval) {
-			cycles_leftover = wait_frames;
-			wait_frames = ((double)current_time - last_time) / framerate_interval - cycles_leftover;
-			last_time += current_time - last_time - cycles_leftover;
-
-			DrawFrame();
-
-			framecount++;
-			frames++;
-
-			if (current_time >= next_fps_time) {
-				next_fps_time += 1000;
-				fps = frames;
-				frames = 0;
-
-				UpdateTitle();
-			}
-
-			break;
-
-		} else {
-			DisplayUi->Sleep((uint32_t)(framerate_interval - (current_time - last_time)));
-		}
-	}
-}
-
-void Graphics::InternUpdate2(bool reset) {
-	// FIXME: This method needs more comments. Why two InternUpdates?
-	static const int MAXIMUM_FRAME_RATE = framerate;
-	//static const int MINIMUM_FRAME_RATE = max(framerate / 4, 1);
-	//static const int MAX_CYCLES_PER_FRAME = MAXIMUM_FRAME_RATE / MINIMUM_FRAME_RATE;
-	static const double UPDATE_INTERVAL = 1.0 / MAXIMUM_FRAME_RATE;
-	static double last_frame_time = 0.0;
-	static double cycles_leftover = 0.0;
-	static double current_time = 0.0;
-	static double update_iterations = 0.0;
-	static bool start = true;
-	static int frames = 0;
-	static uint32_t next_fps_time = DisplayUi->GetTicks() + 1000;
-
-	if (reset) {
-		start = true;
-		frames = 0;
-		next_fps_time = DisplayUi->GetTicks() + 1000;
-		return;
-	}
-
-	for (;;) {
-		if (start) {
-			current_time = DisplayUi->GetTicks() / 1000.0;
-			update_iterations = (current_time - last_frame_time) + cycles_leftover;
-
-			/*if (update_iterations > (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL)) {
-				update_iterations = (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL);
-			}*/
-			start = false;
-		}
-
-		if (update_iterations > UPDATE_INTERVAL) {
-			update_iterations -= UPDATE_INTERVAL;
-
-			framecount++;
-
-			return;
-		}
-
-		start = true;
-		cycles_leftover = update_iterations;
-		last_frame_time = current_time;
-
-		DrawFrame();
-
-		frames++;
-
-		if (DisplayUi->GetTicks() >= next_fps_time) {
-			next_fps_time += 1000;
-			fps = frames;
-			frames = 0;
-
-			UpdateTitle();
-		}
-	}
-}
-
-void Graphics::UpdateTitle() {
 	if (DisplayUi->IsFullscreen()) return;
 
-	std::stringstream title;
-	title << GAME_TITLE;
-
-	if (!fps_on_screen) {
-		title << " - FPS " << fps;
+	std::ostringstream title(GAME_TITLE, std::ios::out | std::ios::ate);
+	if (not fps_on_screen) {
+		title << " - FPS " << std::setprecision(4) << current_fps_;
 	}
 
 	DisplayUi->SetTitle(title.str());
 }
 
 void Graphics::DrawFrame() {
+	++fps_draw_counter;
+
 	if (transition_duration > 0) {
 		UpdateTransition();
 		return;
@@ -279,8 +173,8 @@ void Graphics::DrawFrame() {
 
 void Graphics::DrawOverlay() {
 	if (Graphics::fps_on_screen) {
-		std::stringstream text;
-		text << "FPS: " << fps;
+		std::ostringstream text;
+		text << "FPS: " << std::setprecision(2) << current_fps_;
 		DisplayUi->DrawScreenText(text.str());
 	}
 }
@@ -331,7 +225,7 @@ void Graphics::Transition(TransitionType type, int duration, bool erase) {
 
 		for (int i = 1; i <= transition_duration; i++) {
 			Player::Update();
-			InternUpdate1();
+			InternUpdate();
 		}
 	}
 
@@ -494,13 +388,39 @@ void Graphics::UpdateTransition() {
 }
 
 void Graphics::FrameReset() {
-	switch(fps_mode) {
-	case 1:
-		InternUpdate2(true);
-		return;
-	default:
-		InternUpdate1(true);
+	unsigned const current_time = DisplayUi->GetTicks();
+
+	next_fps_calculation_time = current_time + 1000;
+	fps_draw_counter = 0;
+	expected_next_frame_end_time = current_time + frame_interval;
+
+	frame_interval = 1000.0 / framerate;
+}
+
+void Graphics::InternUpdate() {
+	// draw screen if enough time left
+	unsigned const frame_start_time = DisplayUi->GetTicks();
+	if(frame_start_time < expected_next_frame_end_time) { DrawFrame(); }
+	unsigned const frame_end_time = DisplayUi->GetTicks();
+
+	// calculate FPS if passed FPS calculation time
+	if(frame_end_time >= next_fps_calculation_time) {
+		// check critical frame rate drop
+		if(fps_draw_counter == 0) {
+			Output::Debug("Critical frame rate drop.(Cannot draw a single frame in this second)");
+		}
+
+		double const base = frame_end_time - next_fps_calculation_time + 1000.0;
+		UpdateTitle(fps_draw_counter * 1000.0 / base);
+		FrameReset();
 	}
+
+	// sleep if time left
+	int const sleep_time = expected_next_frame_end_time - frame_end_time;
+	if(sleep_time > 0) { DisplayUi->Sleep(sleep_time); }
+
+	// update next frame end time
+	expected_next_frame_end_time += frame_interval;
 }
 
 void Graphics::Wait(int duration) {
