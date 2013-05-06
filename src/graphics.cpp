@@ -174,7 +174,7 @@ void Graphics::DrawFrame() {
 void Graphics::DrawOverlay() {
 	if (Graphics::fps_on_screen) {
 		std::ostringstream text;
-		text << "FPS: " << std::setprecision(2) << current_fps_;
+		text << "FPS: " << std::setprecision(4) << current_fps_;
 		DisplayUi->DrawScreenText(text.str());
 	}
 }
