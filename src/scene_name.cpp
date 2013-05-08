@@ -25,10 +25,7 @@
 #include <ciso646>
 #include <cassert>
 
-Scene_Name::Scene_Name() :
-	kbd_window(NULL), name_window(NULL), face_window(NULL) {
-	Scene::type = Scene::Name;
-}
+Scene_Name::Scene_Name() : Scene(Name) {}
 
 void Scene_Name::Start() {
 	// Create the windows

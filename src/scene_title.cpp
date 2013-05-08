@@ -52,9 +52,7 @@
 #include "util_macro.h"
 #include "window_command.h"
 
-Scene_Title::Scene_Title() {
-	type = Scene::Title;
-}
+Scene_Title::Scene_Title() : Scene(Title) {}
 
 void Scene_Title::Start() {
 	LoadDatabase();

@@ -40,9 +40,7 @@
 #include "scene_battle.h"
 #include "bitmap.h"
 
-Scene_Battle::Scene_Battle() {
-	Scene::type = Scene::Battle;
-}
+Scene_Battle::Scene_Battle() : Scene(Battle) {}
 
 Scene_Battle::~Scene_Battle() {
 	Game_Battle::Quit();

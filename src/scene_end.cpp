@@ -26,9 +26,7 @@
 #include "util_macro.h"
 #include "bitmap.h"
 
-Scene_End::Scene_End() {
-	Scene::type = Scene::End;
-}
+Scene_End::Scene_End() : Scene(End) {}
 
 void Scene_End::Start() {
 	CreateCommandWindow();

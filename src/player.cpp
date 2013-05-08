@@ -38,12 +38,177 @@
 #include <fstream>
 #include <ciso646>
 
+#include <boost/bind.hpp>
+
+namespace {
+
+enum PushPopOperation {
+	SceneNop,
+	ScenePushed,
+	ScenePopped
+};
+
+const char* scene_names[Scene::SceneMax] = {
+	"Null",
+	"Title",
+	"Map",
+	"Menu",
+	"Item",
+	"Skill",
+	"Equip",
+	"ActorTarget",
+	"Status",
+	"File",
+	"Save",
+	"Load",
+	"End",
+	"Battle",
+	"Shop",
+	"Name",
+	"Gameover",
+	"Debug",
+	"Logo",
+	"Order"
+};
+
+bool SceneFinder(SceneRef const& r, Scene::Type const t) {
+	return r->type == t;
+}
+
+}
+
 struct Player_::Internal {
 	Cache_ cache;
 	FileFinder_ filefinder;
 	Graphics_ graphics;
 	Input_ input;
+
+	struct {
+		/** Current scene. */
+		SceneRef instance;
+
+		/** Old scenes, temporary save for deleting. */
+		std::vector<SceneRef> old_instances;
+
+		std::vector<SceneRef> instances;
+
+		PushPopOperation push_pop_operation;
+	} scene;
+
+	Internal() {
+		scene.push_pop_operation = SceneNop;
+	}
 };
+
+void Scene::PopUntil(Scene::Type type) {
+	int count = 0;
+
+	for (int i = (int)Player().internal->scene.instances.size() - 1 ; i >= 0; --i) {
+		if (Player().internal->scene.instances[i]->type == type) {
+			for (i = 0; i < count; ++i) {
+				Player().internal->scene.old_instances.push_back(Player().internal->scene.instances.back());
+				Player().internal->scene.instances.pop_back();
+			}
+			Player().internal->scene.instance = Player().internal->scene.instances.back();
+			Player().internal->scene.push_pop_operation = ScenePopped;
+			return;
+		}
+		++count;
+	}
+
+	Output::Warning("The requested scene %s was not on the stack", scene_names[type]);
+}
+
+EASYRPG_SHARED_PTR<Scene> Scene::Find(Scene::Type type) {
+	std::vector<SceneRef> const& instances = Player().internal->scene.instances;
+	std::vector<SceneRef>::const_reverse_iterator it =
+			std::find_if(instances.rbegin(), instances.rend(),
+						 boost::bind(SceneFinder, _1, type));
+	return it != instances.rend()? *it : EASYRPG_SHARED_PTR<Scene>();
+}
+
+void Scene::Push(SceneRef const& new_scene, bool pop_stack_top) {
+	if (pop_stack_top) {
+		Player().internal->scene.old_instances.push_back(
+			Player().internal->scene.instances.back());
+		Player().internal->scene.instances.pop_back();
+	}
+
+	Player().internal->scene.instances.push_back(new_scene);
+	Player().internal->scene.instance = new_scene;
+
+	Player().internal->scene.push_pop_operation = ScenePushed;
+
+	/*Output::Debug("Scene Stack after Push:");
+	for (size_t i = 0; i < instances.size(); ++i) {
+		Output::Debug(scene_names[instances[i]->type]);
+	}*/
+}
+
+void Scene::Pop() {
+	Player().internal->scene.old_instances.push_back(
+		Player().internal->scene.instances.back());
+	Player().internal->scene.instances.pop_back();
+
+	if (Player().internal->scene.instances.size() == 0) {
+		Push(Scene::CreateNullScene()); // Null-scene
+	} else {
+		Player().internal->scene.instance = Player().internal->scene.instances.back();
+	}
+
+	Player().internal->scene.push_pop_operation = ScenePopped;
+
+	/*Output::Debug("Scene Stack after Pop:");
+	for (size_t i = 0; i < instances.size(); ++i) {
+		Output::Debug(scene_names[instances[i]->type]);
+	}*/
+}
+
+void Scene::MainFunction() {
+	switch(Player().internal->scene.push_pop_operation) {
+	case ScenePushed:
+		Start();
+		break;
+	case ScenePopped:
+		Continue();
+		break;
+	case SceneNop: break;
+	default: assert(false);
+	}
+
+	Player().internal->scene.push_pop_operation = SceneNop;
+
+	TransitionIn();
+	Resume();
+
+	// Scene loop
+	while (Player().internal->scene.instance.get() == this) {
+		Player().Update();
+		Graphics().Update();
+		Audio().Update();
+		Input().Update();
+		Update();
+	}
+
+	assert(Player().internal->scene.instance == Player().internal->scene.instances.back() &&
+		   "Don't set Scene::instance directly, use Push instead!");
+
+	Graphics().Update();
+
+	Suspend();
+	TransitionOut();
+
+	switch (Player().internal->scene.push_pop_operation) {
+	case ScenePushed:
+		Graphics().Push();
+		break;
+	// Graphics().Pop done in Player Loop
+	case ScenePopped:
+	case SceneNop:
+		break;
+	default: assert(false);
+	}
+}
 
 static EASYRPG_WEAK_PTR<Player_> current_player_;
 
@@ -126,8 +291,8 @@ void Player_::ParseArgs(int argc, char* argv[]) {
 void Player_::Run() {
 	assert(DisplayUi);
 
-	Scene::Push(EASYRPG_MAKE_SHARED<Scene>());
-	Scene::Push(EASYRPG_SHARED_PTR<Scene>
+	Scene::Push(Scene::CreateNullScene());
+	Scene::Push(SceneRef
 				(debug_flag?
 				 static_cast<Scene*>(new Scene_Title()) :
 				 static_cast<Scene*>(new Scene_Logo())));
@@ -138,12 +303,12 @@ void Player_::Run() {
 	Graphics().FrameReset();
 
 	// Main loop
-	while (Scene::instance->type != Scene::Null) {
-		Scene::instance->MainFunction();
-		for (size_t i = 0; i < Scene::old_instances.size(); ++i) {
+	while (internal->scene.instance->type != Scene::Null) {
+		internal->scene.instance->MainFunction();
+		for (size_t i = 0; i < internal->scene.old_instances.size(); ++i) {
 			Graphics().Pop();
 		}
-		Scene::old_instances.clear();
+		internal->scene.old_instances.clear();
 	}
 }
 

@@ -28,11 +28,9 @@
 #include "rpg_save.h"
 #include "scene_file.h"
 
-Scene_File::Scene_File(std::string message) :
-	help_window(NULL), message(message) {
-	top_index = 0;
-	index = 0;
-}
+Scene_File::Scene_File(Scene::Type const t, std::string const& message) :
+		Scene(t), index(0), top_index(0),
+		help_window(NULL), message(message) {}
 
 void Scene_File::Start() {
 	// Create the windows

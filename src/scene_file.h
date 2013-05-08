@@ -36,7 +36,7 @@ public:
 	 *
 	 * @param message title message.
 	 */
-	Scene_File(std::string message);
+	Scene_File(Scene::Type t, std::string const& message);
 
 	void Start();
 	void Update();
@@ -50,7 +50,7 @@ protected:
 	int top_index;
 	boost::scoped_ptr<Window_Help> help_window;
 	std::vector<EASYRPG_SHARED_PTR<Window_SaveFile> > file_windows;
-	std::string message;
+	std::string const message;
 };
 
 #endif

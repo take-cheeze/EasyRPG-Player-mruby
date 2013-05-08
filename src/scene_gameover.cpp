@@ -25,9 +25,7 @@
 #include "input.h"
 #include "scene_title.h"
 
-Scene_Gameover::Scene_Gameover() {
-	type = Scene::Gameover;
-}
+Scene_Gameover::Scene_Gameover() : Scene(Gameover) {}
 
 void Scene_Gameover::Start() {
 	// Load Background Graphic

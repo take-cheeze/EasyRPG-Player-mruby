@@ -35,9 +35,7 @@
 #include "scene_status.h"
 
 Scene_Menu::Scene_Menu(int menu_index) :
-	menu_index(menu_index) {
-	type = Scene::Menu;
-}
+		Scene(Menu), menu_index(menu_index) {}
 
 void Scene_Menu::Start() {
 	CreateCommandWindow();

@@ -26,10 +26,9 @@
 #include "scene_menu.h"
 
 Scene_Equip::Scene_Equip(int actor_index, int equip_index) :
-	actor_index(actor_index),
-	equip_index(equip_index) {
-	type = Scene::Equip;
-}
+		Scene(Equip),
+		actor_index(actor_index),
+		equip_index(equip_index) {}
 
 void Scene_Equip::Start() {
 	Game_Actor* actor = Game_Party::GetActors()[actor_index];

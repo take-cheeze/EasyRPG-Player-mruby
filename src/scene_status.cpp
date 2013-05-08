@@ -24,9 +24,7 @@
 #include "input.h"
 
 Scene_Status::Scene_Status(int actor_index) :
-	actor_index(actor_index) {
-	type = Scene::Status;
-}
+		Scene(Status), actor_index(actor_index) {}
 
 void Scene_Status::Start() {
 	int actor = Game_Party::GetActors()[actor_index]->GetId();

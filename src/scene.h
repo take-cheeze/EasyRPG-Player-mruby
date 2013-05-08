@@ -22,13 +22,18 @@
 #include "system.h"
 #include <vector>
 
+#include <boost/noncopyable.hpp>
+
+class Scene;
+typedef EASYRPG_SHARED_PTR<Scene> SceneRef;
+
 /**
  * Scene virtual class.
  */
-class Scene {
+class Scene : boost::noncopyable {
 public:
 	/** Scene types. */
-	enum SceneType {
+	enum Type {
 		Null,
 		Title,
 		Map,
@@ -52,10 +57,12 @@ public:
 		SceneMax
 	};
 
+	static SceneRef CreateNullScene();
+
 	/**
 	 * Constructor.
 	 */
-	Scene();
+	Scene(Scene::Type t);
 
 	/**
 	 * Destructor.
@@ -126,7 +133,7 @@ public:
 	 * @param pop_stack_top if the scene that is currently
 	 *                      on the top should be popped.
 	 */
-	static void Push(EASYRPG_SHARED_PTR<Scene> const& new_scene, bool pop_stack_top = false);
+	static void Push(SceneRef const& new_scene, bool pop_stack_top = false);
 
 	/**
 	 * Removes the scene that is on the top of the stack.
@@ -139,7 +146,7 @@ public:
 	 *
 	 * @param type type of the scene that is searched.
 	 */
-	static void PopUntil(SceneType type);
+	static void PopUntil(Scene::Type type);
 
 	/**
 	 * Finds the topmost scene of a specific type on the stack.
@@ -147,28 +154,10 @@ public:
 	 * @param type type of the scene that is searched.
 	 * @return the scene found, or NULL if no such scene exists.
 	 */
-	static EASYRPG_SHARED_PTR<Scene> Find(SceneType type);
-
-	// Don't write to the following values directly when you want to change
-	// the scene! Use Push and Pop instead!
+	static SceneRef Find(Scene::Type type);
 
 	/** Scene type. */
-	SceneType type;
-
-	/** Current scene. */
-	static EASYRPG_SHARED_PTR<Scene> instance;
-
-	/** Old scenes, temporary save for deleting. */
-	static std::vector<EASYRPG_SHARED_PTR<Scene> > old_instances;
-
-	/** Contains name of the Scenes. For debug purposes. */
-	static const char scene_names[SceneMax][12];
-
-private:
-	/** Scene stack. */
-	static std::vector<EASYRPG_SHARED_PTR<Scene> > instances;
-
-	static int push_pop_operation;
+	Scene::Type const type;
 };
 
 #endif

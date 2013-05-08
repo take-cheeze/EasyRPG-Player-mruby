@@ -27,9 +27,7 @@
 #include "scene_menu.h"
 
 Scene_Item::Scene_Item(int item_index) :
-	help_window(NULL), item_window(NULL), item_index(item_index) {
-	Scene::type = Scene::Item;
-}
+		Scene(Item), item_index(item_index) {}
 
 void Scene_Item::Start() {
 	// Create the windows

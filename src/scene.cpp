@@ -24,97 +24,17 @@
 #include "output.h"
 #include "audio.h"
 
-EASYRPG_SHARED_PTR<Scene> Scene::instance;
-std::vector<EASYRPG_SHARED_PTR<Scene> > Scene::old_instances;
-std::vector<EASYRPG_SHARED_PTR<Scene> > Scene::instances;
-const char Scene::scene_names[SceneMax][12] =
-{
-	"Null",
-	"Title",
-	"Map",
-	"Menu",
-	"Item",
-	"Skill",
-	"Equip",
-	"ActorTarget",
-	"Status",
-	"File",
-	"Save",
-	"Load",
-	"End",
-	"Battle",
-	"Shop",
-	"Name",
-	"Gameover",
-	"Debug",
-	"Logo",
-	"Order"
-};
-
-enum PushPopOperation {
-	ScenePushed = 1,
-	ScenePopped
-};
-
-int Scene::push_pop_operation = 0;
-
-Scene::Scene() {
-	type = Scene::Null;
+SceneRef Scene::CreateNullScene() {
+	return EASYRPG_MAKE_SHARED<Scene>(Scene::Null);
 }
 
-void Scene::MainFunction() {
-	switch(push_pop_operation) {
-	case ScenePushed:
-		Start();
-		break;
-	case ScenePopped:
-		Continue();
-		break;
-	default:;
-	}
+Scene::Scene(Scene::Type const t) : type(t) {}
 
-	push_pop_operation = 0;
-
-	TransitionIn();
-	Resume();
-
-	// Scene loop
-	while (Scene::instance.get() == this) {
-		Player().Update();
-		Graphics().Update();
-		Audio().Update();
-		Input().Update();
-		Update();
-	}
-
-	assert(Scene::instance == instances.back() &&
-		   "Don't set Scene::instance directly, use Push instead!");
-
-	Graphics().Update();
-
-	Suspend();
-	TransitionOut();
-
-	switch (push_pop_operation) {
-	case ScenePushed:
-		Graphics().Push();
-		break;
-	// Graphics().Pop done in Player Loop
-	default:;
-	}
-}
-
-void Scene::Start() {
-}
-
-void Scene::Continue() {
-}
-
-void Scene::Resume() {
-}
-
-void Scene::Suspend() {
-}
+void Scene::Start() {}
+void Scene::Continue() {}
+void Scene::Resume() {}
+void Scene::Suspend() {}
+void Scene::Update() {}
 
 void Scene::TransitionIn() {
 	Graphics().Transition(Graphics().TransitionFadeIn, 12);
@@ -122,72 +42,4 @@ void Scene::TransitionIn() {
 
 void Scene::TransitionOut() {
 	Graphics().Transition(Graphics().TransitionFadeOut, 12, true);
-}
-
-void Scene::Update() {
-}
-
-void Scene::Push(EASYRPG_SHARED_PTR<Scene> const& new_scene, bool pop_stack_top) {
-	if (pop_stack_top) {
-		old_instances.push_back(instances.back());
-		instances.pop_back();
-	}
-
-	instances.push_back(new_scene);
-	instance = new_scene;
-
-	push_pop_operation = ScenePushed;
-
-	/*Output::Debug("Scene Stack after Push:");
-	for (size_t i = 0; i < instances.size(); ++i) {
-		Output::Debug(scene_names[instances[i]->type]);
-	}*/
-}
-
-void Scene::Pop() {
-	old_instances.push_back(instances.back());
-	instances.pop_back();
-
-	if (instances.size() == 0) {
-		Push(EASYRPG_MAKE_SHARED<Scene>()); // Null-scene
-	} else {
-		instance = instances.back();
-	}
-
-	push_pop_operation = ScenePopped;
-
-	/*Output::Debug("Scene Stack after Pop:");
-	for (size_t i = 0; i < instances.size(); ++i) {
-		Output::Debug(scene_names[instances[i]->type]);
-	}*/
-}
-
-void Scene::PopUntil(SceneType type) {
-	int count = 0;
-
-	for (int i = (int)instances.size() - 1 ; i >= 0; --i) {
-		if (instances[i]->type == type) {
-			for (i = 0; i < count; ++i) {
-				old_instances.push_back(instances.back());
-				instances.pop_back();
-			}
-			instance = instances.back();
-			push_pop_operation = ScenePopped;
-			return;
-		}
-		++count;
-	}
-
-	Output::Warning("The requested scene %s was not on the stack", scene_names[type]);
-}
-
-EASYRPG_SHARED_PTR<Scene> Scene::Find(SceneType type) {
-	std::vector<EASYRPG_SHARED_PTR<Scene> >::const_reverse_iterator it;
-	for (it = instances.rbegin() ; it != instances.rend(); it++) {
-		if ((*it)->type == type) {
-			return *it;
-		}
-	}
-
-	return EASYRPG_SHARED_PTR<Scene>();
 }
