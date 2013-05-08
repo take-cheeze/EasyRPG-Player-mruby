@@ -20,7 +20,7 @@
 #include "graphics.h"
 #include "input.h"
 #include "audio.h"
-#include "baseui.h"
+#include "sdl_ui.h"
 #include "filefinder.h"
 #include "output.h"
 #include "bot_ui.h"
@@ -199,12 +199,11 @@ extern "C" int main(int argc, char* argv[]) {
 #endif
 
 	if(! DisplayUi) {
-		DisplayUi = BaseUi::CreateUi
+		DisplayUi = EASYRPG_MAKE_SHARED<SdlUi>
 			(SCREEN_TARGET_WIDTH,
 			 SCREEN_TARGET_HEIGHT,
 			 GAME_TITLE,
-			 !player->window_flag,
-			 RUN_ZOOM);
+			 !player->window_flag);
 	}
 
 	player->Run();
