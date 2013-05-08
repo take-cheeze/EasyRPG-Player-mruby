@@ -21,7 +21,7 @@
 #include "input_buttons.h"
 #include "keys.h"
 
-void Input::InitButtons() {
+void Input_::InitButtons() {
 	buttons.resize(BUTTON_COUNT);
 
 	buttons[DECISION].push_back(Keys::JOY_1); // Circle

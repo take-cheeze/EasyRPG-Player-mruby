@@ -38,6 +38,7 @@
 #include "player.h"
 #include "bitmap.h"
 #include "main_data.h"
+#include "baseui.h"
 
 #include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
@@ -87,18 +88,18 @@ static void HandleScreenOutput(char const* type, std::string const& msg, bool is
 	DisplayUi->GetDisplaySurface()->Clear();
 	DisplayUi->DrawScreenText(ss.str(), 10, 30 + 10);
 	DisplayUi->UpdateDisplay();
-	Input::ResetKeys();
-	while (!Input::IsAnyPressed()) {
+	Input().ResetKeys();
+	while (!Input().IsAnyPressed()) {
 		DisplayUi->Sleep(1);
 		DisplayUi->ProcessEvents();
 
-		if (Player::exit_flag) break;
+		if (Player().exit_flag) break;
 
-		Input::Update();
+		Input().Update();
 	}
-	Input::ResetKeys();
-	Graphics::FrameReset();
-	Graphics::Update();
+	Input().ResetKeys();
+	Graphics().FrameReset();
+	Graphics().Update();
 }
 
 
@@ -106,17 +107,17 @@ bool Output::TakeScreenshot() {
 	int index = 0;
 	std::string p;
 	do {
-		p = FileFinder::MakePath(Main_Data::project_path,
+		p = FileFinder().MakePath(Main_Data::project_path,
 								 "screenshot_"
 								 + boost::lexical_cast<std::string>(index++)
 								 + ".png");
-	} while(FileFinder::Exists(p));
+	} while(FileFinder().Exists(p));
 	return TakeScreenshot(p);
 }
 
 bool Output::TakeScreenshot(std::string const& file) {
 	EASYRPG_SHARED_PTR<std::fstream> ret =
-		FileFinder::openUTF8(file, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
+		FileFinder().openUTF8(file, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
 	return ret? Output::TakeScreenshot(*ret) : false;
 }
 
@@ -139,7 +140,6 @@ void Output::ErrorStr(std::string const& err) {
 	if (DisplayUi) {
 		DisplayUi->DrawScreenText("Error:", 10, 30, Color(255, 0, 0, 0));
 		HandleScreenOutput("Error", err, true);
-		Player::Exit();
 	} else {
 		// Fallback to Console if the display is not ready yet
 		std::cout << err << std::endl;

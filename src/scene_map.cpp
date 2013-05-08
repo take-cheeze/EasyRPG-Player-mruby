@@ -46,7 +46,7 @@ void Scene_Map::Start() {
 	message_window.reset(new Window_Message(0, 240 - 80, 320, 80));
 
 	Main_Data::game_screen->Reset();
-	Graphics::FrameReset();
+	Graphics().FrameReset();
 }
 
 Scene_Map::~Scene_Map() {
@@ -54,11 +54,11 @@ Scene_Map::~Scene_Map() {
 }
 
 /*void Scene_Map::TransitionIn() {
-	Graphics::Transition((Graphics::TransitionType)Data::system.transition_in, 12);
+	Graphics().Transition((Graphics().TransitionType)Data::system.transition_in, 12);
 }
 
 void Scene_Map::TransitionOut() {
-	Graphics::Transition((Graphics::TransitionType)Data::system.transition_in, 12, true);
+	Graphics().Transition((Graphics().TransitionType)Data::system.transition_in, 12, true);
 }*/
 
 void Scene_Map::Update() {
@@ -88,7 +88,7 @@ void Scene_Map::Update() {
 		return;
 
 	// ESC-Menu calling
-	if (Input::IsTriggered(Input::CANCEL))
+	if (Input().IsTriggered(Input_::CANCEL))
 	{
 		//if (Game_Map::GetInterpreter().IsRunning())
 			//return;
@@ -128,7 +128,7 @@ void Scene_Map::Update() {
 		if (Game_Temp::transition_processing) {
 			Game_Temp::transition_processing = false;
 
-			Graphics::Transition(Game_Temp::transition_type, 32, Game_Temp::transition_erase);
+			Graphics().Transition(Game_Temp::transition_type, 32, Game_Temp::transition_erase);
 		}
 	}
 }
@@ -148,7 +148,7 @@ void Scene_Map::UpdateTeleportPlayer() {
 
 	Scene::TransitionIn();
 
-	Input::Update();
+	Input().Update();
 }
 
 // Scene calling stuff.

@@ -51,7 +51,7 @@ BotUi::BotUi(EASYRPG_SHARED_PTR<BotInterface> const& inf)
 
 void BotUi::ProcessEvents() {
 	if(bot_->is_finished()) {
-		Player::exit_flag = true;
+		Player().exit_flag = true;
 		return;
 	}
 
@@ -62,7 +62,7 @@ void BotUi::ProcessEvents() {
 		keys.reset();
 		counter_ = 0;
 
-		if(Input::IsWaitingInput()) {
+		if(Input().IsWaitingInput()) {
 			assert(!bot_->is_finished());
 			bot_->resume();
 		}

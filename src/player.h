@@ -19,21 +19,30 @@
 #define _PLAYER_H_
 
 // Headers
-#include "baseui.h"
+#include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
+#include "memory_management.h"
+
+struct Player_;
+
+Player_& Player();
+
+typedef EASYRPG_SHARED_PTR<Player_> PlayerRef;
+PlayerRef CreatePlayer();
 
 /**
  * Player namespace.
  */
-namespace Player {
+struct Player_ : boost::noncopyable {
 	enum EngineType {
 		EngineRpg2k,
 		EngineRpg2k3
 	};
 
 	/**
-	 * Initializes EasyRPG Player.
+	 * Parse command line arguments
 	*/
-	void Init(int argc, char *argv[]);
+	void ParseArgs(int argc, char *argv[]);
 
 	/**
 	 * Runs the game engine.
@@ -55,34 +64,42 @@ namespace Player {
 	 */
 	void Update();
 
-	/**
-	 * Exits EasyRPG Player.
-	 */
-	void Exit();
-
 	/** Exit flag, if true will exit application on next Player::Update. */
-	extern bool exit_flag;
+	bool exit_flag;
 
 	/** Reset flag, if true will restart game on next Player::Update. */
-	extern bool reset_flag;
+	bool reset_flag;
 
 	/** Debug flag, if true will run game in debug mode. */
-	extern bool debug_flag;
+	bool debug_flag;
 
 	/** Hide Title flag, if true title scene will run without image and music. */
-	extern bool hide_title_flag;
+	bool hide_title_flag;
 
 	/** Window flag, if true will run in window mode instead of full screen. */
-	extern bool window_flag;
+	bool window_flag;
 
 	/** Battle Test flag, if true will run battle test. */
-	extern bool battle_test_flag;
+	bool battle_test_flag;
 
 	/** Battle Test Troop ID to fight with if battle test is run. */
-	extern int battle_test_troop_id;
+	int battle_test_troop_id;
 
 	/** Currently interpreted engine. */
-	extern EngineType engine;
-}
+	EngineType engine;
+
+	/** make this player current */
+	void MakeCurrent();
+
+	struct Internal;
+	boost::scoped_ptr<Internal> const internal;
+
+  private:
+	friend PlayerRef CreatePlayer();
+
+	Player_();
+
+	EASYRPG_WEAK_PTR<Player_> ref_;
+};
 
 #endif

@@ -202,7 +202,7 @@ void Window_Keyboard::Update() {
 	Window_Base::Update();
 
 	if (active) {
-		if (Input::IsRepeated(Input::DOWN)) {
+		if (Input().IsRepeated(Input_::DOWN)) {
 			play_cursor = true;
 			row = (row + 1) % row_max;
 
@@ -210,7 +210,7 @@ void Window_Keyboard::Update() {
 				col--;
 			}
 		}
-		if (Input::IsRepeated(Input::UP)) {
+		if (Input().IsRepeated(Input_::UP)) {
 			play_cursor = true;
 			row = (row + row_max - 1) % row_max;
 
@@ -218,7 +218,7 @@ void Window_Keyboard::Update() {
 				col--;
 			}
 		}
-		if (Input::IsRepeated(Input::RIGHT)) {
+		if (Input().IsRepeated(Input_::RIGHT)) {
 			play_cursor = true;
 			col += 1;
 			if (col >= col_max) {
@@ -226,7 +226,7 @@ void Window_Keyboard::Update() {
 				if(mode == Letter) { row = (row + 1) % row_max; }
 			}
 		}
-		if (Input::IsRepeated(Input::LEFT)) {
+		if (Input().IsRepeated(Input_::LEFT)) {
 			play_cursor = true;
 			col -= 1;
 			if (col < 0) {

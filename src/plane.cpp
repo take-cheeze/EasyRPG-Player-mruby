@@ -21,10 +21,11 @@
 #include "player.h"
 #include "bitmap.h"
 #include "bitmap_screen.h"
+#include "baseui.h"
 
 Plane::Plane() :
 	type(TypePlane),
-	ID(Graphics::drawable_id++),
+	ID(Graphics().drawable_id++),
 	visible(true),
 	z(0),
 	ox(0),
@@ -32,13 +33,13 @@ Plane::Plane() :
 
 	bitmap_screen = BitmapScreen::Create();
 
-	zobj = Graphics::RegisterZObj(0, ID);
-	Graphics::RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, ID);
+	Graphics().RegisterDrawable(ID, this);
 }
 
 Plane::~Plane() {
-	Graphics::RemoveZObj(ID);
-	Graphics::RemoveDrawable(ID);
+	Graphics().RemoveZObj(ID);
+	Graphics().RemoveDrawable(ID);
 }
 
 void Plane::Draw(int /* z_order */) {
@@ -67,7 +68,7 @@ int Plane::GetZ() const {
 	return z;
 }
 void Plane::SetZ(int nz) {
-	if (z != nz) Graphics::UpdateZObj(zobj, nz);
+	if (z != nz) Graphics().UpdateZObj(zobj, nz);
 	z = nz;
 }
 int Plane::GetOx() const {

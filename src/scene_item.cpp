@@ -44,10 +44,10 @@ void Scene_Item::Update() {
 	help_window->Update();
 	item_window->Update();
 
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		int item_id = item_window->GetItemId();
 
 		if (Game_Party::IsItemUsable(item_id)) {

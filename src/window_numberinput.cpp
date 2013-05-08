@@ -91,7 +91,7 @@ void Window_NumberInput::UpdateCursorRect() {
 void Window_NumberInput::Update() {
 	Window_Selectable::Update();
 	if (active) {
-		if (Input::IsRepeated(Input::DOWN) || Input::IsRepeated(Input::UP)) {
+		if (Input().IsRepeated(Input_::DOWN) || Input().IsRepeated(Input_::UP)) {
 			Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 
 			int place = 1;
@@ -100,24 +100,24 @@ void Window_NumberInput::Update() {
 			}
 			int n = number / place % 10;
 			number -= n * place;
-			if (Input::IsRepeated(Input::UP)) {
+			if (Input().IsRepeated(Input_::UP)) {
 				n = (n + 1) % 10;
 			}
-			if (Input::IsRepeated(Input::DOWN)) {
+			if (Input().IsRepeated(Input_::DOWN)) {
 				n = (n + 9) % 10;
 			}
 			number += n * place;
 			Refresh();
 		}
 
-		if (Input::IsRepeated(Input::RIGHT)) {
+		if (Input().IsRepeated(Input_::RIGHT)) {
 			if (digits_max >= 2) {
 				Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 				index = (index + 1) % digits_max;
 			}
 		}
 
-		if (Input::IsRepeated(Input::LEFT)) {
+		if (Input().IsRepeated(Input_::LEFT)) {
 			Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 			index = (index + digits_max - 1) % digits_max;
 		}

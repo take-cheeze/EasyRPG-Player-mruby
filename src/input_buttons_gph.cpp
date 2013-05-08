@@ -21,7 +21,7 @@
 #include "input_buttons.h"
 #include "keys.h"
 
-void Input::InitButtons() {
+void Input_::InitButtons() {
 	buttons.resize(BUTTON_COUNT);
 
 #if defined(USE_CAANOO)

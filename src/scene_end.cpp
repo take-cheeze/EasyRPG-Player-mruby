@@ -38,10 +38,10 @@ void Scene_End::Start() {
 void Scene_End::Update() {
 	command_window->Update();
 
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop(); // Select End Game
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		Game_System::SePlay(Main_Data::game_data.system.decision_se);
 		switch (command_window->GetIndex()) {
 		case 0: // Yes

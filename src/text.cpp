@@ -55,12 +55,12 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, 
 	text_surface->Clear();
 
 	// Load the system file for the shadow and text color
-	BitmapRef system = Cache::System(Data::system.system_name);
+	BitmapRef system = Cache().System(Data::system.system_name);
 	// Load the exfont-file
-	BitmapRef exfont = Cache::Exfont();
+	BitmapRef exfont = Cache().Exfont();
 
 	// Get the Shadow color
-	Color shadow_color(Cache::system_info.sh_color);
+	Color shadow_color(Cache().system_info.sh_color);
 	// If shadow is pure black, increase blue channel
 	// so it doesn't become transparent
 	if ((shadow_color.red == 0) &&

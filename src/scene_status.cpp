@@ -48,14 +48,14 @@ void Scene_Status::Update() {
 	equipstatus_window->Update();
 	equip_window->Update();
 
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
-	} else if (Game_Party::GetActors().size() > 1 && Input::IsTriggered(Input::RIGHT)) {
+	} else if (Game_Party::GetActors().size() > 1 && Input().IsTriggered(Input_::RIGHT)) {
 		Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 		actor_index = (actor_index + 1) % Game_Party::GetActors().size();
 		Scene::Push(EASYRPG_MAKE_SHARED<Scene_Status>(actor_index), true);
-	} else if (Game_Party::GetActors().size() > 1 && Input::IsTriggered(Input::LEFT)) {
+	} else if (Game_Party::GetActors().size() > 1 && Input().IsTriggered(Input_::LEFT)) {
 		Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 		actor_index = (actor_index + Game_Party::GetActors().size() - 1) % Game_Party::GetActors().size();
 		Scene::Push(EASYRPG_MAKE_SHARED<Scene_Status>(actor_index), true);

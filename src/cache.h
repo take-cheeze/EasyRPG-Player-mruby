@@ -23,19 +23,15 @@
 
 #include "system.h"
 #include "color.h"
+#include "memory_management.h"
+
+#include <boost/noncopyable.hpp>
+#include <boost/container/flat_map.hpp>
 
 /**
- *Structs
+ * Cache_
  */
-typedef struct {
-	Color bg_color;
-	Color sh_color;
-} tSystemInfo;
-
-/**
- * Cache namespace.
- */
-namespace Cache {
+struct Cache_ : boost::noncopyable {
 	BitmapRef Backdrop(const std::string& filename);
 	BitmapRef Battle(const std::string& filename);
 	BitmapRef Battle2(const std::string& filename);
@@ -56,7 +52,52 @@ namespace Cache {
 	BitmapRef Tile(const std::string& filename, int tile_id);
 	void Clear();
 
-	extern tSystemInfo system_info;
-}
+	struct {
+		Color bg_color;
+		Color sh_color;
+	} system_info;
+
+  private:
+	typedef std::pair<std::string,std::string> string_pair;
+	typedef std::pair<std::string, int> tile_pair;
+
+	typedef boost::container::flat_map<string_pair, EASYRPG_WEAK_PTR<Bitmap> > cache_type;
+	cache_type cache;
+
+	typedef boost::container::flat_map<tile_pair, EASYRPG_WEAK_PTR<Bitmap> > cache_tiles_type;
+	cache_tiles_type cache_tiles;
+
+	struct Material {
+		enum Type {
+			REND = -1,
+			Backdrop,
+			Battle,
+			Charset,
+			Chipset,
+			Faceset,
+			Gameover,
+			Monster,
+			Panorama,
+			Picture,
+			System,
+			Title,
+			System2,
+			Battle2,
+			Battlecharset,
+			Battleweapon,
+			Frame,
+			END,
+		};
+
+	}; // struct Material
+
+	BitmapRef LoadBitmap(std::string const& folder_name, const std::string& filename,
+						 bool transparent, uint32_t const flags);
+
+	template<Material::Type T>
+	BitmapRef LoadBitmap(std::string const& f);
+};
+
+Cache_& Cache();
 
 #endif

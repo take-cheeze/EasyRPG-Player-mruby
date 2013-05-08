@@ -62,7 +62,7 @@ bool Window_BattleItem::CanUseItem(const RPG::Item& item) {
 		item.actor_set[actor_id])
 		return true;
 
-	if (Player::engine != Player::EngineRpg2k3)
+	if (Player().engine != Player_::EngineRpg2k3)
 		return false;
 
 	const RPG::Actor& actor = Data::actors[actor_id - 1];

@@ -27,7 +27,7 @@
 
 Window_Base::Window_Base(int x, int y, int width, int height) {
 	windowskin_name = Game_System::GetSystemName();
-	SetWindowskin(Cache::System(windowskin_name));
+	SetWindowskin(Cache().System(windowskin_name));
 
 	SetX(x);
 	SetY(y);
@@ -40,13 +40,13 @@ void Window_Base::Update() {
 	Window::Update();
 	if (Game_System::GetSystemName() != windowskin_name) {
 		windowskin_name = Game_System::GetSystemName();
-		SetWindowskin(Cache::System(windowskin_name));
+		SetWindowskin(Cache().System(windowskin_name));
 		contents->SetTransparentColor(windowskin->GetTransparentColor());
 	}
 }
 
 void Window_Base::DrawFace(std::string face_name, int face_index, int cx, int cy, bool flip) {
-	BitmapRef faceset = Cache::Faceset(face_name);
+	BitmapRef faceset = Cache().Faceset(face_name);
 
 	Rect src_rect(
 		(face_index % 4) * 48,

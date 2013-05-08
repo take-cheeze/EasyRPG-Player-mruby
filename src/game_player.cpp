@@ -26,6 +26,7 @@
 #include "main_data.h"
 #include "player.h"
 #include "util_macro.h"
+#include "baseui.h"
 #include <algorithm>
 
 // Constructor
@@ -46,8 +47,8 @@ bool Game_Player::IsPassable(int x, int y, int d) const {
 
 	if (!Game_Map::IsValid(new_x, new_y)) return false;
 
-	if (Player::debug_flag &&
-		Input::IsPressed(Input::DEBUG_THROUGH)) {
+	if (Player().debug_flag &&
+		Input().IsPressed(Input_::DEBUG_THROUGH)) {
 			return true;
 	}
 
@@ -147,7 +148,7 @@ void Game_Player::Update() {
 
 	if (!IsMoving() && !Game_Map::GetInterpreter().IsRunning()
 		/*move_route_forcing || Game_Temp::message_window_showing*/) {
-		switch (Input::dir4) {
+		switch (Input().dir4) {
 			case 2:
 				MoveDown();
 				break;
@@ -179,7 +180,7 @@ void Game_Player::UpdateNonMoving(bool last_moving) {
 
 	if ( last_moving && CheckTouchEvent() ) return;
 
-	if ( !Game_Message::visible && Input::IsTriggered(Input::DECISION) ) {
+	if ( !Game_Message::visible && Input().IsTriggered(Input_::DECISION) ) {
 		// TODO
 		//if ( GetOnOffVehicle() ) return;
 		if ( CheckActionEvent() ) return;

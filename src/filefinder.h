@@ -23,29 +23,20 @@
 
 #include <string>
 #include <ios>
+#include <vector>
 #include <boost/container/flat_map.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 
 /**
  * FileFinder contains helper methods for finding case
  * insensitive files paths.
  */
-namespace FileFinder {
+struct FileFinder_ : boost::noncopyable {
 	/**
 	 * Initializes FileFinder.
 	 */
-	void Init();
-
-	/**
-	 * Next Init step that is performed after parsing
-	 * the database file. The rtp paths should be added
-	 * to the FileFinder here.
-	 */
-	void InitRtpPaths();
-
-	/**
-	 * Quits FileFinder.
-	 */
-	void Quit();
+	FileFinder_();
 
 	/**
 	 * Finds an image file.
@@ -55,6 +46,12 @@ namespace FileFinder {
 	 * @return path to file.
 	 */
 	std::string FindImage(const std::string& dir, const std::string& name);
+
+	/**
+	 * Reload RTP paths.
+	 * This function is called in constructor too.
+	 */
+	void UpdateRtpPaths();
 
 	/**
 	 * Finds a file.
@@ -112,7 +109,7 @@ namespace FileFinder {
 	 * @param m stream mode.
 	 * @return NULL if open failed.
 	 */
-	EASYRPG_SHARED_PTR<std::fstream> openUTF8(const std::string& name, std::ios_base::openmode m);
+	EASYRPG_SHARED_PTR<std::fstream> openUTF8(const std::string& name, std::ios::openmode m);
 
 	/*
 	 * { case lowered path, real path }
@@ -192,6 +189,24 @@ namespace FileFinder {
 	EASYRPG_SHARED_PTR<ProjectTree> CreateProjectTree(std::string const& p);
 	bool IsRPG2kProject(ProjectTree const& dir);
 
-} // namespace FileFinder
+  private:
+
+	boost::optional<std::string> FindFile(ProjectTree const& tree,
+										  std::string const& dir,
+										  std::string const& name,
+										  char const* exts[]);
+	std::string FindFile(const std::string &dir, const std::string& name, const char* exts[]);
+
+	std::string const& translate_rtp(std::string const& dir, std::string const& name);
+	void add_rtp_path(std::string const& p);
+
+	typedef std::vector<EASYRPG_SHARED_PTR<ProjectTree> > search_path_list;
+	search_path_list search_paths;
+	std::string fonts_path;
+
+	ProjectTree tree_;
+};
+
+FileFinder_& FileFinder();
 
 #endif

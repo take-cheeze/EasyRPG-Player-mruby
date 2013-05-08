@@ -29,119 +29,103 @@
 #include "scene_title.h"
 #include "scene_battle.h"
 #include "utils.h"
-#include "bot_ui.h"
-#include "lua_bot.h"
+#include "baseui.h"
 
 #include <algorithm>
 #include <set>
-#include <locale>
-#include <cstring>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <ciso646>
 
-#ifdef GEKKO
-	#include <fat.h>
-	#include <unistd.h>
-#endif
-#if (defined(_WIN32) && defined(NDEBUG))
-	#include <windows.h>
-	#include <winioctl.h>
-	#include <dbghelp.h>
-	static void InitMiniDumpWriter();
-#endif
+struct Player_::Internal {
+	Cache_ cache;
+	FileFinder_ filefinder;
+	Graphics_ graphics;
+	Input_ input;
+};
 
-namespace Player {
-	bool exit_flag;
-	bool reset_flag;
-	bool debug_flag;
-	bool hide_title_flag;
-	bool window_flag;
-	bool battle_test_flag;
-	int battle_test_troop_id;
-	EngineType engine;
+static EASYRPG_WEAK_PTR<Player_> current_player_;
+
+Cache_& Cache() {
+	return Player().internal->cache;
 }
 
-void Player::Init(int argc, char *argv[]) {
-	static bool init = false;
+FileFinder_& FileFinder() {
+	return Player().internal->filefinder;
+}
 
-	if (init) return;
+Input_& Input() {
+	return Player().internal->input;
+}
 
-#ifdef GEKKO
-	// Init libfat (Mount SD/USB)
-	if (!fatInitDefault()) {
-		Output::Error("Couldn't mount any storage medium!");
-	}
-	// Wii doesn't provide a correct working directory before mounting
-	char gekko_dir[256];
-	getcwd(gekko_dir, 255);
-	Main_Data::project_path = gekko_dir;
-#endif
+Graphics_& Graphics() {
+	return Player().internal->graphics;
+}
 
-#if (defined(_WIN32) && defined(NDEBUG) && defined(WINVER) && WINVER >= 0x0600)
-	InitMiniDumpWriter();
-#endif
+Player_& Player() {
+	assert(not current_player_.expired());
+	return *current_player_.lock();
+}
 
-	exit_flag = false;
-	reset_flag = false;
+PlayerRef CreatePlayer() {
+	PlayerRef const ret(new Player_());
+	ret->ref_ = ret;
+	ret->MakeCurrent();
+	ret->internal->filefinder.UpdateRtpPaths();
+	return ret;
+}
 
-	// Command line parser
+void Player_::MakeCurrent() {
+	assert(not ref_.expired());
+	current_player_ = ref_;
+}
+
+Player_::Player_()
+		:  exit_flag(false)
+		, reset_flag(false)
+		, debug_flag(false)
+		, hide_title_flag(false)
+		, window_flag(false)
+		, battle_test_flag(false)
+		, battle_test_troop_id(0)
+		, engine(EngineRpg2k)
+		, internal(new Internal())
+{
+}
+
+static bool arg_exists(std::vector<std::string>& lst, std::string const& arg) {
+	std::vector<std::string>::iterator const i = std::find(lst.begin(), lst.end(), arg);
+	return (i == lst.end())? false : (lst.erase(i), true);
+}
+
+void Player_::ParseArgs(int argc, char* argv[]) {
 	if((argc > 1) && Utils::LowerCase(argv[1]) == "battletest") {
 		battle_test_flag = true;
 		battle_test_troop_id = (argc > 4)? atoi(argv[4]) : 0;
 	} else {
-		std::set<std::string> args;
-		battle_test_flag = false;
-		battle_test_troop_id = 0;
-		for(int i = 1; i < argc; ++i) { args.insert(Utils::LowerCase(argv[i])); }
-		window_flag = args.find("window") != args.end();
-		debug_flag = args.find("testplay") != args.end();
-		hide_title_flag = args.find("hidetitle") != args.end();
-	}
+		std::vector<std::string> const args(argv + 1, argv + argc);
+		std::vector<std::string> lowered_args(args.size());
+		std::transform(args.begin(), args.end(), lowered_args.begin(), &Utils::LowerCase);
 
+		window_flag = arg_exists(lowered_args, "window");
+		debug_flag = arg_exists(lowered_args, "testplay");
+		hide_title_flag = arg_exists(lowered_args, "hidetitle");
+
+		if(not lowered_args.empty()) {
+			Output::Debug("Unknown arguments passed.");
+		}
+	}
 
 #ifndef NDEBUG
 	debug_flag = true;
 	window_flag = true; // Debug Build needs no fullscreen
 #endif
-
-	engine = EngineRpg2k;
-
-	FileFinder::Init();
-
-	DisplayUi.reset();
-
-#if defined(HAVE_LUA) && defined(HAVE_BOOST_LIBRARIES)
-	char const* const luabot_script = getenv("RPG_LUABOT_SCRIPT");
-	if(luabot_script) {
-		if(FileFinder::Exists(luabot_script)) {
-			std::ifstream ifs(luabot_script);
-			assert(ifs);
-
-			std::istreambuf_iterator<char> const eos;
-			std::string const script(std::istreambuf_iterator<char>(ifs), eos);
-
-			DisplayUi = EASYRPG_MAKE_SHARED<BotUi>(EASYRPG_MAKE_SHARED<LuaBot>(script));
-			Output::IgnorePause(true);
-		} else {
-			Output::Debug("luabost script not found in \"%s\"", luabot_script);
-		}
-	}
-#endif
-
-	if(! DisplayUi) {
-		DisplayUi = BaseUi::CreateUi
-			(SCREEN_TARGET_WIDTH,
-			 SCREEN_TARGET_HEIGHT,
-			 GAME_TITLE,
-			 !window_flag,
-			 RUN_ZOOM);
-	}
-
-	init = true;
 }
 
-void Player::Run() {
+void Player_::Run() {
+	assert(DisplayUi);
+
 	Scene::Push(EASYRPG_MAKE_SHARED<Scene>());
 	Scene::Push(EASYRPG_SHARED_PTR<Scene>
 				(debug_flag?
@@ -151,35 +135,33 @@ void Player::Run() {
 	reset_flag = false;
 
 	// Reset frames before starting
-	Graphics::FrameReset();
+	Graphics().FrameReset();
 
 	// Main loop
 	while (Scene::instance->type != Scene::Null) {
 		Scene::instance->MainFunction();
 		for (size_t i = 0; i < Scene::old_instances.size(); ++i) {
-			Graphics::Pop();
+			Graphics().Pop();
 		}
 		Scene::old_instances.clear();
 	}
-
-	Player::Exit();
 }
 
-void Player::Pause() {
+void Player_::Pause() {
 	Audio().BGM_Pause();
 }
 
-void Player::Resume() {
-	Input::ResetKeys();
+void Player_::Resume() {
+	Input().ResetKeys();
 	Audio().BGM_Resume();
-	Graphics::FrameReset();
+	Graphics().FrameReset();
 }
 
-void Player::Update() {
-	if (Input::IsTriggered(Input::TOGGLE_FPS)) {
-		Graphics::fps_on_screen = !Graphics::fps_on_screen;
+void Player_::Update() {
+	if (Input().IsTriggered(Input_::TOGGLE_FPS)) {
+		Graphics().fps_on_screen = !Graphics().fps_on_screen;
 	}
-	if (Input::IsTriggered(Input::TAKE_SCREENSHOT)) {
+	if (Input().IsTriggered(Input_::TAKE_SCREENSHOT)) {
 		Output::TakeScreenshot();
 	}
 
@@ -192,132 +174,3 @@ void Player::Update() {
 		Scene::PopUntil(Scene::Title);
 	}
 }
-
-void Player::Exit() {
-	Main_Data::Cleanup();
-	Graphics::Quit();
-	FileFinder::Quit();
-	DisplayUi.reset();
-}
-
-#if (defined(_WIN32) && defined(NDEBUG) && defined(WINVER) && WINVER >= 0x0600)
-// Minidump code for Windows
-// Original Author: Oleg Starodumov (www.debuginfo.com)
-// Modified by EasyRPG Team
-typedef BOOL (__stdcall *MiniDumpWriteDumpFunc) (
-	IN HANDLE hProcess,
-	IN DWORD ProcessId,
-	IN HANDLE hFile,
-	IN MINIDUMP_TYPE DumpType,
-	IN CONST PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam, OPTIONAL
-	IN CONST PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam, OPTIONAL
-	IN CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam OPTIONAL
-);
-
-static WCHAR szModulName[_MAX_FNAME];
-static MiniDumpWriteDumpFunc TheMiniDumpWriteDumpFunc;
-
-static BOOL CALLBACK MyMiniDumpCallback(PVOID,
-	const PMINIDUMP_CALLBACK_INPUT pInput,
-	PMINIDUMP_CALLBACK_OUTPUT pOutput
-) {
-	if (pInput == 0 || pOutput == 0)  {
-		return false;
-	}
-
-	switch (pInput->CallbackType)
-	{
-		case IncludeModuleCallback:
-		case IncludeThreadCallback:
-		case ThreadCallback:
-		case ThreadExCallback:
-			return true;
-		case MemoryCallback:
-		case CancelCallback:
-			return false;
-		case ModuleCallback:
-			// Are data sections available for this module?
-			if (pOutput->ModuleWriteFlags & ModuleWriteDataSeg) {
-				// Exclude all modules but the player itself
-				if (pInput->Module.FullPath == NULL ||
-					wcsicmp(pInput->Module.FullPath, szModulName)) {
-					pOutput->ModuleWriteFlags &= (~ModuleWriteDataSeg);
-				}
-			}
-			return true;
-	}
-
-	return false;
-}
-
-static LONG __stdcall CreateMiniDump(EXCEPTION_POINTERS* pep)
-{
-	wchar_t szDumpName[40];
-
-	// Get the current time
-	SYSTEMTIME time;
-	GetLocalTime(&time);
-
-	// Player-YYYY-MM-DD-hh-mm-ss.dmp
-#ifdef __MINGW32__
-	swprintf(szDumpName, L"Player_%04d-%02d-%02d-%02d-%02d-%02d.dmp",
-		time.wYear, time.wMonth, time.wDay,
-		time.wHour, time.wMinute, time.wSecond);
-#else
-	swprintf(szDumpName, 40, L"Player_%04d-%02d-%02d-%02d-%02d-%02d.dmp",
-		time.wYear, time.wMonth, time.wDay,
-		time.wHour, time.wMinute, time.wSecond);
-#endif
-
-	HANDLE hFile = CreateFile(szDumpName, GENERIC_READ | GENERIC_WRITE,
-		0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-	if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE)) {
-		MINIDUMP_EXCEPTION_INFORMATION mdei;
-		mdei.ThreadId           = GetCurrentThreadId();
-		mdei.ExceptionPointers  = pep;
-		mdei.ClientPointers     = FALSE;
-
-		MINIDUMP_CALLBACK_INFORMATION mci;
-		mci.CallbackRoutine     = (MINIDUMP_CALLBACK_ROUTINE)MyMiniDumpCallback;
-		mci.CallbackParam       = 0;
-
-		MINIDUMP_TYPE mdt       = (MINIDUMP_TYPE)(MiniDumpWithPrivateReadWriteMemory |
-									MiniDumpWithDataSegs | MiniDumpWithHandleData |
-									MiniDumpWithFullMemoryInfo | MiniDumpWithThreadInfo |
-									MiniDumpWithUnloadedModules );
-
-		TheMiniDumpWriteDumpFunc(GetCurrentProcess(), GetCurrentProcessId(),
-			hFile, mdt, (pep != 0) ? &mdei : 0, 0, &mci);
-
-		// Enable NTFS compression to save a lot of disk space
-		DWORD res;
-		DWORD format = COMPRESSION_FORMAT_DEFAULT;
-		DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &format, sizeof(USHORT), NULL, 0, &res, NULL);
-
-		CloseHandle(hFile);
-	}
-
-	// Pass to the Windows crash handler
-	return EXCEPTION_CONTINUE_SEARCH;
-}
-
-static void InitMiniDumpWriter()
-{
-	// Prepare the Functions, when their is an exception this could fail so
-	// we do this when the application is still in a clean state
-	static HMODULE dbgHelp = LoadLibrary(L"dbghelp.dll");
-	if (dbgHelp != NULL) {
-		TheMiniDumpWriteDumpFunc = (MiniDumpWriteDumpFunc) GetProcAddress(dbgHelp, "MiniDumpWriteDump");
-
-		if (TheMiniDumpWriteDumpFunc != NULL) {
-			SetUnhandledExceptionFilter(CreateMiniDump);
-
-			// Extract the module name
-			GetModuleFileName(NULL, szModulName, _MAX_FNAME);
-		}
-	}
-}
-
-
-#endif

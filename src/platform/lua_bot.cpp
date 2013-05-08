@@ -43,7 +43,7 @@ namespace {
 		return lua_yield(L, 0);
 	}
 
-	template<Input::Keys::InputKey Key>
+	template<Keys::InputKey Key>
 	int press(lua_State* L) {
 		DisplayUi->GetKeyStates()[Key] = true;
 
@@ -55,7 +55,7 @@ namespace {
 	}
 
 	int quit(lua_State* L) {
-		Player::exit_flag = true;
+		Player().exit_flag = true;
 		return lua_yield(L, 0);
 	}
 
@@ -69,12 +69,12 @@ void LuaBot::register_vm(lua_State* const L) {
 	lua_register(L, "quit", &quit);
 
 	// keys
-	lua_register(L, "up", &press<Input::Keys::UP>);
-	lua_register(L, "down", &press<Input::Keys::DOWN>);
-	lua_register(L, "left", &press<Input::Keys::LEFT>);
-	lua_register(L, "right", &press<Input::Keys::RIGHT>);
-	lua_register(L, "enter", &press<Input::Keys::RETURN>);
-	lua_register(L, "cancel", &press<Input::Keys::ESCAPE>);
+	lua_register(L, "up", &press<Keys::UP>);
+	lua_register(L, "down", &press<Keys::DOWN>);
+	lua_register(L, "left", &press<Keys::LEFT>);
+	lua_register(L, "right", &press<Keys::RIGHT>);
+	lua_register(L, "enter", &press<Keys::RETURN>);
+	lua_register(L, "cancel", &press<Keys::ESCAPE>);
 }
 
 LuaBot::LuaBot(std::string const& script)

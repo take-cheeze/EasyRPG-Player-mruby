@@ -27,7 +27,7 @@
 
 BattleAnimation::BattleAnimation(int x, int y, const RPG::Animation* animation) :
 	x(x), y(y), animation(animation), frame(0), initialized(false), visible(false),
-	ID(Graphics::drawable_id++) {
+	ID(Graphics().drawable_id++) {
 }
 
 BattleAnimation::~BattleAnimation() {
@@ -41,13 +41,13 @@ void BattleAnimation::Setup() {
 	const std::string& name = animation->animation_name;
 	BitmapRef graphic;
 
-	if (!FileFinder::FindImage("Battle", name).empty()) {
+	if (!FileFinder().FindImage("Battle", name).empty()) {
 		large = false;
-		graphic = Cache::Battle(name);
+		graphic = Cache().Battle(name);
 	}
-	else if (!FileFinder::FindImage("Battle2", name).empty()) {
+	else if (!FileFinder().FindImage("Battle2", name).empty()) {
 		large = true;
-		graphic = Cache::Battle2(name);
+		graphic = Cache().Battle2(name);
 	}
 	else {
 		Output::Warning("Couldn't find animation: %s", name.c_str());
@@ -123,12 +123,12 @@ void BattleAnimation::SetVisible(bool _visible) {
 	visible = _visible;
 
 	if (visible) {
-		zobj = Graphics::RegisterZObj(GetZ(), ID);
-		Graphics::RegisterDrawable(ID, this);
+		zobj = Graphics().RegisterZObj(GetZ(), ID);
+		Graphics().RegisterDrawable(ID, this);
 	}
 	else {
-		Graphics::RemoveZObj(ID);
-		Graphics::RemoveDrawable(ID);
+		Graphics().RemoveZObj(ID);
+		Graphics().RemoveDrawable(ID);
 	}
 }
 

@@ -28,7 +28,7 @@
 Spriteset_Map::Spriteset_Map() {
 	tilemap.SetWidth(Game_Map::GetWidth());
 	tilemap.SetHeight(Game_Map::GetHeight());
-	tilemap.SetChipset(Cache::Chipset(Game_Map::GetChipsetName()));
+	tilemap.SetChipset(Cache().Chipset(Game_Map::GetChipsetName()));
 	tilemap.SetPassableDown(Game_Map::GetPassagesDown());
 	tilemap.SetPassableUp(Game_Map::GetPassagesUp());
 	tilemap.SetMapDataDown(Game_Map::GetMapDataDown());
@@ -58,7 +58,7 @@ void Spriteset_Map::Update() {
 	const std::string& name = Game_Map::GetParallaxName();
 	if (name != panorama_name) {
 		panorama_name = name;
-		panorama.SetBitmap(Cache::Panorama(panorama_name));
+		panorama.SetBitmap(Cache().Panorama(panorama_name));
 	}
 	panorama.SetOx(Game_Map::GetParallaxX());
 	panorama.SetOy(Game_Map::GetParallaxY());
@@ -77,7 +77,7 @@ Sprite_Character* Spriteset_Map::FindCharacter(Game_Character* character) const
 }
 
 void Spriteset_Map::ChipsetUpdated() {
-	tilemap.SetChipset(Cache::Chipset(Game_Map::GetChipsetName()));
+	tilemap.SetChipset(Cache().Chipset(Game_Map::GetChipsetName()));
 	tilemap.SetPassableDown(Game_Map::GetPassagesDown());
 	tilemap.SetPassableUp(Game_Map::GetPassagesUp());
 }

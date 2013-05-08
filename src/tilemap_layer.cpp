@@ -25,6 +25,7 @@
 #include "map_data.h"
 #include "bitmap.h"
 #include "bitmap_screen.h"
+#include "baseui.h"
 
 // Blocks subtiles IDs
 // Mess with this code and you will die in 3 days...
@@ -147,7 +148,7 @@ TilemapLayer::TilemapLayer(int ilayer) :
 	animation_step_c(0),
 	animation_speed(24),
 	animation_type(1),
-	ID(Graphics::drawable_id++),
+	ID(Graphics().drawable_id++),
 	type(TypeTilemap),
 	layer(ilayer) {
 
@@ -158,15 +159,15 @@ TilemapLayer::TilemapLayer(int ilayer) :
 
 	int tiles_y = (int)ceil(DisplayUi->GetHeight() / 16.0) + 1;
 	for (int i = 0; i < tiles_y + 2; i++) {
-		Graphics::RegisterZObj(16 * i, ID, true);
+		Graphics().RegisterZObj(16 * i, ID, true);
 	}
-	Graphics::RegisterZObj(9999, ID, true);
-	Graphics::RegisterDrawable(ID, this);
+	Graphics().RegisterZObj(9999, ID, true);
+	Graphics().RegisterDrawable(ID, this);
 }
 
 TilemapLayer::~TilemapLayer() {
-	Graphics::RemoveZObj(ID, true);
-	Graphics::RemoveDrawable(ID);
+	Graphics().RemoveZObj(ID, true);
+	Graphics().RemoveDrawable(ID);
 }
 
 void TilemapLayer::DrawTile(BitmapScreen& screen, int x, int y, int row, int col, bool autotile) {

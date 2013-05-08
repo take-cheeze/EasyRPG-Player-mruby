@@ -916,19 +916,19 @@ void Scene_Logo::Start() {
 }
 
 void Scene_Logo::TransitionIn() {
-	Graphics::Transition(Graphics::TransitionFadeIn, 24);
+	Graphics().Transition(Graphics().TransitionFadeIn, 24);
 }
 
 void Scene_Logo::TransitionOut() {
-	Graphics::Transition(Graphics::TransitionFadeOut, 24);
+	Graphics().Transition(Graphics().TransitionFadeOut, 24);
 }
 
 void Scene_Logo::Update() {
 	++frame_counter;
 
 	if (frame_counter == 90 ||
-		Input::IsTriggered(Input::DECISION) ||
-		Input::IsTriggered(Input::CANCEL)) {
+		Input().IsTriggered(Input_::DECISION) ||
+		Input().IsTriggered(Input_::CANCEL)) {
 		Scene::Push(EASYRPG_MAKE_SHARED<Scene_Title>(), true);
 	}
 }

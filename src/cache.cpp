@@ -33,116 +33,79 @@
 #include "player.h"
 
 namespace {
-
-	typedef std::pair<std::string,std::string> string_pair;
-	typedef std::pair<std::string, int> tile_pair;
-
-	typedef std::map<string_pair, EASYRPG_WEAK_PTR<Bitmap> > cache_type;
-	cache_type cache;
-
-	typedef std::map<tile_pair, EASYRPG_WEAK_PTR<Bitmap> > cache_tiles_type;
-	cache_tiles_type cache_tiles;
-
-	BitmapRef LoadBitmap(std::string const& folder_name, const std::string& filename,
-						 bool transparent, uint32_t const flags) {
-		string_pair const key(folder_name, filename);
-
-		cache_type::const_iterator const it = cache.find(key);
-
-		if (it == cache.end() || it->second.expired()) {
-			std::string const path = FileFinder::FindImage(folder_name, filename);
-
-			if (path.empty()) {
-				// TODO:
-				// Load a dummy image with correct size (issue #32)
-				Output::Warning("Image not found: %s/%s\n\nPlayer will exit now.", folder_name.c_str(), filename.c_str());
-				// Delayed termination, otherwise it segfaults in Graphics::Quit
-				Player::exit_flag = true;
-			}
-
-			return (cache[key] = path.empty()
-					? Bitmap::Create(16, 16, Color())
-					: Bitmap::Create(path, transparent, flags)
-					).lock();
-		} else { return it->second.lock(); }
-	}
-
-	struct Material {
-		enum Type {
-			REND = -1,
-			Backdrop,
-			Battle,
-			Charset,
-			Chipset,
-			Faceset,
-			Gameover,
-			Monster,
-			Panorama,
-			Picture,
-			System,
-			Title,
-			System2,
-			Battle2,
-			Battlecharset,
-			Battleweapon,
-			Frame,
-			END,
-		};
-
-	}; // struct Material
-
-	struct Spec {
-		char const* directory;
-		bool transparent;
-		int min_width , max_width ;
-		int min_height, max_height;
-	} const spec[] = {
-		{ "Backdrop", false, 320, 320, 160, 160 },
-		{ "Battle", true, 480, 480, 96, 480 },
-		{ "CharSet", true, 288, 288, 256, 256 },
-		{ "ChipSet", true, 480, 480, 256, 256 },
-		{ "FaceSet", true, 192, 192, 192, 192 },
-		{ "GameOver", false, 320, 320, 240, 240 },
-		{ "Monster", true, 16, 320, 16, 160 },
-		{ "Panorama", false, 80, 640, 80, 480 },
-		{ "Picture", true, 1, 640, 1, 480 },
-		{ "System", true, 160, 160, 80, 80 },
-		{ "Title", false, 320, 320, 240, 240 },
-		{ "System2", true, 80, 80, 96, 96 },
-		{ "Battle2", true, 640, 640, 640, 640 },
-		{ "BattleCharSet", true, 144, 144, 384, 384 },
-		{ "BattleWeapon", true, 192, 192, 512, 512 },
-		{ "Frame", true, 320, 320, 240, 240 },
-	};
-
-	template<Material::Type T>
-	BitmapRef LoadBitmap(std::string const& f) {
-		BOOST_STATIC_ASSERT(Material::REND < T && T < Material::END);
-
-		Spec const& s = spec[T];
-		BitmapRef const ret = LoadBitmap(s.directory, f, s.transparent,
-										 T == Material::Chipset? Bitmap::Chipset:
-										 T == Material::System? Bitmap::System:
-										 0);
-
-		if(
-		   ret->GetWidth () < s.min_width  || s.max_width  < ret->GetWidth () ||
-		   ret->GetHeight() < s.min_height || s.max_height < ret->GetHeight()
-		   ) {
-			Output::Debug("Image size error in: %s/%s", s.directory, f.c_str());
-			Output::Debug("width  (min, max, actual) = (%d, %d, %d)", s.min_width , s.max_width , ret->GetWidth ());
-			Output::Debug("height (min, max, actual) = (%d, %d, %d)", s.min_height, s.max_height, ret->GetHeight());
-		}
-
-		return ret;
-	}
-
+struct Spec {
+	char const* directory;
+	bool transparent;
+	int min_width , max_width ;
+	int min_height, max_height;
+} const spec[] = {
+	{ "Backdrop", false, 320, 320, 160, 160 },
+	{ "Battle", true, 480, 480, 96, 480 },
+	{ "CharSet", true, 288, 288, 256, 256 },
+	{ "ChipSet", true, 480, 480, 256, 256 },
+	{ "FaceSet", true, 192, 192, 192, 192 },
+	{ "GameOver", false, 320, 320, 240, 240 },
+	{ "Monster", true, 16, 320, 16, 160 },
+	{ "Panorama", false, 80, 640, 80, 480 },
+	{ "Picture", true, 1, 640, 1, 480 },
+	{ "System", true, 160, 160, 80, 80 },
+	{ "Title", false, 320, 320, 240, 240 },
+	{ "System2", true, 80, 80, 96, 96 },
+	{ "Battle2", true, 640, 640, 640, 640 },
+	{ "BattleCharSet", true, 144, 144, 384, 384 },
+	{ "BattleWeapon", true, 192, 192, 512, 512 },
+	{ "Frame", true, 320, 320, 240, 240 },
+};
 }
 
-tSystemInfo Cache::system_info;
+template<Cache_::Material::Type T>
+BitmapRef Cache_::LoadBitmap(std::string const& f) {
+	BOOST_STATIC_ASSERT(Material::REND < T && T < Material::END);
+
+	Spec const& s = spec[T];
+	BitmapRef const ret = LoadBitmap(s.directory, f, s.transparent,
+									 T == Material::Chipset? Bitmap::Chipset:
+									 T == Material::System? Bitmap::System:
+									 0);
+
+	if(
+		   ret->GetWidth () < s.min_width  || s.max_width  < ret->GetWidth () ||
+		   ret->GetHeight() < s.min_height || s.max_height < ret->GetHeight()
+	   ) {
+		Output::Debug("Image size error in: %s/%s", s.directory, f.c_str());
+		Output::Debug("width  (min, max, actual) = (%d, %d, %d)", s.min_width , s.max_width , ret->GetWidth ());
+		Output::Debug("height (min, max, actual) = (%d, %d, %d)", s.min_height, s.max_height, ret->GetHeight());
+	}
+
+	return ret;
+}
+
+BitmapRef Cache_::LoadBitmap(std::string const& folder_name, const std::string& filename,
+							 bool transparent, uint32_t const flags) {
+	string_pair const key(folder_name, filename);
+
+	cache_type::const_iterator const it = cache.find(key);
+
+	if (it == cache.end() || it->second.expired()) {
+		std::string const path = FileFinder().FindImage(folder_name, filename);
+
+		if (path.empty()) {
+			// TODO:
+			// Load a dummy image with correct size (issue #32)
+			Output::Warning("Image not found: %s/%s\n\nPlayer will exit now.", folder_name.c_str(), filename.c_str());
+			// Delayed termination, otherwise it segfaults in Graphics().Quit
+			Player().exit_flag = true;
+		}
+
+		return (cache[key] = path.empty()
+				? Bitmap::Create(16, 16, Color())
+				: Bitmap::Create(path, transparent, flags)
+				).lock();
+	} else { return it->second.lock(); }
+}
 
 #define macro(r, data, elem)						\
-	BitmapRef Cache::elem(const std::string& f) {	\
+	BitmapRef Cache_::elem(const std::string& f) {	\
 		return LoadBitmap<Material::elem>(f);		\
 	}												\
 
@@ -154,7 +117,7 @@ BOOST_PP_SEQ_FOR_EACH(macro, ,
 
 #undef macro
 
-BitmapRef Cache::Exfont() {
+BitmapRef Cache_::Exfont() {
 	string_pair const hash("\x00","ExFont");
 
 	cache_type::const_iterator const it = cache.find(hash);
@@ -164,12 +127,12 @@ BitmapRef Cache::Exfont() {
 	} else { return it->second.lock(); }
 }
 
-BitmapRef Cache::Tile(const std::string& filename, int tile_id) {
+BitmapRef Cache_::Tile(const std::string& filename, int tile_id) {
 	tile_pair const key(filename, tile_id);
 	cache_tiles_type::const_iterator const it = cache_tiles.find(key);
 
 	if (it == cache_tiles.end() || it->second.expired()) {
-		BitmapRef chipset = Cache::Chipset(filename);
+		BitmapRef chipset = Cache_::Chipset(filename);
 		Rect rect = Rect(0, 0, 16, 16);
 
 		int sub_tile_id = 0;
@@ -197,7 +160,7 @@ BitmapRef Cache::Tile(const std::string& filename, int tile_id) {
 	} else { return it->second.lock(); }
 }
 
-void Cache::Clear() {
+void Cache_::Clear() {
 	for(cache_type::const_iterator i = cache.begin(); i != cache.end(); ++i) {
 		if(i->second.expired()) { continue; }
 		Output::Debug("possible leak in cached bitmap %s/%s",

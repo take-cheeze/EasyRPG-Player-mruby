@@ -49,10 +49,10 @@ void Scene_Skill::Update() {
 	skillstatus_window->Update();
 	skill_window->Update();
 
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		int skill_id = skill_window->GetSkillId();
 
 		Game_Actor* actor = Game_Party::GetActors()[actor_index];

@@ -60,12 +60,12 @@ void Window_BattleOption::Update() {
 	int num_commands = commands.size();
 
 	if (active && num_commands >= 0 && index >= 0) {
-		if (Input::IsRepeated(Input::DOWN)) {
+		if (Input().IsRepeated(Input_::DOWN)) {
 			Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 			index++;
 		}
 
-		if (Input::IsRepeated(Input::UP)) {
+		if (Input().IsRepeated(Input_::UP)) {
 			Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 			index--;
 		}

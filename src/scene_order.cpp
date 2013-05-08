@@ -50,10 +50,10 @@ void Scene_Order::Update() {
 }
 
 void Scene_Order::UpdateOrder() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		if (std::find(actors.begin(), actors.end(), window_left->GetIndex() + 1) != actors.end()) {
 			Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		} else {
@@ -78,9 +78,9 @@ void Scene_Order::UpdateOrder() {
 }
 
 void Scene_Order::UpdateConfirm() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Redo();
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		if (window_confirm->GetIndex() == 0) {
 			Confirm();
 			Scene::Pop();

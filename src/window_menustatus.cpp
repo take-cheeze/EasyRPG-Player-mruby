@@ -37,7 +37,7 @@ void Window_MenuStatus::Refresh() {
 	contents->SetTransparentColor(windowskin->GetTransparentColor());
 	contents->Clear();
 
-	DisplayUi->SetBackcolor(Cache::system_info.bg_color);
+	DisplayUi->SetBackcolor(Cache().system_info.bg_color);
 
 	item_max = Game_Party::GetActors().size();
 
@@ -47,7 +47,7 @@ void Window_MenuStatus::Refresh() {
 		Game_Actor* actor = Game_Party::GetActors()[i];
 
 		int face_x = 0;
-		if (Player::engine == Player::EngineRpg2k3) {
+		if (Player().engine == Player_::EngineRpg2k3) {
 			face_x = actor->GetBattleRow() == 1 ? 5 : 0;
 		}
 		DrawActorFace(actor, face_x, i*48 + y);

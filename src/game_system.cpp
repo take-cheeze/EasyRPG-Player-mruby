@@ -49,7 +49,7 @@ void Game_System::BgmPlay(RPG::Music const& bgm) {
 		Audio().BGM_Stop();
 	}
 	data.current_music = bgm;
-	Graphics::FrameReset();
+	Graphics().FrameReset();
 }
 
 void Game_System::SePlay(RPG::Sound const& se) {

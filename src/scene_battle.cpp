@@ -67,7 +67,7 @@ Scene_Battle::FloatText::FloatText(int x, int y, int color, const std::string& t
 }
 
 void Scene_Battle::CreateCursors() {
-	BitmapRef system2 = Cache::System2(Data::system.system2_name);
+	BitmapRef system2 = Cache().System2(Data::system.system2_name);
 
 	ally_cursor.reset(new Sprite());
 	ally_cursor->SetBitmap(system2);
@@ -102,11 +102,11 @@ void Scene_Battle::CreateWindows() {
 }
 
 void Scene_Battle::Start() {
-	if (Player::battle_test_flag) {
-		if (Player::battle_test_troop_id <= 0) {
+	if (Player().battle_test_flag) {
+		if (Player().battle_test_troop_id <= 0) {
 			Output::Error("Invalid Monster Party ID");
 		} else {
-			Game_Temp::battle_troop_id = Player::battle_test_troop_id;
+			Game_Temp::battle_troop_id = Player().battle_test_troop_id;
 			// TODO: Rpg2k does specify a background graphic instead
 			Game_Temp::battle_terrain_id = 1;
 		}
@@ -733,7 +733,7 @@ void Scene_Battle::ProcessActions() {
 }
 
 void Scene_Battle::ProcessInput() {
-	if (Input::IsTriggered(Input::DECISION)) {
+	if (Input().IsTriggered(Input_::DECISION)) {
 		Game_System::SePlay(Main_Data::game_data.system.decision_se);
 		switch (state) {
 			case State_Options:
@@ -792,7 +792,7 @@ void Scene_Battle::ProcessInput() {
 		}
 	}
 
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		switch (state) {
 			case State_Options:
@@ -824,17 +824,17 @@ void Scene_Battle::ProcessInput() {
 	}
 
 	if (state == State_TargetEnemy && Game_Battle::HaveTargetEnemy()) {
-		if (Input::IsRepeated(Input::DOWN))
+		if (Input().IsRepeated(Input_::DOWN))
 			Game_Battle::TargetNextEnemy();
-		if (Input::IsRepeated(Input::UP))
+		if (Input().IsRepeated(Input_::UP))
 			Game_Battle::TargetPreviousEnemy();
 		Game_Battle::ChooseEnemy();
 	}
 
 	if (state == State_TargetAlly && Game_Battle::HaveTargetAlly()) {
-		if (Input::IsRepeated(Input::DOWN))
+		if (Input().IsRepeated(Input_::DOWN))
 			Game_Battle::TargetNextAlly();
-		if (Input::IsRepeated(Input::UP))
+		if (Input().IsRepeated(Input_::UP))
 			Game_Battle::TargetPreviousAlly();
 	}
 }

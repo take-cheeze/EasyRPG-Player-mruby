@@ -25,10 +25,11 @@
 #include "util_macro.h"
 #include "window.h"
 #include "bitmap.h"
+#include "baseui.h"
 
 Window::Window():
 	type(TypeWindow),
-	ID(Graphics::drawable_id++),
+	ID(Graphics().drawable_id++),
 	stretch(true),
 	active(true),
 	visible(true),
@@ -53,8 +54,8 @@ Window::Window():
 	animation_count(0.0),
 	animation_increment(0.0) {
 
-	zobj = Graphics::RegisterZObj(0, ID);
-	Graphics::RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, ID);
+	Graphics().RegisterDrawable(ID, this);
 
 	windowskin_screen = BitmapScreen::Create();
 	contents_screen = BitmapScreen::Create();
@@ -69,8 +70,8 @@ Window::Window():
 }
 
 Window::~Window() {
-	Graphics::RemoveZObj(ID);
-	Graphics::RemoveDrawable(ID);
+	Graphics().RemoveZObj(ID);
+	Graphics().RemoveDrawable(ID);
 }
 
 void Window::SetOpenAnimation(int frames) {
@@ -449,7 +450,7 @@ int Window::GetZ() const {
 	return z;
 }
 void Window::SetZ(int nz) {
-	if (z != nz) Graphics::UpdateZObj(zobj, nz);
+	if (z != nz) Graphics().UpdateZObj(zobj, nz);
 	z = nz;
 }
 

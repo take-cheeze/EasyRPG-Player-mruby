@@ -63,10 +63,10 @@ void Scene_Title::Start() {
 	if (!init) {
 		if (Data::system.ldb_id == 2003) {
 			Output::Debug("Switching to Rpg2003 Interpreter");
-			Player::engine = Player::EngineRpg2k3;
+			Player().engine = Player_::EngineRpg2k3;
 		}
 
-		FileFinder::InitRtpPaths();
+		FileFinder().UpdateRtpPaths();
 	}
 	init = true;
 
@@ -75,7 +75,7 @@ void Scene_Title::Start() {
 	// Create Game System
 	Game_System::Init();
 
-	if (!Player::battle_test_flag) {
+	if (!Player().battle_test_flag) {
 		CreateTitleGraphic();
 		PlayTitleMusic();
 	}
@@ -86,21 +86,21 @@ void Scene_Title::Start() {
 void Scene_Title::Continue() {
 	// Clear the cache when the game returns to title screen
 	// e.g. by pressing F12
-	Cache::Clear();
+	Cache().Clear();
 
 	Start();
 }
 
 void Scene_Title::TransitionIn() {
-	if (!Player::battle_test_flag) {
-		Graphics::Transition(Graphics::TransitionErase, 1, true);
-		Graphics::Transition(Graphics::TransitionFadeIn, 32);
+	if (!Player().battle_test_flag) {
+		Graphics().Transition(Graphics().TransitionErase, 1, true);
+		Graphics().Transition(Graphics().TransitionFadeIn, 32);
 	}
 }
 
 void Scene_Title::TransitionOut() {
-	if (!Player::battle_test_flag) {
-		Graphics::Transition(Graphics::TransitionFadeOut, 12, true);
+	if (!Player().battle_test_flag) {
+		Graphics().Transition(Graphics().TransitionFadeOut, 12, true);
 	}
 }
 
@@ -113,14 +113,14 @@ void Scene_Title::Suspend() {
 }
 
 void Scene_Title::Update() {
-	if (Player::battle_test_flag) {
+	if (Player().battle_test_flag) {
 		PrepareBattleTest();
 		return;
 	}
 
 	command_window->Update();
 
-	if (Input::IsTriggered(Input::DECISION)) {
+	if (Input().IsTriggered(Input_::DECISION)) {
 		switch (command_window->GetIndex()) {
 		case 0: // New Game
 			CommandNewGame();
@@ -138,14 +138,14 @@ void Scene_Title::LoadDatabase() {
 	// Load Database
 	Data::Clear();
 
-	if(! FileFinder::IsRPG2kProject(FileFinder::GetProjectTree())) {
+	if(! FileFinder().IsRPG2kProject(FileFinder().GetProjectTree())) {
 		Output::Debug("%s is not an RPG2k project", Main_Data::project_path.c_str());
 	}
 
-	if (!LDB_Reader::Load(FileFinder::FindDefault(DATABASE_NAME))) {
+	if (!LDB_Reader::Load(FileFinder().FindDefault(DATABASE_NAME))) {
 		Output::ErrorStr(LcfReader::GetError());
 	}
-	if (!LMT_Reader::Load(FileFinder::FindDefault(TREEMAP_NAME))) {
+	if (!LMT_Reader::Load(FileFinder().FindDefault(TREEMAP_NAME))) {
 		Output::ErrorStr(LcfReader::GetError());
 	}
 }
@@ -166,7 +166,7 @@ bool Scene_Title::CheckContinue() {
 		std::stringstream ss;
 		ss << "Save" << (i <= 9 ? "0" : "") << i << ".lsd";
 
-		if (!FileFinder::FindDefault(ss.str()).empty()) {
+		if (!FileFinder().FindDefault(ss.str()).empty()) {
 			return true;
 		}
 	}
@@ -178,7 +178,7 @@ void Scene_Title::CreateTitleGraphic() {
 	if (!title) // No need to recreate Title on Resume
 	{
 		title.reset(new Sprite());
-		title->SetBitmap(Cache::Title(Data::system.title_name));
+		title->SetBitmap(Cache().Title(Data::system.title_name));
 	}
 }
 
@@ -231,7 +231,7 @@ void Scene_Title::CommandNewGame() {
 	} else {
 		Game_System::SePlay(Main_Data::game_data.system.decision_se);
 		Audio().BGM_Stop();
-		Graphics::SetFrameCount(0);
+		Graphics().SetFrameCount(0);
 		CreateGameObjects();
 		Game_Map::Setup(Data::treemap.start.party_map_id);
 		Main_Data::game_player->MoveTo(

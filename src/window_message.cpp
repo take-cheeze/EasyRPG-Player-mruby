@@ -283,7 +283,7 @@ void Window_Message::UpdateMessage() {
 	// Contains at what frame the sleep is over
 	static int sleep_until = -1;
 	if (sleep_until > -1) {
-		if (Graphics::GetFrameCount() >= sleep_until) {
+		if (Graphics().GetFrameCount() >= sleep_until) {
 			// Sleep over
 			sleep_until = -1;
 		} else {
@@ -385,13 +385,13 @@ void Window_Message::UpdateMessage() {
 				break;
 			case '.':
 				// 1/4 second sleep
-				sleep_until = Graphics::GetFrameCount() + 60 / 4;
+				sleep_until = Graphics().GetFrameCount() + 60 / 4;
 				++text_index;
 				return;
 				break;
 			case '|':
 				// Second sleep
-				sleep_until = Graphics::GetFrameCount() + 60;
+				sleep_until = Graphics().GetFrameCount() + 60;
 				++text_index;
 				return;
 				break;
@@ -595,8 +595,8 @@ void Window_Message::UpdateCursorRect() {
 
 void Window_Message::WaitForInput() {
 	active = true; // Enables the Pause arrow
-	if (Input::IsTriggered(Input::DECISION) ||
-		Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::DECISION) ||
+		Input().IsTriggered(Input_::CANCEL)) {
 		active = false;
 		pause = false;
 
@@ -610,13 +610,13 @@ void Window_Message::WaitForInput() {
 }
 
 void Window_Message::InputChoice() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		if (Game_Message::choice_cancel_type > 0) {
 			Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 			Game_Message::choice_result = Game_Message::choice_cancel_type - 1; // Cancel
 			TerminateMessage();
 		}
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		if (Game_Message::choice_disabled.test(index)) {
 			Game_System::SePlay(Main_Data::game_data.system.buzzer_se);
 			return;
@@ -629,7 +629,7 @@ void Window_Message::InputChoice() {
 }
 
 void Window_Message::InputNumber() {
-	if (Input::IsTriggered(Input::DECISION)) {
+	if (Input().IsTriggered(Input_::DECISION)) {
 		Game_System::SePlay(Main_Data::game_data.system.decision_se);
 		Game_Variables[Game_Message::num_input_variable_id] = number_input_window->GetNumber();
 		Game_Map::SetNeedRefresh(true);

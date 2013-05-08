@@ -50,7 +50,7 @@ public:
 	static int common_event_id;
 
 	static bool transition_processing;
-	static Graphics::TransitionType transition_type;
+	static Graphics_::TransitionType transition_type;
 	static bool transition_erase;
 
 	static bool shop_buys;
@@ -79,7 +79,7 @@ public:
 	static int battle_mode;
 	static int battle_result;
 	static bool battle_wait;
-	
+
 	static RPG::Music* map_bgm;
 
 	enum BattleMode {

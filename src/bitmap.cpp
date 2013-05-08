@@ -215,8 +215,8 @@ Bitmap::TileOpacity Bitmap::CheckOpacity(const Rect& rect) {
 
 void Bitmap::CheckPixels(uint32_t flags) {
 	if (flags & System) {
-		Cache::system_info.bg_color = GetPixel(0, 32);
-		Cache::system_info.sh_color = GetPixel(16, 32);
+		Cache().system_info.bg_color = GetPixel(0, 32);
+		Cache().system_info.sh_color = GetPixel(16, 32);
 	}
 
 	if (flags & Chipset) {
@@ -615,7 +615,7 @@ Bitmap::Bitmap(const std::string& filename, bool transparent, uint32_t flags) {
 		return;
 	}
 
-	FILE* stream = FileFinder::fopenUTF8(filename, "rb");
+	FILE* stream = FileFinder().fopenUTF8(filename, "rb");
 	if (!stream) {
 		Output::Error("Couldn't open image file %s", filename.c_str());
 		return;

@@ -32,7 +32,7 @@ Scene_Gameover::Scene_Gameover() {
 void Scene_Gameover::Start() {
 	// Load Background Graphic
 	background.reset(new Sprite());
-	background->SetBitmap(Cache::Gameover(Data::system.gameover_name));
+	background->SetBitmap(Cache().Gameover(Data::system.gameover_name));
 	// Stop current music
 	Audio().BGM_Stop();
 	Audio().BGS_Stop();
@@ -41,7 +41,7 @@ void Scene_Gameover::Start() {
 }
 
 void Scene_Gameover::Update() {
-	if (Input::IsTriggered(Input::DECISION)) {
+	if (Input().IsTriggered(Input_::DECISION)) {
 		Scene::PopUntil(Scene::Title);
 	}
 }

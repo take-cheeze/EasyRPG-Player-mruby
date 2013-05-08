@@ -27,7 +27,7 @@
 // Constructor
 Sprite::Sprite() :
 	type(TypeSprite),
-	ID(Graphics::drawable_id++),
+	ID(Graphics().drawable_id++),
 	visible(true),
 	x(0),
 	y(0),
@@ -39,14 +39,14 @@ Sprite::Sprite() :
 
 	bitmap_screen = BitmapScreen::Create();
 
-	zobj = Graphics::RegisterZObj(0, ID);
-	Graphics::RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, ID);
+	Graphics().RegisterDrawable(ID, this);
 }
 
 // Destructor
 Sprite::~Sprite() {
-	Graphics::RemoveZObj(ID);
-	Graphics::RemoveDrawable(ID);
+	Graphics().RemoveZObj(ID);
+	Graphics().RemoveDrawable(ID);
 }
 
 // Draw
@@ -143,7 +143,7 @@ int Sprite::GetZ() const {
 	return z;
 }
 void Sprite::SetZ(int nz) {
-	if (z != nz) Graphics::UpdateZObj(zobj, nz);
+	if (z != nz) Graphics().UpdateZObj(zobj, nz);
 	z = nz;
 }
 

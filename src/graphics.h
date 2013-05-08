@@ -21,25 +21,25 @@
 // Headers
 #include <string>
 #include <list>
+#include <map>
+#include <vector>
 
 #include "system.h"
 #include "drawable.h"
 #include "zobj.h"
+#include "memory_management.h"
+
+#include <boost/noncopyable.hpp>
 
 /**
- * Graphics namespace.
+ * Graphics.
  * Handles screen drawing.
  */
-namespace Graphics {
+struct Graphics_ : boost::noncopyable {
 	/**
 	 * Initializes Graphics.
 	 */
-	void Init();
-
-	/**
-	 * Disposes Graphics.
-	 **/
-	void Quit();
+	Graphics_();
 
 	/**
 	 * Updates the screen.
@@ -142,13 +142,53 @@ namespace Graphics {
 	void RemoveZObj(uint32_t ID, bool multiz);
 	void UpdateZObj(ZObj* zobj, int z);
 
-	extern bool fps_on_screen;
-	extern uint32_t drawable_id;
+	bool fps_on_screen;
+	uint32_t drawable_id;
 
 	void Push();
 	void Pop();
 
 	unsigned SecondToFrame(float second);
-}
+
+  private:
+	void InternUpdate();
+	void UpdateTitle(double fps);
+	void DrawFrame();
+	void DrawOverlay();
+
+	bool overlay_visible;
+	double current_fps_;
+	int framerate;
+	int framecount;
+	double frame_interval;
+
+	unsigned next_fps_calculation_time;
+	unsigned fps_draw_counter;
+	double expected_next_frame_end_time;
+
+	void UpdateTransition();
+
+	BitmapScreenRef frozen_screen, black_screen, screen1, screen2;
+	bool frozen;
+	TransitionType transition_type;
+	int transition_duration;
+	int transition_frame;
+	bool screen_erased;
+
+	uint32_t drawable_creation;
+
+	struct State {
+		State() : zlist_dirty(false) {}
+		std::map<uint32_t, Drawable*> drawable_map;
+		std::list<EASYRPG_SHARED_PTR<ZObj> > zlist;
+		bool zlist_dirty;
+	};
+	EASYRPG_SHARED_PTR<State> state;
+	std::vector<EASYRPG_SHARED_PTR<State> > stack;
+
+	static bool SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second);
+};
+
+Graphics_& Graphics();
 
 #endif

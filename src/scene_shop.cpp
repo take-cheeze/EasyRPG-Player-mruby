@@ -191,10 +191,10 @@ void Scene_Shop::Update() {
 }
 
 void Scene_Shop::UpdateCommandSelection() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		switch (shop_window->GetChoice()) {
 			case Buy:
 			case Sell:
@@ -211,14 +211,14 @@ void Scene_Shop::UpdateBuySelection() {
 	status_window->SetItemId(buy_window->GetItemId());
 	party_window->SetItemId(buy_window->GetItemId());
 
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		if (Game_Temp::shop_sells) {
 			SetMode(BuySellLeave2);
 		} else {
 			Scene::Pop();
 		}
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		int item_id = buy_window->GetItemId();
 
 		//checks the money and number of items possessed before buy
@@ -244,14 +244,14 @@ void Scene_Shop::UpdateBuySelection() {
 }
 
 void Scene_Shop::UpdateSellSelection() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		if (Game_Temp::shop_buys) {
 			SetMode(BuySellLeave2);
 		} else {
 			Scene::Pop();
 		}
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		int item_id = sell_window->GetItemId();
 		status_window->SetItemId(item_id);
 		party_window->SetItemId(item_id);
@@ -269,7 +269,7 @@ void Scene_Shop::UpdateSellSelection() {
 }
 
 void Scene_Shop::UpdateNumberInput() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		switch (shop_window->GetChoice()) {
 		case Buy:
@@ -277,7 +277,7 @@ void Scene_Shop::UpdateNumberInput() {
 		case Sell:
 			SetMode(Sell); break;
 		}
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		int item_id;
 		switch (shop_window->GetChoice()) {
 		case Buy:

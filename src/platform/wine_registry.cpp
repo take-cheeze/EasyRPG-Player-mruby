@@ -281,7 +281,7 @@ section_list const& get_section(HKEY key) {
 
 	std::string const prefix = get_wine_prefix();
 
-	if(prefix.empty() or not FileFinder::Exists(prefix)) {
+	if(prefix.empty() or not FileFinder().Exists(prefix)) {
 		Output::Debug("wine prefix not found: \"%s\"", prefix.c_str());
 		return empty_sec;
 	}

@@ -19,12 +19,10 @@
 	&& !(defined(DINGOO) || defined(GEKKO))
 
 // Headers
-#include "input_buttons.h"
 #include "keys.h"
+#include "input.h"
 
-void Input::InitButtons() {
-	buttons.resize(BUTTON_COUNT);
-
+void Input_::InitButtons() {
 	buttons[UP].push_back(Keys::UP);
 	buttons[UP].push_back(Keys::K);
 	buttons[UP].push_back(Keys::KP8);
@@ -117,7 +115,6 @@ void Input::InitButtons() {
 	buttons[UP].push_back(Keys::JOY_AXIS_Y_UP);
 #endif
 
-	dir_buttons.resize(10);
 	dir_buttons[2].push_back(DOWN);
 	dir_buttons[4].push_back(LEFT);
 	dir_buttons[6].push_back(RIGHT);

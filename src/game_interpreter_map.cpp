@@ -533,70 +533,70 @@ bool Game_Interpreter_Map::CommandEraseScreen(RPG::EventCommand const& com) {
 
 	switch(com.parameters[0]) {
 		case -1:
-			Game_Temp::transition_type = Graphics::TransitionNone;
+			Game_Temp::transition_type = Graphics().TransitionNone;
 			return true;
 		case 0:
-			Game_Temp::transition_type = Graphics::TransitionFadeOut;
+			Game_Temp::transition_type = Graphics().TransitionFadeOut;
 			return true;
 		case 1:
-			Game_Temp::transition_type = Graphics::TransitionRandomBlocks;
+			Game_Temp::transition_type = Graphics().TransitionRandomBlocks;
 			return true;
 		case 2:
-			Game_Temp::transition_type = Graphics::TransitionRandomBlocksUp;
+			Game_Temp::transition_type = Graphics().TransitionRandomBlocksUp;
 			return true;
 		case 3:
-			Game_Temp::transition_type = Graphics::TransitionRandomBlocksDown;
+			Game_Temp::transition_type = Graphics().TransitionRandomBlocksDown;
 			return true;
 		case 4:
-			Game_Temp::transition_type = Graphics::TransitionBlindClose;
+			Game_Temp::transition_type = Graphics().TransitionBlindClose;
 			return true;
 		case 5:
-			Game_Temp::transition_type = Graphics::TransitionVerticalStripesOut;
+			Game_Temp::transition_type = Graphics().TransitionVerticalStripesOut;
 			return true;
 		case 6:
-			Game_Temp::transition_type = Graphics::TransitionHorizontalStripesOut;
+			Game_Temp::transition_type = Graphics().TransitionHorizontalStripesOut;
 			return true;
 		case 7:
-			Game_Temp::transition_type = Graphics::TransitionBorderToCenterOut;
+			Game_Temp::transition_type = Graphics().TransitionBorderToCenterOut;
 			return true;
 		case 8:
-			Game_Temp::transition_type = Graphics::TransitionCenterToBorderOut;
+			Game_Temp::transition_type = Graphics().TransitionCenterToBorderOut;
 			return true;
 		case 9:
-			Game_Temp::transition_type = Graphics::TransitionScrollUpOut;
+			Game_Temp::transition_type = Graphics().TransitionScrollUpOut;
 			return true;
 		case 10:
-			Game_Temp::transition_type = Graphics::TransitionScrollDownOut;
+			Game_Temp::transition_type = Graphics().TransitionScrollDownOut;
 			return true;
 		case 11:
-			Game_Temp::transition_type = Graphics::TransitionScrollLeftOut;
+			Game_Temp::transition_type = Graphics().TransitionScrollLeftOut;
 			return true;
 		case 12:
-			Game_Temp::transition_type = Graphics::TransitionScrollRightOut;
+			Game_Temp::transition_type = Graphics().TransitionScrollRightOut;
 			return true;
 		case 13:
-			Game_Temp::transition_type = Graphics::TransitionVerticalDivision;
+			Game_Temp::transition_type = Graphics().TransitionVerticalDivision;
 			return true;
 		case 14:
-			Game_Temp::transition_type = Graphics::TransitionHorizontalDivision;
+			Game_Temp::transition_type = Graphics().TransitionHorizontalDivision;
 			return true;
 		case 15:
-			Game_Temp::transition_type = Graphics::TransitionCrossDivision;
+			Game_Temp::transition_type = Graphics().TransitionCrossDivision;
 			return true;
 		case 16:
-			Game_Temp::transition_type = Graphics::TransitionZoomIn;
+			Game_Temp::transition_type = Graphics().TransitionZoomIn;
 			return true;
 		case 17:
-			Game_Temp::transition_type = Graphics::TransitionMosaicOut;
+			Game_Temp::transition_type = Graphics().TransitionMosaicOut;
 			return true;
 		case 18:
-			Game_Temp::transition_type = Graphics::TransitionWaveOut;
+			Game_Temp::transition_type = Graphics().TransitionWaveOut;
 			return true;
 		case 19:
-			Game_Temp::transition_type = Graphics::TransitionErase;
+			Game_Temp::transition_type = Graphics().TransitionErase;
 			return true;
 		default:
-			Game_Temp::transition_type = Graphics::TransitionNone;
+			Game_Temp::transition_type = Graphics().TransitionNone;
 			return true;
 	}
 }
@@ -609,70 +609,70 @@ bool Game_Interpreter_Map::CommandShowScreen(RPG::EventCommand const& com) {
 
 	switch(com.parameters[0]) {
 		case -1:
-			Game_Temp::transition_type = Graphics::TransitionNone;
+			Game_Temp::transition_type = Graphics().TransitionNone;
 			return true;
 		case 0:
-			Game_Temp::transition_type = Graphics::TransitionFadeIn;
+			Game_Temp::transition_type = Graphics().TransitionFadeIn;
 			return true;
 		case 1:
-			Game_Temp::transition_type = Graphics::TransitionRandomBlocks;
+			Game_Temp::transition_type = Graphics().TransitionRandomBlocks;
 			return true;
 		case 2:
-			Game_Temp::transition_type = Graphics::TransitionRandomBlocksUp;
+			Game_Temp::transition_type = Graphics().TransitionRandomBlocksUp;
 			return true;
 		case 3:
-			Game_Temp::transition_type = Graphics::TransitionRandomBlocksDown;
+			Game_Temp::transition_type = Graphics().TransitionRandomBlocksDown;
 			return true;
 		case 4:
-			Game_Temp::transition_type = Graphics::TransitionBlindOpen;
+			Game_Temp::transition_type = Graphics().TransitionBlindOpen;
 			return true;
 		case 5:
-			Game_Temp::transition_type = Graphics::TransitionVerticalStripesIn;
+			Game_Temp::transition_type = Graphics().TransitionVerticalStripesIn;
 			return true;
 		case 6:
-			Game_Temp::transition_type = Graphics::TransitionHorizontalStripesIn;
+			Game_Temp::transition_type = Graphics().TransitionHorizontalStripesIn;
 			return true;
 		case 7:
-			Game_Temp::transition_type = Graphics::TransitionBorderToCenterIn;
+			Game_Temp::transition_type = Graphics().TransitionBorderToCenterIn;
 			return true;
 		case 8:
-			Game_Temp::transition_type = Graphics::TransitionCenterToBorderIn;
+			Game_Temp::transition_type = Graphics().TransitionCenterToBorderIn;
 			return true;
 		case 9:
-			Game_Temp::transition_type = Graphics::TransitionScrollUpIn;
+			Game_Temp::transition_type = Graphics().TransitionScrollUpIn;
 			return true;
 		case 10:
-			Game_Temp::transition_type = Graphics::TransitionScrollDownIn;
+			Game_Temp::transition_type = Graphics().TransitionScrollDownIn;
 			return true;
 		case 11:
-			Game_Temp::transition_type = Graphics::TransitionScrollLeftIn;
+			Game_Temp::transition_type = Graphics().TransitionScrollLeftIn;
 			return true;
 		case 12:
-			Game_Temp::transition_type = Graphics::TransitionScrollRightIn;
+			Game_Temp::transition_type = Graphics().TransitionScrollRightIn;
 			return true;
 		case 13:
-			Game_Temp::transition_type = Graphics::TransitionVerticalCombine;
+			Game_Temp::transition_type = Graphics().TransitionVerticalCombine;
 			return true;
 		case 14:
-			Game_Temp::transition_type = Graphics::TransitionHorizontalCombine;
+			Game_Temp::transition_type = Graphics().TransitionHorizontalCombine;
 			return true;
 		case 15:
-			Game_Temp::transition_type = Graphics::TransitionCrossCombine;
+			Game_Temp::transition_type = Graphics().TransitionCrossCombine;
 			return true;
 		case 16:
-			Game_Temp::transition_type = Graphics::TransitionZoomOut;
+			Game_Temp::transition_type = Graphics().TransitionZoomOut;
 			return true;
 		case 17:
-			Game_Temp::transition_type = Graphics::TransitionMosaicIn;
+			Game_Temp::transition_type = Graphics().TransitionMosaicIn;
 			return true;
 		case 18:
-			Game_Temp::transition_type = Graphics::TransitionWaveIn;
+			Game_Temp::transition_type = Graphics().TransitionWaveIn;
 			return true;
 		case 19:
-			Game_Temp::transition_type = Graphics::TransitionErase;
+			Game_Temp::transition_type = Graphics().TransitionErase;
 			return true;
 		default:
-			Game_Temp::transition_type = Graphics::TransitionNone;
+			Game_Temp::transition_type = Graphics().TransitionNone;
 			return true;
 	}
 }
@@ -695,7 +695,7 @@ bool Game_Interpreter_Map::CommandShowPicture(RPG::EventCommand const& com) { //
 	int speed = com.parameters[13];
 	int bottom_trans;
 
-	if (Player::engine == Player::EngineRpg2k) {
+	if (Player().engine == Player_::EngineRpg2k) {
 		// Rpg2k does not support this option
 		bottom_trans = top_trans;
 	} else {
@@ -744,7 +744,7 @@ bool Game_Interpreter_Map::CommandMovePicture(RPG::EventCommand const& com) { //
 	bool wait = com.parameters[15] != 0;
 
 	int bottom_trans;
-	if (Player::engine == Player::EngineRpg2k) {
+	if (Player().engine == Player_::EngineRpg2k) {
 		// Rpg2k does not support this option
 		bottom_trans = top_trans;
 	} else {
@@ -801,50 +801,50 @@ bool Game_Interpreter_Map::CommandChangeSystemGraphics(RPG::EventCommand const& 
 bool Game_Interpreter_Map::CommandChangeScreenTransitions(RPG::EventCommand const& com) { // code 10690
 	static const int fades[2][21] = {
 		{
-			Graphics::TransitionFadeOut,
-			Graphics::TransitionRandomBlocksUp,
-			Graphics::TransitionBorderToCenterOut,
-			Graphics::TransitionCenterToBorderOut,
-			Graphics::TransitionBlindClose,
-			Graphics::TransitionVerticalStripesOut,
-			Graphics::TransitionHorizontalStripesOut,
-			Graphics::TransitionBorderToCenterOut,
-			Graphics::TransitionCenterToBorderOut,
-			Graphics::TransitionScrollUpOut,
-			Graphics::TransitionScrollDownOut,
-			Graphics::TransitionScrollLeftOut,
-			Graphics::TransitionScrollRightOut,
-			Graphics::TransitionVerticalDivision,
-			Graphics::TransitionHorizontalDivision,
-			Graphics::TransitionCrossDivision,
-			Graphics::TransitionZoomIn,
-			Graphics::TransitionMosaicOut,
-			Graphics::TransitionWaveOut,
-			Graphics::TransitionErase,
-			Graphics::TransitionNone
+			Graphics().TransitionFadeOut,
+			Graphics().TransitionRandomBlocksUp,
+			Graphics().TransitionBorderToCenterOut,
+			Graphics().TransitionCenterToBorderOut,
+			Graphics().TransitionBlindClose,
+			Graphics().TransitionVerticalStripesOut,
+			Graphics().TransitionHorizontalStripesOut,
+			Graphics().TransitionBorderToCenterOut,
+			Graphics().TransitionCenterToBorderOut,
+			Graphics().TransitionScrollUpOut,
+			Graphics().TransitionScrollDownOut,
+			Graphics().TransitionScrollLeftOut,
+			Graphics().TransitionScrollRightOut,
+			Graphics().TransitionVerticalDivision,
+			Graphics().TransitionHorizontalDivision,
+			Graphics().TransitionCrossDivision,
+			Graphics().TransitionZoomIn,
+			Graphics().TransitionMosaicOut,
+			Graphics().TransitionWaveOut,
+			Graphics().TransitionErase,
+			Graphics().TransitionNone
 		},
 		{
-			Graphics::TransitionFadeIn,
-			Graphics::TransitionRandomBlocksDown,
-			Graphics::TransitionBorderToCenterIn,
-			Graphics::TransitionCenterToBorderIn,
-			Graphics::TransitionBlindOpen,
-			Graphics::TransitionVerticalStripesIn,
-			Graphics::TransitionHorizontalStripesIn,
-			Graphics::TransitionBorderToCenterIn,
-			Graphics::TransitionCenterToBorderIn,
-			Graphics::TransitionScrollUpIn,
-			Graphics::TransitionScrollDownIn,
-			Graphics::TransitionScrollLeftIn,
-			Graphics::TransitionScrollRightIn,
-			Graphics::TransitionVerticalCombine,
-			Graphics::TransitionHorizontalCombine,
-			Graphics::TransitionCrossCombine,
-			Graphics::TransitionZoomOut,
-			Graphics::TransitionMosaicIn,
-			Graphics::TransitionWaveIn,
-			Graphics::TransitionErase,
-			Graphics::TransitionNone,
+			Graphics().TransitionFadeIn,
+			Graphics().TransitionRandomBlocksDown,
+			Graphics().TransitionBorderToCenterIn,
+			Graphics().TransitionCenterToBorderIn,
+			Graphics().TransitionBlindOpen,
+			Graphics().TransitionVerticalStripesIn,
+			Graphics().TransitionHorizontalStripesIn,
+			Graphics().TransitionBorderToCenterIn,
+			Graphics().TransitionCenterToBorderIn,
+			Graphics().TransitionScrollUpIn,
+			Graphics().TransitionScrollDownIn,
+			Graphics().TransitionScrollLeftIn,
+			Graphics().TransitionScrollRightIn,
+			Graphics().TransitionVerticalCombine,
+			Graphics().TransitionHorizontalCombine,
+			Graphics().TransitionCrossCombine,
+			Graphics().TransitionZoomOut,
+			Graphics().TransitionMosaicIn,
+			Graphics().TransitionWaveIn,
+			Graphics().TransitionErase,
+			Graphics().TransitionNone,
 		}
 	};
 	int which = com.parameters[0];
@@ -886,7 +886,7 @@ bool Game_Interpreter_Map::CommandTradeEventLocations(RPG::EventCommand const& c
 }
 
 bool Game_Interpreter_Map::CommandTimerOperation(RPG::EventCommand const& com) { // code 10230
-	int timer_id = (Player::engine == Player::EngineRpg2k3) ? com.parameters[5] : 0;
+	int timer_id = (Player().engine == Player_::EngineRpg2k3) ? com.parameters[5] : 0;
 	int seconds;
 	bool visible, battle;
 
@@ -1171,7 +1171,7 @@ bool Game_Interpreter_Map::CommandEnemyEncounter(RPG::EventCommand const& com) {
 		case 1:
 			Game_Temp::battle_terrain_id = 0;
 			Game_Temp::battle_background = com.string;
-			if (Player::engine == Player::EngineRpg2k3) {
+			if (Player().engine == Player_::EngineRpg2k3) {
 				Game_Temp::battle_formation = com.parameters[7];
 			}
 			break;
@@ -1186,7 +1186,7 @@ bool Game_Interpreter_Map::CommandEnemyEncounter(RPG::EventCommand const& com) {
 	Game_Temp::battle_defeat_mode = com.parameters[4]; // game over, custom handler
 	Game_Temp::battle_first_strike = com.parameters[5] != 0;
 
-	if (Player::engine == Player::EngineRpg2k3)
+	if (Player().engine == Player_::EngineRpg2k3)
 		Game_Temp::battle_mode = com.parameters[6]; // normal, initiative, surround, back attack, pincer
 	else
 		Game_Temp::battle_mode = 0;
@@ -1414,13 +1414,13 @@ bool Game_Interpreter_Map::CommandKeyInputProc(RPG::EventCommand const& com) { /
 	bool check_up       = false;
 	int result = 0;
 
-	if (Player::engine == Player::EngineRpg2k) {
+	if (Player().engine == Player_::EngineRpg2k) {
 		bool check_dir = com.parameters[2] != 0;
 		check_up = check_dir;
 		check_down = check_dir;
 		check_left = check_dir;
 		check_right = check_dir;
-	} else if (Player::engine == Player::EngineRpg2k3) {
+	} else if (Player().engine == Player_::EngineRpg2k3) {
 		size_t param_size = com.parameters.size();
 
 		// Optimization: If missing -> default value
@@ -1440,27 +1440,27 @@ bool Game_Interpreter_Map::CommandKeyInputProc(RPG::EventCommand const& com) { /
 		assert(false);
 	}
 
-	if (check_down && Input::IsTriggered(Input::DOWN))
+	if (check_down && Input().IsTriggered(Input_::DOWN))
 		result = 1;
-	if (check_left && Input::IsTriggered(Input::LEFT))
+	if (check_left && Input().IsTriggered(Input_::LEFT))
 		result = 2;
-	if (check_right && Input::IsTriggered(Input::RIGHT))
+	if (check_right && Input().IsTriggered(Input_::RIGHT))
 		result = 3;
-	if (check_up && Input::IsTriggered(Input::UP))
+	if (check_up && Input().IsTriggered(Input_::UP))
 		result = 4;
-	if (check_decision && Input::IsTriggered(Input::DECISION))
+	if (check_decision && Input().IsTriggered(Input_::DECISION))
 		result = 5;
-	if (check_cancel && Input::IsTriggered(Input::CANCEL))
+	if (check_cancel && Input().IsTriggered(Input_::CANCEL))
 		result = 6;
-	if (check_shift && Input::IsTriggered(Input::SHIFT))
+	if (check_shift && Input().IsTriggered(Input_::SHIFT))
 		result = 7;
 	if (check_numbers)
 		for (int i = 0; i < 10; i++)
-			if (Input::IsTriggered((Input::InputButton)(Input::N0 + i)))
+			if (Input().IsTriggered((Input_::Button)(Input_::N0 + i)))
 				result = 10 + i;
 	if (check_arith)
 		for (int i = 0; i < 5; i++)
-			if (Input::IsTriggered((Input::InputButton)(Input::PLUS + i)))
+			if (Input().IsTriggered((Input_::Button)(Input_::PLUS + i)))
 				result = 20 + i;
 
 	Game_Variables[var_id] = result;

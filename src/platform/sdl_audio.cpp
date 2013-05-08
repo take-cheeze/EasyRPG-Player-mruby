@@ -59,7 +59,7 @@ SdlAudio::~SdlAudio() {
 }
 
 void SdlAudio::BGM_Play(std::string const& file, int volume, int /* pitch */) {
-	std::string const path = FileFinder::FindMusic(file);
+	std::string const path = FileFinder().FindMusic(file);
 	if (path.empty()) {
 		Output::Warning("No such file or directory - %s", file.c_str());
 		return;
@@ -111,7 +111,7 @@ void SdlAudio::BGM_Fade(int fade) {
 }
 
 void SdlAudio::BGS_Play(std::string const& file, int volume, int /* pitch */) {
-	std::string const path = FileFinder::FindMusic(file);
+	std::string const path = FileFinder().FindMusic(file);
 	if (path.empty()) {
 		Output::Warning("No such file or directory - %s", file.c_str());
 		return;
@@ -150,7 +150,7 @@ void me_finish(int channel) {
 */
 
 void SdlAudio::ME_Play(std::string const& file, int volume, int /* pitch */) {
-	std::string const path = FileFinder::FindMusic(file);
+	std::string const path = FileFinder().FindMusic(file);
 	if (path.empty()) {
 		Output::Warning("No such file or directory - %s", file.c_str());
 		return;
@@ -181,7 +181,7 @@ void SdlAudio::ME_Fade(int fade) {
 }
 
 void SdlAudio::SE_Play(std::string const& file, int volume, int /* pitch */) {
-	std::string const path = FileFinder::FindSound(file);
+	std::string const path = FileFinder().FindSound(file);
 	if (path.empty()) {
 		Output::Warning("No such file or directory - %s", file.c_str());
 		return;

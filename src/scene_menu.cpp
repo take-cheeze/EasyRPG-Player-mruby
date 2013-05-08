@@ -73,7 +73,7 @@ void Scene_Menu::CreateCommandWindow() {
 	// Create Options Window
 	std::vector<std::string> options;
 
-	if (Player::engine == Player::EngineRpg2k) {
+	if (Player().engine == Player_::EngineRpg2k) {
 		command_options.resize(5);
 		command_options[0] = Item;
 		command_options[1] = Skill;
@@ -151,10 +151,10 @@ void Scene_Menu::CreateCommandWindow() {
 }
 
 void Scene_Menu::UpdateCommand() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		menu_index = command_window->GetIndex();
 
 		switch (command_options[menu_index]) {
@@ -209,12 +209,12 @@ void Scene_Menu::UpdateCommand() {
 }
 
 void Scene_Menu::UpdateActorSelection() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		command_window->SetActive(true);
 		menustatus_window->SetActive(false);
 		menustatus_window->SetIndex(-1);
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		Game_System::SePlay(Main_Data::game_data.system.decision_se);
 		switch (command_options[command_window->GetIndex()]) {
 		case Skill:

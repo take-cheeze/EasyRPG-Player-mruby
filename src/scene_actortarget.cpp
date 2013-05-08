@@ -75,14 +75,14 @@ void Scene_ActorTarget::Update() {
 }
 
 void Scene_ActorTarget::UpdateItem() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
 	}
 }
 
 void Scene_ActorTarget::UpdateSkill() {
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
 	}

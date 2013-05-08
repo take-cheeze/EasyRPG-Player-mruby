@@ -52,11 +52,11 @@ AudioInterface& SdlUi::GetAudio() {
 static int FilterUntilFocus(const SDL_Event* evnt);
 
 #if defined(USE_KEYBOARD) && defined(SUPPORT_KEYBOARD)
-	static Input::Keys::InputKey SdlKey2InputKey(SDLKey sdlkey);
+	static Keys::InputKey SdlKey2InputKey(SDLKey sdlkey);
 #endif
 
 #if defined(USE_JOYSTICK) && defined(SUPPORT_JOYSTICK)
-	static Input::Keys::InputKey SdlJKey2InputKey(int button_index);
+	static Keys::InputKey SdlJKey2InputKey(int button_index);
 #endif
 
 #ifdef GEKKO
@@ -309,7 +309,7 @@ bool SdlUi::RefreshDisplayMode() {
 	int bpp = current_display_mode.bpp;
 
 	// Display on screen fps while fullscreen or no window available
-	Graphics::fps_on_screen = (flags & SDL_FULLSCREEN) == SDL_FULLSCREEN || !toggle_fs_available;
+	Graphics().fps_on_screen = (flags & SDL_FULLSCREEN) == SDL_FULLSCREEN || !toggle_fs_available;
 
 	if (zoom_available && current_display_mode.zoom) {
 		display_width *= 2;
@@ -395,7 +395,7 @@ void SdlUi::ProcessEvents() {
 	while (SDL_PollEvent(&evnt)) {
 		ProcessEvent(evnt);
 
-		if (Player::exit_flag)
+		if (Player().exit_flag)
 			break;
 	}
 }
@@ -472,7 +472,7 @@ void SdlUi::ProcessEvent(SDL_Event &evnt) {
 			return;
 
 		case SDL_QUIT:
-			Player::exit_flag = true;
+			Player().exit_flag = true;
 			return;
 
 		case SDL_KEYDOWN:
@@ -521,7 +521,7 @@ void SdlUi::ProcessActiveEvent(SDL_Event &evnt) {
 				}
 #endif
 
-				Player::Pause();
+				Player().Pause();
 
 				bool last = ShowCursor(true);
 
@@ -535,7 +535,7 @@ void SdlUi::ProcessActiveEvent(SDL_Event &evnt) {
 
 				ResetKeys();
 
-				Player::Resume();
+				Player().Resume();
 			}
 			return;
 #endif
@@ -554,7 +554,7 @@ void SdlUi::ProcessKeyDownEvent(SDL_Event &evnt) {
 	case SDLK_F4:
 		// Close program on LeftAlt+F4
 		if (evnt.key.keysym.mod & KMOD_LALT) {
-			Player::exit_flag = true;
+			Player().exit_flag = true;
 			return;
 		}
 
@@ -575,7 +575,7 @@ void SdlUi::ProcessKeyDownEvent(SDL_Event &evnt) {
 
 	case SDLK_F12:
 		// Reset the game engine on F12
-		Player::reset_flag = true;
+		Player().reset_flag = true;
 		return;
 
 	case SDLK_RETURN:
@@ -615,13 +615,13 @@ void SdlUi::ProcessMouseButtonEvent(SDL_Event& /* evnt */) {
 #if defined(USE_MOUSE) && defined(SUPPORT_MOUSE)
 	switch (evnt.button.button) {
 	case SDL_BUTTON_LEFT:
-		keys[Input::Keys::MOUSE_LEFT] = evnt.button.state == SDL_PRESSED;
+		keys[Keys::MOUSE_LEFT] = evnt.button.state == SDL_PRESSED;
 		break;
 	case SDL_BUTTON_MIDDLE:
-		keys[Input::Keys::MOUSE_MIDDLE] = evnt.button.state == SDL_PRESSED;
+		keys[Keys::MOUSE_MIDDLE] = evnt.button.state == SDL_PRESSED;
 		break;
 	case SDL_BUTTON_RIGHT:
-		keys[Input::Keys::MOUSE_RIGHT] = evnt.button.state == SDL_PRESSED;
+		keys[Keys::MOUSE_RIGHT] = evnt.button.state == SDL_PRESSED;
 		break;
 	}
 #endif
@@ -636,39 +636,39 @@ void SdlUi::ProcessJoystickButtonEvent(SDL_Event &evnt) {
 void SdlUi::ProcessJoystickHatEvent(SDL_Event &evnt) {
 #if defined(USE_JOYSTICK_HAT)  && defined(SUPPORT_JOYSTICK_HAT)
 	// Set all states to false
-	keys[Input::Keys::JOY_HAT_LOWER_LEFT] = false;
-	keys[Input::Keys::JOY_HAT_DOWN] = false;
-	keys[Input::Keys::JOY_HAT_LOWER_RIGHT] = false;
-	keys[Input::Keys::JOY_HAT_LEFT] = false;
-	keys[Input::Keys::JOY_HAT_RIGHT] = false;
-	keys[Input::Keys::JOY_HAT_UPPER_LEFT] = false;
-	keys[Input::Keys::JOY_HAT_UP] = false;
-	keys[Input::Keys::JOY_HAT_UPPER_RIGHT] = false;
+	keys[Keys::JOY_HAT_LOWER_LEFT] = false;
+	keys[Keys::JOY_HAT_DOWN] = false;
+	keys[Keys::JOY_HAT_LOWER_RIGHT] = false;
+	keys[Keys::JOY_HAT_LEFT] = false;
+	keys[Keys::JOY_HAT_RIGHT] = false;
+	keys[Keys::JOY_HAT_UPPER_LEFT] = false;
+	keys[Keys::JOY_HAT_UP] = false;
+	keys[Keys::JOY_HAT_UPPER_RIGHT] = false;
 
 	// Check hat states
 	if ((evnt.jhat.value & SDL_HAT_RIGHTUP) == SDL_HAT_RIGHTUP)
-		keys[Input::Keys::JOY_HAT_UPPER_RIGHT] = true;
+		keys[Keys::JOY_HAT_UPPER_RIGHT] = true;
 
 	else if ((evnt.jhat.value & SDL_HAT_RIGHTDOWN)  == SDL_HAT_RIGHTDOWN)
-		keys[Input::Keys::JOY_HAT_LOWER_RIGHT] = true;
+		keys[Keys::JOY_HAT_LOWER_RIGHT] = true;
 
 	else if ((evnt.jhat.value & SDL_HAT_LEFTUP)  == SDL_HAT_LEFTUP)
-		keys[Input::Keys::JOY_HAT_UPPER_LEFT] = true;
+		keys[Keys::JOY_HAT_UPPER_LEFT] = true;
 
 	else if ((evnt.jhat.value & SDL_HAT_LEFTDOWN)  == SDL_HAT_LEFTDOWN)
-		keys[Input::Keys::JOY_HAT_LOWER_LEFT] = true;
+		keys[Keys::JOY_HAT_LOWER_LEFT] = true;
 
 	else if (evnt.jhat.value & SDL_HAT_UP)
-		keys[Input::Keys::JOY_HAT_UP] = true;
+		keys[Keys::JOY_HAT_UP] = true;
 
 	else if (evnt.jhat.value & SDL_HAT_RIGHT)
-		keys[Input::Keys::JOY_HAT_RIGHT] = true;
+		keys[Keys::JOY_HAT_RIGHT] = true;
 
 	else if (evnt.jhat.value & SDL_HAT_DOWN)
-		keys[Input::Keys::JOY_HAT_DOWN] = true;
+		keys[Keys::JOY_HAT_DOWN] = true;
 
 	else if (evnt.jhat.value & SDL_HAT_LEFT)
-		keys[Input::Keys::JOY_HAT_LEFT] = true;
+		keys[Keys::JOY_HAT_LEFT] = true;
 #endif
 }
 
@@ -677,27 +677,27 @@ void SdlUi::ProcessJoystickAxisEvent(SDL_Event &evnt) {
 	// Horizontal axis
 	if (evnt.jaxis.axis == 0) {
 		if (evnt.jaxis.value < -JOYSTICK_AXIS_SENSIBILITY) {
-			keys[Input::Keys::JOY_AXIS_X_LEFT] = true;
-			keys[Input::Keys::JOY_AXIS_X_RIGHT] = false;
+			keys[Keys::JOY_AXIS_X_LEFT] = true;
+			keys[Keys::JOY_AXIS_X_RIGHT] = false;
 		} else if (evnt.jaxis.value > JOYSTICK_AXIS_SENSIBILITY) {
-			keys[Input::Keys::JOY_AXIS_X_LEFT] = false;
-			keys[Input::Keys::JOY_AXIS_X_RIGHT] = true;
+			keys[Keys::JOY_AXIS_X_LEFT] = false;
+			keys[Keys::JOY_AXIS_X_RIGHT] = true;
 		} else {
-			keys[Input::Keys::JOY_AXIS_X_LEFT] = false;
-			keys[Input::Keys::JOY_AXIS_X_RIGHT] = false;
+			keys[Keys::JOY_AXIS_X_LEFT] = false;
+			keys[Keys::JOY_AXIS_X_RIGHT] = false;
 		}
 
 	// Vertical Axis
 	} else if (evnt.jaxis.axis == 1) {
 		if (evnt.jaxis.value < -JOYSTICK_AXIS_SENSIBILITY) {
-			keys[Input::Keys::JOY_AXIS_Y_UP] = true;
-			keys[Input::Keys::JOY_AXIS_Y_DOWN] = false;
+			keys[Keys::JOY_AXIS_Y_UP] = true;
+			keys[Keys::JOY_AXIS_Y_DOWN] = false;
 		} else if (evnt.jaxis.value > JOYSTICK_AXIS_SENSIBILITY) {
-			keys[Input::Keys::JOY_AXIS_Y_UP] = false;
-			keys[Input::Keys::JOY_AXIS_Y_DOWN] = true;
+			keys[Keys::JOY_AXIS_Y_UP] = false;
+			keys[Keys::JOY_AXIS_Y_DOWN] = true;
 		} else {
-			keys[Input::Keys::JOY_AXIS_Y_UP] = false;
-			keys[Input::Keys::JOY_AXIS_Y_DOWN] = false;
+			keys[Keys::JOY_AXIS_Y_UP] = false;
+			keys[Keys::JOY_AXIS_Y_DOWN] = false;
 		}
 	}
 #endif
@@ -732,143 +732,143 @@ bool SdlUi::IsFullscreen() {
 }
 
 #if defined(USE_KEYBOARD) && defined(SUPPORT_KEYBOARD)
-Input::Keys::InputKey SdlKey2InputKey(SDLKey sdlkey) {
+Keys::InputKey SdlKey2InputKey(SDLKey sdlkey) {
 	switch (sdlkey) {
-		case SDLK_BACKSPACE		: return Input::Keys::BACKSPACE;
-		case SDLK_TAB			: return Input::Keys::TAB;
-		case SDLK_CLEAR			: return Input::Keys::CLEAR;
-		case SDLK_RETURN		: return Input::Keys::RETURN;
-		case SDLK_PAUSE			: return Input::Keys::PAUSE;
-		case SDLK_ESCAPE		: return Input::Keys::ESCAPE;
-		case SDLK_SPACE			: return Input::Keys::SPACE;
-		case SDLK_PAGEUP		: return Input::Keys::PGUP;
-		case SDLK_PAGEDOWN		: return Input::Keys::PGDN;
-		case SDLK_END			: return Input::Keys::ENDS;
-		case SDLK_HOME			: return Input::Keys::HOME;
-		case SDLK_LEFT			: return Input::Keys::LEFT;
-		case SDLK_UP			: return Input::Keys::UP;
-		case SDLK_RIGHT			: return Input::Keys::RIGHT;
-		case SDLK_DOWN			: return Input::Keys::DOWN;
-		case SDLK_PRINT			: return Input::Keys::SNAPSHOT;
-		case SDLK_INSERT		: return Input::Keys::INSERT;
-		case SDLK_DELETE		: return Input::Keys::DEL;
-		case SDLK_LSHIFT		: return Input::Keys::LSHIFT;
-		case SDLK_RSHIFT		: return Input::Keys::RSHIFT;
-		case SDLK_LCTRL			: return Input::Keys::LCTRL;
-		case SDLK_RCTRL			: return Input::Keys::RCTRL;
-		case SDLK_LALT			: return Input::Keys::LALT;
-		case SDLK_RALT			: return Input::Keys::RALT;
-		case SDLK_0				: return Input::Keys::N0;
-		case SDLK_1				: return Input::Keys::N1;
-		case SDLK_2				: return Input::Keys::N2;
-		case SDLK_3				: return Input::Keys::N3;
-		case SDLK_4				: return Input::Keys::N4;
-		case SDLK_5				: return Input::Keys::N5;
-		case SDLK_6				: return Input::Keys::N6;
-		case SDLK_7				: return Input::Keys::N7;
-		case SDLK_8				: return Input::Keys::N8;
-		case SDLK_9				: return Input::Keys::N9;
-		case SDLK_a				: return Input::Keys::A;
-		case SDLK_b				: return Input::Keys::B;
-		case SDLK_c				: return Input::Keys::C;
-		case SDLK_d				: return Input::Keys::D;
-		case SDLK_e				: return Input::Keys::E;
-		case SDLK_f				: return Input::Keys::F;
-		case SDLK_g				: return Input::Keys::G;
-		case SDLK_h				: return Input::Keys::H;
-		case SDLK_i				: return Input::Keys::I;
-		case SDLK_j				: return Input::Keys::J;
-		case SDLK_k				: return Input::Keys::K;
-		case SDLK_l				: return Input::Keys::L;
-		case SDLK_m				: return Input::Keys::M;
-		case SDLK_n				: return Input::Keys::N;
-		case SDLK_o				: return Input::Keys::O;
-		case SDLK_p				: return Input::Keys::P;
-		case SDLK_q				: return Input::Keys::Q;
-		case SDLK_r				: return Input::Keys::R;
-		case SDLK_s				: return Input::Keys::S;
-		case SDLK_t				: return Input::Keys::T;
-		case SDLK_u				: return Input::Keys::U;
-		case SDLK_v				: return Input::Keys::V;
-		case SDLK_w				: return Input::Keys::W;
-		case SDLK_x				: return Input::Keys::X;
-		case SDLK_y				: return Input::Keys::Y;
-		case SDLK_z				: return Input::Keys::Z;
-		case SDLK_LSUPER		: return Input::Keys::LOS;
-		case SDLK_RSUPER		: return Input::Keys::ROS;
-		case SDLK_MENU			: return Input::Keys::MENU;
-		case SDLK_KP0			: return Input::Keys::KP0;
-		case SDLK_KP1			: return Input::Keys::KP1;
-		case SDLK_KP2			: return Input::Keys::KP2;
-		case SDLK_KP3			: return Input::Keys::KP3;
-		case SDLK_KP4			: return Input::Keys::KP4;
-		case SDLK_KP5			: return Input::Keys::KP5;
-		case SDLK_KP6			: return Input::Keys::KP6;
-		case SDLK_KP7			: return Input::Keys::KP7;
-		case SDLK_KP8			: return Input::Keys::KP8;
-		case SDLK_KP9			: return Input::Keys::KP9;
-		case SDLK_KP_MULTIPLY	: return Input::Keys::MULTIPLY;
-		case SDLK_KP_PLUS		: return Input::Keys::ADD;
-		case SDLK_KP_ENTER		: return Input::Keys::RETURN;
-		case SDLK_KP_MINUS		: return Input::Keys::SUBTRACT;
-		case SDLK_KP_PERIOD		: return Input::Keys::PERIOD;
-		case SDLK_KP_DIVIDE		: return Input::Keys::DIVIDE;
-		case SDLK_F1			: return Input::Keys::F1;
-		case SDLK_F2			: return Input::Keys::F2;
-		case SDLK_F3			: return Input::Keys::F3;
-		case SDLK_F4			: return Input::Keys::F4;
-		case SDLK_F5			: return Input::Keys::F5;
-		case SDLK_F6			: return Input::Keys::F6;
-		case SDLK_F7			: return Input::Keys::F7;
-		case SDLK_F8			: return Input::Keys::F8;
-		case SDLK_F9			: return Input::Keys::F9;
-		case SDLK_F10			: return Input::Keys::F10;
-		case SDLK_F11			: return Input::Keys::F11;
-		case SDLK_F12			: return Input::Keys::F12;
-		case SDLK_CAPSLOCK		: return Input::Keys::CAPS_LOCK;
-		case SDLK_NUMLOCK		: return Input::Keys::NUM_LOCK;
-		case SDLK_SCROLLOCK		: return Input::Keys::SCROLL_LOCK;
-		default					: return Input::Keys::NONE;
+		case SDLK_BACKSPACE		: return Keys::BACKSPACE;
+		case SDLK_TAB			: return Keys::TAB;
+		case SDLK_CLEAR			: return Keys::CLEAR;
+		case SDLK_RETURN		: return Keys::RETURN;
+		case SDLK_PAUSE			: return Keys::PAUSE;
+		case SDLK_ESCAPE		: return Keys::ESCAPE;
+		case SDLK_SPACE			: return Keys::SPACE;
+		case SDLK_PAGEUP		: return Keys::PGUP;
+		case SDLK_PAGEDOWN		: return Keys::PGDN;
+		case SDLK_END			: return Keys::ENDS;
+		case SDLK_HOME			: return Keys::HOME;
+		case SDLK_LEFT			: return Keys::LEFT;
+		case SDLK_UP			: return Keys::UP;
+		case SDLK_RIGHT			: return Keys::RIGHT;
+		case SDLK_DOWN			: return Keys::DOWN;
+		case SDLK_PRINT			: return Keys::SNAPSHOT;
+		case SDLK_INSERT		: return Keys::INSERT;
+		case SDLK_DELETE		: return Keys::DEL;
+		case SDLK_LSHIFT		: return Keys::LSHIFT;
+		case SDLK_RSHIFT		: return Keys::RSHIFT;
+		case SDLK_LCTRL			: return Keys::LCTRL;
+		case SDLK_RCTRL			: return Keys::RCTRL;
+		case SDLK_LALT			: return Keys::LALT;
+		case SDLK_RALT			: return Keys::RALT;
+		case SDLK_0				: return Keys::N0;
+		case SDLK_1				: return Keys::N1;
+		case SDLK_2				: return Keys::N2;
+		case SDLK_3				: return Keys::N3;
+		case SDLK_4				: return Keys::N4;
+		case SDLK_5				: return Keys::N5;
+		case SDLK_6				: return Keys::N6;
+		case SDLK_7				: return Keys::N7;
+		case SDLK_8				: return Keys::N8;
+		case SDLK_9				: return Keys::N9;
+		case SDLK_a				: return Keys::A;
+		case SDLK_b				: return Keys::B;
+		case SDLK_c				: return Keys::C;
+		case SDLK_d				: return Keys::D;
+		case SDLK_e				: return Keys::E;
+		case SDLK_f				: return Keys::F;
+		case SDLK_g				: return Keys::G;
+		case SDLK_h				: return Keys::H;
+		case SDLK_i				: return Keys::I;
+		case SDLK_j				: return Keys::J;
+		case SDLK_k				: return Keys::K;
+		case SDLK_l				: return Keys::L;
+		case SDLK_m				: return Keys::M;
+		case SDLK_n				: return Keys::N;
+		case SDLK_o				: return Keys::O;
+		case SDLK_p				: return Keys::P;
+		case SDLK_q				: return Keys::Q;
+		case SDLK_r				: return Keys::R;
+		case SDLK_s				: return Keys::S;
+		case SDLK_t				: return Keys::T;
+		case SDLK_u				: return Keys::U;
+		case SDLK_v				: return Keys::V;
+		case SDLK_w				: return Keys::W;
+		case SDLK_x				: return Keys::X;
+		case SDLK_y				: return Keys::Y;
+		case SDLK_z				: return Keys::Z;
+		case SDLK_LSUPER		: return Keys::LOS;
+		case SDLK_RSUPER		: return Keys::ROS;
+		case SDLK_MENU			: return Keys::MENU;
+		case SDLK_KP0			: return Keys::KP0;
+		case SDLK_KP1			: return Keys::KP1;
+		case SDLK_KP2			: return Keys::KP2;
+		case SDLK_KP3			: return Keys::KP3;
+		case SDLK_KP4			: return Keys::KP4;
+		case SDLK_KP5			: return Keys::KP5;
+		case SDLK_KP6			: return Keys::KP6;
+		case SDLK_KP7			: return Keys::KP7;
+		case SDLK_KP8			: return Keys::KP8;
+		case SDLK_KP9			: return Keys::KP9;
+		case SDLK_KP_MULTIPLY	: return Keys::MULTIPLY;
+		case SDLK_KP_PLUS		: return Keys::ADD;
+		case SDLK_KP_ENTER		: return Keys::RETURN;
+		case SDLK_KP_MINUS		: return Keys::SUBTRACT;
+		case SDLK_KP_PERIOD		: return Keys::PERIOD;
+		case SDLK_KP_DIVIDE		: return Keys::DIVIDE;
+		case SDLK_F1			: return Keys::F1;
+		case SDLK_F2			: return Keys::F2;
+		case SDLK_F3			: return Keys::F3;
+		case SDLK_F4			: return Keys::F4;
+		case SDLK_F5			: return Keys::F5;
+		case SDLK_F6			: return Keys::F6;
+		case SDLK_F7			: return Keys::F7;
+		case SDLK_F8			: return Keys::F8;
+		case SDLK_F9			: return Keys::F9;
+		case SDLK_F10			: return Keys::F10;
+		case SDLK_F11			: return Keys::F11;
+		case SDLK_F12			: return Keys::F12;
+		case SDLK_CAPSLOCK		: return Keys::CAPS_LOCK;
+		case SDLK_NUMLOCK		: return Keys::NUM_LOCK;
+		case SDLK_SCROLLOCK		: return Keys::SCROLL_LOCK;
+		default					: return Keys::NONE;
 	}
 }
 #endif
 
 #if defined(USE_JOYSTICK) && defined(SUPPORT_JOYSTICK)
-Input::Keys::InputKey SdlJKey2InputKey(int button_index) {
+Keys::InputKey SdlJKey2InputKey(int button_index) {
 	switch (button_index) {
-		case 0	: return Input::Keys::JOY_0;
-		case 1	: return Input::Keys::JOY_1;
-		case 2	: return Input::Keys::JOY_2;
-		case 3	: return Input::Keys::JOY_3;
-		case 4	: return Input::Keys::JOY_4;
-		case 5	: return Input::Keys::JOY_5;
-		case 6	: return Input::Keys::JOY_6;
-		case 7	: return Input::Keys::JOY_7;
-		case 8	: return Input::Keys::JOY_8;
-		case 9	: return Input::Keys::JOY_9;
-		case 10	: return Input::Keys::JOY_10;
-		case 11	: return Input::Keys::JOY_11;
-		case 12	: return Input::Keys::JOY_12;
-		case 13	: return Input::Keys::JOY_13;
-		case 14	: return Input::Keys::JOY_14;
-		case 15	: return Input::Keys::JOY_15;
-		case 16	: return Input::Keys::JOY_16;
-		case 17	: return Input::Keys::JOY_17;
-		case 18	: return Input::Keys::JOY_18;
-		case 19	: return Input::Keys::JOY_19;
-		case 20	: return Input::Keys::JOY_20;
-		case 21	: return Input::Keys::JOY_21;
-		case 22	: return Input::Keys::JOY_22;
-		case 23	: return Input::Keys::JOY_23;
-		case 24	: return Input::Keys::JOY_24;
-		case 25	: return Input::Keys::JOY_25;
-		case 26	: return Input::Keys::JOY_23;
-		case 27	: return Input::Keys::JOY_27;
-		case 28	: return Input::Keys::JOY_28;
-		case 29	: return Input::Keys::JOY_29;
-		case 30	: return Input::Keys::JOY_30;
-		case 31	: return Input::Keys::JOY_31;
-		default : return Input::Keys::NONE;
+		case 0	: return Keys::JOY_0;
+		case 1	: return Keys::JOY_1;
+		case 2	: return Keys::JOY_2;
+		case 3	: return Keys::JOY_3;
+		case 4	: return Keys::JOY_4;
+		case 5	: return Keys::JOY_5;
+		case 6	: return Keys::JOY_6;
+		case 7	: return Keys::JOY_7;
+		case 8	: return Keys::JOY_8;
+		case 9	: return Keys::JOY_9;
+		case 10	: return Keys::JOY_10;
+		case 11	: return Keys::JOY_11;
+		case 12	: return Keys::JOY_12;
+		case 13	: return Keys::JOY_13;
+		case 14	: return Keys::JOY_14;
+		case 15	: return Keys::JOY_15;
+		case 16	: return Keys::JOY_16;
+		case 17	: return Keys::JOY_17;
+		case 18	: return Keys::JOY_18;
+		case 19	: return Keys::JOY_19;
+		case 20	: return Keys::JOY_20;
+		case 21	: return Keys::JOY_21;
+		case 22	: return Keys::JOY_22;
+		case 23	: return Keys::JOY_23;
+		case 24	: return Keys::JOY_24;
+		case 25	: return Keys::JOY_25;
+		case 26	: return Keys::JOY_23;
+		case 27	: return Keys::JOY_27;
+		case 28	: return Keys::JOY_28;
+		case 29	: return Keys::JOY_29;
+		case 30	: return Keys::JOY_30;
+		case 31	: return Keys::JOY_31;
+		default : return Keys::NONE;
 	}
 }
 #endif
@@ -876,7 +876,7 @@ Input::Keys::InputKey SdlJKey2InputKey(int button_index) {
 int FilterUntilFocus(const SDL_Event* evnt) {
 	switch (evnt->type) {
 	case SDL_QUIT:
-		Player::exit_flag = true;
+		Player().exit_flag = true;
 		return 1;
 
 	case SDL_ACTIVEEVENT:
@@ -889,7 +889,7 @@ int FilterUntilFocus(const SDL_Event* evnt) {
 
 #ifdef GEKKO
 void GekkoResetCallback() {
-	Player::reset_flag = true;
+	Player().reset_flag = true;
 }
 #endif
 

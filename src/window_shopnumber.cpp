@@ -65,13 +65,13 @@ void Window_ShopNumber::Update() {
 
 	if (active) {
 		int last_number = number;
-		if (Input::IsRepeated(Input::RIGHT) && number < item_max) {
+		if (Input().IsRepeated(Input_::RIGHT) && number < item_max) {
 			number++;
-		} else if (Input::IsRepeated(Input::LEFT) && number > 1) {
+		} else if (Input().IsRepeated(Input_::LEFT) && number > 1) {
 			number--;
-		} else if (Input::IsRepeated(Input::UP) && number < item_max) {
+		} else if (Input().IsRepeated(Input_::UP) && number < item_max) {
 			number = min(number + 10, item_max);
-		} else if (Input::IsRepeated(Input::DOWN) && number > 1) {
+		} else if (Input().IsRepeated(Input_::DOWN) && number > 1) {
 			number = max(number - 10, 1);
 		}
 

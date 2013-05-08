@@ -230,7 +230,7 @@ public:
 	BitmapRef const& GetDisplaySurface() const;
 	BitmapRef& GetDisplaySurface();
 
-	typedef std::bitset<Input::Keys::KEYS_COUNT> KeyStatus;
+	typedef std::bitset<Keys::KEYS_COUNT> KeyStatus;
 
 	/**
 	 * Gets vector with the all keys pressed states.

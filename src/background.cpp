@@ -27,45 +27,45 @@
 #include "bitmap.h"
 
 Background::Background(const std::string& name) :
-	ID(Graphics::drawable_id++), zobj(NULL), visible(true),
+	ID(Graphics().drawable_id++), zobj(NULL), visible(true),
 	bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
 	fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
 
-	zobj = Graphics::RegisterZObj(0, ID);
-	Graphics::RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, ID);
+	Graphics().RegisterDrawable(ID, this);
 
-	bg_screen = BitmapScreen::Create(Cache::Backdrop(name));
+	bg_screen = BitmapScreen::Create(Cache().Backdrop(name));
 }
 
 Background::Background(int terrain_id) :
-	ID(Graphics::drawable_id++), zobj(NULL), visible(true),
+	ID(Graphics().drawable_id++), zobj(NULL), visible(true),
 	bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
 	fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
 
-	zobj = Graphics::RegisterZObj(0, ID);
-	Graphics::RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, ID);
+	Graphics().RegisterDrawable(ID, this);
 
 	const RPG::Terrain& terrain = Data::terrains[terrain_id - 1];
 
 	if (terrain.background_type == 0) {
-		bg_screen = BitmapScreen::Create(Cache::Backdrop(terrain.background_name));
+		bg_screen = BitmapScreen::Create(Cache().Backdrop(terrain.background_name));
 		return;
 	}
 
-	bg_screen = BitmapScreen::Create(Cache::Frame(terrain.background_a_name));
+	bg_screen = BitmapScreen::Create(Cache().Frame(terrain.background_a_name));
 	bg_hscroll = terrain.background_a_scrollh ? terrain.background_a_scrollh_speed : 0;
 	bg_vscroll = terrain.background_a_scrollv ? terrain.background_a_scrollv_speed : 0;
 
 	if (terrain.background_b) {
-		fg_screen = BitmapScreen::Create(Cache::Frame(terrain.background_b_name));
+		fg_screen = BitmapScreen::Create(Cache().Frame(terrain.background_b_name));
 		fg_hscroll = terrain.background_b_scrollh ? terrain.background_b_scrollh_speed : 0;
 		fg_vscroll = terrain.background_b_scrollv ? terrain.background_b_scrollv_speed : 0;
 	}
 }
 
 Background::~Background() {
-	Graphics::RemoveZObj(ID);
-	Graphics::RemoveDrawable(ID);
+	Graphics().RemoveZObj(ID);
+	Graphics().RemoveDrawable(ID);
 }
 
 int Background::GetZ() const {

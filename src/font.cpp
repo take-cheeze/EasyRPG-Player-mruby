@@ -270,7 +270,7 @@ bool FTFont::check_face() {
 	if(!face_ || face_name_ != name) {
 	    face_cache_type::const_iterator it = face_cache.find(name);
 		if(it == face_cache.end() || it->second.expired()) {
-			std::string const face_path = FileFinder::FindFont(name);
+			std::string const face_path = FileFinder().FindFont(name);
 			FT_Face face;
 			if(FT_New_Face(library_.get(), face_path.c_str(), 0, &face) != FT_Err_Ok) {
 				Output::Error("Couldn't initialize FreeType face: %s(%s)\n",

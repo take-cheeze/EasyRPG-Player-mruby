@@ -30,7 +30,7 @@ char const ALAudio::NULL_DEVICE[] = "No Output";
 
 
 namespace {
-	/**	
+	/**
 	 * @return true if no error
 	 */
 	bool print_al_error() {
@@ -261,7 +261,7 @@ EASYRPG_SHARED_PTR<ALAudio::buffer> ALAudio::load_buffer(std::string const& file
 EASYRPG_SHARED_PTR<ALAudio::buffer> ALAudio::getMusic(std::string const& file) {
 	buffer_cache::iterator const i = music_pool_.find(file);
 	if(i == music_pool_.end() || i->second.expired()) {
-		EASYRPG_SHARED_PTR<buffer> const ret = load_buffer(FileFinder::FindMusic(file));
+		EASYRPG_SHARED_PTR<buffer> const ret = load_buffer(FileFinder().FindMusic(file));
 		music_pool_[file] = ret;
 		return ret;
 	} else {
@@ -272,7 +272,7 @@ EASYRPG_SHARED_PTR<ALAudio::buffer> ALAudio::getMusic(std::string const& file) {
 EASYRPG_SHARED_PTR<ALAudio::buffer> ALAudio::getSound(std::string const& file) {
 	buffer_cache::iterator i = sound_pool_.find(file);
 	if(i == sound_pool_.end() || i->second.expired()) {
-		EASYRPG_SHARED_PTR<buffer> const ret = load_buffer(FileFinder::FindSound(file));
+		EASYRPG_SHARED_PTR<buffer> const ret = load_buffer(FileFinder().FindSound(file));
 		sound_pool_[file] = ret;
 		return ret;
 	} else {

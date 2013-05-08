@@ -40,7 +40,7 @@ void Sprite_Character::Update() {
 		character_name = character->GetCharacterName();
 		character_index = character->GetCharacterIndex();
 		if (tile_id > 0) {
-			BitmapRef tile = Cache::Tile(Game_Map::GetChipsetName(), tile_id);
+			BitmapRef tile = Cache().Tile(Game_Map::GetChipsetName(), tile_id);
 			SetBitmap(tile);
 			r.Set(0, 0, 16, 16);
 			SetSrcRect(r);
@@ -50,7 +50,7 @@ void Sprite_Character::Update() {
 			if (character_name.empty()) {
 				SetBitmap(BitmapRef());
 			} else {
-				SetBitmap(Cache::Charset(character_name));
+				SetBitmap(Cache().Charset(character_name));
 				chara_width = GetBitmap()->GetWidth() / 4 / 3;
 				chara_height = GetBitmap()->GetHeight() / 2 / 4;
 				SetOx(chara_width / 2);

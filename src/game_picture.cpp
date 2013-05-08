@@ -64,7 +64,7 @@ void Picture::Show(const std::string& _name) {
 	data.name = _name;
 	data.time_left = 0;
 
-	BitmapRef bitmap = Cache::Picture(data.name);
+	BitmapRef bitmap = Cache().Picture(data.name);
 	sprite.reset(new Sprite());
 	sprite->SetBitmap(bitmap);
 	sprite->SetOx(bitmap->GetWidth() / 2);

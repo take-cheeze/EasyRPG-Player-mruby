@@ -69,5 +69,5 @@ void Scene_Save::Action(int index) {
 	Main_Data::game_data.system.save_slot = index + 1;
 	Main_Data::game_data.system.save_count += 1;
 
-	LSD_Reader::Save(FileFinder::FindDefault(ss.str()), Main_Data::game_data);
+	LSD_Reader::Save(FileFinder().FindDefault(ss.str()), Main_Data::game_data);
 }

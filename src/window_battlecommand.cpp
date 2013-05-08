@@ -64,12 +64,12 @@ void Window_BattleCommand::Update() {
 	int num_commands = commands.size();
 	int old_index = index;
 	if (active && num_commands >= 0 && index >= 0) {
-		if (Input::IsRepeated(Input::DOWN)) {
+		if (Input().IsRepeated(Input_::DOWN)) {
 			Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 			index++;
 		}
 
-		if (Input::IsRepeated(Input::UP)) {
+		if (Input().IsRepeated(Input_::UP)) {
 			Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 			index--;
 		}
@@ -136,7 +136,7 @@ void Window_BattleCommand::SetIndex(int _index) {
 }
 
 void Window_BattleCommand::SetActor(int _actor_id) {
-	actor_id = (Player::engine == Player::EngineRpg2k3) ? _actor_id : 0;
+	actor_id = (Player().engine == Player_::EngineRpg2k3) ? _actor_id : 0;
 	commands.clear();
 
 	if (actor_id == 0) {

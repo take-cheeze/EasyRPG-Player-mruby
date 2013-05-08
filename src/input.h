@@ -21,8 +21,11 @@
 // Headers
 #include <vector>
 #include <bitset>
+
 #include "system.h"
-#include "input_buttons.h"
+#include "memory_management.h"
+
+#include <boost/noncopyable.hpp>
 
 /**
  * Input namespace.
@@ -32,11 +35,41 @@
  * buttons are platform and device independent, while the
  * assigned keys can vary by the system.
  */
-namespace Input {
+struct Input_ : boost::noncopyable {
+	enum Button {
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		DECISION,
+		CANCEL,
+		SHIFT,
+		N0,
+		N1,
+		N2,
+		N3,
+		N4,
+		N5,
+		N6,
+		N7,
+		N8,
+		N9,
+		PLUS,
+		MINUS,
+		MULTIPLY,
+		DIVIDE,
+		PERIOD,
+		DEBUG_MENU,
+		DEBUG_THROUGH,
+		TOGGLE_FPS,
+		TAKE_SCREENSHOT,
+		BUTTON_COUNT
+	};
+
 	/**
 	 * Initializes Input.
 	 */
-	void Init();
+	Input_();
 
 	/**
 	 * Updates Input state.
@@ -54,7 +87,7 @@ namespace Input {
 	 * @param button button ID.
 	 * @return whether the button is being pressed.
 	 */
-	bool IsPressed(InputButton button);
+	bool IsPressed(Button button);
 
 	/**
 	 * Gets if a button is starting to being pressed.
@@ -62,7 +95,7 @@ namespace Input {
 	 * @param button button ID.
 	 * @return whether the button is being triggered.
 	 */
-	bool IsTriggered(InputButton button);
+	bool IsTriggered(Button button);
 
 	/**
 	 * Gets if a button is being repeated. A button is being
@@ -73,7 +106,7 @@ namespace Input {
 	 * @param button button ID.
 	 * @return whether the button is being repeated.
 	 */
-	bool IsRepeated(InputButton button);
+	bool IsRepeated(Button button);
 
 	/**
 	 * Gets if a button is being released.
@@ -81,7 +114,7 @@ namespace Input {
 	 * @param button button ID.
 	 * @return whether the button is being released.
 	 */
-	bool IsReleased(InputButton button);
+	bool IsReleased(Button button);
 
 	/**
 	 * Gets if any button is being pressed.
@@ -116,63 +149,79 @@ namespace Input {
 	 *
 	 * @return a vector with the buttons IDs.
 	 */
-	std::vector<InputButton> GetAllPressed();
+	std::vector<Button> GetAllPressed();
 
 	/**
 	 * Gets all buttons being triggered.
 	 *
 	 * @return a vector with the buttons IDs.
 	 */
-	std::vector<InputButton> GetAllTriggered();
+	std::vector<Button> GetAllTriggered();
 
 	/**
 	 * Gets all buttons being repeated.
 	 *
 	 * @return a vector with the buttons IDs.
 	 */
-	std::vector<InputButton> GetAllRepeated();
+	std::vector<Button> GetAllRepeated();
 
 	/**
 	 * Gets all buttons being released.
 	 *
 	 * @return a vector with the buttons IDs.
 	 */
-	std::vector<InputButton> GetAllReleased();
+	std::vector<Button> GetAllReleased();
 
 	/** Buttons press time (in frames). */
-	extern EASYRPG_ARRAY<int, BUTTON_COUNT> press_time;
+	EASYRPG_ARRAY<int, BUTTON_COUNT> press_time;
 
 	/** Buttons trigger state. */
-	extern std::bitset<BUTTON_COUNT> triggered;
+	std::bitset<BUTTON_COUNT> triggered;
 
 	/** Buttons trigger state. */
-	extern std::bitset<BUTTON_COUNT> repeated;
+	std::bitset<BUTTON_COUNT> repeated;
 
 	/** Buttons trigger state. */
-	extern std::bitset<BUTTON_COUNT> released;
+	std::bitset<BUTTON_COUNT> released;
 
 	/** Horizontal and vertical directions state. */
-	extern int dir4;
+	int dir4;
 
 	/** All cardinal directions state. */
-	extern int dir8;
+	int dir8;
 
 	/**
 	 * Start repeat time (in frames) a key has
 	 * to be maintained pressed before being
 	 * repeated for fist time.
 	 */
-	extern int start_repeat_time;
+	int start_repeat_time;
 
 	/**
 	 * Repeat time (in frames) a key has to be
 	 * maintained pressed after the start repeat time
 	 * has passed for being repeated again.
 	 */
-	extern int repeat_time;
+	int repeat_time;
 
 	bool IsWaitingInput();
 	void WaitInput(bool val);
-}
+
+	/**
+	 * Initializes input buttons to their mappings.
+	 */
+	void InitButtons();
+
+	/** Buttons list of equivalent keys. */
+	static EASYRPG_ARRAY<std::vector<int>, BUTTON_COUNT> buttons;
+
+	/** Direction buttons list of equivalent buttons. */
+	static EASYRPG_ARRAY<std::vector<int>, 10> dir_buttons;
+
+  private:
+	bool wait_input;
+};
+
+Input_& Input();
 
 #endif

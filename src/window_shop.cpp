@@ -158,7 +158,7 @@ void Window_Shop::Update() {
 		switch (mode) {
 			case Scene_Shop::BuySellLeave:
 			case Scene_Shop::BuySellLeave2:
-				if (Input::IsRepeated(Input::DOWN)) {
+				if (Input().IsRepeated(Input_::DOWN)) {
 					if (index < leave_index) {
 						index++;
 					}
@@ -167,7 +167,7 @@ void Window_Shop::Update() {
 					}
 					Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 				}
-				if (Input::IsRepeated(Input::UP)) {
+				if (Input().IsRepeated(Input_::UP)) {
 					if (index > 1) {
 						index--;
 					}
@@ -176,7 +176,7 @@ void Window_Shop::Update() {
 					}
 					Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 				}
-				if (Input::IsTriggered(Input::DECISION)) {
+				if (Input().IsTriggered(Input_::DECISION)) {
 					Game_System::SePlay(Main_Data::game_data.system.decision_se);
 					if (index == buy_index)
 						choice = Scene_Shop::Buy;

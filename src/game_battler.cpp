@@ -93,7 +93,7 @@ bool Game_Battler::IsSkillUsable(int skill_id) const {
 
 int Game_Battler::CalculateSkillCost(int skill_id) const {
 	const RPG::Skill& skill = Data::skills[skill_id - 1];
-	return (Player::engine == Player::EngineRpg2k3 &&
+	return (Player().engine == Player_::EngineRpg2k3 &&
 			skill.sp_type == RPG::Skill::SpType_percent)
 		? GetMaxSp() * skill.sp_percent / 100
 		: skill.sp_cost;
@@ -220,4 +220,3 @@ int Game_Battler::GetAgi() const {
 
 	return n;
 }
-

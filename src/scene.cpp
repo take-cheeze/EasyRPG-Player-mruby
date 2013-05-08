@@ -80,26 +80,26 @@ void Scene::MainFunction() {
 
 	// Scene loop
 	while (Scene::instance.get() == this) {
-		Player::Update();
-		Graphics::Update();
+		Player().Update();
+		Graphics().Update();
 		Audio().Update();
-		Input::Update();
+		Input().Update();
 		Update();
 	}
 
 	assert(Scene::instance == instances.back() &&
 		   "Don't set Scene::instance directly, use Push instead!");
 
-	Graphics::Update();
+	Graphics().Update();
 
 	Suspend();
 	TransitionOut();
 
 	switch (push_pop_operation) {
 	case ScenePushed:
-		Graphics::Push();
+		Graphics().Push();
 		break;
-	// Graphics::Pop done in Player Loop
+	// Graphics().Pop done in Player Loop
 	default:;
 	}
 }
@@ -117,11 +117,11 @@ void Scene::Suspend() {
 }
 
 void Scene::TransitionIn() {
-	Graphics::Transition(Graphics::TransitionFadeIn, 12);
+	Graphics().Transition(Graphics().TransitionFadeIn, 12);
 }
 
 void Scene::TransitionOut() {
-	Graphics::Transition(Graphics::TransitionFadeOut, 12, true);
+	Graphics().Transition(Graphics().TransitionFadeOut, 12, true);
 }
 
 void Scene::Update() {

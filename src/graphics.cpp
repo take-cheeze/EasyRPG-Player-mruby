@@ -32,105 +32,37 @@
 #include "util_macro.h"
 #include "player.h"
 
-namespace Graphics {
-	bool fps_on_screen;
-	uint32_t drawable_id;
 
-	void InternUpdate();
-	void UpdateTitle(double fps);
-	void DrawFrame();
-	void DrawOverlay();
-
-	bool overlay_visible;
-	double current_fps_;
-	int framerate;
-	int framecount;
-	uint32_t timer_wait;
-	double frame_interval;
-
-	unsigned next_fps_calculation_time;
-	unsigned fps_draw_counter;
-	double expected_next_frame_end_time;
-
-	void UpdateTransition();
-
-	BitmapScreenRef frozen_screen;
-	BitmapScreenRef black_screen;
-	BitmapScreenRef screen1;
-	BitmapScreenRef screen2;
-	bool frozen;
-	TransitionType transition_type;
-	int transition_duration;
-	int transition_frame;
-	bool screen_erased;
-
-	uint32_t drawable_creation;
-
-	struct State {
-		State() : zlist_dirty(false) {}
-		std::map<uint32_t, Drawable*> drawable_map;
-		std::list<EASYRPG_SHARED_PTR<ZObj> > zlist;
-		bool zlist_dirty;
-	};
-	EASYRPG_SHARED_PTR<State> state;
-	std::vector<EASYRPG_SHARED_PTR<State> > stack;
-
-	bool SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second);
-}
-
-unsigned Graphics::SecondToFrame(float const second) {
+unsigned Graphics_::SecondToFrame(float const second) {
 	return(second * framerate);
 }
 
-void Graphics::Init() {
-	overlay_visible = true;
-	fps_on_screen = false;
-	current_fps_ = 0;
-	framerate = DEFAULT_FPS;
-	frame_interval = 1000.0 / framerate;
-	framecount = 0;
-	timer_wait = 0;
-	frozen_screen = BitmapScreen::Create();
+Graphics_::Graphics_()
+		: fps_on_screen(false)
+		, drawable_id(0)
+		, overlay_visible(true)
+		, current_fps_(0)
+		, framerate(DEFAULT_FPS)
+		, framecount(0)
+		, frame_interval(1000.0 / framerate)
+		, next_fps_calculation_time(0)
+		, fps_draw_counter(0)
+		, expected_next_frame_end_time(-1) // needs FrameReset value
+		, frozen_screen(BitmapScreen::Create())
+		, black_screen(BitmapScreen::Create())
+		, frozen(false)
+		, screen_erased(false)
+		, drawable_creation(0)
+		, state(EASYRPG_MAKE_SHARED<State>())
+{}
 
-	black_screen = BitmapScreen::Create();
-	BitmapRef black_bitmap = Bitmap::Create(DisplayUi->GetWidth(), DisplayUi->GetHeight(), Color(0,0,0,255));
-	black_screen->SetBitmap(black_bitmap);
-
-	frozen = false;
-	drawable_creation = 0;
-	drawable_id = 0;
-	state.reset(new State());
-	screen_erased = false;
-
-	FrameReset();
-
-	UpdateTitle(0);
-}
-
-void Graphics::Quit() {
-	std::map<uint32_t, Drawable*>::iterator it;
-	std::map<uint32_t, Drawable*> drawable_map_temp = state->drawable_map;
-
-	for (it = drawable_map_temp.begin(); it != drawable_map_temp.end(); it++) {
-		delete it->second;
-	}
-
-	state->drawable_map.clear();
-	state->zlist.clear();
-
-	frozen_screen.reset();
-	black_screen.reset();
-
-	Cache::Clear();
-}
-
-void Graphics::Update() {
+void Graphics_::Update() {
 	if (frozen) return;
 
 	InternUpdate();
 }
 
-void Graphics::UpdateTitle(double const fps) {
+void Graphics_::UpdateTitle(double const fps) {
 	current_fps_ = fps;
 
 	if (DisplayUi->IsFullscreen()) return;
@@ -143,7 +75,7 @@ void Graphics::UpdateTitle(double const fps) {
 	DisplayUi->SetTitle(title.str());
 }
 
-void Graphics::DrawFrame() {
+void Graphics_::DrawFrame() {
 	++fps_draw_counter;
 
 	if (transition_duration > 0) {
@@ -171,15 +103,15 @@ void Graphics::DrawFrame() {
 	DisplayUi->UpdateDisplay();
 }
 
-void Graphics::DrawOverlay() {
-	if (Graphics::fps_on_screen) {
+void Graphics_::DrawOverlay() {
+	if (Graphics().fps_on_screen) {
 		std::ostringstream text;
 		text << "FPS: " << std::setprecision(4) << current_fps_;
 		DisplayUi->DrawScreenText(text.str());
 	}
 }
 
-BitmapRef Graphics::SnapToBitmap() {
+BitmapRef Graphics_::SnapToBitmap() {
 	DisplayUi->BeginScreenCapture();
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
@@ -190,13 +122,18 @@ BitmapRef Graphics::SnapToBitmap() {
 	return DisplayUi->EndScreenCapture();
 }
 
-void Graphics::Freeze() {
+void Graphics_::Freeze() {
 	frozen_screen->SetBitmap(SnapToBitmap());
 	frozen = true;
 }
 
-void Graphics::Transition(TransitionType type, int duration, bool erase) {
+void Graphics_::Transition(TransitionType type, int duration, bool erase) {
 	if (erase && screen_erased) return;
+
+	if(not black_screen->GetBitmap()) {
+		black_screen->SetBitmap(Bitmap::Create(
+			DisplayUi->GetWidth(), DisplayUi->GetHeight(), Color(0,0,0,255)));
+	}
 
 	if (type != TransitionNone) {
 		transition_type = type;
@@ -224,7 +161,7 @@ void Graphics::Transition(TransitionType type, int duration, bool erase) {
 		}
 
 		for (int i = 1; i <= transition_duration; i++) {
-			Player::Update();
+			Player().Update();
 			InternUpdate();
 		}
 	}
@@ -239,7 +176,7 @@ void Graphics::Transition(TransitionType type, int duration, bool erase) {
 	FrameReset();
 }
 
-void Graphics::UpdateTransition() {
+void Graphics_::UpdateTransition() {
 	// FIXME: Comments. Pleeeease. screen1, screen2?
 	int w = DisplayUi->GetWidth();
 	int h = DisplayUi->GetHeight();
@@ -387,7 +324,7 @@ void Graphics::UpdateTransition() {
 	DisplayUi->UpdateDisplay();
 }
 
-void Graphics::FrameReset() {
+void Graphics_::FrameReset() {
 	unsigned const current_time = DisplayUi->GetTicks();
 
 	next_fps_calculation_time = current_time + 1000;
@@ -397,7 +334,12 @@ void Graphics::FrameReset() {
 	frame_interval = 1000.0 / framerate;
 }
 
-void Graphics::InternUpdate() {
+void Graphics_::InternUpdate() {
+	if(expected_next_frame_end_time < 0) {
+		FrameReset(); // init frame variables
+		UpdateTitle(0);
+	}
+
 	// draw screen if enough time left
 	unsigned const frame_start_time = DisplayUi->GetTicks();
 	if(frame_start_time < expected_next_frame_end_time) { DrawFrame(); }
@@ -423,44 +365,44 @@ void Graphics::InternUpdate() {
 	expected_next_frame_end_time += frame_interval;
 }
 
-void Graphics::Wait(int duration) {
+void Graphics_::Wait(int duration) {
 	while(duration-- > 0) {
 		Update();
 	}
 }
 
-int Graphics::GetFrameCount() {
+int Graphics_::GetFrameCount() {
 	return framecount;
 }
-void Graphics::SetFrameCount(int nframecount) {
+void Graphics_::SetFrameCount(int nframecount) {
 	framecount = nframecount;
 }
 
-void Graphics::RegisterDrawable(uint32_t ID, Drawable* drawable) {
+void Graphics_::RegisterDrawable(uint32_t ID, Drawable* drawable) {
 	state->drawable_map[ID] = drawable;
 }
 
-void Graphics::RemoveDrawable(uint32_t ID) {
+void Graphics_::RemoveDrawable(uint32_t ID) {
 	std::map<uint32_t, Drawable*>::iterator it = state->drawable_map.find(ID);
 	if(it != state->drawable_map.end()) { state->drawable_map.erase(it); }
 }
 
-ZObj* Graphics::RegisterZObj(int z, uint32_t ID) {
+ZObj* Graphics_::RegisterZObj(int z, uint32_t ID) {
 	state->zlist.push_back(EASYRPG_MAKE_SHARED<ZObj>(z, drawable_creation++, ID));
 	state->zlist_dirty = true;
 	return state->zlist.back().get();
 }
 
-void Graphics::RegisterZObj(int z, uint32_t ID, bool /* multiz */) {
+void Graphics_::RegisterZObj(int z, uint32_t ID, bool /* multiz */) {
 	state->zlist.push_back(EASYRPG_MAKE_SHARED<ZObj>(z, 999999, ID));
 	state->zlist_dirty = true;
 }
 
-void Graphics::RemoveZObj(uint32_t ID) {
+void Graphics_::RemoveZObj(uint32_t ID) {
 	RemoveZObj(ID, false);
 }
 
-void Graphics::RemoveZObj(uint32_t ID, bool multiz) {
+void Graphics_::RemoveZObj(uint32_t ID, bool multiz) {
 	std::vector<std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator> to_erase;
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
@@ -476,23 +418,23 @@ void Graphics::RemoveZObj(uint32_t ID, bool multiz) {
 	}
 }
 
-void Graphics::UpdateZObj(ZObj* zobj, int z) {
+void Graphics_::UpdateZObj(ZObj* zobj, int z) {
 	zobj->SetZ(z);
 	state->zlist_dirty = true;
 }
 
-inline bool Graphics::SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second) {
+inline bool Graphics_::SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second) {
 	if (first->GetZ() < second->GetZ()) return true;
 	else if (first->GetZ() > second->GetZ()) return false;
 	else return first->GetCreation() < second->GetCreation();
 }
 
-void Graphics::Push() {
+void Graphics_::Push() {
 	stack.push_back(state);
 	state.reset(new State());
 }
 
-void Graphics::Pop() {
+void Graphics_::Pop() {
 	if (stack.size() > 0) {
 		state = stack.back();
 		stack.pop_back();

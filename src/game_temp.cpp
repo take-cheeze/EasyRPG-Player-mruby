@@ -30,7 +30,7 @@ bool Game_Temp::to_title;
 bool Game_Temp::gameover;
 int Game_Temp::common_event_id;
 bool Game_Temp::transition_processing;
-Graphics::TransitionType Game_Temp::transition_type;
+Graphics_::TransitionType Game_Temp::transition_type;
 bool Game_Temp::transition_erase;
 bool Game_Temp::shop_buys;
 bool Game_Temp::shop_sells;
@@ -67,7 +67,7 @@ void Game_Temp::Init() {
 	gameover = false;
 	common_event_id = 0;
 	transition_processing = false;
-	transition_type = Graphics::TransitionNone;
+	transition_type = Graphics().TransitionNone;
 	transition_erase = false;
 	shop_buys = true;
 	shop_sells = true;

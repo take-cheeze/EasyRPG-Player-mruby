@@ -84,7 +84,7 @@ Battle::Enemy::Enemy(const RPG::TroopMember* member, int id) :
 }
 
 void Battle::Enemy::CreateSprite() {
-	BitmapRef graphic = Cache::Monster(rpg_enemy->battler_name);
+	BitmapRef graphic = Cache().Monster(rpg_enemy->battler_name);
 	bool hue_change = rpg_enemy->battler_hue != 0;
 	if (hue_change) {
 	    BitmapRef new_graphic = Bitmap::Create(graphic->GetWidth(), graphic->GetHeight());
@@ -126,7 +126,7 @@ Battle::Ally::Ally(Game_Actor* game_actor, int id) :
 }
 
 void Battle::Ally::CreateSprite() {
-	if (Player::engine != Player::EngineRpg2k3)
+	if (Player().engine != Player_::EngineRpg2k3)
 		return;
 
 	sprite.reset(new Sprite());
@@ -141,7 +141,7 @@ void Battle::Ally::CreateSprite() {
 }
 
 void Battle::Ally::SetAnimState(int state) {
-	if (Player::engine != Player::EngineRpg2k3)
+	if (Player().engine != Player_::EngineRpg2k3)
 		return;
 
 	anim_state = state;
@@ -152,11 +152,11 @@ void Battle::Ally::SetAnimState(int state) {
 		return;
 
 	sprite_file = ext.battler_name;
-	sprite->SetBitmap(Cache::Battlecharset(sprite_file));
+	sprite->SetBitmap(Cache().Battlecharset(sprite_file));
 }
 
 void Battle::Ally::UpdateAnim(int cycle) {
-	if (Player::engine != Player::EngineRpg2k3)
+	if (Player().engine != Player_::EngineRpg2k3)
 		return;
 
 	static const int frames[] = {0,1,2,1};

@@ -353,37 +353,37 @@ bool Game_Interpreter::ExecuteCommand() {
 }
 
 bool Game_Interpreter::CommandWait(RPG::EventCommand const& /* com */) {
-	if (Player::engine == Player::EngineRpg2k || list[index].parameters[1] == 0) {
+	if (Player().engine == Player_::EngineRpg2k || list[index].parameters[1] == 0) {
 		SetupWait(list[index].parameters[0]);
 		return true;
 	} else
-		return Input::IsAnyTriggered();
+		return Input().IsAnyTriggered();
 }
 
 // Input Button.
 void Game_Interpreter::InputButton() {
-	Input::InputButton n = Input::BUTTON_COUNT;
+	Input_::Button n = Input_::BUTTON_COUNT;
 
-	if (Input::IsTriggered(Input::UP)) {
-		n = Input::UP;
+	if (Input().IsTriggered(Input_::UP)) {
+		n = Input_::UP;
 	} else {
-		if (Input::IsTriggered(Input::DOWN)) {
-			n = Input::DOWN;
+		if (Input().IsTriggered(Input_::DOWN)) {
+			n = Input_::DOWN;
 		} else {
-			if (Input::IsTriggered(Input::LEFT)) {
-				n = Input::LEFT;
+			if (Input().IsTriggered(Input_::LEFT)) {
+				n = Input_::LEFT;
 			} else {
-				if (Input::IsTriggered(Input::RIGHT)) {
-					n = Input::RIGHT;
+				if (Input().IsTriggered(Input_::RIGHT)) {
+					n = Input_::RIGHT;
 				} else {
-					if (Input::IsTriggered(Input::DECISION)) {
-						n = Input::DECISION;
+					if (Input().IsTriggered(Input_::DECISION)) {
+						n = Input_::DECISION;
 					} else {
-						if (Input::IsTriggered(Input::CANCEL)) {
-							n = Input::CANCEL;
+						if (Input().IsTriggered(Input_::CANCEL)) {
+							n = Input_::CANCEL;
 						} else {
-							if (Input::IsTriggered(Input::SHIFT)) {
-								n = Input::SHIFT;
+							if (Input().IsTriggered(Input_::SHIFT)) {
+								n = Input_::SHIFT;
 							}
 						}
 					}
@@ -393,7 +393,7 @@ void Game_Interpreter::InputButton() {
 	} // end first if
 
 	// If a button was pressed
-	if (n != Input::BUTTON_COUNT) {
+	if (n != Input_::BUTTON_COUNT) {
 		// Set variable
 		Game_Variables[button_input_variable_id] = n;
 		Game_Map::SetNeedRefresh(true);
@@ -1231,7 +1231,7 @@ bool Game_Interpreter::CommandFlashScreen(RPG::EventCommand const& com) { // cod
 	int tenths = com.parameters[4];
 	bool wait = com.parameters[5] != 0;
 
-	if (Player::engine == Player::EngineRpg2k3) {
+	if (Player().engine == Player_::EngineRpg2k3) {
 		switch (com.parameters[6]) {
 			case 0:
 				screen->FlashOnce(r, g, b, s, tenths);
@@ -1261,7 +1261,7 @@ bool Game_Interpreter::CommandShakeScreen(RPG::EventCommand const& com) { // cod
 	int tenths = com.parameters[2];
 	bool wait = com.parameters[3] != 0;
 
-	if (Player::engine == Player::EngineRpg2k) {
+	if (Player().engine == Player_::EngineRpg2k) {
 		screen->ShakeOnce(strength, speed, tenths);
 		if (wait) {
 			SetupWait(tenths);

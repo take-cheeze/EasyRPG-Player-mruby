@@ -47,7 +47,7 @@ void Scene_File::Start() {
 		// Try to access file
 		std::stringstream ss;
 		ss << "Save" << (i <= 8 ? "0" : "") << (i+1) << ".lsd";
-		std::string file = FileFinder::FindDefault(ss.str());
+		std::string file = FileFinder().FindDefault(ss.str());
 		if (!file.empty()) {
 			// File found
 			std::auto_ptr<RPG::Save> savegame =
@@ -110,10 +110,10 @@ void Scene_File::Update() {
 	for (int i = 0; (size_t) i < file_windows.size(); i++)
 		file_windows[i]->Update();
 
-	if (Input::IsTriggered(Input::CANCEL)) {
+	if (Input().IsTriggered(Input_::CANCEL)) {
 		Game_System::SePlay(Main_Data::game_data.system.cancel_se);
 		Scene::Pop();
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input().IsTriggered(Input_::DECISION)) {
 		Game_System::SePlay(Main_Data::game_data.system.decision_se);
 		Action(index);
 		Scene::Pop();
@@ -122,14 +122,14 @@ void Scene_File::Update() {
 	int old_top_index = top_index;
 	int old_index = index;
 
-	if (Input::IsRepeated(Input::DOWN)) {
+	if (Input().IsRepeated(Input_::DOWN)) {
 		Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 		index++;
 		if ((size_t) index >= file_windows.size())
 			index--;
 		top_index = std::max(top_index, index - 3 + 1);
 	}
-	if (Input::IsRepeated(Input::UP)) {
+	if (Input().IsRepeated(Input_::UP)) {
 		Game_System::SePlay(Main_Data::game_data.system.cursor_se);
 		index--;
 		if (index < 0)

@@ -135,7 +135,7 @@ bool Game_Event::AreConditionsMet(const RPG::EventPage& page) {
 	}
 
 	// Variable
-	if (Player::engine == Player::EngineRpg2k) {
+	if (Player().engine == Player_::EngineRpg2k) {
 		if (page.condition.flags.variable && !(Game_Variables[page.condition.variable_id] >= page.condition.variable_value)) {
 			return false;
 		}
