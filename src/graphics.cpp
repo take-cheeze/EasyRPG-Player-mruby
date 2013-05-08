@@ -32,6 +32,8 @@
 #include "util_macro.h"
 #include "player.h"
 
+#include <boost/math/special_functions/round.hpp>
+
 
 unsigned Graphics_::SecondToFrame(float const second) {
 	return(second * framerate);
@@ -358,7 +360,10 @@ void Graphics_::InternUpdate() {
 	}
 
 	// sleep if time left
-	int const sleep_time = expected_next_frame_end_time - frame_end_time;
+	namespace policies = boost::math::policies;
+	int const sleep_time = boost::math::round(
+		expected_next_frame_end_time - frame_end_time,
+		policies::policy<policies::rounding_error<policies::ignore_error> >());
 	if(sleep_time > 0) { DisplayUi->Sleep(sleep_time); }
 
 	// update next frame end time

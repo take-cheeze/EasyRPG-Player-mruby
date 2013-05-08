@@ -31,10 +31,6 @@ add_definitions(
   -D UNIX=1
   -D USE_SDL=1)
 
-if(CMAKE_GENERATOR MATCHES "Makefile")
-  add_definitions(-fno-rtti)
-endif()
-
 # wine checking
 find_program(WINE_EXECUTABLE wine)
 if(EXISTS ${WINE_EXECUTABLE})
