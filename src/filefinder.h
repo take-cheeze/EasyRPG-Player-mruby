@@ -86,6 +86,13 @@ struct FileFinder_ : boost::noncopyable {
 	std::string FindSound(const std::string& name);
 
 	/**
+	 * Finds a movie file.
+	 * @param name the movie path and name.
+	 * @return path to file.
+	 */
+	std::string FindMovie(const std::string& name);
+
+	/**
 	 * Finds a font file.
 	 *
 	 * @param name the font name.

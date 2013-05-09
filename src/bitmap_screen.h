@@ -296,7 +296,7 @@ public:
 
 	BitmapScreen(BitmapRef const& source);
 
-protected:
+private:
 	BitmapRef bitmap;
 
 	bool needs_refresh;

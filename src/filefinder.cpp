@@ -67,7 +67,7 @@
 
 namespace {
 
-// const char* MOVIE_TYPES[] = { ".avi", ".mpg", NULL };
+const char* MOVIE_TYPES[] = { ".avi", ".mpg", NULL };
 const char* FONTS_TYPES[] = {
 	".ttf", ".ttc", ".otf", ".fon", NULL, };
 const char* IMG_TYPES[] = {
@@ -375,6 +375,10 @@ std::string FileFinder_::FindMusic(const std::string& name) {
 
 std::string FileFinder_::FindSound(const std::string& name) {
 	return FindFile("Sound", name, SOUND_TYPES);
+}
+
+std::string FileFinder_::FindMovie(const std::string& name) {
+	return FindFile("Movie", name, MOVIE_TYPES);
 }
 
 bool FileFinder_::Exists(std::string const& filename) {
