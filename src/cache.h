@@ -91,8 +91,9 @@ struct Cache_ : boost::noncopyable {
 
 	}; // struct Material
 
-	BitmapRef LoadBitmap(std::string const& folder_name, const std::string& filename,
-						 bool transparent, uint32_t const flags);
+	struct Spec;
+	static Spec const specs_[];
+	BitmapRef LoadBitmap(Spec const& spec, std::string const& filename);
 
 	template<Material::Type T>
 	BitmapRef LoadBitmap(std::string const& f);

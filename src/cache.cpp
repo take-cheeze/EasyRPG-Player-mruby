@@ -32,13 +32,14 @@
 #include "output.h"
 #include "player.h"
 
-namespace {
-struct Spec {
+struct Cache_::Spec {
 	char const* directory;
 	bool transparent;
 	int min_width , max_width ;
 	int min_height, max_height;
-} const spec[] = {
+};
+
+Cache_::Spec const Cache_::specs_[] = {
 	{ "Backdrop", false, 320, 320, 160, 160 },
 	{ "Battle", true, 480, 480, 96, 480 },
 	{ "CharSet", true, 288, 288, 256, 256 },
@@ -56,22 +57,24 @@ struct Spec {
 	{ "BattleWeapon", true, 192, 192, 512, 512 },
 	{ "Frame", true, 320, 320, 240, 240 },
 };
-}
 
 template<Cache_::Material::Type T>
 BitmapRef Cache_::LoadBitmap(std::string const& f) {
 	BOOST_STATIC_ASSERT(Material::REND < T && T < Material::END);
 
-	Spec const& s = spec[T];
-	BitmapRef const ret = LoadBitmap(s.directory, f, s.transparent,
-									 T == Material::Chipset? Bitmap::Chipset:
-									 T == Material::System? Bitmap::System:
-									 0);
+	Spec const& s = specs_[T];
+	BitmapRef const ret = LoadBitmap(s, f);
 
-	if(
-		   ret->GetWidth () < s.min_width  || s.max_width  < ret->GetWidth () ||
-		   ret->GetHeight() < s.min_height || s.max_height < ret->GetHeight()
-	   ) {
+	// set flag of just created bitmap
+	if(ret.use_count() == 1) {
+		ret->CheckPixels(
+			T == Material::Chipset? Bitmap::Chipset:
+			T == Material::System? Bitmap::System:
+			0);
+	}
+
+	if(ret->GetWidth () < s.min_width  || s.max_width  < ret->GetWidth () ||
+	   ret->GetHeight() < s.min_height || s.max_height < ret->GetHeight()) {
 		Output::Debug("Image size error in: %s/%s", s.directory, f.c_str());
 		Output::Debug("width  (min, max, actual) = (%d, %d, %d)", s.min_width , s.max_width , ret->GetWidth ());
 		Output::Debug("height (min, max, actual) = (%d, %d, %d)", s.min_height, s.max_height, ret->GetHeight());
@@ -80,26 +83,25 @@ BitmapRef Cache_::LoadBitmap(std::string const& f) {
 	return ret;
 }
 
-BitmapRef Cache_::LoadBitmap(std::string const& folder_name, const std::string& filename,
-							 bool transparent, uint32_t const flags) {
-	string_pair const key(folder_name, filename);
+BitmapRef Cache_::LoadBitmap(Spec const& spec, std::string const& filename) {
+	string_pair const key(spec.directory, filename);
 
 	cache_type::const_iterator const it = cache.find(key);
 
 	if (it == cache.end() || it->second.expired()) {
-		std::string const path = FileFinder().FindImage(folder_name, filename);
+		std::string const path = FileFinder().FindImage(spec.directory, filename);
 
 		if (path.empty()) {
 			// TODO:
 			// Load a dummy image with correct size (issue #32)
-			Output::Warning("Image not found: %s/%s\n\nPlayer will exit now.", folder_name.c_str(), filename.c_str());
+			Output::Warning("Image not found: %s/%s\n\nPlayer will exit now.", spec.directory, filename.c_str());
 			// Delayed termination, otherwise it segfaults in Graphics().Quit
 			Player().exit_flag = true;
 		}
 
 		return (cache[key] = path.empty()
 				? Bitmap::Create(16, 16, Color())
-				: Bitmap::Create(path, transparent, flags)
+				: Bitmap::Create(path, spec.transparent)
 				).lock();
 	} else { return it->second.lock(); }
 }

@@ -17,13 +17,9 @@
 
 // Headers
 #include <cmath>
-#include <cstdlib>
-#include <cstring>
 #include <algorithm>
 #include <iostream>
-
-#include <boost/scope_exit.hpp>
-#include <png.h>
+#include <sstream>
 
 #include "system.h"
 #include "utils.h"
@@ -36,13 +32,11 @@
 #include "options.h"
 #include "data.h"
 #include "output.h"
-#include "image_xyz.h"
-#include "image_bmp.h"
-#include "image_png.h"
 #include "pixel_format.h"
 #include "font.h"
 #include "output.h"
 #include "util_macro.h"
+#include "image_io.h"
 
 BitmapRef Bitmap::Create(int width, int height, const Color& color) {
     BitmapRef surface = Bitmap::Create(width, height, false);
@@ -50,16 +44,50 @@ BitmapRef Bitmap::Create(int width, int height, const Color& color) {
 	return surface;
 }
 
-BitmapRef Bitmap::Create(const std::string& filename, bool transparent, uint32_t flags) {
-	return EASYRPG_MAKE_SHARED<Bitmap>(filename, transparent, flags);
+BitmapRef Bitmap::Create(const std::string& filename, bool transparent) {
+	BitmapRef const ret = ImageIO::ReadImage(filename, transparent);
+	return ret? ret : (Output::Error("Image loading error: %s", filename.c_str()), BitmapRef());
 }
 
-BitmapRef Bitmap::Create(const uint8_t* data, unsigned bytes, bool transparent, uint32_t flags) {
-	return EASYRPG_MAKE_SHARED<Bitmap>(data, bytes, transparent, flags);
+BitmapRef Bitmap::Create(const uint8_t* const data, unsigned const data_size, bool transparent) {
+	static char const XYZ_SIGNATURE[] = "XYZ1";
+	static char const BMP_SIGNATURE[] = "BM";
+	static uint8_t const PNG_SIGNATURE[] = {137, 80, 78, 71, 13, 10, 26, 10, 0};
+
+	if(data_size < std::max(sizeof(XYZ_SIGNATURE),
+							std::max(sizeof(PNG_SIGNATURE), sizeof(BMP_SIGNATURE)))) {
+		return Output::Error("too small image data size: %d", data_size), BitmapRef();
+	}
+
+	std::istringstream iss(
+		std::string(reinterpret_cast<char const*>(data), data_size),
+		std::ios::binary | std::ios::in);
+
+#define PP_check_image(type)											\
+	(std::string(data, data + sizeof(type ## _SIGNATURE - 1))			\
+	 == std::string(type ## _SIGNATURE,									\
+					type ## _SIGNATURE + sizeof(type ## _SIGNATURE) - 1)) \
+			? ImageIO::Read ## type (iss, transparent)					\
+
+	BitmapRef const ret =
+			PP_check_image(XYZ): PP_check_image(BMP): PP_check_image(PNG):
+			BitmapRef();
+
+#undef PP_check_image
+
+	return ret? ret : (Output::Error("Image loading error"), BitmapRef());
 }
 
 BitmapRef Bitmap::Create(Bitmap const& source, Rect const& src_rect, bool transparent) {
 	return EASYRPG_MAKE_SHARED<Bitmap>(source, src_rect, transparent);
+}
+
+BitmapRef Bitmap::Create(int width, int height, bool transparent) {
+	return EASYRPG_MAKE_SHARED<Bitmap>(width, height, transparent);
+}
+
+BitmapRef Bitmap::Create(void *pixels, int width, int height, int pitch, const DynamicFormat& format) {
+	return EASYRPG_MAKE_SHARED<Bitmap>(pixels, width, height, pitch, format);
 }
 
 void Bitmap::InitBitmap() {
@@ -88,72 +116,6 @@ Color Bitmap::GetPixel(int x, int y) const {
 	return Color(r, g, b, a);
 }
 
-static void write_data(png_structp out_ptr, png_bytep data, png_size_t len) {
-	reinterpret_cast<std::ostream*>(png_get_io_ptr(out_ptr))->write(
-																	reinterpret_cast<char const*>(data), len);
-}
-static void flush_stream(png_structp out_ptr) {
-	reinterpret_cast<std::ostream*>(png_get_io_ptr(out_ptr))->flush();
-}
-
-
-bool Bitmap::WritePNG(std::ostream& os) const {
-	size_t const width = GetWidth(), height = GetHeight();
-	size_t const stride = width * 4;
-
-	std::vector<uint32_t> data(width * height);
-
-	EASYRPG_SHARED_PTR<pixman_image_t> dst
-		(pixman_image_create_bits(PIXMAN_a8r8g8b8, width, height, &data.front(), stride),
-		 pixman_image_unref);
-	pixman_image_composite32(PIXMAN_OP_SRC, bitmap, NULL, dst.get(),
-							 0, 0, 0, 0, 0, 0, width, height);
-
-	for(size_t i = 0; i < width * height; ++i) {
-		uint32_t const p = data[i];
-		uint8_t* out = reinterpret_cast<uint8_t*>(&data[i]);
-		uint8_t
-			a = (p >> 24) & 0xff, r = (p >> 16) & 0xff,
-			g = (p >>  8) & 0xff, b = (p >>  0) & 0xff;
-		if(a != 0) {
-			r = (r * 255) / a;
-			g = (g * 255) / a;
-			b = (b * 255) / a;
-		}
-		*out++ = r; *out++ = g; *out++ = b; *out++ = a;
-	}
-
-	std::vector<png_bytep> ptrs(height);
-	for(size_t i = 0; i < ptrs.size(); ++i) {
-		ptrs[i] = reinterpret_cast<png_bytep>(&data[width*i]);
-	}
-
-	png_structp write = NULL;
-	if(!(write = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL))) {
-		Output::Warning("Bitmap::WritePNG: error in png_create_write");
-		return false;
-	}
-
-	png_infop info = NULL;
-	BOOST_SCOPE_EXIT(&write, &info) {
-		png_destroy_write_struct(&write, &info);
-	} BOOST_SCOPE_EXIT_END do {} while(0);
-	if(!(info = png_create_info_struct(write))) {
-		Output::Warning("Bitmap::WritePNG: error in png_create_info_struct");
-		return false;
-	}
-
-	png_set_write_fn(write, &os, &write_data, &flush_stream);
-
-	png_set_IHDR(write, info, width, height, 8,
-				 PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
-				 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-	png_write_info(write, info);
-	png_write_image(write, &ptrs.front());
-	png_write_end(write, NULL);
-
-	return true;
-}
 
 void Bitmap::AttachBitmapScreen(BitmapScreen* bitmap) {
 	attached_screen_bitmaps.push_back(bitmap);
@@ -244,14 +206,6 @@ uint8_t* Bitmap::pointer(int x, int y) {
 
 uint8_t const* Bitmap::pointer(int x, int y) const {
 	return (uint8_t const*) pixels() + y * pitch() + x * bytes();
-}
-
-BitmapRef Bitmap::Create(int width, int height, bool transparent, int /* bpp */) {
-	return EASYRPG_MAKE_SHARED<Bitmap>(width, height, transparent);
-}
-
-BitmapRef Bitmap::Create(void *pixels, int width, int height, int pitch, const DynamicFormat& format) {
-	return EASYRPG_MAKE_SHARED<Bitmap>(pixels, width, height, pitch, format);
 }
 
 void Bitmap::SetPixel(int x, int y, const Color &color) {
@@ -595,71 +549,6 @@ Bitmap::Bitmap(void *pixels, int width, int height, int pitch, const DynamicForm
 	format = _format;
 	pixman_format = find_format(format);
 	Init(width, height, pixels, pitch, false);
-}
-
-Bitmap::Bitmap(const std::string& filename, bool transparent, uint32_t flags) {
-	InitBitmap();
-
-	format = (transparent ? pixel_format : opaque_pixel_format);
-	pixman_format = find_format(format);
-
-	int namelen = (int) filename.size();
-	if (namelen < 5 || filename[namelen - 4] != '.') {
-		Output::Error("Invalid extension for image file %s", filename.c_str());
-		return;
-	}
-
-	std::string ext = Utils::LowerCase(filename.substr(namelen - 3, 3));
-	if (ext != "png" && ext != "xyz" && ext != "bmp") {
-		Output::Error("Unsupported image file %s", filename.c_str());
-		return;
-	}
-
-	FILE* stream = FileFinder().fopenUTF8(filename, "rb");
-	if (!stream) {
-		Output::Error("Couldn't open image file %s", filename.c_str());
-		return;
-	}
-
-	int w, h;
-	void* pixels;
-
-	if (ext == "png")
-		ImagePNG::ReadPNG(stream, (void*) NULL, transparent, w, h, pixels);
-	else if (ext == "xyz")
-		ImageXYZ::ReadXYZ(stream, transparent, w, h, pixels);
-	else if (ext == "bmp")
-		ImageBMP::ReadBMP(stream, transparent, w, h, pixels);
-	else { assert(false); }
-
-	fclose(stream);
-
-	Init(w, h, (void *) NULL);
-	ConvertImage(w, h, pixels, transparent);
-
-	CheckPixels(flags);
-}
-
-Bitmap::Bitmap(const uint8_t* data, unsigned bytes, bool transparent, uint32_t flags) {
-	InitBitmap();
-
-	format = (transparent ? pixel_format : opaque_pixel_format);
-	pixman_format = find_format(format);
-
-	int w, h;
-	void* pixels;
-
-	if (bytes > 4 && strncmp((char*) data, "XYZ1", 4) == 0)
-		ImageXYZ::ReadXYZ(data, bytes, transparent, w, h, pixels);
-	else if (bytes > 2 && strncmp((char*) data, "BM", 4) == 0)
-		ImageBMP::ReadBMP(data, bytes, transparent, w, h, pixels);
-	else
-		ImagePNG::ReadPNG((FILE*) NULL, (const void*) data, transparent, w, h, pixels);
-
-	Init(w, h, (void *) NULL);
-	ConvertImage(w, h, pixels, transparent);
-
-	CheckPixels(flags);
 }
 
 Bitmap::Bitmap(Bitmap const& source, Rect const& src_rect, bool transparent) {
@@ -1025,7 +914,7 @@ void Bitmap::ToneBlit(int x, int y, Bitmap const& src, Rect const& src_rect, con
 			Blit(x, y, src, src_rect, 255);
 		return;
 	}
-	
+
 	// FIXME
 	// Pixman ToneBlit is broken.
 	// Slow (working) software implementation:
@@ -1059,7 +948,7 @@ void Bitmap::ToneBlit(int x, int y, Bitmap const& src, Rect const& src_rect, con
 	}
 
 	End(src);
-	
+
 	// Pixman ToneBlit code
 	/*
 	if (&src != this)

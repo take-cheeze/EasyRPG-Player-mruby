@@ -101,10 +101,17 @@ std::string Utils::FromWideString(const Utils::wstring& str) {
 }
 
 bool Utils::IsBigEndian() {
-    union {
+    static union {
         uint32_t i;
         char c[4];
     } d = {0x01020304};
-
     return(d.c[0] == 1);
+}
+
+std::string Utils::GetExt(std::string const& str) {
+	std::string::const_reverse_iterator const i =
+			std::find(str.rbegin(), str.rend(), '.');
+	return (i != str.rend())
+			? LowerCase(std::string(i.base(), str.end()))
+			: std::string();
 }

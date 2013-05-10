@@ -32,6 +32,12 @@ namespace Utils {
 #endif
 
 	/**
+	 * returns case lowered string from the last '.' to end of the passed string
+	 * if '.' isn't found empty string is returned
+	 */
+	std::string GetExt(std::string const& str);
+
+	/**
 	 * Converts a string to lower case.
 	 *
 	 * @param str string to convert.

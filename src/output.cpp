@@ -39,6 +39,7 @@
 #include "bitmap.h"
 #include "main_data.h"
 #include "baseui.h"
+#include "image_io.h"
 
 #include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
@@ -122,7 +123,7 @@ bool Output::TakeScreenshot(std::string const& file) {
 }
 
 bool Output::TakeScreenshot(std::ostream& os) {
-	return DisplayUi->GetDisplaySurface()->WritePNG(os);
+	return ImageIO::WritePNG(DisplayUi->GetDisplaySurface(), os);
 }
 
 void Output::Error(const char* fmt, ...) {

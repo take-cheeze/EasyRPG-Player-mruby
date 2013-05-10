@@ -46,7 +46,7 @@ BotUi::BotUi(EASYRPG_SHARED_PTR<BotInterface> const& inf)
 		(8*4, mask[0], mask[1], mask[2], mask[3], PF::NoAlpha);
 	Bitmap::SetFormat(Bitmap::ChooseFormat(format));
 
-	main_surface = Bitmap::Create(SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT, false, 4);
+	main_surface = Bitmap::Create(SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT, false);
 }
 
 void BotUi::ProcessEvents() {

@@ -197,7 +197,6 @@ struct FileFinder_ : boost::noncopyable {
 	bool IsRPG2kProject(ProjectTree const& dir);
 
   private:
-
 	boost::optional<std::string> FindFile(ProjectTree const& tree,
 										  std::string const& dir,
 										  std::string const& name,

@@ -64,7 +64,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions(-D _DEBUG=1)
 endif()
 
-foreach(i Iconv Expat Freetype JPEG Pixman PNG SDL ZLIB Boost)
+foreach(i Iconv Expat Freetype Pixman PNG SDL ZLIB Boost)
   find_package(${i} REQUIRED)
 
   string(TOUPPER ${i} i)
@@ -169,7 +169,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://easy-rpg.org/")
   set(CPACK_DEBIAN_PACKAGE_MAINTAINER "take_cheeze")
   set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    libexpat1 libfreetype6 libjpeg8 libpixman-1-0 libpng12-0 zlib1g libsdl1.2debian
+    libexpat1 libfreetype6 libpixman-1-0 libpng12-0 zlib1g libsdl1.2debian
     libsdl-mixer1.2 libopenal1 libogg0 libflac8 libvorbis0a libvorbisenc2 libsndfile1
     liblua5.1-0 libboost-thread-dev libboost-chrono-dev libboost-system-dev libstdc++6
     libgcc1 libasound2 libpulse0 libxext6 libcaca0 libmikmod2 libvorbisfile3 libmad0

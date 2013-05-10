@@ -57,7 +57,7 @@ public:
 	 * @param transparent allow transparency on bitmap.
 	 * @param flags bitmap flags.
 	 */
-	static BitmapRef Create(const std::string& filename, bool transparent = true, uint32_t flags = 0);
+	static BitmapRef Create(const std::string& filename, bool transparent = true);
 
 	/*
 	 * Loads a bitmap from memory.
@@ -67,7 +67,7 @@ public:
 	 * @param transparent allow transparency on bitmap.
 	 * @param flags bitmap flags.
 	 */
-	static BitmapRef Create(const uint8_t* data, unsigned bytes, bool transparent = true, uint32_t flags = 0);
+	static BitmapRef Create(const uint8_t* data, unsigned bytes, bool transparent = true);
 
 	/**
 	 * Creates a bitmap from another.
@@ -86,16 +86,7 @@ public:
 	 * @param bpp surface bpp.
 	 * @param transparent allow transparency on surface.
 	 */
-	static BitmapRef Create(int width, int height, bool transparent = true, int bpp = 0);
-
-	/**
-	 * Creates a copy of an existing bitmap.
-	 *
-	 * @//param source : source bitmap
-	 * @//param src_rect : rect to copy from source bitmap
-	 * @//param transparent : allow transparency on bitmap
-	 */
-	// static BitmapRef Create(Bitmap const& source, Rect const& src_rect, bool transparent = true);
+	static BitmapRef Create(int width, int height, bool transparent = true);
 
 	/**
 	 * Destructor.
@@ -147,6 +138,11 @@ public:
 	static const uint32_t System  = 0x80000000;
 	static const uint32_t Chipset = 0x40000000;
 
+	/*
+	 * apply material type optimization
+	 */
+	void CheckPixels(uint32_t flags);
+
 	/**
 	 * Creates a resampled bitmap.
 	 *
@@ -165,14 +161,6 @@ public:
 	TileOpacity GetTileOpacity(int row, int col);
 
 	bool IsAttachedToBitmapScreen();
-
-	/**
-	 * Writes PNG converted bitmap to output stream.
-	 *
-	 * @param os output stream that PNG will be output.
-	 * @return true if success, otherwise false.
-	 */
-	bool WritePNG(std::ostream& os) const;
 
 protected:
 	Bitmap();
@@ -198,8 +186,6 @@ protected:
 	void End();
 
 	TileOpacity CheckOpacity(Rect const& rect);
-
-	void CheckPixels(uint32_t flags);
 
 	DynamicFormat format;
 
@@ -651,8 +637,6 @@ protected:
 	bool editing;
 public:
 	Bitmap(int width, int height, bool transparent);
-	Bitmap(const std::string& filename, bool transparent, uint32_t flags);
-	Bitmap(const uint8_t* data, unsigned bytes, bool transparent, uint32_t flags);
 	Bitmap(Bitmap const& source, Rect const& src_rect, bool transparent);
 	Bitmap(void *pixels, int width, int height, int pitch, const DynamicFormat& format);
 
