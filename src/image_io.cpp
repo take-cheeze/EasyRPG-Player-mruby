@@ -6,7 +6,6 @@
 
 #include <png.h>
 #include <zlib.h>
-#include <jpeglib.h>
 
 #include <fstream>
 
