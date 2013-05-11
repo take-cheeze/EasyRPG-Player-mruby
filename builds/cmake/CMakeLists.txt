@@ -51,6 +51,20 @@ if(RUBY_FOUND)
     WORKING_DIRECTORY "${SHINONOME_PATH}")
 endif()
 
+# exfont
+set(EXFONT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/exfont")
+include_directories("${EXFONT_PATH}")
+set(EXFONT_SRC "${EXFONT_PATH}/exfont.cxx")
+find_package(DevIL)
+if(${RUBY_FOUND} AND ${IL_FOUND})
+  set(EXFONT_GENERATOR "${EXFONT_PATH}/exfont2cxx.rb")
+  add_custom_command(
+    OUTPUT ${EXFONT_SRC} "${EXFONT_PATH}/exfont.hxx"
+    COMMAND "${RUBY_EXECUTABLE}" "${EXFONT_GENERATOR}"
+    DEPENDS ${EXFONT_GENERATOR} "${EXFONT_PATH}/exfont.png"
+    WORKING_DIRECTORY "${EXFONT_PATH}")
+endif()
+
 # endianess check
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   include(TestBigEndian)
@@ -121,7 +135,7 @@ set(MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../../src/main.cpp")
 # static library
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/../../src SRCS)
 list(REMOVE_ITEM SRCS ${MAIN_FILE})
-list(APPEND SRCS ${SHINONOME_SRCS})
+list(APPEND SRCS ${SHINONOME_SRCS} ${EXFONT_SRC})
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
   list(APPEND SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/player.rc")
 endif()

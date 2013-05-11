@@ -38,7 +38,6 @@ struct Cache_ : boost::noncopyable {
 	BitmapRef Battlecharset(const std::string& filename);
 	BitmapRef Battleweapon(const std::string& filename);
 	BitmapRef Charset(const std::string& filename);
-	BitmapRef Exfont();
 	BitmapRef Faceset(const std::string& filename);
 	BitmapRef Frame(const std::string& filename);
 	BitmapRef Gameover(const std::string& filename);

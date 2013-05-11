@@ -45,7 +45,9 @@ bool operator<(ShinonomeGlyph const& lhs, uint32_t const code) {
 namespace {
 	typedef std::map<std::string, EASYRPG_WEAK_PTR<boost::remove_pointer<FT_Face>::type> > face_cache_type;
 	face_cache_type face_cache;
-	ShinonomeGlyph const* find_glyph(ShinonomeGlyph const* data, size_t size, uint32_t code) {
+
+	template<size_t size>
+	ShinonomeGlyph const* find_glyph(ShinonomeGlyph const* data, uint32_t code) {
 		ShinonomeGlyph const* ret = std::lower_bound(data, data + size, code);
 		if(ret != (data + size) and ret->code == code) {
 			return ret;
@@ -57,14 +59,14 @@ namespace {
 	}
 
 	ShinonomeGlyph const* find_gothic_glyph(uint32_t code) {
-		return find_glyph(SHINONOME_GOTHIC,
-						  sizeof(SHINONOME_GOTHIC) / sizeof(ShinonomeGlyph), code);
+		return find_glyph<sizeof(SHINONOME_GOTHIC) / sizeof(ShinonomeGlyph)>
+				(SHINONOME_GOTHIC, code);
 	}
 
 	ShinonomeGlyph const* find_mincho_glyph(uint32_t code) {
 		ShinonomeGlyph const* const mincho =
-			find_glyph(SHINONOME_MINCHO,
-					   sizeof(SHINONOME_MINCHO) / sizeof(ShinonomeGlyph), code);
+				find_glyph<sizeof(SHINONOME_MINCHO) / sizeof(ShinonomeGlyph)>
+				(SHINONOME_MINCHO, code);
 		return mincho == NULL? find_gothic_glyph(code) : mincho;
 	}
 
@@ -145,8 +147,8 @@ void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& 
 	size_t const width = glyph->is_full? FULL_WIDTH : HALF_WIDTH;
 
 	unsigned const
-		src_x = color == ColorShadow? 16 : color % 10 * 16 + (16 - width) / 2,
-	    src_y = color == ColorShadow? 32 : color / 10 * 16 + 48 + (16 - HEIGHT) / 2;
+			src_x = (color == ColorShadow? 16 : color % 10 * 16) + (16 - width) / 2,
+			src_y = (color == ColorShadow? 32 : color / 10 * 16 + 48) + (16 - HEIGHT) / 2;
 
 	for(size_t y_ = 0; y_ < HEIGHT; ++y_) {
 		for(size_t x_ = 0; x_ < width; ++x_) {

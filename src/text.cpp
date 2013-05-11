@@ -23,6 +23,7 @@
 #include "bitmap.h"
 #include "font.h"
 #include "text.h"
+#include "exfont.hxx"
 
 #include <cctype>
 
@@ -56,8 +57,6 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, 
 
 	// Load the system file for the shadow and text color
 	BitmapRef system = Cache().System(Data::system.system_name);
-	// Load the exfont-file
-	BitmapRef exfont = Cache().Exfont();
 
 	// Get the Shadow color
 	Color shadow_color(Cache().system_info.sh_color);
@@ -77,76 +76,50 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, 
 	// Where to draw the next glyph (x pos)
 	int next_glyph_pos = 0;
 
-	// The current char is an exfont
-	bool is_exfont = false;
-
 	// This loops always renders a single char, color blends it and then puts
 	// it onto the text_surface (including the drop shadow)
 	for (boost::u8_to_u32_iterator<std::string::const_iterator>
 			 c(text.begin(), text.begin(), text.end()),
 			 end(text.end(), text.begin(), text.end()); c != end; ++c) {
-		Rect next_glyph_rect(next_glyph_pos, 0, 0, 0);
+		Rect const next_glyph_rect(next_glyph_pos, 0, 0, 0);
 
-		boost::u8_to_u32_iterator<std::string::const_iterator> next_c_it = boost::next(c);
+		boost::u8_to_u32_iterator<std::string::const_iterator> const next_c_it = boost::next(c);
 		uint32_t const next_c = std::distance(c, end) > 1? *next_c_it : 0;
 
 		// ExFont-Detection: Check for A-Z or a-z behind the $
 		if (*c == '$' && std::isalpha(next_c)) {
-			int exfont_value = -1;
-			// Calculate which exfont shall be rendered
-			if (islower(next_c)) {
-				exfont_value = 26 + next_c - 'a';
-			} else if (isupper(next_c)) {
-				exfont_value = next_c - 'A';
-			} else { assert(false); }
-			is_exfont = true;
+			int const exfont_index =
+					std::islower(next_c)? next_c - 'a' + 26:
+					std::isupper(next_c)? next_c - 'A':
+					-1;
+			assert(exfont_index != -1);
 
-			BitmapRef mask = Bitmap::Create(12, 12, true);
+			size_t const color_base = (16 - 12) / 2;
+			unsigned const
+					shadow_x = 16 + color_base, shadow_y = 32 + color_base,
+					src_x = color % 10 * 16 + color_base,
+					src_y = color / 10 * 16 + 48 + color_base;
 
-			// Get exfont from graphic
-			Rect const rect_exfont((exfont_value % 13) * 12, (exfont_value / 13) * 12, 12, 12);
+			for(size_t y = 0; y < 12; ++y) {
+				for(size_t x = 0; x < 12; ++x) {
+					if(EASYRPG_EXFONT[exfont_index][y] & (0x01 << x)) {
+						// color
+						text_surface->SetPixel(
+							next_glyph_rect.x + x, next_glyph_rect.y + y,
+							system->GetPixel(src_x + x, src_y + y));
+						// shadow
+						text_surface->SetPixel(
+							next_glyph_rect.x + x + 1, next_glyph_rect.y + y + 1,
+							system->GetPixel(shadow_x + x, shadow_y + y));
+					}
+				}
+			}
 
-			// Create a mask
-			mask->Clear();
-			mask->Blit(0, 0, *exfont, rect_exfont, 255);
-
-			// Get color region from system graphic
-			Rect clip_system(8+16*(color%10), 4+48+16*(color/10), 6, 12);
-
-			BitmapRef char_surface = Bitmap::Create(mask->GetWidth(), mask->GetHeight(), true);
-			char_surface->SetTransparentColor(dest.GetTransparentColor());
-			char_surface->Clear();
-
-			// Blit gradient color background (twice because of full glyph)
-			char_surface->Blit(0, 0, *system, clip_system, 255);
-			char_surface->Blit(6, 0, *system, clip_system, 255);
-
-			// Blit mask onto background
-			char_surface->MaskBlit(0, 0, *mask, mask->GetRect());
-
-			BitmapRef char_shadow = Bitmap::Create(mask->GetWidth(), mask->GetHeight(), true);
-			char_shadow->SetTransparentColor(dest.GetTransparentColor());
-			char_shadow->Clear();
-
-			// Blit solid color background
-			char_shadow->Fill(shadow_color);
-			// Blit mask onto background
-			char_shadow->MaskBlit(0, 0, *mask, mask->GetRect());
-
-			// Blit first shadow and then text
-			text_surface->Blit(next_glyph_rect.x + 1, next_glyph_rect.y + 1, *char_shadow, char_shadow->GetRect(), 255);
-			text_surface->Blit(next_glyph_rect.x, next_glyph_rect.y, *char_surface, char_surface->GetRect(), 255);
+			next_glyph_pos += 12;
+			// Skip the alphabet part of exfont
+			++c;
 		} else { // Not ExFont, draw normal text
 			font->Render(*text_surface, next_glyph_rect.x, next_glyph_rect.y, *system, color, *c);
-		}
-
-		// If it's a full size glyph, add the size of a half-size glypth twice
-		if (is_exfont) {
-			is_exfont = false;
-			next_glyph_pos += 12;
-			// Skip the next character
-			++c;
-		} else {
 			std::string const glyph(c.base(), next_c_it.base());
 			next_glyph_pos += Font::Default()->GetSize(glyph).width;
 		}

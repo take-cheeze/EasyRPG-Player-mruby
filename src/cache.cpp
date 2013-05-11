@@ -27,7 +27,6 @@
 
 #include "cache.h"
 #include "filefinder.h"
-#include "exfont.h"
 #include "bitmap.h"
 #include "output.h"
 #include "player.h"
@@ -118,16 +117,6 @@ BOOST_PP_SEQ_FOR_EACH(macro, ,
 					  )
 
 #undef macro
-
-BitmapRef Cache_::Exfont() {
-	string_pair const hash("\x00","ExFont");
-
-	cache_type::const_iterator const it = cache.find(hash);
-
-	if (it == cache.end() || it->second.expired()) {
-		return(cache[hash] = Bitmap::Create(exfont_h, sizeof(exfont_h), true)).lock();
-	} else { return it->second.lock(); }
-}
 
 BitmapRef Cache_::Tile(const std::string& filename, int tile_id) {
 	tile_pair const key(filename, tile_id);
