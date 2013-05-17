@@ -24,12 +24,12 @@
 #include "scene_skill.h"
 
 Scene_ActorTarget::Scene_ActorTarget(int item_id, int item_index) :
-		Scene(ActorTarget),
+		Scene("ActorTarget"),
 		id(item_id), index(item_index), use_item(true) {}
 
 Scene_ActorTarget::Scene_ActorTarget(
 	int skill_id, int actor_index, int skill_index) :
-		Scene(ActorTarget),
+		Scene("ActorTarget"),
 		id(skill_id), index(skill_index),
 		actor_index(actor_index), use_item(false) {}
 

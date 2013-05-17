@@ -29,21 +29,20 @@ Window_Command::Window_Command(std::vector<std::string> commands, int width, int
 	item_max = commands.size();
 
 	SetContents(Bitmap::Create(this->width - 16, item_max * 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	Refresh();
 }
 
 void Window_Command::Refresh() {
-	contents->Clear();
+	contents->clear();
 	for (int i = 0; i < item_max; i++) {
 		DrawItem(i, Font::ColorDefault);
 	}
 }
 
 void Window_Command::DrawItem(int index, Font::SystemColor color) {
-	contents->ClearRect(Rect(0, 16 * index, contents->GetWidth() - 0, 16));
-	contents->TextDraw(0, 16 * index + 2, color, commands[index]);
+	contents->fill(Rect(0, 16 * index, contents->width() - 0, 16), Color());
+	contents->draw_text(0, 16 * index + 2, commands[index], color);
 }
 
 void Window_Command::DisableItem(int i) {

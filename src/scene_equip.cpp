@@ -26,7 +26,7 @@
 #include "scene_menu.h"
 
 Scene_Equip::Scene_Equip(int actor_index, int equip_index) :
-		Scene(Equip),
+		Scene("Equip"),
 		actor_index(actor_index),
 		equip_index(equip_index) {}
 

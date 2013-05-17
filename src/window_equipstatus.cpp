@@ -31,14 +31,13 @@ Window_EquipStatus::Window_EquipStatus(int ix, int iy, int iwidth, int iheight, 
 	dirty(true) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	Refresh();
 }
 
 void Window_EquipStatus::Refresh() {
 	if (dirty) {
-		contents->Clear();
+		contents->clear();
 
 		int y_offset;
 
@@ -120,13 +119,13 @@ void Window_EquipStatus::DrawParameter(int cx, int cy, int type) {
 	}
 
 	// Draw Term
-	contents->TextDraw(cx, cy, 1, name);
+	contents->draw_text(cx, cy, name, 1);
 
 	// Draw Value
 	cx += 60;
 	std::stringstream ss;
 	ss << value;
-	contents->TextDraw(cx + 18, cy, Font::ColorDefault, ss.str(), Text::AlignRight);
+	contents->draw_text(cx + 18, cy, ss.str(), Font::ColorDefault, Text::AlignRight);
 
 	if (draw_params) {
 		// Draw New Value
@@ -134,6 +133,6 @@ void Window_EquipStatus::DrawParameter(int cx, int cy, int type) {
 		ss.str("");
 		ss << new_value;
 		int color = GetNewParameterColor(value, new_value);
-		contents->TextDraw(cx + 18, cy, color, ss.str(), Text::AlignRight);
+		contents->draw_text(cx + 18, cy, ss.str(), color, Text::AlignRight);
 	}
 }

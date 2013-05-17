@@ -44,8 +44,8 @@ void Picture::UpdateSprite() {
 	sprite->SetZ(1000 + data.ID);
 	sprite->SetZoomX(data.current_magnify / 100.0);
 	sprite->SetZoomY(data.current_magnify / 100.0);
-	sprite->SetOx((int)(sprite->GetBitmap()->GetWidth() * data.current_magnify / 200.0));
-	sprite->SetOy((int)(sprite->GetBitmap()->GetHeight() * data.current_magnify / 200.0));
+	sprite->SetOx((int)(sprite->GetBitmap()->width() * data.current_magnify / 200.0));
+	sprite->SetOy((int)(sprite->GetBitmap()->height() * data.current_magnify / 200.0));
 	sprite->SetAngle(data.effect_mode == 1 ? data.current_rotation : 0.0);
 	sprite->SetWaverPhase(data.effect_mode == 2 ? data.current_waver : 0.0);
 	sprite->SetWaverDepth(data.effect_mode == 2 ? data.effect2_speed : 0);
@@ -67,8 +67,8 @@ void Picture::Show(const std::string& _name) {
 	BitmapRef bitmap = Cache().Picture(data.name);
 	sprite.reset(new Sprite());
 	sprite->SetBitmap(bitmap);
-	sprite->SetOx(bitmap->GetWidth() / 2);
-	sprite->SetOy(bitmap->GetHeight() / 2);
+	sprite->SetOx(bitmap->width() / 2);
+	sprite->SetOy(bitmap->height() / 2);
 }
 
 void Picture::Erase() {

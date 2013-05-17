@@ -23,7 +23,7 @@
 #include "scene_shop.h"
 #include "output.h"
 
-Scene_Shop::Scene_Shop() : Scene(Shop) {}
+Scene_Shop::Scene_Shop() : Scene("Shop") {}
 
 void Scene_Shop::Start() {
 	shop_window.reset(new Window_Shop(0, 160, 320, 80));

@@ -50,7 +50,6 @@ Window_Message::Window_Message(int ix, int iy, int iwidth, int iheight) :
 	gold_window(new Window_Gold(232, 0, 88, 32))
 {
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	visible = false;
 	SetZ(10000);
@@ -72,7 +71,7 @@ Window_Message::~Window_Message() {
 }
 
 void Window_Message::StartMessageProcessing() {
-	contents->Clear();
+	contents->clear();
 	text.clear();
 	for (size_t i = 0; i < Game_Message::texts.size(); ++i) {
 		std::string const line = Game_Message::texts[i];
@@ -122,7 +121,7 @@ void Window_Message::StartNumberInputProcessing() {
 }
 
 void Window_Message::InsertNewPage() {
-	contents->Clear();
+	contents->clear();
 
 	if (Game_Message::fixed_position) {
 		y = Game_Message::position * 80;
@@ -346,17 +345,17 @@ void Window_Message::UpdateMessage() {
 			case 'v':
 				// These commands support indirect access via \v[]
 				command_result = ParseCommandCode();
-				contents->TextDraw(contents_x, contents_y, text_color, command_result);
-				contents_x += contents->GetFont()->GetSize(command_result).width;
+				contents->draw_text(contents_x, contents_y, command_result, text_color);
+				contents_x += contents->text_size(command_result).width;
 				break;
 			case '\\':
 				// Show Backslash
-				contents->TextDraw(contents_x, contents_y, text_color, std::string("\\"));
-				contents_x += contents->GetFont()->GetSize("\\").width;
+				contents->draw_text(contents_x, contents_y, std::string("\\"), text_color);
+				contents_x += contents->text_size("\\").width;
 				break;
 			case '_':
 				// Insert half size space
-				contents_x += contents->GetFont()->GetSize(" ").width / 2;
+				contents_x += contents->text_size(" ").width / 2;
 				break;
 			case '$':
 				// Show Gold Window
@@ -401,15 +400,17 @@ void Window_Message::UpdateMessage() {
 				   && std::distance(text_index, end) > 1
 				   && std::isalpha(*boost::next(text_index))) {
 			// ExFont
-			contents->TextDraw(contents_x, contents_y, text_color,
-							   std::string(text_index.base(), boost::next(text_index, 2).base()));
+			contents->draw_text(contents_x, contents_y,
+								std::string(text_index.base(),
+											boost::next(text_index, 2).base()),
+								text_color);
 			contents_x += 12;
 			++text_index;
 		} else {
 			std::string const glyph(text_index.base(), boost::next(text_index).base());
 
-			contents->TextDraw(contents_x, contents_y, text_color, glyph);
-			contents_x += contents->GetFont()->GetSize(glyph).width;
+			contents->draw_text(contents_x, contents_y, glyph, text_color);
+			contents_x += contents->text_size(glyph).width;
 		}
 
 		++text_index;
@@ -578,7 +579,7 @@ void Window_Message::UpdateCursorRect() {
 	if (index >= 0) {
 		int x_pos = 2;
 		int y_pos = (Game_Message::choice_start + index) * 16;
-		int width = contents->GetWidth();
+		int width = contents->width();
 
 		if (!Game_Message::face_name.empty()) {
 			if (Game_Message::face_left_position) {

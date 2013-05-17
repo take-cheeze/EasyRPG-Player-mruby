@@ -27,6 +27,7 @@
 #include "system.h"
 #include "drawable.h"
 #include "zobj.h"
+#include "color.h"
 #include "memory_management.h"
 
 #include <boost/noncopyable.hpp>
@@ -150,6 +151,27 @@ struct Graphics_ : boost::noncopyable {
 
 	unsigned SecondToFrame(float second);
 
+	BitmapRef const& ScreenBuffer() const;
+
+	/**
+	 * Gets background color.
+	 *
+	 * @return background color.
+	 */
+	Color const& GetBackcolor() const;
+
+	/**
+	 * Sets background color.
+	 *
+	 * @param color new background color.
+	 */
+	void SetBackcolor(const Color &color);
+
+	/**
+	 * Cleans video buffer.
+	 */
+	void CleanScreen();
+
   private:
 	void InternUpdate();
 	void UpdateTitle(double fps);
@@ -187,6 +209,11 @@ struct Graphics_ : boost::noncopyable {
 	std::vector<EASYRPG_SHARED_PTR<State> > stack;
 
 	static bool SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second);
+
+	BitmapRef const screen_buffer_;
+
+	/** Color for display background. */
+	Color back_color;
 };
 
 Graphics_& Graphics();

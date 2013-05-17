@@ -21,7 +21,7 @@
 #include "scene_file.h"
 
 Scene_Load::Scene_Load() :
-		Scene_File(Load, Data::terms.load_game_message) {}
+		Scene_File("Load", Data::terms.load_game_message) {}
 
 void Scene_Load::Action(int /* index */) {
 	// TODO load game

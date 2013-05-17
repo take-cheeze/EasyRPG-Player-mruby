@@ -27,7 +27,7 @@
 #include "scene_menu.h"
 
 Scene_Skill::Scene_Skill(int actor_index, int skill_index) :
-		Scene(Skill),
+		Scene("Skill"),
 		actor_index(actor_index), skill_index(skill_index) {}
 
 void Scene_Skill::Start() {
@@ -62,7 +62,7 @@ void Scene_Skill::Update() {
 			if (Data::skills[skill_id - 1].type == RPG::Skill::Type_switch) {
 				actor->SetSp(actor->GetSp() - actor->CalculateSkillCost(skill_id));
 				Game_Switches[Data::skills[skill_id - 1].switch_id] = true;
-				Scene::PopUntil(Scene::Map);
+				Scene::PopUntil("Map");
 				Game_Map::SetNeedRefresh(true);
 			} else if (Data::skills[skill_id - 1].type == RPG::Skill::Type_normal) {
 				Scene::Push(EASYRPG_MAKE_SHARED<Scene_ActorTarget>(skill_id, actor_index, skill_window->GetIndex()));

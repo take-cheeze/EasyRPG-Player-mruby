@@ -64,8 +64,6 @@ public:
 	void ToggleFullscreen();
 	void ToggleZoom();
 	void UpdateDisplay();
-	void BeginScreenCapture();
-	BitmapRef EndScreenCapture();
 	void SetTitle(const std::string &title);
 	void DrawScreenText(const std::string &text);
 	void DrawScreenText(const std::string &text, int x, int y, Color const& color = Color(255, 255, 255, 255));
@@ -113,14 +111,6 @@ private:
 	/** @} */
 
 	/**
-	 * Blits a bitmap scaled x2 to an SDL surface.
-	 *
-	 * @param src source bitmap.
-	 * @param dst destination surface.
-	 */
-	void Blit2X(Bitmap const& src, SDL_Surface* dst);
-
-	/**
 	 * Sets app icon.
 	 */
 	void SetAppIcon();
@@ -142,7 +132,7 @@ private:
 	bool mode_changing;
 
 	/** Main SDL window. */
-	SDL_Surface* main_window;
+	SDL_Surface* screen;
 
 	boost::scoped_ptr<AudioInterface> audio_;
 };

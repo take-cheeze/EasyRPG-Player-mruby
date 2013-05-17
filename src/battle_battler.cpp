@@ -85,17 +85,14 @@ Battle::Enemy::Enemy(const RPG::TroopMember* member, int id) :
 
 void Battle::Enemy::CreateSprite() {
 	BitmapRef graphic = Cache().Monster(rpg_enemy->battler_name);
-	bool hue_change = rpg_enemy->battler_hue != 0;
-	if (hue_change) {
-	    BitmapRef new_graphic = Bitmap::Create(graphic->GetWidth(), graphic->GetHeight());
-		new_graphic->HueChangeBlit(0, 0, *graphic, graphic->GetRect(), rpg_enemy->battler_hue);
-		graphic = new_graphic;
+	if (rpg_enemy->battler_hue != 0) {
+	    (graphic = Bitmap::Create(graphic))->hue_change(rpg_enemy->battler_hue);
 	}
 
 	sprite.reset(new Sprite());
 	sprite->SetBitmap(graphic);
-	sprite->SetOx(graphic->GetWidth() / 2);
-	sprite->SetOy(graphic->GetHeight() / 2);
+	sprite->SetOx(graphic->width() / 2);
+	sprite->SetOy(graphic->height() / 2);
 	sprite->SetX(member->x);
 	sprite->SetY(member->y);
 	sprite->SetZ(member->y);

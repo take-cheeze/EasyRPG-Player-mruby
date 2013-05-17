@@ -20,6 +20,7 @@
 
 // Headers
 #include "system.h"
+#include <boost/static_assert.hpp>
 
 /**
  * Color class.
@@ -84,5 +85,7 @@ public:
 	/** Alpha component. */
 	uint8_t alpha;
 };
+
+BOOST_STATIC_ASSERT(sizeof(Color) == 4);
 
 #endif

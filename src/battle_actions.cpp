@@ -24,7 +24,7 @@ bool Battle::WaitAction::operator()() {
 }
 
 bool Battle::SpriteAction::operator()() {
-	((Scene_Battle*) Scene::Find(Scene::Battle).get())->SetAnimState(*ally, anim_state);
+	((Scene_Battle*) Scene::Find("Battle").get())->SetAnimState(*ally, anim_state);
 	return true;
 }
 

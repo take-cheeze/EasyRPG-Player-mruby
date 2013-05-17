@@ -33,7 +33,6 @@ Window_Selectable::Window_Selectable(int ix, int iy, int iwidth, int iheight) :
 
 void Window_Selectable::CreateContents() {
 	SetContents(Bitmap::Create(width - 16, max(height - 16, GetRowMax() * 16)));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 }
 
 // Properties
@@ -68,7 +67,7 @@ int Window_Selectable::GetPageItemMax() {
 
 Rect Window_Selectable::GetItemRect(int index) {
 	Rect rect = Rect();
-	rect.width = (contents->GetWidth()) / column_max - 4;
+	rect.width = (contents->width()) / column_max - 4;
 	rect.height = 12;
 	rect.x = index % column_max * rect.width;
 	if (rect.x > 0){

@@ -45,10 +45,9 @@ void Window_ShopBuy::Refresh() {
 
 	CreateContents();
 
-	contents->Clear();
-	Rect rect(0, 0, contents->GetWidth(), contents->GetHeight());
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
-	contents->Clear();
+	contents->clear();
+	Rect rect(0, 0, contents->width(), contents->height());
+	contents->clear();
 
 	for (size_t i = 0; i < data.size(); ++i) {
 		DrawItem(i);
@@ -59,13 +58,12 @@ void Window_ShopBuy::DrawItem(int index) {
 	int item_id = data[index];
 	bool enabled = Data::items[item_id - 1].price <= Game_Party::GetGold();
 	Rect rect = GetItemRect(index);
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
-	contents->ClearRect(rect);
+	contents->fill(rect, Color());
 	DrawItemName(&Data::items[item_id - 1], rect.x, rect.y, enabled);
 
 	std::stringstream ss;
 	ss << Data::items[item_id - 1].price;
-	contents->TextDraw(rect.width + 4, rect.y, enabled ? Font::ColorDefault : Font::ColorDisabled, ss.str(), Text::AlignRight);
+	contents->draw_text(rect.width + 4, rect.y, ss.str(), enabled ? Font::ColorDefault : Font::ColorDisabled, Text::AlignRight);
 }
 
 void Window_ShopBuy::UpdateHelp() {

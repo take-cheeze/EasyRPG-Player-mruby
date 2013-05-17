@@ -53,7 +53,7 @@ void Window_Skill::Refresh() {
 
 	CreateContents();
 
-	contents->Clear();
+	contents->clear();
 
 	if (data.size() == 0) {
 		data.push_back(0);
@@ -68,7 +68,7 @@ void Window_Skill::Refresh() {
 
 void Window_Skill::DrawItem(int index) {
 	Rect rect = GetItemRect(index);
-	contents->ClearRect(rect);
+	contents->fill(rect, Color());
 
 	int skill_id = data[index];
 
@@ -79,8 +79,8 @@ void Window_Skill::DrawItem(int index) {
 
 		std::stringstream ss;
 		ss << costs;
-		contents->TextDraw(rect.x + rect.width - 28, rect.y, color, "-");
-		contents->TextDraw(rect.x + rect.width - 6, rect.y, color, ss.str(), Text::AlignRight);
+		contents->draw_text(rect.x + rect.width - 28, rect.y, "-", color);
+		contents->draw_text(rect.x + rect.width - 6, rect.y, ss.str(), color, Text::AlignRight);
 
 		DrawSkillName(&Data::skills[skill_id - 1], rect.x, rect.y, enabled);
 	}

@@ -24,12 +24,12 @@
 #include "window_shopparty.h"
 #include "bitmap.h"
 #include "font.h"
+#include "tone.h"
 
 Window_ShopParty::Window_ShopParty(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	cycle = 0;
 	item_id = 0;
@@ -40,19 +40,18 @@ Window_ShopParty::Window_ShopParty(int ix, int iy, int iwidth, int iheight) :
 		const std::string& sprite_name = actor->GetCharacterName();
 		int sprite_id = actor->GetCharacterIndex();
 		BitmapRef bm = Cache().Charset(sprite_name);
-		int width = bm->GetWidth() / 4 / 3;
-		int height = bm->GetHeight() / 2 / 4;
+		int width = bm->width() / 4 / 3;
+		int height = bm->height() / 2 / 4;
 		for (int j = 0; j < 3; j++) {
 			int sx = ((sprite_id % 4) * 3 + j) * width;
 			int sy = ((sprite_id / 4) * 4 + 2) * height;
 			Rect src(sx, sy, width, height);
 			for (int k = 0; k < 2; k++) {
-				BitmapRef bm2 = Bitmap::Create(width, height, true);
-				bm2->SetTransparentColor(bm->GetTransparentColor());
-				bm2->Clear();
-				bm2->Blit(0, 0, *bm, src, 255);
+				BitmapRef bm2 = Bitmap::Create(width, height);
+				bm2->clear();
+				bm2->blit(0, 0, *bm, src, 255);
 				if (k == 0)
-					bm2->ToneBlit(0, 0, *bm2, bm2->GetRect(), Tone(0, 0, 0, 255));
+					bm2->tone_blit(BlitCommon(0, 0, *bm2, bm2->rect()), Tone(0, 0, 0, 255));
 				bitmaps[i][j][k] = bm2;
 			}
 		}
@@ -62,7 +61,7 @@ Window_ShopParty::Window_ShopParty(int ix, int iy, int iwidth, int iheight) :
 }
 
 void Window_ShopParty::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	BitmapRef system = Cache().System(Data::system.system_name);
 
@@ -75,7 +74,7 @@ void Window_ShopParty::Refresh() {
 		}
 		bool equippable = item_id == 0 || actor->IsEquippable(item_id);
 		BitmapRef bm = bitmaps[i][phase][equippable ? 1 : 0];
-		contents->Blit(i * 32, 0, *bm, bm->GetRect(), 255);
+		contents->blit(i * 32, 0, *bm, bm->rect(), 255);
 
 		if (equippable) {
 			//check if item is equipped by each member
@@ -83,7 +82,7 @@ void Window_ShopParty::Refresh() {
 			for (int j = 0; j < 5; ++j)
 				is_equipped |= (actor->GetEquipment(j) == item_id);
 			if (is_equipped)
-				contents->Blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 24, 8, 8), 255);
+				contents->blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 24, 8, 8), 255);
 			else {
 
 				RPG::Item* new_item = &Data::items[item_id - 1];
@@ -131,11 +130,11 @@ void Window_ShopParty::Refresh() {
 					int diff_spi = new_item->spi_points1 - current_item->spi_points1;
 					int diff_agi = new_item->agi_points1 - current_item->agi_points1;
 					if (diff_atk > 0 || diff_def > 0 || diff_spi > 0 || diff_agi > 0)
-						contents->Blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 0, 8, 8), 255);
+						contents->blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 0, 8, 8), 255);
 					else if (diff_atk < 0 || diff_def < 0 || diff_spi < 0 || diff_agi < 0)
-						contents->Blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 16, 8, 8), 255);
+						contents->blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 16, 8, 8), 255);
 					else
-						contents->Blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 8, 8, 8), 255);
+						contents->blit(i * 32 + 20, 24, *system, Rect(128 + 8 * phase, 8, 8, 8), 255);
 				}
 			}
 		}

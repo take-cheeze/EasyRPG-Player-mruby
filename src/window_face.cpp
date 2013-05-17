@@ -24,11 +24,10 @@ Window_Face::Window_Face(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 }
 
 void Window_Face::Refresh() {
-	contents->Clear();
+	contents->clear();
 	DrawActorFace(Game_Actors::GetActor(actor_id), 0, 0);
 }
 

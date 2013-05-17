@@ -34,7 +34,6 @@ Window_BattleStatus::Window_BattleStatus() :
 	SetBorderY(4);
 
 	SetContents(Bitmap::Create(width - 8, height - 8));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	index = -1;
 
@@ -42,7 +41,7 @@ Window_BattleStatus::Window_BattleStatus() :
 }
 
 void Window_BattleStatus::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	for (size_t i = 0; i < Game_Battle::allies.size() && i < 4; i++) {
 		int y = i * 15;
@@ -57,7 +56,7 @@ void Window_BattleStatus::Refresh() {
 
 void Window_BattleStatus::RefreshGauge(int i) {
 	int y = i * 15;
-	contents->ClearRect(Rect(192, y, 44, 15));
+	contents->fill(Rect(192, y, 44, 15), Color());
 	Game_Actor* actor = Game_Battle::allies[i].game_actor;
 	//DrawGauge(actor, i, 192, y);
 	DrawActorSp(actor, 202, y, false);
@@ -78,10 +77,10 @@ void Window_BattleStatus::DrawGauge(Game_Actor* /* actor */, int index, int cx, 
 	Rect dst_rect(cx+16, cy, 25, 16);
 	Rect bar_rect(cx+16, cy, gauge_w, 16);
 
-	contents->Blit(cx+0, cy, *system2, gauge_left, 255);
-	contents->StretchBlit(dst_rect, *system2, gauge_center, 255);
-	contents->Blit(cx+16+25, cy, *system2, gauge_right, 255);
-	contents->StretchBlit(bar_rect, *system2, gauge_bar, 255);
+	contents->blit(cx+0, cy, *system2, gauge_left, 255);
+	contents->stretch_blit(dst_rect, *system2, gauge_center, 255);
+	contents->blit(cx+16+25, cy, *system2, gauge_right, 255);
+	contents->stretch_blit(bar_rect, *system2, gauge_bar, 255);
 }
 
 void Window_BattleStatus::SetActiveCharacter(int _index) {
@@ -148,5 +147,5 @@ void Window_BattleStatus::UpdateCursorRect() {
 	if (index < 0)
 		SetCursorRect(Rect());
 	else
-		SetCursorRect(Rect(0, index * 15, contents->GetWidth(), 16));
+		SetCursorRect(Rect(0, index * 15, contents->width(), 16));
 }

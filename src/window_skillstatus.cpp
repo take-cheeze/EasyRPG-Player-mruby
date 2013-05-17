@@ -26,7 +26,6 @@ Window_SkillStatus::Window_SkillStatus(int ix, int iy, int iwidth, int iheight) 
 	Window_Base(ix, iy, iwidth, iheight), actor_id(-1) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 }
 
 void Window_SkillStatus::SetActor(int actor_id) {
@@ -35,7 +34,7 @@ void Window_SkillStatus::SetActor(int actor_id) {
 }
 
 void Window_SkillStatus::Refresh() {
-	contents->ClearRect(Rect(0, 0, contents->GetWidth(), 16));
+	contents->fill(Rect(0, 0, contents->width(), 16), Color());
 
 	Game_Actor* actor = Game_Actors::GetActor(actor_id);
 

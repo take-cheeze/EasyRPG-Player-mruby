@@ -30,7 +30,6 @@ Window_Shop::Window_Shop(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	switch (Game_Temp::shop_type) {
 		case 0:
@@ -85,7 +84,7 @@ void Window_Shop::UpdateCursorRect() {
 	switch (mode) {
 		case Scene_Shop::BuySellLeave:
 		case Scene_Shop::BuySellLeave2:
-			rect = Rect(4, index * 16 + 2, contents->GetWidth() - 8, 16);
+			rect = Rect(4, index * 16 + 2, contents->width() - 8, 16);
 			break;
 		default:
 			rect = Rect();
@@ -96,44 +95,44 @@ void Window_Shop::UpdateCursorRect() {
 }
 
 void Window_Shop::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	int idx = 0;
 	switch (mode) {
 		case Scene_Shop::BuySellLeave:
 		case Scene_Shop::BuySellLeave2:
-			contents->TextDraw(2, 4, Font::ColorDefault,
-							   mode == Scene_Shop::BuySellLeave2
-							   ? regreeting
-							   : greeting);
+			contents->draw_text(2, 4,
+								mode == Scene_Shop::BuySellLeave2
+								? regreeting
+								: greeting, Font::ColorDefault);
 			idx++;
 
-			contents->TextDraw(12, 4 + idx * 16, Font::ColorDefault, buy_msg);
+			contents->draw_text(12, 4 + idx * 16, buy_msg, Font::ColorDefault);
 			buy_index = idx++;
 
-			contents->TextDraw(12, 4 + idx * 16, Font::ColorDefault, sell_msg);
+			contents->draw_text(12, 4 + idx * 16, sell_msg, Font::ColorDefault);
 			sell_index = idx++;
 
-			contents->TextDraw(12, 4 + idx * 16, Font::ColorDefault, leave_msg);
+			contents->draw_text(12, 4 + idx * 16, leave_msg, Font::ColorDefault);
 			leave_index = idx++;
 			break;
 		case Scene_Shop::Buy:
-			contents->TextDraw(2, 2, Font::ColorDefault, buy_select);
+			contents->draw_text(2, 2, buy_select, Font::ColorDefault);
 			break;
 		case Scene_Shop::BuyHowMany:
-			contents->TextDraw(2, 2, Font::ColorDefault, buy_number);
+			contents->draw_text(2, 2, buy_number, Font::ColorDefault);
 			break;
 		case Scene_Shop::Bought:
-			contents->TextDraw(2, 2, Font::ColorDefault, purchased);
+			contents->draw_text(2, 2, purchased, Font::ColorDefault);
 			break;
 		case Scene_Shop::Sell:
-			contents->TextDraw(2, 2, Font::ColorDefault, sell_select);
+			contents->draw_text(2, 2, sell_select, Font::ColorDefault);
 			break;
 		case Scene_Shop::SellHowMany:
-			contents->TextDraw(2, 2, Font::ColorDefault, sell_number);
+			contents->draw_text(2, 2, sell_number, Font::ColorDefault);
 			break;
 		case Scene_Shop::Sold:
-			contents->TextDraw(2, 2, Font::ColorDefault, sold_msg);
+			contents->draw_text(2, 2, sold_msg, Font::ColorDefault);
 			break;
 	}
 }

@@ -27,28 +27,27 @@ Window_ShopStatus::Window_ShopStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight), item_id(0) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	Refresh();
 }
 
 void Window_ShopStatus::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	if (item_id != 0) {
 		int number = Game_Party::ItemNumber(item_id);
 
-		contents->TextDraw(0, 2, 1, Data::terms.possessed_items);
-		contents->TextDraw(0, 18, 1, Data::terms.equipped_items);
+		contents->draw_text(0, 2, Data::terms.possessed_items, 1);
+		contents->draw_text(0, 18, Data::terms.equipped_items, 1);
 
 		std::stringstream ss;
 		ss << number;
 
-		contents->TextDraw(120, 2, Font::ColorDefault, ss.str(), Text::AlignRight);
+		contents->draw_text(120, 2, ss.str(), Font::ColorDefault, Text::AlignRight);
 
 		ss.str("");
 		ss << Game_Party::ItemNumber(item_id, true);
-		contents->TextDraw(120, 18, Font::ColorDefault, ss.str(), Text::AlignRight);
+		contents->draw_text(120, 18, ss.str(), Font::ColorDefault, Text::AlignRight);
 	}
 }
 

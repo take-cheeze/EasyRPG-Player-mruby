@@ -31,7 +31,6 @@ Window_NumberInput::Window_NumberInput(int ix, int iy, int iwidth, int iheight) 
 	number = 0;
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 	cursor_width = 14;
 	SetZ(10001);
 	opacity = 0;
@@ -43,7 +42,7 @@ Window_NumberInput::Window_NumberInput(int ix, int iy, int iwidth, int iheight) 
 }
 
 void Window_NumberInput::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	char s[7];
 	// Copies digits_max numbers from number-string to s
@@ -52,7 +51,7 @@ void Window_NumberInput::Refresh() {
 	for (int i = 0; i < digits_max; ++i) {
 		char c[2] = {s[i], '\0'};
 		int x = i * (cursor_width - 2) + 12;
-		contents->TextDraw(x, 2, Font::ColorDefault, c);
+		contents->draw_text(x, 2, c, Font::ColorDefault);
 	}
 }
 

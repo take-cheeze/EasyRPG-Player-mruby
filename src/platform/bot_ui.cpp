@@ -23,6 +23,7 @@
 #include "output.h"
 #include "input.h"
 #include "utils.h"
+#include "graphics.h"
 
 #include <boost/chrono.hpp>
 #include <boost/thread.hpp>
@@ -34,19 +35,6 @@ BotUi::BotUi(EASYRPG_SHARED_PTR<BotInterface> const& inf)
 {
 	current_display_mode.width = SCREEN_TARGET_WIDTH;
 	current_display_mode.height = SCREEN_TARGET_HEIGHT;
-
-	uint32_t const mask[4] = {
-		Utils::IsBigEndian()? 0xff000000u : 0x000000ffu,
-		Utils::IsBigEndian()? 0x00ff0000u : 0x0000ff00u,
-		Utils::IsBigEndian()? 0x0000ff00u : 0x00ff0000u,
-		Utils::IsBigEndian()? 0x000000ffu : 0xff000000u,
-	};
-
-	DynamicFormat const format
-		(8*4, mask[0], mask[1], mask[2], mask[3], PF::NoAlpha);
-	Bitmap::SetFormat(Bitmap::ChooseFormat(format));
-
-	main_surface = Bitmap::Create(SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT, false);
 }
 
 void BotUi::ProcessEvents() {
@@ -67,10 +55,6 @@ void BotUi::ProcessEvents() {
 			bot_->resume();
 		}
 	}
-}
-
-BitmapRef BotUi::EndScreenCapture() {
-	return Bitmap::Create(*main_surface, main_surface->GetRect());
 }
 
 uint32_t BotUi::GetTicks() const {

@@ -30,7 +30,6 @@ Window_SaveFile::Window_SaveFile(int ix, int iy, int iwidth, int iheight) :
 	index(0), hero_hp(0), hero_level(0), corrupted(false) {
 
 	SetContents(Bitmap::Create(width - 8, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 	SetZ(9999);
 
 	Refresh();
@@ -58,35 +57,35 @@ void Window_SaveFile::SetCorrupted(bool corrupted) {
 }
 
 void Window_SaveFile::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	std::ostringstream out;
 	out << Data::terms.file << std::setw(2) << std::setfill(' ') << index + 1;
-	contents->TextDraw(4, 2, Font::ColorDefault, out.str());
+	contents->draw_text(4, 2, out.str(), Font::ColorDefault);
 
 	if (corrupted) {
-		contents->TextDraw(4, 16 + 2, Font::ColorKnockout, "Savegame corrupted");
+		contents->draw_text(4, 16 + 2, "Savegame corrupted", Font::ColorKnockout);
 		return;
 	}
 
 	if (party.empty())
 		return;
 
-	contents->TextDraw(8, 16 + 2, Font::ColorDefault, hero_name);
+	contents->draw_text(8, 16 + 2, hero_name, Font::ColorDefault);
 
-	contents->TextDraw(8, 32 + 2, 1, Data::terms.lvl_short);
+	contents->draw_text(8, 32 + 2, Data::terms.lvl_short, 1);
 
 	int lx = Font::Default()->GetSize(Data::terms.lvl_short).width;
 	out.str("");
 	out << std::setw(2) << std::setfill(' ') << hero_level;
-	contents->TextDraw(8 + lx, 32 + 2, Font::ColorDefault, out.str());
+	contents->draw_text(8 + lx, 32 + 2, out.str(), Font::ColorDefault);
 
-	contents->TextDraw(42, 32 + 2, 1, Data::terms.hp_short);
+	contents->draw_text(42, 32 + 2, Data::terms.hp_short, 1);
 
 	int hx = Font::Default()->GetSize(Data::terms.hp_short).width;
 	out.str("");
 	out << hero_hp;
-	contents->TextDraw(42 + hx, 32 + 2, Font::ColorDefault, out.str());
+	contents->draw_text(42 + hx, 32 + 2, out.str(), Font::ColorDefault);
 
 	for (int i = 0; i < 4 && (size_t) i < party.size(); i++) {
 		DrawFace(party[i].second, party[i].first, 88 + i * 56, 0);

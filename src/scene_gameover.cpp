@@ -25,7 +25,7 @@
 #include "input.h"
 #include "scene_title.h"
 
-Scene_Gameover::Scene_Gameover() : Scene(Gameover) {}
+Scene_Gameover::Scene_Gameover() : Scene("Gameover") {}
 
 void Scene_Gameover::Start() {
 	// Load Background Graphic
@@ -40,6 +40,6 @@ void Scene_Gameover::Start() {
 
 void Scene_Gameover::Update() {
 	if (Input().IsTriggered(Input_::DECISION)) {
-		Scene::PopUntil(Scene::Title);
+		Scene::PopUntil("Title");
 	}
 }

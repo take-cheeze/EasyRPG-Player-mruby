@@ -39,13 +39,6 @@ BaseUi::KeyStatus& BaseUi::GetKeyStates() {
 	return keys;
 }
 
-BitmapRef const& BaseUi::GetDisplaySurface() const {
-	return main_surface;
-}
-BitmapRef& BaseUi::GetDisplaySurface() {
-	return main_surface;
-}
-
 long BaseUi::GetWidth() const {
 	return current_display_mode.width;
 }
@@ -64,15 +57,4 @@ int BaseUi::GetMousePosX() const {
 
 int BaseUi::GetMousePosY() const {
 	return mouse_y;
-}
-
-Color const& BaseUi::GetBackcolor() const {
-	return back_color;
-}
-void BaseUi::SetBackcolor(const Color &color) {
-	back_color = color;
-}
-
-void BaseUi::CleanDisplay() {
-	main_surface->FillRect(main_surface->GetRect(), back_color);
 }

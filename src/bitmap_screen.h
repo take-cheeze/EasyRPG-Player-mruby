@@ -46,11 +46,6 @@ public:
 	static BitmapScreenRef Create();
 
 	/**
-	 * Destructor.
-	 */
-	~BitmapScreen();
-
-	/**
 	 * Marks the BitmapScreen as dirty.
 	 */
 	void SetDirty();
@@ -318,8 +313,8 @@ private:
 	double waver_effect_phase;
 	Color flash_effect;
 
-	void BlitScreenIntern(Bitmap const& draw_bitmap, int x, int y, Rect const& src_rect,
-								  bool need_scale, int bush_y);
+	void BlitScreenIntern(BitmapRef const& draw_bitmap, int x, int y, Rect const& src_rect,
+						  bool need_scale, int bush_y);
 
 	BitmapRef Refresh(Rect& rect, bool& need_scale, int& bush_y);
 

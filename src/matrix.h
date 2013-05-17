@@ -18,66 +18,143 @@
 #ifndef _EASYRPG_MATRIX_H_
 #define _EASYRPG_MATRIX_H_
 
-// Headers
-#include <cmath>
+#include <pixman.h>
 
-// 2D Matrix class
+#include <cmath>
+#include <algorithm>
+
+#include <boost/assert.hpp>
+#include <boost/bind.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_integral.hpp>
+
 
 struct Matrix {
-	double xx, xy, x0;
-	double yx, yy, y0;
+  private:
+	// uninitalized
+	struct no_init {};
+	Matrix(no_init const&) {}
 
-	Matrix(double xx, double xy, double x0,
-		   double yx, double yy, double y0) :
-		xx(xx), xy(xy), x0(x0), yx(yx), yy(yy), y0(y0) {}
+  public:
+	pixman_transform_t data;
 
-	static inline Matrix Rotation(double angle) {
-		double c = cos(angle);
-		double s = sin(angle);
-		return Matrix( c, s, 0,
-					  -s, c, 0);
+	struct fixed {
+		pixman_fixed_t data;
+
+		template<class T>
+		fixed(T const& v, typename boost::enable_if<boost::is_floating_point<T> >::type* = 0)
+				: data(pixman_double_to_fixed(double(v))) {}
+		template<class T>
+		fixed(T const& v, typename boost::enable_if<boost::is_integral<T> >::type* = 0)
+				: data(pixman_int_to_fixed(int(v))) {}
+	};
+
+	Matrix() {
+		pixman_transform_init_identity(&data);
 	}
 
-	static inline Matrix Scale(double sx, double sy) {
-		return Matrix(sx, 0, 0,
-					  0, sy, 0);
+	static Matrix rotate(double const angle) {
+		Matrix ret = no_init();
+		pixman_transform_init_rotate(
+			&ret.data,
+			pixman_double_to_fixed(std::cos(angle)),
+			pixman_double_to_fixed(std::sin(angle)));
+		return ret;
+	}
+	static Matrix scale(fixed const& x, fixed const& y) {
+		Matrix ret = no_init();
+		pixman_transform_init_scale(&ret.data, x.data, y.data);
+		return ret;
+	}
+	static Matrix translate(fixed const x, fixed const y) {
+		Matrix ret = no_init();
+		pixman_transform_init_translate(&ret.data, x.data, y.data);
+		return ret;
 	}
 
-	static inline Matrix Translation(double x, double y) {
-		return Matrix(1, 0, x,
-					  0, 1, y);
+	Matrix invert() const {
+		Matrix ret = no_init();
+		BOOST_VERIFY(pixman_transform_invert(&ret.data, &data));
+		return ret;
 	}
 
-	static inline Matrix Multiply(const Matrix& a, const Matrix& b) {
-		return Matrix(a.xy*b.yx + a.xx*b.xx, a.xy*b.yy + a.xx*b.xy, a.xy*b.y0 + a.xx*b.x0 + a.x0,
-					  a.yy*b.yx + a.yx*b.xx, a.yy*b.yy + a.yx*b.xy, a.yy*b.y0 + a.yx*b.x0 + a.y0);
+	Matrix& rotate_(double const angle, bool const forward = true) {
+		pixman_transform_rotate(forward? &data : NULL, forward? NULL : &data,
+								pixman_double_to_fixed(std::cos(angle)),
+								pixman_double_to_fixed(std::sin(angle)));
+		return *this;
+	}
+	Matrix& scale_(fixed const& x, fixed const& y, bool const forward = true) {
+		pixman_transform_scale(
+			forward? &data : NULL, forward? NULL : &data, x.data, y.data);
+		return *this;
+	}
+	Matrix& translate_(fixed const& x, fixed const& y, bool const forward = true) {
+		pixman_transform_translate(
+			forward? &data : NULL, forward? NULL : &data, x.data, y.data);
+		return *this;
 	}
 
-	inline Matrix PreMultiply(const Matrix& a) const {
-		return Multiply(a, *this);
+	void multiply(pixman_vector_t& v) const {
+		BOOST_VERIFY(pixman_transform_point(&data, &v));
 	}
 
-	inline Matrix PostMultiply(const Matrix& b) const {
-		return Multiply(*this, b);
+	template<size_t index>
+	static inline bool compare_vector(pixman_vector_t const& lhs,
+											 pixman_vector_t const& rhs)
+	{
+		BOOST_STATIC_ASSERT(index < 3);
+		return lhs.vector[index] < rhs.vector[index];
 	}
 
-	inline Matrix Inverse() const {
-		double det = xx*yy - xy*yx;
-		return Matrix( yy/det, -xy/det, (y0*xy - x0*yy)/det,
-					  -yx/det,  xx/det, (x0*yx - y0*xx)/det);
+	Rect transform(Rect const& rct) const {
+		pixman_vector_t vecs[4] = {
+			{ { fixed(rct.x).data, fixed(rct.y).data, fixed(1).data } },
+			{ { fixed(rct.x + rct.width).data, fixed(rct.y).data, fixed(1).data } },
+			{ { fixed(rct.x + rct.width).data, fixed(rct.y + rct.height).data, fixed(1).data } },
+			{ { fixed(rct.x).data, fixed(rct.y + rct.height).data, fixed(1).data } } };
+
+		std::for_each(vecs, vecs + 4, boost::bind(&Matrix::multiply, this, _1));
+
+		int const
+				x = pixman_fixed_to_int(pixman_fixed_floor(
+					std::min_element(vecs, vecs + 4, &compare_vector<0>)->vector[0])),
+				y = pixman_fixed_to_int(pixman_fixed_floor(
+					std::min_element(vecs, vecs + 4, &compare_vector<1>)->vector[1]));
+
+		return Rect(
+			x, y,
+			pixman_fixed_to_int(pixman_fixed_ceil(
+				std::max_element(vecs, vecs + 4, &compare_vector<0>)->vector[0])) - x,
+			pixman_fixed_to_int(pixman_fixed_ceil(
+				std::max_element(vecs, vecs + 4, &compare_vector<1>)->vector[1])) - y);
 	}
 
-	inline void Transform(double x, double y, double& rx, double& ry) const {
-		rx = xx*x + xy*y + x0;
-		ry = yx*x + yy*y + y0;
+	Matrix operator*(Matrix const& rhs) const {
+		Matrix ret = no_init();
+		pixman_transform_multiply(&ret.data, &data, &rhs.data);
+		return ret;
 	}
 
-	// in bitmap_utils.cpp
-	static Matrix Setup(double angle,
-						double scale_x, double scale_y,
-						int src_pos_x, int src_pos_y,
-						int dst_pos_x, int dst_pos_y);
+	static Matrix const identity;
+};
+
+struct set_matrix {
+	set_matrix(pixman_image_t* img, Matrix const& mat)
+			: img_(img)
+	{
+		assert(img_);
+
+		pixman_image_set_transform(img_, &mat.data);
+	}
+
+	~set_matrix() {
+		pixman_image_set_transform(img_, &Matrix::identity.data);
+	}
+
+  private:
+	pixman_image_t* const img_;
 };
 
 #endif
-

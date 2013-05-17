@@ -170,11 +170,8 @@ TilemapLayer::~TilemapLayer() {
 	Graphics().RemoveDrawable(ID);
 }
 
-void TilemapLayer::DrawTile(BitmapScreen& screen, int x, int y, int row, int col, bool autotile) {
-	if (!autotile && screen.GetBitmap()->GetTileOpacity(row, col) == Bitmap::Transparent)
-		return;
-	Rect rect(col * 16, row * 16, 16, 16);
-	screen.BlitScreen(x, y, rect);
+void TilemapLayer::DrawTile(BitmapScreen& screen, int x, int y, int row, int col, bool) {
+	screen.BlitScreen(x, y, Rect(col * 16, row * 16, 16, 16));
 }
 
 void TilemapLayer::Draw(int z_order) {
@@ -470,7 +467,6 @@ void TilemapLayer::GenerateAutotileD(short ID) {
 BitmapScreenRef TilemapLayer::GenerateAutotiles(int count, const std::map<uint32_t, TileXY>& map) {
 	int rows = (count + TILES_PER_ROW - 1) / TILES_PER_ROW;
 	BitmapRef tiles = Bitmap::Create(TILES_PER_ROW * 16, rows * 16);
-	tiles->Clear();
 	Rect rect(0, 0, 8, 8);
 
 	std::map<uint32_t, TileXY>::const_iterator it;
@@ -488,7 +484,7 @@ BitmapScreenRef TilemapLayer::GenerateAutotiles(int count, const std::map<uint32
 
 				rect.x = (x * 2 + i) * 8;
 				rect.y = (y * 2 + j) * 8;
-				tiles->Blit((dst.x * 2 + i) * 8, (dst.y * 2 + j) * 8, *chipset, rect, 255);
+				tiles->blit((dst.x * 2 + i) * 8, (dst.y * 2 + j) * 8, *chipset, rect, 255);
 			}
 		}
 	}
@@ -529,7 +525,7 @@ BitmapRef const& TilemapLayer::GetChipset() const {
 void TilemapLayer::SetChipset(BitmapRef const& nchipset) {
 	chipset = nchipset;
 	chipset_screen->SetBitmap(chipset);
-	chipset_screen->SetSrcRect(chipset->GetRect());
+	chipset_screen->SetSrcRect(chipset->rect());
 }
 std::vector<short> TilemapLayer::GetMapData() const {
 	return map_data;

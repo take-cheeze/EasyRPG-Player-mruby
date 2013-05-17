@@ -35,7 +35,7 @@ class Font {
 	virtual Rect GetSize(std::string const& txt) const = 0;
 
 	virtual void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, unsigned glyph) = 0;
-	virtual void Render(Bitmap& bmp, int x, int y, Color const& color, unsigned glyph) = 0;
+	virtual void Render(Bitmap& bmp, int x, int y, unsigned glyph) = 0;
 
 	static FontRef Create(const std::string& name, int size, bool bold, bool italic);
 	static FontRef Default(bool mincho = false);
@@ -44,6 +44,7 @@ class Font {
 	static const int default_size = 9;
 	static const bool default_bold = false;
 	static const bool default_italic = false;
+	static Color default_color;
 
 	enum SystemColor {
 		ColorShadow = -1,

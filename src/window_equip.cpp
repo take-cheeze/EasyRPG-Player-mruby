@@ -25,7 +25,6 @@ Window_Equip::Window_Equip(int ix, int iy, int iwidth, int iheight, int actor_id
 	actor_id(actor_id) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	index = 0;
 
@@ -37,7 +36,7 @@ int Window_Equip::GetItemId() {
 }
 
 void Window_Equip::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	// Add the equipment of the actor to data
 	data.clear();

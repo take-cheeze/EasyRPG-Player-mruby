@@ -25,10 +25,12 @@
 #include "audio.h"
 
 SceneRef Scene::CreateNullScene() {
-	return EASYRPG_MAKE_SHARED<Scene>(Scene::Null);
+	return EASYRPG_MAKE_SHARED<Scene>((char const*)NULL);
 }
 
-Scene::Scene(Scene::Type const t) : type(t) {}
+Scene::Scene(char const* t) : type(t? t : "") {
+	assert(type.empty()? t == NULL : bool(t));
+}
 
 void Scene::Start() {}
 void Scene::Continue() {}

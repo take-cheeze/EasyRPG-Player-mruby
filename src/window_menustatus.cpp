@@ -28,16 +28,14 @@ Window_MenuStatus::Window_MenuStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	Refresh();
 }
 
 void Window_MenuStatus::Refresh() {
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
-	contents->Clear();
+	contents->clear();
 
-	DisplayUi->SetBackcolor(Cache().system_info.bg_color);
+	// DisplayUi->SetBackcolor(Cache().system_info.bg_color);
 
 	item_max = Game_Party::GetActors().size();
 

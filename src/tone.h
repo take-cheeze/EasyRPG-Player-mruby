@@ -69,6 +69,8 @@ public:
 
 	/** Gray component. */
 	int gray;
+
+	bool IsEmpty() const;
 };
 
 #endif

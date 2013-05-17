@@ -31,7 +31,6 @@
 	#include <wiiuse/wpad.h>
 #endif
 #include "color.h"
-#include "font_render_8x8.h"
 #include "graphics.h"
 #include "keys.h"
 #include "output.h"
@@ -40,6 +39,8 @@
 #include "audio.h"
 #include "sdl_audio.h"
 #include "al_audio.h"
+#include "font.h"
+#include "utils.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -67,7 +68,7 @@ SdlUi::SdlUi(long width, long height, const std::string& title, bool fs_flag) :
 	zoom_available(true),
 	toggle_fs_available(false),
 	mode_changing(false),
-	main_window(NULL) {
+	screen(NULL) {
 
 #ifdef GEKKO
 	WPAD_Init();
@@ -316,46 +317,17 @@ bool SdlUi::RefreshDisplayMode() {
 		display_height *= 2;
 	}
 
-	// Free non zoomed surface
-	main_surface.reset();
-
 	// Create our window
-	main_window = SDL_SetVideoMode(display_width, display_height, bpp, flags);
+	screen = SDL_SetVideoMode(display_width, display_height, bpp, flags);
 
-	if (!main_window)
+	if (!screen)
 		return false;
 
 	// Modes below 15 bpp aren't supported
-	if (main_window->format->BitsPerPixel < 15)
+	if (screen->format->BitsPerPixel < 15)
 		return false;
 
-	current_display_mode.bpp = main_window->format->BitsPerPixel;
-
-	const DynamicFormat format(
-		main_window->format->BitsPerPixel,
-		main_window->format->Rmask,
-		main_window->format->Gmask,
-		main_window->format->Bmask,
-		main_window->format->Amask,
-		PF::NoAlpha);
-
-	Bitmap::SetFormat(Bitmap::ChooseFormat(format));
-
-	if (zoom_available && current_display_mode.zoom) {
-		// Create a non zoomed surface as drawing surface
-		main_surface = Bitmap::Create(current_display_mode.width,
-									  current_display_mode.height,
-									  false);
-
-		if (!main_surface)
-			return false;
-
-	} else {
-		void *pixels = (uint8_t*) main_window->pixels + main_window->offset;
-		// Drawing surface will be the window itself
-		main_surface = Bitmap::Create(
-			pixels, main_window->w, main_window->h, main_window->pitch, format);
-	}
+	current_display_mode.bpp = screen->format->BitsPerPixel;
 
 	return true;
 }
@@ -399,21 +371,75 @@ void SdlUi::ProcessEvents() {
 	}
 }
 
+static pixman_format_code_t to_pixman_format(SDL_PixelFormat const& f) {
+	Uint8 const shifts[3] = { f.Rshift, f.Gshift, f.Bshift };
+	Uint8 const max_shift = *std::max_element(shifts, shifts + 3);
+	int const alpha_count = std::bitset<32>(f.Amask).count();
+
+	int t =
+			(f.Rshift > f.Gshift and f.Gshift > f.Bshift)
+			? (alpha_count > 0 and max_shift < f.Ashift
+			   ? PIXMAN_TYPE_ARGB : PIXMAN_TYPE_RGBA):
+			(f.Rshift < f.Gshift and f.Gshift < f.Bshift)
+			? (alpha_count > 0  and max_shift < f.Ashift
+			   ? PIXMAN_TYPE_ABGR : PIXMAN_TYPE_BGRA):
+			-1; // invalid type
+
+	assert(t != -1);
+
+	/*
+	if((f.BytesPerPixel % 2 == 0) and not Utils::IsBigEndian()) {
+		switch(t) {
+			case PIXMAN_TYPE_ARGB: t = PIXMAN_TYPE_BGRA; break;
+			case PIXMAN_TYPE_ABGR: t = PIXMAN_TYPE_RGBA; break;
+			case PIXMAN_TYPE_RGBA: t = PIXMAN_TYPE_ABGR; break;
+			case PIXMAN_TYPE_BGRA: t = PIXMAN_TYPE_ARGB; break;
+		}
+	}
+	*/
+
+	return
+			pixman_format_code_t(PIXMAN_FORMAT(
+				f.BitsPerPixel, t, alpha_count,
+				std::bitset<32>(f.Rmask).count(),
+				std::bitset<32>(f.Gmask).count(),
+				std::bitset<32>(f.Bmask).count()));
+}
+
 void SdlUi::UpdateDisplay() {
-	if (zoom_available && current_display_mode.zoom) {
-		// Blit drawing surface x2 scaled over window surface
-		Blit2X(*main_surface, main_window);
+	if(SDL_MUSTLOCK(screen) and SDL_LockSurface(screen) < 0) {
+		return;
 	}
 
-	SDL_UpdateRect(main_window, 0, 0, 0, 0);
-}
+	pixman_format_code_t const format = to_pixman_format(*screen->format);
+	pixman_transform_t mat;
 
-void SdlUi::BeginScreenCapture() {
-	CleanDisplay();
-}
+	pixman_image_ptr const img(
+		pixman_image_create_bits_no_clear(
+			format, screen->w, screen->h,
+			reinterpret_cast<uint32_t*>(screen->pixels),
+			screen->pitch),
+		&pixman_image_unref);
 
-BitmapRef SdlUi::EndScreenCapture() {
-	return Bitmap::Create(*main_surface, main_surface->GetRect());
+	BitmapRef const& buffer = Graphics().ScreenBuffer();
+
+	pixman_transform_init_scale(
+		&mat,
+		pixman_double_to_fixed(buffer->width () / double(screen->w)),
+		pixman_double_to_fixed(buffer->height() / double(screen->h)));
+	pixman_image_set_transform(buffer->image(), &mat);
+
+	pixman_image_composite(PIXMAN_OP_SRC, buffer->image(), NULL, img.get(),
+						   0, 0, 0, 0, 0, 0, screen->w, screen->h);
+
+	pixman_transform_init_identity(&mat);
+	pixman_image_set_transform(buffer->image(), &mat);
+
+	if(SDL_MUSTLOCK(screen)) {
+		SDL_UnlockSurface(screen);
+	}
+
+	SDL_UpdateRect(screen, 0, 0, 0, 0);
 }
 
 void SdlUi::SetTitle(const std::string &title) {
@@ -425,15 +451,13 @@ void SdlUi::DrawScreenText(const std::string &text) {
 }
 
 void SdlUi::DrawScreenText(const std::string &text, int x, int y, Color const& color) {
-	uint32_t ucolor = main_surface->GetUint32Color(color);
-
-	FontRender8x8::TextDraw(text, (uint8_t*)main_surface->pixels(), x, y, main_surface->width(), main_surface->height(), main_surface->bytes(), ucolor);
+	Font::default_color = color;
+	Graphics().ScreenBuffer()->draw_text(x, y, text);
 }
 
 void SdlUi::DrawScreenText(const std::string &text, Rect const& dst_rect, Color const& color) {
-	uint32_t ucolor = main_surface->GetUint32Color(color);
-
-	FontRender8x8::TextDraw(text, (uint8_t*)main_surface->pixels(), dst_rect, main_surface->width(), main_surface->height(), main_surface->bytes(), ucolor);
+	Font::default_color = color;
+	Graphics().ScreenBuffer()->draw_text(dst_rect, text);
 }
 
 bool SdlUi::ShowCursor(bool flag) {
@@ -441,27 +465,6 @@ bool SdlUi::ShowCursor(bool flag) {
 	cursor_visible = flag;
 	SDL_ShowCursor(flag ? SDL_ENABLE : SDL_DISABLE);
 	return temp_flag;
-}
-
-void SdlUi::Blit2X(Bitmap const& src, SDL_Surface* dst_surf) {
-	if (SDL_MUSTLOCK(dst_surf)) SDL_LockSurface(dst_surf);
-
-	BitmapRef dst = Bitmap::Create(
-		dst_surf->pixels,
-		dst_surf->w,
-		dst_surf->h,
-		dst_surf->pitch,
-		DynamicFormat(
-			dst_surf->format->BitsPerPixel,
-			dst_surf->format->Rmask,
-			dst_surf->format->Gmask,
-			dst_surf->format->Bmask,
-			dst_surf->format->Amask,
-			PF::NoAlpha));
-
-	dst->Blit2x(dst->GetRect(), src, src.GetRect());
-
-	if (SDL_MUSTLOCK(dst_surf)) SDL_UnlockSurface(dst_surf);
 }
 
 void SdlUi::ProcessEvent(SDL_Event &evnt) {

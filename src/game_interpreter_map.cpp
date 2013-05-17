@@ -1316,7 +1316,7 @@ bool Game_Interpreter_Map::CommandChangeMapTileset(RPG::EventCommand const& com)
 	int chipset_id = com.parameters[0];
 	Game_Map::SetChipset(chipset_id);
 
-	Scene_Map* scene = (Scene_Map*) Scene::Find(Scene::Map).get();
+	Scene_Map* scene = (Scene_Map*) Scene::Find("Map").get();
 
 	if (!scene)
 		return true;
@@ -1514,7 +1514,7 @@ bool Game_Interpreter_Map::CommandTileSubstitution(RPG::EventCommand const& com)
 	bool upper = com.parameters[0] != 0;
 	int old_id = com.parameters[1];
 	int new_id = com.parameters[2];
-	Scene_Map* scene = (Scene_Map*) Scene::Find(Scene::Map).get();
+	Scene_Map* scene = (Scene_Map*) Scene::Find("Map").get();
 	if (!scene)
 		return true;
 

@@ -36,6 +36,7 @@
 #include "font.h"
 #include "bitmap.h"
 #include "utils.h"
+#include "color.h"
 
 bool operator<(ShinonomeGlyph const& lhs, uint32_t const code) {
 	return lhs.code < code;
@@ -80,7 +81,7 @@ namespace {
 		Rect GetSize(std::string const& txt) const;
 
 		void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, unsigned glyph);
-		void Render(Bitmap& bmp, int x, int y, Color const& color, unsigned glyph);
+		void Render(Bitmap& bmp, int x, int y, unsigned glyph);
 
 	private:
 		function_type const func_;
@@ -105,7 +106,7 @@ namespace {
 		Rect GetSize(std::string const& txt) const;
 
 		void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, unsigned glyph);
-		void Render(Bitmap& bmp, int x, int y, Color const& color, unsigned glyph);
+		void Render(Bitmap& bmp, int x, int y, unsigned glyph);
 
 	private:
 		static EASYRPG_WEAK_PTR<boost::remove_pointer<FT_Library>::type> library_checker_;
@@ -120,6 +121,8 @@ namespace {
 	FontRef const gothic = EASYRPG_MAKE_SHARED<ShinonomeFont>(&find_gothic_glyph);
 	FontRef const mincho = EASYRPG_MAKE_SHARED<ShinonomeFont>(&find_mincho_glyph);
 } // anonymous namespace
+
+Color Font::default_color(255, 255, 255, 255);
 
 ShinonomeFont::ShinonomeFont(ShinonomeFont::function_type func)
 	: Font("Shinonome", HEIGHT, false, false), func_(func) {}
@@ -153,13 +156,13 @@ void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& 
 	for(size_t y_ = 0; y_ < HEIGHT; ++y_) {
 		for(size_t x_ = 0; x_ < width; ++x_) {
 			if(glyph->data[y_] & (0x1 << x_)) {
-				bmp.SetPixel(x + x_, y + y_, sys.GetPixel(src_x + x_, src_y + y_));
+				bmp.set_pixel(x + x_, y + y_, sys.get_pixel(src_x + x_, src_y + y_));
 			}
 		}
 	}
 }
 
-void ShinonomeFont::Render(Bitmap& bmp, int x, int y, Color const& color, unsigned code) {
+void ShinonomeFont::Render(Bitmap& bmp, int x, int y, unsigned code) {
 	ShinonomeGlyph const* const glyph = func_(code);
 	assert(glyph);
 	size_t const width = glyph->is_full? FULL_WIDTH : HALF_WIDTH;
@@ -167,7 +170,7 @@ void ShinonomeFont::Render(Bitmap& bmp, int x, int y, Color const& color, unsign
 	for(size_t y_ = 0; y_ < HEIGHT; ++y_) {
 		for(size_t x_ = 0; x_ < width; ++x_) {
 			if(glyph->data[y] & (0x1 << x_)) {
-				bmp.SetPixel(x + x_, y + y_, color);
+				bmp.set_pixel(x + x_, y + y_, default_color);
 			}
 		}
 	}
@@ -193,12 +196,12 @@ Rect FTFont::GetSize(std::string const& txt) const {
 }
 
 void FTFont::Render(Bitmap& bmp, int x, int y, Bitmap const& /* sys */, int /* color */, unsigned glyph) {
-	Render(bmp, x, y, Color(), glyph);
+	Render(bmp, x, y, glyph);
 }
 
-void FTFont::Render(Bitmap& bmp, int const x, int const y, Color const& color, unsigned const glyph) {
+void FTFont::Render(Bitmap& bmp, int const x, int const y, unsigned const glyph) {
 	if(!check_face()) {
-		Font::Default()->Render(bmp, x, y, color, glyph);
+		Font::Default()->Render(bmp, x, y, glyph);
 		return;
 	}
 
@@ -222,7 +225,7 @@ void FTFont::Render(Bitmap& bmp, int const x, int const y, Color const& color, u
 			unsigned c = ft_bitmap.buffer[pitch * row + col];
 			for(int bit = 7; bit >= 0; --bit) {
 				if(c & (0x01 << bit)) {
-					bmp.SetPixel(x + col * 8 + (7 - bit), y + row, color);
+					bmp.set_pixel(x + col * 8 + (7 - bit), y + row, default_color);
 				}
 			}
 		}

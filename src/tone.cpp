@@ -46,3 +46,7 @@ void Tone::Set(int nred, int ngreen, int nblue, int ngray) {
 	blue = nblue;
 	gray = ngray;
 }
+
+bool Tone::IsEmpty() const {
+	return red == 0 and green == 0 and blue == 0 and gray == 0;
+}

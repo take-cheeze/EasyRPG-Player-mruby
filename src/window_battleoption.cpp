@@ -40,9 +40,8 @@ Window_BattleOption::Window_BattleOption(int x, int y, int width, int height) :
 	top_row = 0;
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
-	num_rows = contents->GetHeight() / 16;
+	num_rows = contents->height() / 16;
 
 	Refresh();
 }
@@ -84,13 +83,13 @@ void Window_BattleOption::Update() {
 
 void Window_BattleOption::UpdateCursorRect() {
 	if (index >= 0)
-		SetCursorRect(Rect(0, (index - top_row) * 16, contents->GetWidth(), 16));
+		SetCursorRect(Rect(0, (index - top_row) * 16, contents->width(), 16));
 	else
 		SetCursorRect(Rect());
 }
 
 void Window_BattleOption::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	Font::SystemColor color = Font::ColorDefault;
 
@@ -109,10 +108,10 @@ void Window_BattleOption::Refresh() {
 
 void Window_BattleOption::DrawItem(int index, Font::SystemColor color) {
 	int y = 16 * (index - top_row);
-	if (y < 0 || y + 16 > contents->GetHeight())
+	if (y < 0 || y + 16 > int(contents->height()))
 		return;
-	contents->ClearRect(Rect(0, y, contents->GetWidth(), 16));
-	contents->TextDraw(2, y + 2, color, commands[index]);
+	contents->fill(Rect(0, y, contents->width(), 16), Color());
+	contents->draw_text(2, y + 2, commands[index], color);
 }
 
 int Window_BattleOption::GetIndex() {

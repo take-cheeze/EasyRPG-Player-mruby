@@ -26,7 +26,7 @@
 #include "util_macro.h"
 #include "bitmap.h"
 
-Scene_End::Scene_End() : Scene(End) {}
+Scene_End::Scene_End() : Scene("End") {}
 
 void Scene_End::Start() {
 	CreateCommandWindow();
@@ -46,7 +46,7 @@ void Scene_End::Update() {
 			Audio().BGM_Fade(800);
 			Audio().BGS_Fade(800);
 			Audio().ME_Fade(800);
-			Scene::PopUntil(Scene::Title);
+			Scene::PopUntil("Title");
 			break;
 		case 1: // No
 			Scene::Pop();

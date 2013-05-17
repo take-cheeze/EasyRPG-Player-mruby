@@ -215,11 +215,10 @@ void Game_Screen::InitWeather() {
 	if (not weather_plane) {
 		weather_plane.reset(new Plane());
 		weather_surface = Bitmap::Create(320, 240);
-		weather_surface->SetTransparentColor(Color(0,0,0,0));
 		weather_plane->SetBitmap(weather_surface);
 		weather_plane->SetZ(9999);
 	}
-	weather_surface->Clear();
+	weather_surface->clear();
 
 	if (not rain_bitmap)
 		rain_bitmap = Bitmap::Create(rain_image, sizeof(rain_image));
@@ -266,14 +265,14 @@ void Game_Screen::UpdateSnowRain(int speed) {
 void Game_Screen::DrawRain() {
 	weather_plane->SetOpacity(192);
 
-	Rect rect = rain_bitmap->GetRect();
+	Rect rect = rain_bitmap->rect();
 
 	std::vector<Snowflake>::iterator it;
 	for (it = snowflakes.begin(); it != snowflakes.end(); it++) {
 		Snowflake& f = *it;
 		if (f.life > snowflake_visible)
 			continue;
-		weather_surface->Blit(f.x - f.y/2, f.y, *rain_bitmap, rect, 255);
+		weather_surface->blit(f.x - f.y/2, f.y, *rain_bitmap, rect, 255);
 	}
 }
 
@@ -284,7 +283,7 @@ void Game_Screen::DrawSnow() {
 	};
 	weather_plane->SetOpacity(192);
 
-	Rect rect = snow_bitmap->GetRect();
+	Rect rect = snow_bitmap->rect();
 
 	std::vector<Snowflake>::iterator it;
 	for (it = snowflakes.begin(); it != snowflakes.end(); it++) {
@@ -296,20 +295,18 @@ void Game_Screen::DrawSnow() {
 		int i = (y / 2) % 18;
 		x += wobble[0][i];
 		y += wobble[1][i];
-		weather_surface->Blit(x, y, *snow_bitmap, rect, 255);
+		weather_surface->blit(x, y, *snow_bitmap, rect, 255);
 	}
 }
 
 void Game_Screen::DrawFog() {
-
-	weather_surface->Fill(Color(128,128,128,255));
+	weather_surface->fill(weather_surface->rect(), Color(128,128,128,255));
 	static const int opacities[3] = {128, 160, 192};
 	weather_plane->SetOpacity(opacities[data.weather_strength]);
 }
 
 void Game_Screen::DrawSandstorm() {
-
-	weather_surface->Fill(Color(192,160,128,255));
+	weather_surface->fill(weather_surface->rect(), Color(192,160,128,255));
 	static const int opacities[3] = {128, 160, 192};
 	weather_plane->SetOpacity(opacities[data.weather_strength]);
 	// TODO

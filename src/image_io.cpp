@@ -48,6 +48,11 @@ uint32_t get_4(std::istream& is) {
 			(unsigned(is.get()) << 16) | (unsigned(is.get()) << 24) ;
 }
 
+typedef EASYRPG_ARRAY<uint8_t, 4> RawPngColor;
+Color to_color(RawPngColor const& c) {
+	return Color(c[0], c[1], c[2], c[3]);
+}
+
 }
 
 BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
@@ -133,7 +138,7 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 		}
 	}
 
-	BitmapRef const ret = Bitmap::Create(width, height, transparent);
+	BitmapRef const ret = Bitmap::Create(width, height);
 
 	// align each line with 4 bytes
 	size_t const line_size = (width * depth) >> 3;
@@ -145,7 +150,7 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 		for (int x = 0; x < width; x++) {
 			uint8_t const idx = is.get();
 			EASYRPG_ARRAY<uint8_t, 4> const& pal = palette[idx];
-			ret->SetPixel(x, y, Color(
+			ret->set_pixel(x, y, Color(
 				pal[2], pal[1], pal[0], (transparent && idx == 0)? 0x00 : 0xff));
 		}
 	}
@@ -218,30 +223,25 @@ BitmapRef ImageIO::ReadPNG(std::istream& is, bool const transparent) {
 
 	png_read_update_info(png_ptr, info_ptr);
 
-	BitmapRef const ret = Bitmap::Create(width, height, transparent);
-	typedef EASYRPG_ARRAY<uint8_t, 4> RawColor;
-	boost::container::vector<RawColor> buf(width);
+	BitmapRef const ret = Bitmap::Create(width, height);
+	boost::container::vector<RawPngColor> buf(width);
 
-	if (transparent && num_palette > 0) {
-		assert(palette);
-
+	if (transparent and palette) {
 		Color const src_color(palette->red, palette->green, palette->blue, 0xff);
 		Color const dst_color(palette->red, palette->green, palette->blue, 0x00);
 
 		for (size_t y = 0; y < height; y++) {
 			png_read_row(png_ptr, reinterpret_cast<png_bytep>(buf.data()), NULL);
 			for(size_t x = 0; x < width; ++x) {
-				RawColor const& raw_c = buf[x];
-				Color const c(raw_c[0], raw_c[1], raw_c[2], raw_c[3]);
-				ret->SetPixel(x, y, (c == src_color)? dst_color : c);
+				Color const c = to_color(buf[x]);
+				ret->set_pixel(x, y, (c == src_color)? dst_color : c);
 			}
 		}
 	} else {
 		for (size_t y = 0; y < height; y++) {
 			png_read_row(png_ptr, reinterpret_cast<png_bytep>(buf.data()), NULL);
 			for(size_t x = 0; x < width; ++x) {
-				RawColor const& c = buf[x];
-				ret->SetPixel(x, y, Color(c[0], c[1], c[2], c[3]));
+				ret->set_pixel(x, y, to_color(buf[x]));
 			}
 		}
 	}
@@ -289,7 +289,7 @@ BitmapRef ImageIO::ReadXYZ(std::istream& is, bool const transparent) {
 		for (int x = 0; x < width; x++) {
 			uint8_t const idx = dst_buf[PALETTE_SIZE + width * y + x];
 			size_t const pal_off = 0 + 3 * idx;
-			ret->SetPixel(x, y, Color(
+			ret->set_pixel(x, y, Color(
 				dst_buf[pal_off + 0],
 				dst_buf[pal_off + 1],
 				dst_buf[pal_off + 2],
@@ -301,14 +301,12 @@ BitmapRef ImageIO::ReadXYZ(std::istream& is, bool const transparent) {
 }
 
 bool ImageIO::WritePNG(BitmapRef const& bmp, std::ostream& os) {
-	size_t const width = bmp->GetWidth(), height = bmp->GetHeight();
+	size_t const width = bmp->width(), height = bmp->height();
 
 	boost::container::vector<uint32_t> data(width * height);
 	for(size_t y = 0; y < height; ++y) {
 		for(size_t x = 0; x < width; ++x) {
-			Color const c = bmp->GetPixel(x, y);
-			uint8_t* out = reinterpret_cast<uint8_t*>(&data[width * y + x]);
-			*out++ = c.red; *out++ = c.green; *out++ = c.blue; *out++ = c.alpha;
+			reinterpret_cast<Color&>(data[width * y + x]) = bmp->get_pixel(x, y);
 		}
 	}
 

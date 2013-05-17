@@ -26,20 +26,19 @@ Window_TargetStatus::Window_TargetStatus(int ix, int iy, int iwidth, int iheight
 	Window_Base(ix, iy, iwidth, iheight), id(-1), use_item(false) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 }
 
 void Window_TargetStatus::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	if (id < 0) {
 		return;
 	}
 
 	if (use_item) {
-		contents->TextDraw(0, 0, 1, Data::terms.possessed_items);
+		contents->draw_text(0, 0, Data::terms.possessed_items, 1);
 	} else {
-		contents->TextDraw(0, 0, 1, Data::terms.sp_cost);
+		contents->draw_text(0, 0, Data::terms.sp_cost, 1);
 	}
 
 	std::stringstream ss;
@@ -49,7 +48,7 @@ void Window_TargetStatus::Refresh() {
 		ss << Data::skills[id - 1].sp_cost;
 	}
 
-	contents->TextDraw(contents->GetWidth() - contents->GetFont()->GetSize(ss.str()).width, 0, Font::ColorDefault, ss.str(), Text::AlignRight);
+	contents->draw_text(contents->width() - contents->text_size(ss.str()).width, 0, ss.str(), Font::ColorDefault, Text::AlignRight);
 }
 
 void Window_TargetStatus::SetData(int id, bool is_item) {

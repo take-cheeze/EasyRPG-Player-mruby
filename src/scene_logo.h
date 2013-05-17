@@ -21,8 +21,9 @@
 // Headers
 #include "system.h"
 #include "scene.h"
-#include "sprite.h"
 #include <boost/scoped_ptr.hpp>
+
+class Sprite;
 
 /**
  * Scene Logo class.

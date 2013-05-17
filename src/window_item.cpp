@@ -72,10 +72,7 @@ void Window_Item::Refresh() {
 
 	CreateContents();
 
-	contents->Clear();
-	Rect rect(0, 0, contents->GetWidth(), contents->GetHeight());
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
-	contents->ClearRect(rect);
+	contents->clear();
 
 	for (int i = 0; i < item_max; ++i) {
 		DrawItem(i);
@@ -84,8 +81,7 @@ void Window_Item::Refresh() {
 
 void Window_Item::DrawItem(int index) {
 	Rect rect = GetItemRect(index);
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
-	contents->ClearRect(rect);
+	contents->fill(rect, Color());
 
 	int item_id = data[index];
 
@@ -97,8 +93,8 @@ void Window_Item::DrawItem(int index) {
 		std::stringstream ss;
 		ss << number;
 		Font::SystemColor color = enabled ? Font::ColorDefault : Font::ColorDisabled;
-		contents->TextDraw(rect.x + rect.width - 28, rect.y, color, "x");
-		contents->TextDraw(rect.x + rect.width - 6, rect.y, color, ss.str(), Text::AlignRight);
+		contents->draw_text(rect.x + rect.width - 28, rect.y, "x", color);
+		contents->draw_text(rect.x + rect.width - 6, rect.y, ss.str(), color, Text::AlignRight);
 	}
 }
 

@@ -51,12 +51,34 @@ Graphics_::Graphics_()
 		, fps_draw_counter(0)
 		, expected_next_frame_end_time(-1) // needs FrameReset value
 		, frozen_screen(BitmapScreen::Create())
-		, black_screen(BitmapScreen::Create())
+		, black_screen(BitmapScreen::Create(
+			Bitmap::Create(SCREEN_TARGET_WIDTH,
+						   SCREEN_TARGET_HEIGHT,
+						   Color(0, 0, 0, 255))))
 		, frozen(false)
 		, screen_erased(false)
 		, drawable_creation(0)
 		, state(EASYRPG_MAKE_SHARED<State>())
+		, screen_buffer_(Bitmap::Create(SCREEN_TARGET_WIDTH,
+										SCREEN_TARGET_HEIGHT,
+										Color(0, 0, 0, 255)))
+		, back_color(Color(0, 0, 0, 255))
 {}
+
+BitmapRef const& Graphics_::ScreenBuffer() const {
+	return screen_buffer_;
+}
+
+Color const& Graphics_::GetBackcolor() const {
+	return back_color;
+}
+void Graphics_::SetBackcolor(const Color &color) {
+	back_color = color;
+}
+
+void Graphics_::CleanScreen() {
+	screen_buffer_->fill(screen_buffer_->rect(), back_color);
+}
 
 void Graphics_::Update() {
 	if (frozen) return;
@@ -91,7 +113,7 @@ void Graphics_::DrawFrame() {
 		state->zlist_dirty = false;
 	}
 
-	DisplayUi->CleanDisplay();
+	CleanScreen();
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
 	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
@@ -114,14 +136,14 @@ void Graphics_::DrawOverlay() {
 }
 
 BitmapRef Graphics_::SnapToBitmap() {
-	DisplayUi->BeginScreenCapture();
+	CleanScreen();
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
 	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
 		state->drawable_map[(*it_zlist)->GetId()]->Draw((*it_zlist)->GetZ());
 	}
 
-	return DisplayUi->EndScreenCapture();
+	return Bitmap::Create(screen_buffer_);
 }
 
 void Graphics_::Freeze() {
@@ -131,11 +153,6 @@ void Graphics_::Freeze() {
 
 void Graphics_::Transition(TransitionType type, int duration, bool erase) {
 	if (erase && screen_erased) return;
-
-	if(not black_screen->GetBitmap()) {
-		black_screen->SetBitmap(Bitmap::Create(
-			DisplayUi->GetWidth(), DisplayUi->GetHeight(), Color(0,0,0,255)));
-	}
 
 	if (type != TransitionNone) {
 		transition_type = type;
@@ -319,7 +336,7 @@ void Graphics_::UpdateTransition() {
 	case TransitionWaveOut:
 		break;
 	default:
-		DisplayUi->CleanDisplay();
+		CleanScreen();
 		break;
 	}
 

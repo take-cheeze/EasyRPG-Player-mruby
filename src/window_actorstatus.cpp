@@ -28,11 +28,10 @@ Window_ActorStatus::Window_ActorStatus(int ix, int iy, int iwidth, int iheight, 
 	actor_id(actor_id) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	Refresh();
 }
 
 void Window_ActorStatus::Refresh() {
-	contents->Clear();
+	contents->clear();
 }

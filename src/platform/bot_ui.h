@@ -34,7 +34,6 @@ struct BotUi : public BaseUi {
 	void ToggleFullscreen() {}
 	void ToggleZoom() {}
 	void UpdateDisplay() {}
-	void BeginScreenCapture() {}
 	void SetTitle(const std::string&) {}
 	void DrawScreenText(const std::string&) {}
 	void DrawScreenText(const std::string&, int, int, Color const&) {}
@@ -42,7 +41,6 @@ struct BotUi : public BaseUi {
 	bool ShowCursor(bool) { return false; }
 	bool IsFullscreen() { return false; }
 
-	BitmapRef EndScreenCapture();
 	void ProcessEvents();
 
 	uint32_t GetTicks() const;

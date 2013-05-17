@@ -26,7 +26,7 @@
 #include "scene_file.h"
 
 Scene_Save::Scene_Save() :
-		Scene_File(Save, Data::terms.save_game_message) {}
+		Scene_File("Save", Data::terms.save_game_message) {}
 
 void Scene_Save::Action(int index) {
 	std::stringstream ss;

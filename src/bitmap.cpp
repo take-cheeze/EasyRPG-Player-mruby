@@ -15,41 +15,187 @@
  * along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Headers
-#include <cmath>
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-
-#include "system.h"
-#include "utils.h"
-#include "cache.h"
 #include "bitmap.h"
-#include "bitmap_screen.h"
-#include "bitmap_utils.h"
-#include "text.h"
-#include "filefinder.h"
-#include "options.h"
-#include "data.h"
-#include "output.h"
-#include "pixel_format.h"
 #include "font.h"
-#include "output.h"
-#include "util_macro.h"
+#include "tone.h"
 #include "image_io.h"
+#include "output.h"
+#include "matrix.h"
+#include "utils.h"
 
-BitmapRef Bitmap::Create(int width, int height, const Color& color) {
-    BitmapRef surface = Bitmap::Create(width, height, false);
-	surface->Fill(color);
-	return surface;
+#include <cmath>
+#include <sstream>
+#include <fstream>
+
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+#include <boost/math/constants/constants.hpp>
+
+Matrix const Matrix::identity;
+
+#define check_opacity(op)						\
+	do {										\
+		op = std::max(0, std::min(op, 255));	\
+		if(op == 0) { return; }					\
+	} while(false)								\
+
+#define SET_MATRIX(bmp, m)						\
+	set_matrix mat__ ## __LINE__(bmp, m);		\
+	(void)mat__ ## __LINE__						\
+
+namespace {
+
+bool inside_image(Bitmap const& bmp, int const x, int const y) {
+	return (0 <= x and x < int(bmp.width()))
+			and (0 <= y and y < int(bmp.height()));
 }
 
-BitmapRef Bitmap::Create(const std::string& filename, bool transparent) {
-	BitmapRef const ret = ImageIO::ReadImage(filename, transparent);
-	return ret? ret : (Output::Error("Image loading error: %s", filename.c_str()), BitmapRef());
+pixman_rectangle16_t to_pixman(Rect const& r) {
+	pixman_rectangle16_t const ret = {
+		int16_t(r.x), int16_t(r.y), uint16_t(r.width), uint16_t(r.height) };
+	return ret;
 }
 
-BitmapRef Bitmap::Create(const uint8_t* const data, unsigned const data_size, bool transparent) {
+pixman_color_t to_pixman(Color const& c) {
+	pixman_color_t const ret = {
+		uint16_t(c.red  << c.alpha), uint16_t(c.green << c.alpha),
+		uint16_t(c.blue << c.alpha), uint16_t(c.alpha << 8) };
+	return ret;
+}
+
+float const PI = boost::math::constants::pi<float>();
+
+/*
+ * originaly from http://beesbuzz.biz/code/hsv_color_transforms.php
+ *
+ * @param in: input
+ * @param H hue shift (in degree)
+ * @param S saturation multipiler (scaler)
+ * @param V value multiplier (scaler)
+ */
+void transform_hsv(Color& in, float const H,
+				   float const S, float const V) {
+	float const VSU = V * S * std::cos(H * PI / 180);
+	float const VSW = V * S * std::sin(H * PI / 180);
+
+	in = Color(
+		(.299*V+.701*VSU+.168*VSW)*in.red
+        + (.587*V-.587*VSU+.330*VSW)*in.green
+        + (.114*V-.114*VSU-.497*VSW)*in.blue,
+		(.299*V-.299*VSU-.328*VSW)*in.red
+        + (.587*V+.413*VSU+.035*VSW)*in.green
+        + (.114*V-.114*VSU+.292*VSW)*in.blue,
+		(.299*V-.3*VSU+1.25*VSW)*in.red
+        + (.587*V-.588*VSU-1.05*VSW)*in.green
+        + (.114*V+.886*VSU-.203*VSW)*in.blue,
+		in.alpha);
+}
+
+void color_tone_change(Color& in, Tone const& t) {
+	assert(t.gray == 0);
+
+	in.red = std::max(0, std::min(in.red + t.red, 0xff));
+	in.green = std::max(0, std::min(in.green + t.green, 0xff));
+	in.blue = std::max(0, std::min(in.blue + t.blue, 0xff));
+}
+
+void color_tone_change_gray(Color& in, Tone const& t, float const factor) {
+	assert(t.gray != 0);
+
+	float const gray = in.red * 0.299f + in.green * 0.587f + in.blue * 0.114f;
+
+	in.red = std::max(0, std::min<int>((in.red - gray) * factor + gray + t.red + 0.5f, 255));
+	in.green = std::max(0, std::min<int>((in.green - gray) * factor + gray + t.green + 0.5f, 255));
+	in.blue = std::max(0, std::min<int>((in.blue - gray) * factor + gray + t.blue + 0.5f, 255));
+}
+
+struct null_deleter { void operator()(void const*) const {} };
+
+struct pixman_releaser {
+	void operator()(pixman_image_t* ptr) const {
+		if(ptr) {
+			BOOST_VERIFY(pixman_image_unref(ptr));
+		}
+	}
+};
+
+pixman_image_ptr create_color_mask(Color const& c) {
+	static Color const ignore_color(0, 0, 0, 255);
+
+	pixman_color_t const col = to_pixman(c);
+	return pixman_image_ptr(c == ignore_color
+							? NULL : pixman_image_create_solid_fill(&col),
+							pixman_releaser());
+}
+
+pixman_image_ptr create_opacity_mask(int op) {
+	return create_color_mask(Color(0, 0, 0, op));
+}
+
+int waver_offset(int depth, double phase, int i) {
+	return depth * (1 + std::sin((phase + i * 20) * PI / 180));
+}
+int waver_offset_max(int depth) { return depth * 2; }
+
+static pixman_format_code_t const pixman_format
+= Utils::IsBigEndian()? PIXMAN_r8g8b8a8 : PIXMAN_a8b8g8r8;
+
+pixman_image_ptr create_sub_image(pixman_image_t* ptr, Rect const& rect) {
+	size_t const stride = pixman_image_get_stride(ptr);
+	assert((stride % 4) == 0);
+
+	return pixman_image_ptr(pixman_image_create_bits_no_clear(
+		pixman_format, rect.width, rect.height,
+		pixman_image_get_data(ptr) + stride / 4 * rect.y + rect.x,
+		stride), pixman_releaser());
+}
+
+}
+
+Bitmap::Bitmap(size_t w, size_t h, Color const& col)
+		: font(Font::Default()), dirty_(true)
+		, width_(w), height_(h), data_(w * h, col)
+		, ref_(
+			pixman_image_create_bits_no_clear(
+				pixman_format, w, h,
+				reinterpret_cast<uint32_t*>(data_.data()), w * 4),
+			pixman_releaser())
+{}
+
+Bitmap::Bitmap(Bitmap const& src)
+		: font(src.font), dirty_(true)
+		, width_(src.width_), height_(src.height_)
+		, data_(src.data_)
+		, ref_(
+			pixman_image_create_bits_no_clear(
+				pixman_format, width_, height_,
+				reinterpret_cast<uint32_t*>(data_.data()), width_ * 4),
+			pixman_releaser())
+{}
+
+size_t Bitmap::width() const {
+	assert(size_t(pixman_image_get_width(ref_.get())) == width_);
+	return width_;
+}
+size_t Bitmap::height() const {
+	assert(size_t(pixman_image_get_height(ref_.get())) == height_);
+	return height_;
+}
+
+pixman_image_t* Bitmap::image() {
+	return ref_.get();
+}
+
+BitmapRef Bitmap::Create(std::string const& file, bool transparent) {
+	return ImageIO::ReadImage(file, transparent);
+}
+BitmapRef Bitmap::Create(size_t width, size_t height, Color const& col) {
+	return BitmapRef(new Bitmap(width, height, col));
+}
+BitmapRef Bitmap::Create(BitmapRef const& another) {
+	return BitmapRef(new Bitmap(*another));
+}
+BitmapRef Bitmap::Create(uint8_t const* data, size_t data_size, bool transparent) {
 	static char const XYZ_SIGNATURE[] = "XYZ1";
 	static char const BMP_SIGNATURE[] = "BM";
 	static uint8_t const PNG_SIGNATURE[] = {137, 80, 78, 71, 13, 10, 26, 10, 0};
@@ -78,1058 +224,340 @@ BitmapRef Bitmap::Create(const uint8_t* const data, unsigned const data_size, bo
 	return ret? ret : (Output::Error("Image loading error"), BitmapRef());
 }
 
-BitmapRef Bitmap::Create(Bitmap const& source, Rect const& src_rect, bool transparent) {
-	return EASYRPG_MAKE_SHARED<Bitmap>(source, src_rect, transparent);
+Rect Bitmap::rect() const {
+	return Rect(0, 0, width_, height_);
 }
 
-BitmapRef Bitmap::Create(int width, int height, bool transparent) {
-	return EASYRPG_MAKE_SHARED<Bitmap>(width, height, transparent);
+Rect Bitmap::text_size(std::string const& str) const {
+	return font->GetSize(str);
 }
 
-BitmapRef Bitmap::Create(void *pixels, int width, int height, int pitch, const DynamicFormat& format) {
-	return EASYRPG_MAKE_SHARED<Bitmap>(pixels, width, height, pitch, format);
+bool Bitmap::clear_dirty_flag() {
+	bool ret = false;
+	std::swap(dirty_, ret);
+	return ret;
 }
 
-void Bitmap::InitBitmap() {
-	editing = false;
-	font = Font::Default();
+void Bitmap::mark_dirty() {
+	dirty_ = true;
 }
 
-Bitmap::Bitmap() {
-	InitBitmap();
+void Bitmap::pixman_image_composite(pixman_image_ptr const& src,
+									pixman_image_ptr const& mask,
+									pixman_image_ptr const& dst,
+									int16_t src_x, int16_t src_y,
+									int16_t mask_x, int16_t mask_y,
+									int16_t dest_x, int16_t dest_y,
+									uint16_t width, uint16_t height)
+{
+	::pixman_image_composite(PIXMAN_OP_OVER,
+							 src.get(), mask? mask.get() : NULL, dst.get(),
+							 src_x, src_y, mask_x, mask_y,
+							 dest_x, dest_y, width, height);
+	mark_dirty();
 }
 
-Bitmap::~Bitmap() {
-	pixman_image_unref(bitmap);
+void Bitmap::pixman_image_composite(pixman_image_ptr const& src,
+									pixman_image_ptr const& mask,
+									pixman_image_ptr const& dst,
+									int16_t src_x, int16_t src_y,
+									int16_t mask_x, int16_t mask_y,
+									int16_t dest_x, int16_t dest_y,
+									uint16_t width, uint16_t height) const
+{
+	::pixman_image_composite(PIXMAN_OP_OVER,
+							 src.get(), mask? mask.get() : NULL, dst.get(),
+							 src_x, src_y, mask_x, mask_y,
+							 dest_x, dest_y, width, height);
 }
 
-Color Bitmap::GetPixel(int x, int y) const {
-	if (x < 0 || y < 0 || x >= width() || y >= height())
-		return Color();
-
-	BitmapUtils* bm_utils = Begin(*this);
-
-	const uint8_t* src_pixels = pointer(x, y);
-	uint8_t r, g, b, a;
-	bm_utils->GetPixel(src_pixels, r, g, b, a);
-
-	return Color(r, g, b, a);
+Color const& Bitmap::get_pixel(int const x, int const y) const {
+	static Color const INVALID;
+	return inside_image(*this, x, y)? data_[width_ * y + x] : INVALID;
 }
 
-
-void Bitmap::AttachBitmapScreen(BitmapScreen* bitmap) {
-	attached_screen_bitmaps.push_back(bitmap);
-}
-
-void Bitmap::DetachBitmapScreen(BitmapScreen* bitmap) {
-	attached_screen_bitmaps.remove(bitmap);
-}
-
-bool Bitmap::IsAttachedToBitmapScreen() {
-	return attached_screen_bitmaps.size() != 0;
-}
-
-int Bitmap::GetWidth() const {
-	return width();
-}
-
-int Bitmap::GetHeight() const {
-	return height();
-}
-
-Rect Bitmap::GetRect() const {
-	return Rect(0, 0, width(), height());
-}
-
-bool Bitmap::GetTransparent() const {
-	return format.alpha_type != PF::NoAlpha;
-}
-
-Color Bitmap::GetTransparentColor() const {
-	return GetColor(colorkey());
-}
-
-void Bitmap::SetTransparentColor(Color /* color */) {
-}
-
-Bitmap::TileOpacity Bitmap::CheckOpacity(const Rect& rect) {
-	bool all = true;
-	bool any = false;
-
-	BitmapUtils* bm_utils = Begin();
-
-	uint8_t* src_pixels = pointer(rect.x, rect.y);
-
-	for (int y = 0; y < rect.height; y++) {
-		bm_utils->CheckOpacity(src_pixels, rect.width, all, any);
-		if (any && !all)
-			break;
-		src_pixels += pitch();
+void Bitmap::set_pixel(int const x, int const y, Color const& col) {
+	if(inside_image(*this, x, y)) {
+		data_[width_ * y + x] = col;
+		mark_dirty();
 	}
-
-	End();
-
-	return
-		all ? Bitmap::Opaque :
-		any ? Bitmap::Partial :
-		Bitmap::Transparent;
 }
 
-void Bitmap::CheckPixels(uint32_t flags) {
-	if (flags & System) {
-		Cache().system_info.bg_color = GetPixel(0, 32);
-		Cache().system_info.sh_color = GetPixel(16, 32);
-	}
+void Bitmap::hue_change(int hue) {
+	std::for_each(data_.begin(), data_.end(),
+				  boost::bind(&transform_hsv, _1, hue, 1.f, 1.f));
 
-	if (flags & Chipset) {
-		opacity.reset(new opacity_type());
-		for (int row = 0; row < 16; row++) {
-			for (int col = 0; col < 30; col++) {
-				Rect rect(col * 16, row * 16, 16, 16);
-				(*opacity)[row][col] = CheckOpacity(rect);
-			}
+	mark_dirty();
+}
+
+void Bitmap::draw_text(int x, int y, std::string const& str, Text::Alignment aln) {
+	Text::Draw(*this, x, y, str, aln);
+}
+void Bitmap::draw_text(Rect const& rect, std::string const& str, Text::Alignment aln) {
+	if(aln == Text::AlignLeft) {
+		Text::Draw(*this, rect.x, rect.y, str, aln);
+	} else  {
+		int const dx = text_size(str).width - rect.width;
+		switch(aln) {
+			case Text::AlignCenter:
+				Text::Draw(*this, rect.x + dx / 2, rect.y, str);
+				break;
+			case Text::AlignRight:
+				Text::Draw(*this, rect.x + dx, rect.y, str);
+				break;
+			default: assert(false);
 		}
 	}
 }
 
-Bitmap::TileOpacity Bitmap::GetTileOpacity(int row, int col) {
-	return opacity? (*opacity)[row][col] : Partial;
+void Bitmap::draw_text(int x, int y, std::string const& str, int color, Text::Alignment aln) {
+	Text::Draw(*this, x, y, color, str, aln);
 }
-
-uint8_t Bitmap::bytes() const {
-	return format.bytes;
-}
-
-uint8_t* Bitmap::pointer(int x, int y) {
-	return (uint8_t*) pixels() + y * pitch() + x * bytes();
-}
-
-uint8_t const* Bitmap::pointer(int x, int y) const {
-	return (uint8_t const*) pixels() + y * pitch() + x * bytes();
-}
-
-void Bitmap::SetPixel(int x, int y, const Color &color) {
-	if (x < 0 || y < 0 || x >= width() || y >= height()) return;
-
-	BitmapUtils* bm_utils = Begin();
-
-	uint8_t* dst_pixels = pointer(x, y);
-	bm_utils->SetPixel(dst_pixels, color.red, color.green, color.blue, color.alpha);
-
-	End();
-}
-
-void Bitmap::TransformBlit(Rect const& dst_rect_,
-							Bitmap const& src, Rect const& src_rect,
-							double angle,
-							double scale_x, double scale_y,
-							int src_pos_x, int src_pos_y,
-							int dst_pos_x, int dst_pos_y,
-							int opacity) {
-	Matrix fwd = Matrix::Setup(angle, scale_x, scale_y,
-							   src_pos_x, src_pos_y,
-							   dst_pos_x, dst_pos_y);
-	Matrix inv = fwd.Inverse();
-
-	Rect rect = TransformRectangle(fwd, src_rect);
-	Rect dst_rect = dst_rect_; dst_rect.Adjust(rect);
-	if (dst_rect.IsEmpty())
-		return;
-
-	TransformBlit(dst_rect, src, src_rect, inv, opacity);
-}
-
-void Bitmap::HueChangeBlit(int x, int y, Bitmap const& src, Rect const& src_rect, double hue) {
-	HSLBlit(x, y, src, src_rect, hue, 1, 1, 0);
-}
-
-void Bitmap::HSLBlit(int x, int y, Bitmap const& src, Rect const& src_rect_, double h, double s, double l, double lo) {
-	Rect dst_rect(x, y, 0, 0), src_rect = src_rect_;
-
-	if (!Rect::AdjustRectangles(src_rect, dst_rect, src.GetRect()))
-		return;
-	if (!Rect::AdjustRectangles(dst_rect, src_rect, GetRect()))
-		return;
-
-	int hue  = (int) (h / 60.0 * 0x100);
-	int sat  = (int) (s * 0x100);
-	int lum  = (int) (l * 0x100);
-	int loff = (int) (lo * 0x100);
-
-	if (hue < 0)
-		hue += ((-hue + 0x5FF) / 0x600) * 0x600;
-	else if (hue > 0x600)
-		hue -= (hue / 0x600) * 0x600;
-
-	BitmapUtils* bm_utils = Begin(src);
-
-	const uint8_t* src_pixels = src.pointer(src_rect.x, src_rect.y);
-	uint8_t* dst_pixels = pointer(dst_rect.x, dst_rect.y);
-
-	for (int i = 0; i < dst_rect.height; i++) {
-		bm_utils->HSLBlit(dst_pixels, src_pixels, dst_rect.width, hue, sat, lum, loff);
-		dst_pixels += pitch();
-	}
-
-	End(src);
-}
-
-BitmapUtils* Bitmap::Begin() {
-	BitmapUtils* bm_utils = BitmapUtils::Create(format, format, false);
-	bm_utils->SetDstColorKey(colorkey());
-	return bm_utils;
-}
-
-BitmapUtils* Bitmap::Begin(Bitmap const& src) const {
-	BitmapUtils* bm_utils = BitmapUtils::Create(format, src.format, true);
-	bm_utils->SetDstColorKey(colorkey());
-	bm_utils->SetSrcColorKey(src.colorkey());
-	return bm_utils;
-}
-
-void Bitmap::End() {
-	RefreshCallback();
-}
-
-void Bitmap::End(Bitmap const&) {
-	RefreshCallback();
-}
-
-void Bitmap::RefreshCallback() {
-	if (editing) return;
-
-	std::list<BitmapScreen*>::iterator it;
-
-	for (it = attached_screen_bitmaps.begin(); it != attached_screen_bitmaps.end(); it++) {
-		(*it)->SetDirty();
-	}
-}
-
-FontRef const& Bitmap::GetFont() const {
-	return font;
-}
-
-void Bitmap::SetFont(FontRef const& new_font) {
-	font = new_font;
-}
-
-void Bitmap::TextDraw(int x, int y, int width, int /* height */, int color, std::string const& text, Text::Alignment align) {
-	Rect rect = GetFont()->GetSize(text);
-	int dx = rect.width - width;
-
-	switch (align) {
-	case Text::AlignLeft:
-		TextDraw(x, y, color, text);
-		break;
-	case Text::AlignCenter:
-		TextDraw(x + dx / 2, y, color, text);
-		break;
-	case Text::AlignRight:
-		TextDraw(x + dx, y, color, text);
-		break;
-	default: assert(false);
-	}
-}
-
-void Bitmap::TextDraw(Rect const& rect, int color, std::string const& text, Text::Alignment align) {
-	TextDraw(rect.x, rect.y, rect.width, rect.height, color, text, align);
-}
-
-void Bitmap::TextDraw(int x, int y, int color, std::string const& text, Text::Alignment align) {
-	Text::Draw(*this, x, y, color, text, align);
-	RefreshCallback();
-}
-
-Rect Bitmap::TransformRectangle(const Matrix& m, const Rect& rect) {
-	int sx0 = rect.x;
-	int sy0 = rect.y;
-	int sx1 = rect.x + rect.width;
-	int sy1 = rect.y + rect.height;
-
-	double x0, y0, x1, y1, x2, y2, x3, y3;
-	m.Transform(sx0, sy0, x0, y0);
-	m.Transform(sx1, sy0, x1, y1);
-	m.Transform(sx1, sy1, x2, y2);
-	m.Transform(sx0, sy1, x3, y3);
-
-	double xmin = std::min(std::min(x0, x1), std::min(x2, x3));
-	double ymin = std::min(std::min(y0, y1), std::min(y2, y3));
-	double xmax = std::max(std::max(x0, x1), std::max(x2, x3));
-	double ymax = std::max(std::max(y0, y1), std::max(y2, y3));
-
-	int dx0 = (int) floor(xmin);
-	int dy0 = (int) floor(ymin);
-	int dx1 = (int) ceil(xmax);
-	int dy1 = (int) ceil(ymax);
-
-	return Rect(dx0, dy0, dx1 - dx0, dy1 - dy0);
-}
-
-Matrix Matrix::Setup(double angle,
-					 double scale_x, double scale_y,
-					 int src_pos_x, int src_pos_y,
-					 int dst_pos_x, int dst_pos_y) {
-	Matrix m = Matrix::Translation(-src_pos_x, -src_pos_y);
-	m = m.PreMultiply(Matrix::Scale(scale_x, scale_y));
-	m = m.PreMultiply(Matrix::Rotation(angle));
-	m = m.PreMultiply(Matrix::Translation(dst_pos_x, dst_pos_y));
-	return m;
-}
-
-bool Bitmap::formats_initialized = false;
-std::map<int, pixman_format_code_t> Bitmap::formats_map;
-
-void Bitmap::add_pair(pixman_format_code_t pcode, const DynamicFormat& format) {
-	int dcode = format.code_alpha();
-	formats_map[dcode] = pcode;
-}
-
-void Bitmap::initialize_formats() {
-	if (formats_initialized)
-		return;
-
-	add_pair(PIXMAN_a8r8g8b8, DynamicFormat(32,8,16,8,8,8,0,8,24,PF::Alpha));
-	add_pair(PIXMAN_x8r8g8b8, DynamicFormat(32,8,16,8,8,8,0,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_a8b8g8r8, DynamicFormat(32,8,0,8,8,8,16,8,24,PF::Alpha));
-	add_pair(PIXMAN_x8b8g8r8, DynamicFormat(32,8,0,8,8,8,16,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_b8g8r8a8, DynamicFormat(32,8,8,8,16,8,24,8,0,PF::Alpha));
-	add_pair(PIXMAN_b8g8r8x8, DynamicFormat(32,8,8,8,16,8,24,0,0,PF::NoAlpha));
-
-	add_pair(PIXMAN_x14r6g6b6, DynamicFormat(32,6,12,6,6,6,0,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_x2r10g10b10, DynamicFormat(32,10,20,10,10,10,0,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_a2r10g10b10, DynamicFormat(32,10,20,10,10,10,0,2,30,PF::Alpha));
-	add_pair(PIXMAN_x2b10g10r10, DynamicFormat(32,10,0,10,10,10,20,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_a2b10g10r10, DynamicFormat(32,10,0,10,10,10,20,2,30,PF::Alpha));
-
-	add_pair(PIXMAN_r8g8b8a8, DynamicFormat(32,8,24,8,16,8,8,8,0,PF::Alpha));
-	add_pair(PIXMAN_r8g8b8x8, DynamicFormat(32,8,24,8,16,8,8,8,0,PF::NoAlpha));
-
-	add_pair(PIXMAN_r8g8b8, DynamicFormat(24,8,16,8,8,8,0,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_b8g8r8, DynamicFormat(24,8,0,8,8,8,16,0,0,PF::NoAlpha));
-
-	add_pair(PIXMAN_r5g6b5, DynamicFormat(16,5,11,6,5,5,0,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_b5g6r5, DynamicFormat(16,5,0,6,5,5,11,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_a1r5g5b5, DynamicFormat(16,5,10,5,5,5,0,1,15,PF::Alpha));
-	add_pair(PIXMAN_x1r5g5b5, DynamicFormat(16,5,10,5,5,5,0,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_a1b5g5r5, DynamicFormat(16,5,0,5,5,5,10,1,15,PF::Alpha));
-	add_pair(PIXMAN_x1b5g5r5, DynamicFormat(16,5,0,5,5,5,10,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_a4r4g4b4, DynamicFormat(16,4,8,4,4,4,0,4,12,PF::Alpha));
-	add_pair(PIXMAN_x4r4g4b4, DynamicFormat(16,4,8,4,4,4,0,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_a4b4g4r4, DynamicFormat(16,4,0,4,4,4,8,4,12,PF::Alpha));
-	add_pair(PIXMAN_x4b4g4r4, DynamicFormat(16,4,0,4,4,4,8,0,0,PF::NoAlpha));
-	add_pair(PIXMAN_g8, DynamicFormat(8,8,0,8,0,8,0,8,0,PF::Alpha));
-	add_pair(PIXMAN_g8, DynamicFormat(8,8,0,8,0,8,0,0,0,PF::NoAlpha));
-
-	formats_initialized = true;
-}
-
-pixman_format_code_t Bitmap::find_format(const DynamicFormat& format) {
-	initialize_formats();
-	int dcode = format.code_alpha();
-	int pcode = formats_map[dcode];
-	if (pcode == 0) {
-		// To fix add a pair to initialize_formats that maps the outputted
-		// DynamicFormat to a pixman format
-		Output::Error("%s\nDynamicFormat(%d, %d, %d, %d, %d, %d, %d, %d, %d, %s)",
-		"Couldn't find Pixman format for",
-		format.bits,
-		format.r.bits, format.r.shift,
-		format.g.bits, format.g.shift,
-		format.b.bits, format.b.shift,
-		format.a.bits, format.a.shift,
-		format.alpha_type == PF::Alpha ? "PF::Alpha" : "PF::NoAlpha");
-	}
-	return (pixman_format_code_t) pcode;
-}
-
-DynamicFormat Bitmap::pixel_format;
-DynamicFormat Bitmap::opaque_pixel_format;
-DynamicFormat Bitmap::image_format;
-DynamicFormat Bitmap::opaque_image_format;
-
-void Bitmap::SetFormat(const DynamicFormat& format) {
-	pixel_format = format;
-	opaque_pixel_format = format;
-	opaque_pixel_format.alpha_type = PF::NoAlpha;
-	image_format = format_R8G8B8A8_a().format();
-	opaque_image_format = format_R8G8B8A8_n().format();
-}
-
-DynamicFormat Bitmap::ChooseFormat(const DynamicFormat& format) {
-	uint32_t amask;
-	amask = (format.a.mask == 0)
-		? ((~0U >> (32 - format.bits)) ^ (format.r.mask | format.g.mask | format.b.mask))
-		: format.a.mask;
-	if (amask != 0)
-		return DynamicFormat(format.bits,
-							 format.r.mask, format.g.mask, format.b.mask,
-							 amask, PF::Alpha);
-	switch (format.bits) {
-		case 16:
-			return (format.r.shift > format.b.shift)
-				? DynamicFormat(16,5,10,5,5,5,0,1,15,PF::Alpha)
-				: DynamicFormat(16,5,0,5,5,5,10,1,15,PF::Alpha);
-		case 24:
-			return (format.r.shift > format.b.shift)
-				? DynamicFormat(32,8,16,8,8,8,0,8,24,PF::Alpha)
-				: DynamicFormat(32,8,0,8,8,8,16,8,24,PF::Alpha);
-		default:
-			return format_B8G8R8A8_a().format();
-	}
-}
-
-static void destroy_func(pixman_image_t * /* image */, void *data) {
-	free(data);
-}
-
-static pixman_indexed_t palette;
-static bool palette_initialized = false;
-
-static void initialize_palette() {
-	if (palette_initialized)
-		return;
-	palette.color = false;
-	palette.rgba[0] = 0U;
-	for (int i = 1; i < PIXMAN_MAX_INDEXED; i++)
-		palette.rgba[i] = ~0U;
-	palette_initialized = true;
-}
-
-void Bitmap::Init(int width, int height, void* data, int pitch, bool destroy) {
-	if (!pitch)
-		pitch = width * bytes();
-
-	bitmap = pixman_image_create_bits(pixman_format, width, height, (uint32_t*) data, pitch);
-
-	if (bitmap == NULL) {
-		Output::Error("Couldn't create %dx%d image.\n", width, height);
-	}
-
-	if (format.bits == 8) {
-		initialize_palette();
-		pixman_image_set_indexed(bitmap, &palette);
-	}
-
-	if (data != NULL && destroy)
-		pixman_image_set_destroy_function(bitmap, destroy_func, data);
-}
-
-void Bitmap::ConvertImage(int& width, int& height, void*& pixels, bool transparent) {
-	const DynamicFormat& img_format = transparent ? image_format : opaque_image_format;
-
-	// premultiply alpha
-	for (int y = 0; y < height; y++) {
-		uint8_t* dst = (uint8_t*) pixels + y * width * 4;
-		for (int x = 0; x < width; x++) {
-			uint8_t &r = *dst++;
-			uint8_t &g = *dst++;
-			uint8_t &b = *dst++;
-			uint8_t &a = *dst++;
-			MultiplyAlpha(r, g, b, a);
+void Bitmap::draw_text(Rect const& rect, std::string const& str, int color, Text::Alignment aln) {
+	if(aln == Text::AlignLeft) {
+		Text::Draw(*this, rect.x, rect.y, color, str, aln);
+	} else  {
+		int const dx = text_size(str).width - rect.width;
+		switch(aln) {
+			case Text::AlignCenter:
+				Text::Draw(*this, rect.x + dx / 2, rect.y, color, str);
+				break;
+			case Text::AlignRight:
+				Text::Draw(*this, rect.x + dx, rect.y, color, str);
+				break;
+			default: assert(false);
 		}
 	}
-
-	Bitmap src(pixels, width, height, 0, img_format);
-	Clear();
-	Blit(0, 0, src, src.GetRect(), 255);
-	free(pixels);
 }
 
-Bitmap::Bitmap(int width, int height, bool transparent) {
-	InitBitmap();
+void Bitmap::blit(int x, int y, Bitmap const& src, Rect const& src_rect, int opacity) {
+	check_opacity(opacity);
 
-	format = (transparent ? pixel_format : opaque_pixel_format);
-	pixman_format = find_format(format);
-	Init(width, height, (void *) NULL);
+	pixman_image_composite(
+		src.ref_, create_opacity_mask(opacity), ref_,
+		src_rect.x, src_rect.y, 0, 0, x, y,
+		src_rect.width, src_rect.height);
 }
 
-Bitmap::Bitmap(void *pixels, int width, int height, int pitch, const DynamicFormat& _format) {
-	InitBitmap();
-
-	format = _format;
-	pixman_format = find_format(format);
-	Init(width, height, pixels, pitch, false);
-}
-
-Bitmap::Bitmap(Bitmap const& source, Rect const& src_rect, bool transparent) {
-	InitBitmap();
-
-	format = (transparent ? pixel_format : opaque_pixel_format);
-	pixman_format = find_format(format);
-
-	Init(src_rect.width, src_rect.height, (void *) NULL);
-
-	Blit(0, 0, source, src_rect, 255);
-}
-
-void* Bitmap::pixels() {
-	return (void*) pixman_image_get_data(bitmap);
-}
-void const* Bitmap::pixels() const {
-	return (void const*) pixman_image_get_data(bitmap);
-}
-
-uint8_t Bitmap::bpp() const {
-	return (pixman_image_get_depth(bitmap) + 7) / 8;
-}
-
-int Bitmap::width() const {
-	return pixman_image_get_width(bitmap);
-}
-
-int Bitmap::height() const {
-	return pixman_image_get_height(bitmap);
-}
-
-uint16_t Bitmap::pitch() const {
-	return pixman_image_get_stride(bitmap);
-}
-
-uint32_t Bitmap::rmask() const {
-	return pixel_format.r.mask;
-}
-
-uint32_t Bitmap::gmask() const {
-	return pixel_format.g.mask;
-}
-
-uint32_t Bitmap::bmask() const {
-	return pixel_format.b.mask;
-}
-
-uint32_t Bitmap::amask() const {
-	return pixel_format.a.mask;
-}
-
-uint32_t Bitmap::colorkey() const {
-	return 0;
-}
-
-BitmapRef Bitmap::Resample(int scale_w, int scale_h, const Rect& src_rect) const {
-	BitmapRef dst(new Bitmap(scale_w, scale_h, GetTransparent()));
-
-	double zoom_x = (double)src_rect.width  / scale_w;
-	double zoom_y = (double)src_rect.height / scale_h;
-
-	pixman_transform_t xform;
-	pixman_transform_init_scale(&xform,
-								pixman_double_to_fixed(zoom_x),
-								pixman_double_to_fixed(zoom_y));
-
-	pixman_image_set_transform(bitmap, &xform);
-
-	pixman_image_composite32(PIXMAN_OP_SRC,
-							 bitmap, (pixman_image_t*) NULL, dst->bitmap,
-							 src_rect.x, src_rect.y,
-							 0, 0,
-							 0, 0,
-							 scale_w, scale_h);
-
-	pixman_transform_init_identity(&xform);
-	pixman_image_set_transform(bitmap, &xform);
-
-	return dst;
-}
-
-void Bitmap::Blit(int x, int y, Bitmap const& src, Rect const& src_rect, int opacity) {
-	if (opacity < 0)
-		return;
-
-	if (opacity > 255) opacity = 255;
-
-	pixman_image_t* mask;
-	if (opacity < 255) {
-		pixman_color_t tcolor = {0, 0, 0, static_cast<uint16_t>(opacity << 8)};
-		mask = pixman_image_create_solid_fill(&tcolor);
-	}
-	else
-		mask = (pixman_image_t*) NULL;
-
-	pixman_image_composite32(PIXMAN_OP_OVER,
-							 src.bitmap,
-							 mask, bitmap,
-							 src_rect.x, src_rect.y,
-							 0, 0,
-							 x, y,
-							 src_rect.width, src_rect.height);
-
-	if (mask != NULL)
-		pixman_image_unref(mask);
-
-	RefreshCallback();
-}
-
-pixman_image_t* Bitmap::GetSubimage(Bitmap const& src, const Rect& src_rect) {
-	uint8_t* pixels = (uint8_t*) src.pixels() + src_rect.x * src.bpp() + src_rect.y * src.pitch();
-	return pixman_image_create_bits(src.pixman_format, src_rect.width, src_rect.height,
-									(uint32_t*) pixels, src.pitch());
-}
-
-void Bitmap::TiledBlit(Rect const& src_rect, Bitmap const& src, Rect const& dst_rect, int opacity) {
-	TiledBlit(0, 0, src_rect, src, dst_rect, opacity);
-}
-
-void Bitmap::TiledBlit(int ox, int oy, Rect const& src_rect, Bitmap const& src, Rect const& dst_rect, int opacity) {
-	if (opacity < 0)
-		return;
-
-	if (opacity > 255) opacity = 255;
-
-	if (ox >= src_rect.width)	ox %= src_rect.width;
-	if (oy >= src_rect.height)	ox %= src_rect.height;
-	if (ox < 0) ox += src_rect.width  * ((-ox + src_rect.width  - 1) / src_rect.width);
-	if (oy < 0) oy += src_rect.height * ((-oy + src_rect.height - 1) / src_rect.height);
-
-	pixman_image_t* src_bm = GetSubimage(src, src_rect);
-
-	pixman_image_t* mask;
-	if (opacity < 255) {
-		pixman_color_t tcolor = {0, 0, 0, static_cast<uint16_t>(opacity << 8)};
-		mask = pixman_image_create_solid_fill(&tcolor);
-	}
-	else
-		mask = (pixman_image_t*) NULL;
-
-	pixman_image_set_repeat(src_bm, PIXMAN_REPEAT_NORMAL);
-
-	pixman_transform_t xform;
-	pixman_transform_init_translate(&xform,
-									pixman_int_to_fixed(ox),
-									pixman_int_to_fixed(oy));
-
-	pixman_image_set_transform(src_bm, &xform);
-
-	pixman_image_composite32(PIXMAN_OP_OVER,
-							 src_bm, mask, bitmap,
-							 0, 0,
-							 0, 0,
-							 dst_rect.x, dst_rect.y,
-							 dst_rect.width, dst_rect.height);
-
-	pixman_image_unref(src_bm);
-
-	if (mask != NULL)
-		pixman_image_unref(mask);
-
-	RefreshCallback();
-}
-
-void Bitmap::StretchBlit(Bitmap const&  src, Rect const& src_rect, int opacity) {
-	StretchBlit(GetRect(), src, src_rect, opacity);
-}
-
-void Bitmap::StretchBlit(Rect const& dst_rect, Bitmap const& src, Rect const& src_rect, int opacity) {
-	if (opacity < 0)
-		return;
-
-	pixman_image_t* mask = (pixman_image_t*) NULL;
-	if (opacity < 255) {
-		pixman_color_t tcolor = {0, 0, 0, static_cast<uint16_t>(opacity << 8)};
-		mask = pixman_image_create_solid_fill(&tcolor);
-	}
-
-	double zoom_x = (double)src_rect.width  / dst_rect.width;
-	double zoom_y = (double)src_rect.height / dst_rect.height;
-
-	pixman_transform_t xform;
-	pixman_transform_init_scale(&xform,
-								pixman_double_to_fixed(zoom_x),
-								pixman_double_to_fixed(zoom_y));
-
-	pixman_image_set_transform(src.bitmap, &xform);
-
-	pixman_image_composite32(PIXMAN_OP_OVER,
-							 src.bitmap, mask, bitmap,
-							 src_rect.x / zoom_x, src_rect.y / zoom_y,
-							 0, 0,
-							 dst_rect.x, dst_rect.y,
-							 dst_rect.width, dst_rect.height);
-
-	pixman_transform_init_identity(&xform);
-	pixman_image_set_transform(src.bitmap, &xform);
-
-	if (mask != NULL)
-		pixman_image_unref(mask);
-
-	RefreshCallback();
-}
-
-void Bitmap::TransformBlit(Rect const& dst_rect, Bitmap const& src, Rect const& /* src_rect */, const Matrix& inv, int /* opacity */) {
-	pixman_transform_t xform = {{
-		{ pixman_double_to_fixed(inv.xx), pixman_double_to_fixed(inv.xy), pixman_double_to_fixed(inv.x0) },
-		{ pixman_double_to_fixed(inv.yx), pixman_double_to_fixed(inv.yy), pixman_double_to_fixed(inv.y0) },
-		{ pixman_double_to_fixed(0.0),    pixman_double_to_fixed(0.0),    pixman_double_to_fixed(1.0) }
-		}};
-
-	pixman_image_set_transform(src.bitmap, &xform);
-
-	pixman_image_composite32(PIXMAN_OP_OVER,
-							 src.bitmap, (pixman_image_t*) NULL, bitmap,
-							 dst_rect.x, dst_rect.y,
-							 0, 0,
-							 dst_rect.x, dst_rect.y,
-							 dst_rect.width, dst_rect.height);
-
-	pixman_transform_init_identity(&xform);
-	pixman_image_set_transform(src.bitmap, &xform);
-}
-
-void Bitmap::MaskBlit(int x, int y, Bitmap const& src, Rect const& src_rect) {
-	pixman_image_composite32(PIXMAN_OP_DISJOINT_IN_REVERSE,
-							 src.bitmap, (pixman_image_t*) NULL, bitmap,
-							 src_rect.x, src_rect.y,
-							 0, 0,
-							 x, y,
-							 src_rect.width, src_rect.height);
-
-	RefreshCallback();
-}
-
-void Bitmap::WaverBlit(int x, int y, Bitmap const& src, Rect const& src_rect, int depth, double phase, int opacity) {
-	if (opacity < 0)
-		return;
-
-	if (opacity > 255) opacity = 255;
-
-	pixman_image_t* mask;
-	if (opacity < 255) {
-		pixman_color_t tcolor = {0, 0, 0, static_cast<uint16_t>(opacity << 8)};
-		mask = pixman_image_create_solid_fill(&tcolor);
-	}
-	else
-		mask = (pixman_image_t*) NULL;
-
-	for (int i = 0; i < src_rect.height; i++) {
-		int offset = (int) (depth * (1 + sin((phase + i * 20) * 3.14159 / 180)));
-
-		pixman_image_composite32(PIXMAN_OP_OVER,
-								 src.bitmap, mask, bitmap,
-								 src_rect.x, src_rect.y + i,
-								 0, 0,
-								 x + offset, y + i,
-								 src_rect.width, 1);
-	}
-
-	if (mask != NULL)
-		pixman_image_unref(mask);
-
-	RefreshCallback();
-}
-
-static pixman_color_t PixmanColor(const Color &color) {
-	pixman_color_t pcolor;
-	pcolor.red = color.red * color.alpha;
-	pcolor.green = color.green * color.alpha;
-	pcolor.blue = color.blue * color.alpha;
-	pcolor.alpha = color.alpha << 8;
-	return pcolor;
-}
-
-void Bitmap::Fill(const Color &color) {
-	pixman_color_t pcolor = PixmanColor(color);
-	pixman_rectangle16_t rect = {
-    0, 0, static_cast<uint16_t>(width()), static_cast<uint16_t>(height())};
-
-	pixman_image_fill_rectangles(PIXMAN_OP_SRC, bitmap, &pcolor, 1, &rect);
-
-	RefreshCallback();
-}
-
-void Bitmap::FillRect(Rect const& dst_rect, const Color &color) {
-	pixman_color_t pcolor = PixmanColor(color);
-	pixman_rectangle16_t rect = {
-    static_cast<int16_t>(dst_rect.x),
-    static_cast<int16_t>(dst_rect.y),
-    static_cast<uint16_t>(dst_rect.width),
-    static_cast<uint16_t>(dst_rect.height), };
-
-	pixman_image_fill_rectangles(PIXMAN_OP_SRC, bitmap, &pcolor, 1, &rect);
-
-	RefreshCallback();
-}
-
-void Bitmap::Clear() {
-	pixman_color_t pcolor = {0, 0, 0, 0};
-	pixman_rectangle16_t rect = {
-    0, 0, static_cast<uint16_t>(width()), static_cast<uint16_t>(height())};
-
-	pixman_image_fill_rectangles(PIXMAN_OP_CLEAR, bitmap, &pcolor, 1, &rect);
-
-	RefreshCallback();
-}
-
-void Bitmap::ClearRect(Rect const& dst_rect) {
-	pixman_color_t pcolor = {0, 0, 0, 0};
-	pixman_rectangle16_t rect = {
-    static_cast<int16_t>(dst_rect.x),
-    static_cast<int16_t>(dst_rect.y),
-    static_cast<uint16_t>(dst_rect.width),
-    static_cast<uint16_t>(dst_rect.height), };
-
-	pixman_image_fill_rectangles(PIXMAN_OP_CLEAR, bitmap, &pcolor, 1, &rect);
-
-	RefreshCallback();
-}
-
-void Bitmap::OpacityBlit(int x, int y, Bitmap const& src, Rect const& src_rect, int opacity) {
-	if (opacity == 255) {
-		if (&src != this)
-			Blit(x, y, src, src_rect, opacity);
-		return;
-	}
-
-	if (&src == this) {
-		pixman_color_t pcolor = {0, 0, 0, static_cast<uint16_t>(opacity << 8)};
-		pixman_rectangle16_t rect = {
-      static_cast<int16_t>(src_rect.x),
-      static_cast<int16_t>(src_rect.y),
-      static_cast<uint16_t>(src_rect.width),
-      static_cast<uint16_t>(src_rect.height), };
-
-		pixman_image_fill_rectangles(PIXMAN_OP_IN_REVERSE, bitmap, &pcolor, 1, &rect);
-	}
-	else {
-		if (opacity > 255)
-			opacity = 255;
-
-		pixman_color_t tcolor = {0, 0, 0, static_cast<uint16_t>(opacity << 8)};
-		pixman_image_t* mask = pixman_image_create_solid_fill(&tcolor);
-
-		pixman_image_composite32(PIXMAN_OP_OVER,
-								 src.bitmap, mask, bitmap,
-								 src_rect.x, src_rect.y,
-								 0, 0,
-								 x, y,
-								 src_rect.width, src_rect.height);
-
-		pixman_image_unref(mask);
-	}
-
-	RefreshCallback();
-}
-
-void Bitmap::ToneBlit(int x, int y, Bitmap const& src, Rect const& src_rect, const Tone &tone) {
-	if (tone == Tone()) {
-		if (&src != this)
-			Blit(x, y, src, src_rect, 255);
-		return;
-	}
-
-	// FIXME
-	// Pixman ToneBlit is broken.
-	// Slow (working) software implementation:
-	Rect dst_rect(x, y, 0, 0);
-	Rect src_rect_ = src_rect;
-
-
-	if (!Rect::AdjustRectangles(src_rect_, dst_rect, src.GetRect()))
-		return;
-	if (!Rect::AdjustRectangles(dst_rect, src_rect_, GetRect()))
-		return;
-
-	BitmapUtils* bm_utils = Begin(src);
-
-	const uint8_t* src_pixels = src.pointer(src_rect.x, src_rect.y);
-	uint8_t* dst_pixels = pointer(dst_rect.x, dst_rect.y);
-
-	if (tone.gray == 0) {
-		for (int i = 0; i < dst_rect.height; i++) {
-			bm_utils->ToneBlit(dst_pixels, src_pixels, dst_rect.width, tone);
-			src_pixels += src.pitch();
-			dst_pixels += pitch();
+BitmapRef Bitmap::waver(int const depth, double const phase, Rect const& rect) const {
+	if(depth == 0) { return sub_image(rect); }
+	BitmapRef const ret = Bitmap::Create(rect.width + waver_offset_max(depth), rect.height);
+
+	int current_offset = waver_offset(depth, phase, 0), offset_count = 1;
+	for(int i = 1; i < rect.height + 1; ++i) {
+		int const next_offset = waver_offset(depth, phase, i);
+
+		if(next_offset == current_offset and i < rect.height) {
+			offset_count++;
+			continue;
 		}
+
+		ret->blit(current_offset, i - offset_count, *this,
+				  Rect(rect.x, rect.y, rect.width, offset_count));
+		current_offset = next_offset;
+		offset_count = 1;
+	}
+
+	return ret;
+}
+
+void Bitmap::waver_blit(BlitCommon const& info, int depth, double phase, int opacity) {
+	BitmapRef const src = info.src.waver(depth, phase, info.src_rect);
+	blit(info.x, info.y, *src, src->rect(), opacity);
+}
+
+BitmapRef Bitmap::tone_change(Tone const& tone, Rect const& r) const {
+	BitmapRef const ret = sub_image(r);
+	if(tone != Tone()) {
+		std::for_each(ret->data_.begin(), ret->data_.end(),
+					  tone.gray == 0
+					  ? boost::function<void(Color&)>(boost::bind(&color_tone_change, _1, boost::cref(tone)))
+					  : boost::function<void(Color&)>(boost::bind(
+						  &color_tone_change_gray, _1, boost::cref(tone), (255 - tone.gray) / 255.f)));
+	}
+	return ret;
+}
+
+void Bitmap::tone_blit(BlitCommon const& info, Tone const& tone) {
+	BitmapRef const src = info.src.tone_change(tone, info.src_rect);
+	blit(info.x, info.y, *src, src->rect());
+}
+
+void Bitmap::blend_blit(BlitCommon const& info, Color const& color) {
+	if(color.alpha == 0) {
+		if(&info.src != this) {
+			blit(info.x, info.y, info.src, info.src_rect, 255);
+		}
+		return;
+	}
+
+	pixman_image_composite(
+		info.src.ref_, create_color_mask(color), ref_,
+		info.src_rect.x, info.src_rect.y, 0, 0, info.x, info.y,
+		info.src_rect.width, info.src_rect.height);
+}
+
+void Bitmap::tiled_blit(BlitCommon const& info, Rect const& dst_rect, int opacity) {
+	check_opacity(opacity);
+
+	int ox = info.x, oy = info.y;
+
+	if(ox >= info.src_rect.width ) ox %= info.src_rect.width;
+	if(oy >= info.src_rect.height) oy %= info.src_rect.width;
+	if(ox < 0) ox += info.src_rect.width  * ((-ox + info.src_rect.width  - 1) / info.src_rect.width );
+	if(oy < 0) ox += info.src_rect.height * ((-ox + info.src_rect.height - 1) / info.src_rect.height);
+
+	pixman_image_ptr const src_bmp =
+			create_sub_image(info.src.ref_.get(), info.src_rect);
+
+	pixman_image_set_repeat(src_bmp.get(), PIXMAN_REPEAT_NORMAL);
+
+	SET_MATRIX(src_bmp.get(), Matrix::translate(ox, oy));
+	pixman_image_composite(
+		src_bmp, create_opacity_mask(opacity), ref_,
+		0, 0, 0, 0, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
+}
+
+void Bitmap::stretch_blit(Rect const& dst_rect, Bitmap const& src, Rect const& src_rect, int opacity) {
+	check_opacity(opacity);
+
+	double const zoom_x = double(src_rect.width ) / dst_rect.width ,
+				 zoom_y = double(src_rect.height) / dst_rect.height;
+	SET_MATRIX(src.ref_.get(),
+			   Matrix::scale(zoom_x, zoom_y)
+			   .translate_(src_rect.x, src_rect.y));
+
+	pixman_image_composite(
+		src.ref_, create_opacity_mask(opacity), ref_,
+		0, 0, 0, 0, dst_rect.x, dst_rect.y,
+		dst_rect.width, dst_rect.height);
+}
+
+void Bitmap::flip_blit(BlitCommon const& info, bool const horizontal, bool const vertical) {
+	SET_MATRIX(
+		info.src.ref_.get(),
+		Matrix::scale(horizontal? -1 : 1, vertical? -1 : 1)
+		.translate(horizontal? info.src.width() : 0,
+				   vertical? info.src.height() : 0));
+	pixman_image_composite(info.src.ref_, pixman_image_ptr(), ref_,
+						   horizontal? info.src.width() - info.src_rect.x + info.src_rect.width : info.src_rect.x,
+						   vertical? info.src.height() - info.src_rect.y + info.src_rect.height : info.src_rect.y,
+						   0, 0, info.x, info.y, info.src_rect.width, info.src_rect.height);
+}
+void Bitmap::flip(Rect const& rect, bool const horizontal, bool const vertical) {
+	if(not horizontal and not vertical) { return; }
+
+	BitmapRef const resampled = sub_image(rect);
+	resampled->flip_blit(BlitCommon(0, 0, *this, rect), horizontal, vertical);
+	pixman_image_composite(resampled->ref_, pixman_image_ptr(), ref_,
+						   0, 0, 0, 0, rect.x, rect.y, rect.width, rect.height);
+}
+
+BitmapRef Bitmap::resample(int const scale_w, int const scale_h, Rect const& src_rect) const {
+	BitmapRef const ret = Bitmap::Create(scale_w, scale_h, Color());
+
+	SET_MATRIX(
+		ref_.get(),
+		Matrix::scale(double(scale_w) / src_rect.width,
+					  double(scale_h) / src_rect.height));
+	pixman_image_composite(ref_, pixman_image_ptr(), ret->ref_,
+						   src_rect.x, src_rect.y, 0, 0, 0, 0, scale_w, scale_h);
+
+	return ret;
+}
+BitmapRef Bitmap::sub_image(Rect const& rect) const {
+	BitmapRef const ret = Bitmap::Create(rect.width, rect.height);
+
+	SET_MATRIX(ref_.get(), Matrix::translate(rect.x, rect.y));
+	pixman_image_composite(
+		ref_, pixman_image_ptr(), ret->ref_,
+		rect.x, rect.y, 0, 0, 0, 0, rect.width, rect.height);
+
+	assert(ret->width () == size_t(rect.width ));
+	assert(ret->height() == size_t(rect.height));
+
+	return ret;
+}
+
+void Bitmap::fill(Rect const& r, Color const& c) {
+	pixman_color_t const color = to_pixman(c);
+	pixman_rectangle16_t const rect = to_pixman(r);
+	pixman_image_fill_rectangles(
+		PIXMAN_OP_OVER, ref_.get(), &color, 1, &rect);
+
+	mark_dirty();
+}
+
+void Bitmap::clear() {
+	pixman_color_t const c = to_pixman(Color());
+	pixman_rectangle16_t const r = to_pixman(rect());
+	pixman_image_fill_rectangles(PIXMAN_OP_CLEAR, ref_.get(), &c, 1, &r);
+
+	mark_dirty();
+}
+
+void Bitmap::transform_blit(BlitCommon const& info, Matrix const& mat, int opacity) {
+	check_opacity(opacity);
+
+	Rect src_rect = mat.transform(info.src_rect);
+	src_rect.Adjust(rect());
+	if(src_rect.IsEmpty()) { return; }
+
+	SET_MATRIX(info.src.ref_.get(), mat.invert());
+	pixman_image_composite(
+		info.src.ref_, create_opacity_mask(opacity), ref_,
+		src_rect.x, src_rect.y, 0, 0,
+		info.x, info.y, src_rect.width, src_rect.height);
+}
+
+void Bitmap::effect_blit(BlitCommon const& info, Matrix const& mat,
+						 int top_opacity, int bottom_opacity, int opacity_split)
+{
+	if(opacity_split <= 0) {
+		transform_blit(info, mat, top_opacity);
+	} else if(opacity_split >= info.src_rect.height) {
+		transform_blit(info, mat, bottom_opacity);
 	} else {
-		double factor = (255 - tone.gray) / 255.0;
-		for (int i = 0; i < dst_rect.height; i++) {
-			bm_utils->ToneBlit(dst_pixels, src_pixels, dst_rect.width, tone, factor);
-			src_pixels += src.pitch();
-			dst_pixels += pitch();
-		}
+		size_t const top_height = info.src_rect.height - opacity_split;
+
+		transform_blit(
+			BlitCommon(info.x, info.y, info.src, Rect(
+				info.src_rect.x, info.src_rect.y,
+				info.src_rect.width, top_height)),
+			mat, top_opacity);
+
+		transform_blit(
+			BlitCommon(info.x, info.y, info.src, Rect(
+				info.src_rect.x, info.src_rect.y + top_height,
+				info.src_rect.width, opacity_split)),
+			mat, bottom_opacity);
+	}
+}
+
+void Bitmap::effect_blit(BlitCommon const& info,
+						 int top_opacity, int bottom_opacity, int opacity_split,
+						 Tone const& tone, double zoom_x, double zoom_y, double angle,
+						 int waver_depth, double waver_phase)
+{
+	Rect src_rect = info.src_rect;
+	EASYRPG_SHARED_PTR<Bitmap const> draw(&info.src, null_deleter());
+
+	// apply tone
+	if (not tone.IsEmpty()) {
+		draw = draw->tone_change(tone, src_rect);
+		src_rect = draw->rect();
 	}
 
-	End(src);
-
-	// Pixman ToneBlit code
-	/*
-	if (&src != this)
-		pixman_image_composite32(PIXMAN_OP_SRC,
-								 src.bitmap, (pixman_image_t*) NULL, bitmap,
-								 src_rect.x, src_rect.y,
-								 0, 0,
-								 x, y,
-								 src_rect.width, src_rect.height);
-
-	if (tone.gray == 0) {
-		pixman_color_t tcolor = {
-      static_cast<uint16_t>(tone.red << 8),
-      static_cast<uint16_t>(tone.green << 8),
-      static_cast<uint16_t>(tone.blue << 8), 0xFFFF};
-		pixman_image_t *timage = pixman_image_create_solid_fill(&tcolor);
-
-		pixman_image_composite32(PIXMAN_OP_ADD,
-								 timage, src.bitmap, bitmap,
-								 src_rect.x, src_rect.y,
-								 0, 0,
-								 x, y,
-								 src_rect.width, src_rect.height);
-
-		pixman_image_unref(timage);
-	}
-	else {
-		pixman_rectangle16_t rect = {
-			0, 0, static_cast<uint16_t>(src_rect.width),
-			static_cast<uint16_t>(src_rect.height)};
-
-		BitmapRef gray(new Bitmap(src, src_rect, GetTransparent()));
-		pixman_color_t gcolor = {0, 0, 0, 0xFFFF};
-		pixman_image_fill_rectangles(PIXMAN_OP_HSL_SATURATION, gray->bitmap, &gcolor, 1, &rect);
-
-		pixman_color_t acolor = {0, 0, 0, static_cast<uint16_t>(tone.gray << 8)};
-		pixman_image_fill_rectangles(PIXMAN_OP_IN_REVERSE, gray->bitmap, &acolor, 1, &rect);
-
-		pixman_image_composite32(PIXMAN_OP_ATOP,
-								 gray->bitmap, (pixman_image_t*) NULL, bitmap,
-								 src_rect.x, src_rect.y,
-								 0, 0,
-								 x, y,
-								 src_rect.width, src_rect.height);
-
-		pixman_color_t tcolor = {
-			static_cast<uint16_t>(tone.red << 8),
-			static_cast<uint16_t>(tone.green << 8),
-			static_cast<uint16_t>(tone.blue << 8), 0xFFFF};
-		pixman_image_t *timage = pixman_image_create_solid_fill(&tcolor);
-
-		pixman_image_composite32(PIXMAN_OP_ADD,
-								 timage, src.bitmap, bitmap,
-								 src_rect.x, src_rect.y,
-								 0, 0,
-								 x, y,
-								 src_rect.width, src_rect.height);
-
-		pixman_image_unref(timage);
-	}
-	*/
-
-	RefreshCallback();
-}
-
-void Bitmap::BlendBlit(int x, int y, Bitmap const& src, Rect const& src_rect, const Color& color) {
-	if (color.alpha == 0) {
-		if (&src != this)
-			Blit(x, y, src, src_rect, 255);
-		return;
+	// apply waver
+	if (waver_depth != 0) {
+		draw = draw->waver(waver_depth, waver_phase, src_rect);
+		src_rect = draw->rect();
 	}
 
-	if (&src != this)
-		pixman_image_composite32(PIXMAN_OP_SRC,
-								 src.bitmap, (pixman_image_t*) NULL, bitmap,
-								 src_rect.x, src_rect.y,
-								 0, 0,
-								 x, y,
-								 src_rect.width, src_rect.height);
-
-	pixman_color_t tcolor = PixmanColor(color);
-	pixman_image_t* timage = pixman_image_create_solid_fill(&tcolor);
-
-	pixman_image_composite32(PIXMAN_OP_OVER,
-							 timage, src.bitmap, bitmap,
-							 0, 0,
-							 src_rect.x, src_rect.y,
-							 x, y,
-							 src_rect.width, src_rect.height);
-
-	pixman_image_unref(timage);
-
-	RefreshCallback();
-}
-
-void Bitmap::FlipBlit(int x, int y, Bitmap const& src, Rect const& src_rect, bool horizontal, bool vertical) {
-	if (!horizontal && !vertical) {
-		Blit(x, y, src, src_rect, 255);
-		return;
-	}
-
-	pixman_transform_t xform;
-	pixman_transform_init_scale(&xform,
-								pixman_int_to_fixed(horizontal ? -1 : 1),
-								pixman_int_to_fixed(vertical ? -1 : 1));
-
-	pixman_transform_translate((pixman_transform_t*) NULL, &xform,
-							   pixman_int_to_fixed(horizontal ? src.GetWidth() : 0),
-							   pixman_int_to_fixed(vertical ? src.GetHeight() : 0));
-
-	pixman_image_set_transform(src.bitmap, &xform);
-
-	pixman_image_composite32(PIXMAN_OP_SRC,
-							 src.bitmap, (pixman_image_t*) NULL, bitmap,
-							 horizontal ? src.GetWidth() - src_rect.x - src_rect.width : src_rect.x,
-							 vertical ? src.GetHeight() - src_rect.y - src_rect.height : src_rect.y,
-							 0, 0,
-							 x, y,
-							 src_rect.width, src_rect.height);
-
-	pixman_transform_init_identity(&xform);
-	pixman_image_set_transform(src.bitmap, &xform);
-
-	RefreshCallback();
-}
-
-void Bitmap::Flip(const Rect& dst_rect, bool horizontal, bool vertical) {
-	if (!horizontal && !vertical)
-		return;
-
-	BitmapRef resampled(new Bitmap(dst_rect.width, dst_rect.height, GetTransparent()));
-
-	resampled->FlipBlit(0, 0, *this, dst_rect, horizontal, vertical);
-
-	pixman_image_composite32(PIXMAN_OP_SRC,
-							 resampled->bitmap, (pixman_image_t*) NULL, bitmap,
-							 0, 0,
-							 0, 0,
-							 dst_rect.x, dst_rect.y,
-							 dst_rect.width, dst_rect.height);
-
-	RefreshCallback();
-}
-
-void Bitmap::Blit2x(Rect const& dst_rect, Bitmap const& src, Rect const& src_rect) {
-	pixman_transform_t xform;
-	pixman_transform_init_scale(&xform,
-								pixman_double_to_fixed(0.5),
-								pixman_double_to_fixed(0.5));
-
-	pixman_image_set_transform(src.bitmap, &xform);
-
-	pixman_image_composite32(PIXMAN_OP_SRC,
-							 src.bitmap, (pixman_image_t*) NULL, bitmap,
-							 src_rect.x, src_rect.y,
-							 0, 0,
-							 dst_rect.x, dst_rect.y,
-							 dst_rect.width, dst_rect.height);
-
-	pixman_transform_init_identity(&xform);
-	pixman_image_set_transform(src.bitmap, &xform);
-
-	RefreshCallback();
-}
-
-Color Bitmap::GetColor(uint32_t uint32_color) const {
-	uint8_t r, g, b, a;
-	GetColorComponents(uint32_color, r, g, b, a);
-	return Color(r, g, b, a);
-}
-
-uint32_t Bitmap::GetUint32Color(const Color &color) const {
-	return GetUint32Color(color.red, color.green, color.blue, color.alpha);
-}
-
-uint32_t Bitmap::GetUint32Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const {
-	MultiplyAlpha(r, g, b, a);
-	return pixel_format.rgba_to_uint32_t(r, g, b, a);
-}
-
-void Bitmap::GetColorComponents(uint32_t color, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a) const {
-	pixel_format.uint32_to_rgba(color, r, g, b, a);
-	DivideAlpha(r, g, b, a);
+	effect_blit(
+		BlitCommon(info.x, info.y, *draw, src_rect),
+		Matrix::translate(src_rect.x, src_rect.y)
+		.scale_(zoom_x, zoom_y)
+		.rotate_(angle),
+		top_opacity, bottom_opacity, opacity_split);
 }

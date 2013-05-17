@@ -37,7 +37,7 @@
 #include "audio.h"
 #include "input.h"
 
-Scene_Map::Scene_Map() : Scene(Map) {}
+Scene_Map::Scene_Map() : Scene("Map") {}
 
 void Scene_Map::Start() {
 	spriteset.reset(new Spriteset_Map());
@@ -79,7 +79,7 @@ void Scene_Map::Update() {
 
 	if (Game_Temp::to_title) {
 		Game_Temp::to_title = false;
-		Scene::PopUntil(Scene::Title);
+		Scene::PopUntil("Title");
 	}
 
 	if (Game_Message::visible)

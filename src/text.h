@@ -21,6 +21,8 @@
 #include "system.h"
 #include <string>
 
+class Color;
+
 namespace Text {
 	/** TextDraw alignment options. */
 	enum Alignment {
@@ -30,6 +32,7 @@ namespace Text {
 	};
 
 	void Draw(Bitmap& dest, int x, int y, int color, std::string const& text, Text::Alignment align = Text::AlignLeft);
+	void Draw(Bitmap& dest, int x, int y, std::string const& text, Text::Alignment align = Text::AlignLeft);
 }; // namespace Text
 
 #endif

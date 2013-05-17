@@ -29,8 +29,7 @@ Window_ShopNumber::Window_ShopNumber(int ix, int iy, int iwidth, int iheight) :
 	item_max(1), price(0), number(1), item_id(0) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
-	contents->Clear();
+	contents->clear();
 }
 
 void Window_ShopNumber::SetData(int item_id, int item_max, int price) {
@@ -41,7 +40,7 @@ void Window_ShopNumber::SetData(int item_id, int item_max, int price) {
 }
 
 void Window_ShopNumber::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	int y = 34;
 	DrawItemName(&Data::items[item_id - 1], 0, y);
@@ -49,11 +48,11 @@ void Window_ShopNumber::Refresh() {
 	std::stringstream ss;
 	ss << number;
 
-	contents->TextDraw(132, y, Font::ColorDefault, "x");
-	contents->TextDraw(132 + 30, y, Font::ColorDefault, ss.str(), Text::AlignRight);
+	contents->draw_text(132, y, "x", Font::ColorDefault);
+	contents->draw_text(132 + 30, y, ss.str(), Font::ColorDefault, Text::AlignRight);
 	SetCursorRect(Rect(132 + 14, y - 2, 20, 16));
 
-	DrawCurrencyValue(GetTotal(), contents->GetWidth(), y + 32);
+	DrawCurrencyValue(GetTotal(), contents->width(), y + 32);
 }
 
 int Window_ShopNumber::GetNumber() const {

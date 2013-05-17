@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <sstream>
 #include <ciso646>
+#include <cmath>
 
 #include "rpg_battlecommand.h"
 #include "input.h"
@@ -40,7 +41,7 @@
 #include "scene_battle.h"
 #include "bitmap.h"
 
-Scene_Battle::Scene_Battle() : Scene(Battle) {}
+Scene_Battle::Scene_Battle() : Scene("Battle") {}
 
 Scene_Battle::~Scene_Battle() {
 	Game_Battle::Quit();
@@ -50,8 +51,8 @@ Scene_Battle::FloatText::FloatText(int x, int y, int color, const std::string& t
 	Rect rect = Font::Default()->GetSize(text);
 
 	BitmapRef graphic = Bitmap::Create(rect.width, rect.height);
-	graphic->Clear();
-	graphic->TextDraw(-rect.x, -rect.y, color, text);
+	graphic->clear();
+	graphic->draw_text(-rect.x, -rect.y, text, color);
 
 	sprite.reset(new Sprite());
 	sprite->SetBitmap(graphic);
@@ -907,7 +908,7 @@ void Scene_Battle::UpdateSprites() {
 
 		if (!it->rpg_enemy->levitate)
 			continue;
-		int y = (int) (3 * sin(cycle / 30.0));
+		int y = (int) (3 * std::sin(cycle / 30.0));
 		it->sprite->SetY(it->member->y + y);
 		it->sprite->SetZ(it->member->y + y);
 	}

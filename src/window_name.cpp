@@ -29,7 +29,6 @@ Window_Name::Window_Name(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 
 	name.clear();
 
@@ -37,8 +36,8 @@ Window_Name::Window_Name(int ix, int iy, int iwidth, int iheight) :
 }
 
 void Window_Name::Refresh() {
-	contents->Clear();
-	contents->TextDraw(2, 2, Font::ColorDefault, name);
+	contents->clear();
+	contents->draw_text(2, 2, name, Font::ColorDefault);
 }
 
 void Window_Name::Set(const std::string& text) {
@@ -47,7 +46,7 @@ void Window_Name::Set(const std::string& text) {
 }
 
 void Window_Name::Append(const std::string& text) {
-	if(contents->GetFont()->GetSize(name + text).width <= (12 * 6)) {
+	if(contents->text_size(name + text).width <= (12 * 6)) {
 		name += text;
 		Refresh();
 	} else {
@@ -56,7 +55,7 @@ void Window_Name::Append(const std::string& text) {
 }
 
 void Window_Name::Update() {
-	Rect const name_size = contents->GetFont()->GetSize(name);
+	Rect const name_size = contents->text_size(name);
 	SetCursorRect(Rect(name_size.width + 2, 0, 16, 16));
 }
 

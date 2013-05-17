@@ -51,11 +51,6 @@ struct Cache_ : boost::noncopyable {
 	BitmapRef Tile(const std::string& filename, int tile_id);
 	void Clear();
 
-	struct {
-		Color bg_color;
-		Color sh_color;
-	} system_info;
-
   private:
 	typedef std::pair<std::string,std::string> string_pair;
 	typedef std::pair<std::string, int> tile_pair;

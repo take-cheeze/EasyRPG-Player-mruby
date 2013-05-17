@@ -47,7 +47,7 @@ void Plane::Draw(int /* z_order */) {
 
 	Rect dst_rect(0, 0, DisplayUi->GetWidth(), DisplayUi->GetHeight());
 
-	bitmap_screen->BlitScreenTiled(bitmap->GetRect(), dst_rect, ox, oy);
+	bitmap_screen->BlitScreenTiled(bitmap->rect(), dst_rect, ox, oy);
 }
 
 BitmapRef const& Plane::GetBitmap() const {

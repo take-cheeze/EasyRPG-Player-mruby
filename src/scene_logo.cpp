@@ -905,7 +905,7 @@ static const uint8_t easyrpg_logo[] = {
 };
 
 Scene_Logo::Scene_Logo() :
-		Scene(Logo), frame_counter(0) {}
+		Scene("Logo"), frame_counter(0) {}
 
 void Scene_Logo::Start() {
 	logo.reset(new Sprite());

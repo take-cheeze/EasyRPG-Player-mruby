@@ -34,8 +34,8 @@
 struct Cache_::Spec {
 	char const* directory;
 	bool transparent;
-	int min_width , max_width ;
-	int min_height, max_height;
+	size_t min_width , max_width ;
+	size_t min_height, max_height;
 };
 
 Cache_::Spec const Cache_::specs_[] = {
@@ -64,19 +64,11 @@ BitmapRef Cache_::LoadBitmap(std::string const& f) {
 	Spec const& s = specs_[T];
 	BitmapRef const ret = LoadBitmap(s, f);
 
-	// set flag of just created bitmap
-	if(ret.use_count() == 1) {
-		ret->CheckPixels(
-			T == Material::Chipset? Bitmap::Chipset:
-			T == Material::System? Bitmap::System:
-			0);
-	}
-
-	if(ret->GetWidth () < s.min_width  || s.max_width  < ret->GetWidth () ||
-	   ret->GetHeight() < s.min_height || s.max_height < ret->GetHeight()) {
+	if(ret->width () < s.min_width  || s.max_width  < ret->width () ||
+	   ret->height() < s.min_height || s.max_height < ret->height()) {
 		Output::Debug("Image size error in: %s/%s", s.directory, f.c_str());
-		Output::Debug("width  (min, max, actual) = (%d, %d, %d)", s.min_width , s.max_width , ret->GetWidth ());
-		Output::Debug("height (min, max, actual) = (%d, %d, %d)", s.min_height, s.max_height, ret->GetHeight());
+		Output::Debug("width  (min, max, actual) = (%d, %d, %d)", s.min_width , s.max_width , ret->width ());
+		Output::Debug("height (min, max, actual) = (%d, %d, %d)", s.min_height, s.max_height, ret->height());
 	}
 
 	return ret;
@@ -99,7 +91,7 @@ BitmapRef Cache_::LoadBitmap(Spec const& spec, std::string const& filename) {
 		}
 
 		return (cache[key] = path.empty()
-				? Bitmap::Create(16, 16, Color())
+				? Bitmap::Create(16, 16)
 				: Bitmap::Create(path, spec.transparent)
 				).lock();
 	} else { return it->second.lock(); }
@@ -147,7 +139,7 @@ BitmapRef Cache_::Tile(const std::string& filename, int tile_id) {
 		rect.x += sub_tile_id % 6 * 16;
 		rect.y += sub_tile_id / 6 * 16;
 
-		return(cache_tiles[key] = Bitmap::Create(*chipset, rect)).lock();
+		return(cache_tiles[key] = chipset->sub_image(rect)).lock();
 	} else { return it->second.lock(); }
 }
 

@@ -28,6 +28,7 @@
 #include "scene_logo.h"
 #include "scene_title.h"
 #include "scene_battle.h"
+#include "scene_bitmap_test.h"
 #include "utils.h"
 #include "baseui.h"
 
@@ -48,30 +49,7 @@ enum PushPopOperation {
 	ScenePopped
 };
 
-const char* scene_names[Scene::SceneMax] = {
-	"Null",
-	"Title",
-	"Map",
-	"Menu",
-	"Item",
-	"Skill",
-	"Equip",
-	"ActorTarget",
-	"Status",
-	"File",
-	"Save",
-	"Load",
-	"End",
-	"Battle",
-	"Shop",
-	"Name",
-	"Gameover",
-	"Debug",
-	"Logo",
-	"Order"
-};
-
-bool SceneFinder(SceneRef const& r, Scene::Type const t) {
+bool SceneFinder(SceneRef const& r, std::string const& t) {
 	return r->type == t;
 }
 
@@ -100,7 +78,7 @@ struct Player_::Internal {
 	}
 };
 
-void Scene::PopUntil(Scene::Type type) {
+void Scene::PopUntil(std::string const& type) {
 	int count = 0;
 
 	for (int i = (int)Player().internal->scene.instances.size() - 1 ; i >= 0; --i) {
@@ -116,10 +94,10 @@ void Scene::PopUntil(Scene::Type type) {
 		++count;
 	}
 
-	Output::Warning("The requested scene %s was not on the stack", scene_names[type]);
+	Output::Warning("The requested scene %s was not on the stack", type.c_str());
 }
 
-EASYRPG_SHARED_PTR<Scene> Scene::Find(Scene::Type type) {
+EASYRPG_SHARED_PTR<Scene> Scene::Find(std::string const& type) {
 	std::vector<SceneRef> const& instances = Player().internal->scene.instances;
 	std::vector<SceneRef>::const_reverse_iterator it =
 			std::find_if(instances.rbegin(), instances.rend(),
@@ -293,9 +271,10 @@ void Player_::Run() {
 
 	Scene::Push(Scene::CreateNullScene());
 	Scene::Push(SceneRef
-				(debug_flag?
-				 static_cast<Scene*>(new Scene_Title()) :
-				 static_cast<Scene*>(new Scene_Logo())));
+				(debug_flag
+				 // ? static_cast<Scene*>(new Scene_BitmapTest())
+				 ? static_cast<Scene*>(new Scene_Title())
+				 : static_cast<Scene*>(new Scene_Logo())));
 
 	reset_flag = false;
 
@@ -303,7 +282,7 @@ void Player_::Run() {
 	Graphics().FrameReset();
 
 	// Main loop
-	while (internal->scene.instance->type != Scene::Null) {
+	while (not internal->scene.instance->type.empty()) {
 		internal->scene.instance->MainFunction();
 		for (size_t i = 0; i < internal->scene.old_instances.size(); ++i) {
 			Graphics().Pop();
@@ -333,9 +312,9 @@ void Player_::Update() {
 	DisplayUi->ProcessEvents();
 
 	if (exit_flag) {
-		Scene::PopUntil(Scene::Null);
+		Scene::PopUntil(std::string());
 	} else if (reset_flag) {
 		reset_flag = false;
-		Scene::PopUntil(Scene::Title);
+		Scene::PopUntil("Title");
 	}
 }

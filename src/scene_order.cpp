@@ -27,7 +27,7 @@
 #include "scene_map.h"
 
 Scene_Order::Scene_Order() :
-		Scene(Order), actor_counter(0) {}
+		Scene("Order"), actor_counter(0) {}
 
 void Scene_Order::Start() {
 	actors.resize(Game_Party::GetActors().size());

@@ -36,7 +36,7 @@ public:
 	 *
 	 * @param message title message.
 	 */
-	Scene_File(Scene::Type t, std::string const& message);
+	Scene_File(char const* t, std::string const& message);
 
 	void Start();
 	void Update();

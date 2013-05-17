@@ -102,7 +102,7 @@ void Sprite::SetBitmap(BitmapRef const& nbitmap) {
 	if (!bitmap) {
 		src_rect = Rect();
 	} else {
-		src_rect = bitmap->GetRect();
+		src_rect = bitmap->rect();
 	}
 	bitmap_screen->SetBitmap(bitmap);
 	bitmap_screen->SetSrcRect(src_rect);

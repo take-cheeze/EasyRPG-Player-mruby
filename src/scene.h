@@ -21,6 +21,7 @@
 // Headers
 #include "system.h"
 #include <vector>
+#include <string>
 
 #include <boost/noncopyable.hpp>
 
@@ -32,37 +33,12 @@ typedef EASYRPG_SHARED_PTR<Scene> SceneRef;
  */
 class Scene : boost::noncopyable {
 public:
-	/** Scene types. */
-	enum Type {
-		Null,
-		Title,
-		Map,
-		Menu,
-		Item,
-		Skill,
-		Equip,
-		ActorTarget,
-		Status,
-		File,
-		Save,
-		Load,
-		End,
-		Battle,
-		Shop,
-		Name,
-		Gameover,
-		Debug,
-		Logo,
-		Order,
-		SceneMax
-	};
-
 	static SceneRef CreateNullScene();
 
 	/**
 	 * Constructor.
 	 */
-	Scene(Scene::Type t);
+	Scene(char const* name);
 
 	/**
 	 * Destructor.
@@ -146,7 +122,7 @@ public:
 	 *
 	 * @param type type of the scene that is searched.
 	 */
-	static void PopUntil(Scene::Type type);
+	static void PopUntil(std::string const& type);
 
 	/**
 	 * Finds the topmost scene of a specific type on the stack.
@@ -154,10 +130,13 @@ public:
 	 * @param type type of the scene that is searched.
 	 * @return the scene found, or NULL if no such scene exists.
 	 */
-	static SceneRef Find(Scene::Type type);
+	static SceneRef Find(std::string const& type);
 
-	/** Scene type. */
-	Scene::Type const type;
+	/**
+	 * Scene type.
+	 * if empty it's a null scene
+	 */
+	std::string const type;
 };
 
 #endif

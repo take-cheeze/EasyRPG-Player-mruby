@@ -28,7 +28,7 @@
 #include "rpg_save.h"
 #include "scene_file.h"
 
-Scene_File::Scene_File(Scene::Type const t, std::string const& message) :
+Scene_File::Scene_File(char const* t, std::string const& message) :
 		Scene(t), index(0), top_index(0),
 		help_window(NULL), message(message) {}
 

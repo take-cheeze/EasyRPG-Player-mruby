@@ -135,11 +135,10 @@ Window_Keyboard::Window_Keyboard(int ix, int iy, int iwidth, int iheight)
 	col = 0;
 
 	SetContents(Bitmap::Create(width - 16, height - 16));
-	contents->SetTransparentColor(windowskin->GetTransparentColor());
 	SetZ(9999);
 
 	row_spacing = 16;
-	col_spacing = (contents->GetWidth() - 2 * border_x) / col_max;
+	col_spacing = (contents->width() - 2 * border_x) / col_max;
 
 	mode = Letter;
 
@@ -177,7 +176,7 @@ Rect Window_Keyboard::GetItemRect(int row, int col) const {
 	std::string const& str = items[mode][row][col];
 	return Rect(col * col_spacing + border_x,
 				row * row_spacing + border_y,
-				contents->GetFont()->GetSize(str).width + 8,
+				contents->text_size(str).width + 8,
 				row_spacing);
 }
 
@@ -188,12 +187,12 @@ void Window_Keyboard::UpdateCursorRect() {
 }
 
 void Window_Keyboard::Refresh() {
-	contents->Clear();
+	contents->clear();
 
 	for (int j = 0; j < row_max; j++) {
 		for (int i = 0; i < col_max; i++) {
 			Rect r = GetItemRect(j, i);
-			contents->TextDraw(r.x + 4, r.y, Font::ColorDefault, items[mode][j][i]);
+			contents->draw_text(r.x + 4, r.y, items[mode][j][i], Font::ColorDefault);
 		}
 	}
 }

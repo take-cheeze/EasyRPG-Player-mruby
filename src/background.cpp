@@ -104,12 +104,12 @@ void Background::Draw(int /* z_order */) {
 		return;
 
 	if (bg_screen)
-		bg_screen->BlitScreenTiled(bg_screen->GetBitmap()->GetRect(),
-								   DisplayUi->GetDisplaySurface()->GetRect(),
+		bg_screen->BlitScreenTiled(bg_screen->GetBitmap()->rect(),
+								   Graphics().ScreenBuffer()->rect(),
 								   Scale(bg_x), Scale(bg_y));
 
 	if (fg_screen)
-		fg_screen->BlitScreenTiled(bg_screen->GetBitmap()->GetRect(),
-								   DisplayUi->GetDisplaySurface()->GetRect(),
+		fg_screen->BlitScreenTiled(bg_screen->GetBitmap()->rect(),
+								   Graphics().ScreenBuffer()->rect(),
 								   Scale(fg_x), Scale(fg_y));
 }

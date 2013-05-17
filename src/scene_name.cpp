@@ -25,7 +25,7 @@
 #include <ciso646>
 #include <cassert>
 
-Scene_Name::Scene_Name() : Scene(Name) {}
+Scene_Name::Scene_Name() : Scene("Name") {}
 
 void Scene_Name::Start() {
 	// Create the windows

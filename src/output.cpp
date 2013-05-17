@@ -86,7 +86,7 @@ static void HandleScreenOutput(char const* type, std::string const& msg, bool is
 	} else {
 		ss << "Press any key to continue...";
 	}
-	DisplayUi->GetDisplaySurface()->Clear();
+	Graphics().ScreenBuffer()->clear();
 	DisplayUi->DrawScreenText(ss.str(), 10, 30 + 10);
 	DisplayUi->UpdateDisplay();
 	Input().ResetKeys();
@@ -123,7 +123,7 @@ bool Output::TakeScreenshot(std::string const& file) {
 }
 
 bool Output::TakeScreenshot(std::ostream& os) {
-	return ImageIO::WritePNG(DisplayUi->GetDisplaySurface(), os);
+	return ImageIO::WritePNG(Graphics().ScreenBuffer(), os);
 }
 
 void Output::Error(const char* fmt, ...) {
