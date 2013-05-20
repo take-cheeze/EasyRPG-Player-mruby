@@ -420,6 +420,7 @@ void SdlUi::UpdateDisplay() {
 			reinterpret_cast<uint32_t*>(screen->pixels),
 			screen->pitch),
 		&pixman_image_unref);
+	BOOST_VERIFY(pixman_image_set_filter(img.get(), PIXMAN_FILTER_FAST, NULL, 0));
 
 	BitmapRef const& buffer = Graphics().ScreenBuffer();
 

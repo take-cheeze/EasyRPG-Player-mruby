@@ -20,7 +20,9 @@
 
 #include <pixman.h>
 #include <string>
+
 #include <boost/container/vector.hpp>
+#include <boost/noncopyable.hpp>
 
 #include "memory_management.h"
 #include "text.h"
@@ -42,7 +44,7 @@ struct BlitCommon {
 
 typedef EASYRPG_SHARED_PTR<pixman_image_t> pixman_image_ptr;
 
-class Bitmap {
+class Bitmap : boost::noncopyable {
   public:
 	static BitmapRef Create(std::string const& file, bool transparent = true);
 	static BitmapRef Create(size_t width, size_t height, Color const& col = Color(0, 0, 0, 0));

@@ -151,6 +151,11 @@ pixman_image_ptr create_sub_image(pixman_image_t* ptr, Rect const& rect) {
 		stride), pixman_releaser());
 }
 
+void init_image_setting(pixman_image_t* ptr) {
+	pixman_image_set_component_alpha(ptr, true);
+	BOOST_VERIFY(pixman_image_set_filter(ptr, PIXMAN_FILTER_FAST, NULL, 0));
+}
+
 }
 
 Bitmap::Bitmap(size_t w, size_t h, Color const& col)
@@ -161,7 +166,9 @@ Bitmap::Bitmap(size_t w, size_t h, Color const& col)
 				pixman_format, w, h,
 				reinterpret_cast<uint32_t*>(data_.data()), w * 4),
 			pixman_releaser())
-{}
+{
+	init_image_setting(ref_.get());
+}
 
 Bitmap::Bitmap(Bitmap const& src)
 		: font(src.font), dirty_(true)
@@ -172,7 +179,9 @@ Bitmap::Bitmap(Bitmap const& src)
 				pixman_format, width_, height_,
 				reinterpret_cast<uint32_t*>(data_.data()), width_ * 4),
 			pixman_releaser())
-{}
+{
+	init_image_setting(ref_.get());
+}
 
 size_t Bitmap::width() const {
 	assert(size_t(pixman_image_get_width(ref_.get())) == width_);
