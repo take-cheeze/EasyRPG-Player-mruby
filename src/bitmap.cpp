@@ -141,19 +141,26 @@ pixman_format_code_t const pixman_format
 = Utils::IsBigEndian()? PIXMAN_r8g8b8a8 : PIXMAN_a8b8g8r8;
 pixman_op_t const pixman_operation = PIXMAN_OP_OVER;
 
+pixman_image_ptr create_image(size_t w, size_t h, void* data, size_t stride) {
+	pixman_image_ptr const ret(
+		pixman_image_create_bits_no_clear(
+			pixman_format, w, h, reinterpret_cast<uint32_t*>(data), stride),
+		pixman_releaser());
+
+	pixman_image_set_component_alpha(ret.get(), true);
+	// pixman_image_set_alpha_map(ret.get(), ret.get(), 0, 0);
+	BOOST_VERIFY(pixman_image_set_filter(ret.get(), PIXMAN_FILTER_FAST, NULL, 0));
+
+	return ret;
+}
+
 pixman_image_ptr create_sub_image(pixman_image_t* ptr, Rect const& rect) {
 	size_t const stride = pixman_image_get_stride(ptr);
 	assert((stride % 4) == 0);
 
-	return pixman_image_ptr(pixman_image_create_bits_no_clear(
-		pixman_format, rect.width, rect.height,
-		pixman_image_get_data(ptr) + stride / 4 * rect.y + rect.x,
-		stride), pixman_releaser());
-}
-
-void init_image_setting(pixman_image_t* ptr) {
-	pixman_image_set_component_alpha(ptr, true);
-	BOOST_VERIFY(pixman_image_set_filter(ptr, PIXMAN_FILTER_FAST, NULL, 0));
+	return create_image(
+		rect.width, rect.height,
+		pixman_image_get_data(ptr) + stride / 4 * rect.y + rect.x, stride);
 }
 
 }
@@ -161,27 +168,14 @@ void init_image_setting(pixman_image_t* ptr) {
 Bitmap::Bitmap(size_t w, size_t h, Color const& col)
 		: font(Font::Default()), dirty_(true)
 		, width_(w), height_(h), data_(w * h, col)
-		, ref_(
-			pixman_image_create_bits_no_clear(
-				pixman_format, w, h,
-				reinterpret_cast<uint32_t*>(data_.data()), w * 4),
-			pixman_releaser())
-{
-	init_image_setting(ref_.get());
-}
-
+		, ref_(create_image(width_, height_, data_.data(), width_ * 4))
+{}
 Bitmap::Bitmap(Bitmap const& src)
 		: font(src.font), dirty_(true)
 		, width_(src.width_), height_(src.height_)
 		, data_(src.data_)
-		, ref_(
-			pixman_image_create_bits_no_clear(
-				pixman_format, width_, height_,
-				reinterpret_cast<uint32_t*>(data_.data()), width_ * 4),
-			pixman_releaser())
-{
-	init_image_setting(ref_.get());
-}
+		, ref_(create_image(width_, height_, data_.data(), width_ * 4))
+{}
 
 size_t Bitmap::width() const {
 	assert(size_t(pixman_image_get_width(ref_.get())) == width_);
