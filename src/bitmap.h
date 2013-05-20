@@ -110,7 +110,6 @@ class Bitmap {
 
 	void pixman_image_composite(pixman_image_ptr const& src,
 								pixman_image_ptr const& mask,
-								pixman_image_ptr const& dst,
 								int16_t src_x, int16_t src_y,
 								int16_t mask_x, int16_t mask_y,
 								int16_t dest_x, int16_t dest_y,

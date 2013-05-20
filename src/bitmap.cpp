@@ -58,8 +58,8 @@ pixman_rectangle16_t to_pixman(Rect const& r) {
 
 pixman_color_t to_pixman(Color const& c) {
 	pixman_color_t const ret = {
-		uint16_t(c.red  << c.alpha), uint16_t(c.green << c.alpha),
-		uint16_t(c.blue << c.alpha), uint16_t(c.alpha << 8) };
+		uint16_t(c.red  << 8), uint16_t(c.green << 8),
+		uint16_t(c.blue << 8), uint16_t(c.alpha << 8) };
 	return ret;
 }
 
@@ -123,9 +123,7 @@ pixman_image_ptr create_color_mask(Color const& c) {
 	static Color const ignore_color(0, 0, 0, 255);
 
 	pixman_color_t const col = to_pixman(c);
-	return pixman_image_ptr(c == ignore_color
-							? NULL : pixman_image_create_solid_fill(&col),
-							pixman_releaser());
+	return pixman_image_ptr(pixman_image_create_solid_fill(&col), pixman_releaser());
 }
 
 pixman_image_ptr create_opacity_mask(int op) {
@@ -137,8 +135,9 @@ int waver_offset(int depth, double phase, int i) {
 }
 int waver_offset_max(int depth) { return depth * 2; }
 
-static pixman_format_code_t const pixman_format
+pixman_format_code_t const pixman_format
 = Utils::IsBigEndian()? PIXMAN_r8g8b8a8 : PIXMAN_a8b8g8r8;
+pixman_op_t const pixman_operation = PIXMAN_OP_OVER;
 
 pixman_image_ptr create_sub_image(pixman_image_t* ptr, Rect const& rect) {
 	size_t const stride = pixman_image_get_stride(ptr);
@@ -244,14 +243,13 @@ void Bitmap::mark_dirty() {
 
 void Bitmap::pixman_image_composite(pixman_image_ptr const& src,
 									pixman_image_ptr const& mask,
-									pixman_image_ptr const& dst,
 									int16_t src_x, int16_t src_y,
 									int16_t mask_x, int16_t mask_y,
 									int16_t dest_x, int16_t dest_y,
 									uint16_t width, uint16_t height)
 {
-	::pixman_image_composite(PIXMAN_OP_OVER,
-							 src.get(), mask? mask.get() : NULL, dst.get(),
+	::pixman_image_composite(pixman_operation,
+							 src.get(), mask? mask.get() : NULL, ref_.get(),
 							 src_x, src_y, mask_x, mask_y,
 							 dest_x, dest_y, width, height);
 	mark_dirty();
@@ -265,7 +263,7 @@ void Bitmap::pixman_image_composite(pixman_image_ptr const& src,
 									int16_t dest_x, int16_t dest_y,
 									uint16_t width, uint16_t height) const
 {
-	::pixman_image_composite(PIXMAN_OP_OVER,
+	::pixman_image_composite(pixman_operation,
 							 src.get(), mask? mask.get() : NULL, dst.get(),
 							 src_x, src_y, mask_x, mask_y,
 							 dest_x, dest_y, width, height);
@@ -334,7 +332,7 @@ void Bitmap::blit(int x, int y, Bitmap const& src, Rect const& src_rect, int opa
 	check_opacity(opacity);
 
 	pixman_image_composite(
-		src.ref_, create_opacity_mask(opacity), ref_,
+		src.ref_, create_opacity_mask(opacity),
 		src_rect.x, src_rect.y, 0, 0, x, y,
 		src_rect.width, src_rect.height);
 }
@@ -392,7 +390,7 @@ void Bitmap::blend_blit(BlitCommon const& info, Color const& color) {
 	}
 
 	pixman_image_composite(
-		info.src.ref_, create_color_mask(color), ref_,
+		info.src.ref_, create_color_mask(color),
 		info.src_rect.x, info.src_rect.y, 0, 0, info.x, info.y,
 		info.src_rect.width, info.src_rect.height);
 }
@@ -414,7 +412,7 @@ void Bitmap::tiled_blit(BlitCommon const& info, Rect const& dst_rect, int opacit
 
 	SET_MATRIX(src_bmp.get(), Matrix::translate(ox, oy));
 	pixman_image_composite(
-		src_bmp, create_opacity_mask(opacity), ref_,
+		src_bmp, create_opacity_mask(opacity),
 		0, 0, 0, 0, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
 }
 
@@ -428,7 +426,7 @@ void Bitmap::stretch_blit(Rect const& dst_rect, Bitmap const& src, Rect const& s
 			   .translate_(src_rect.x, src_rect.y));
 
 	pixman_image_composite(
-		src.ref_, create_opacity_mask(opacity), ref_,
+		src.ref_, create_opacity_mask(opacity),
 		0, 0, 0, 0, dst_rect.x, dst_rect.y,
 		dst_rect.width, dst_rect.height);
 }
@@ -439,7 +437,7 @@ void Bitmap::flip_blit(BlitCommon const& info, bool const horizontal, bool const
 		Matrix::scale(horizontal? -1 : 1, vertical? -1 : 1)
 		.translate(horizontal? info.src.width() : 0,
 				   vertical? info.src.height() : 0));
-	pixman_image_composite(info.src.ref_, pixman_image_ptr(), ref_,
+	pixman_image_composite(info.src.ref_, pixman_image_ptr(),
 						   horizontal? info.src.width() - info.src_rect.x + info.src_rect.width : info.src_rect.x,
 						   vertical? info.src.height() - info.src_rect.y + info.src_rect.height : info.src_rect.y,
 						   0, 0, info.x, info.y, info.src_rect.width, info.src_rect.height);
@@ -449,7 +447,7 @@ void Bitmap::flip(Rect const& rect, bool const horizontal, bool const vertical) 
 
 	BitmapRef const resampled = sub_image(rect);
 	resampled->flip_blit(BlitCommon(0, 0, *this, rect), horizontal, vertical);
-	pixman_image_composite(resampled->ref_, pixman_image_ptr(), ref_,
+	pixman_image_composite(resampled->ref_, pixman_image_ptr(),
 						   0, 0, 0, 0, rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -483,7 +481,7 @@ void Bitmap::fill(Rect const& r, Color const& c) {
 	pixman_color_t const color = to_pixman(c);
 	pixman_rectangle16_t const rect = to_pixman(r);
 	pixman_image_fill_rectangles(
-		PIXMAN_OP_OVER, ref_.get(), &color, 1, &rect);
+		PIXMAN_OP_SRC, ref_.get(), &color, 1, &rect);
 
 	mark_dirty();
 }
@@ -505,7 +503,7 @@ void Bitmap::transform_blit(BlitCommon const& info, Matrix const& mat, int opaci
 
 	SET_MATRIX(info.src.ref_.get(), mat.invert());
 	pixman_image_composite(
-		info.src.ref_, create_opacity_mask(opacity), ref_,
+		info.src.ref_, create_opacity_mask(opacity),
 		src_rect.x, src_rect.y, 0, 0,
 		info.x, info.y, src_rect.width, src_rect.height);
 }

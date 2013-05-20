@@ -228,7 +228,7 @@ BitmapRef ImageIO::ReadPNG(std::istream& is, bool const transparent) {
 
 	if (transparent and palette) {
 		Color const src_color(palette->red, palette->green, palette->blue, 0xff);
-		Color const dst_color(palette->red, palette->green, palette->blue, 0x00);
+		Color const dst_color(0, 0, 0, 0);
 
 		for (size_t y = 0; y < height; y++) {
 			png_read_row(png_ptr, reinterpret_cast<png_bytep>(buf.data()), NULL);
