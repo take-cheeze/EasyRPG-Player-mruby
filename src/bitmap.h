@@ -28,7 +28,6 @@
 #include "color.h"
 
 
-class Color;
 class Tone;
 struct Matrix;
 
@@ -46,7 +45,7 @@ typedef EASYRPG_SHARED_PTR<pixman_image_t> pixman_image_ptr;
 class Bitmap {
   public:
 	static BitmapRef Create(std::string const& file, bool transparent = true);
-	static BitmapRef Create(size_t width, size_t height, Color const& col = Color());
+	static BitmapRef Create(size_t width, size_t height, Color const& col = Color(0, 0, 0, 0));
 	static BitmapRef Create(BitmapRef const& another);
 	static BitmapRef Create(uint8_t const* data, size_t data_size, bool transparent = true);
 

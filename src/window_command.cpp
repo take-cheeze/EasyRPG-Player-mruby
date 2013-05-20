@@ -19,7 +19,6 @@
 #include "window_command.h"
 #include "color.h"
 #include "bitmap.h"
-#include "util_macro.h"
 
 Window_Command::Window_Command(std::vector<std::string> commands, int width, int max_item) :
 	Window_Selectable(0, 0, GetRequiredWidth(commands, width), (max_item == -1 ? commands.size() : max_item) * 16 + 16),

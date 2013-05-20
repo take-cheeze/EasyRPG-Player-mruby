@@ -25,7 +25,6 @@
 #include "input.h"
 #include "main_data.h"
 #include "player.h"
-#include "util_macro.h"
 #include "baseui.h"
 #include <algorithm>
 
@@ -92,8 +91,8 @@ void Game_Player::Center(int x, int y) {
 
 	int max_x = (Game_Map::GetWidth() - DisplayUi->GetWidth() / 16) * 128;
 	int max_y = (Game_Map::GetHeight() - DisplayUi->GetHeight() / 16) * 128;
-	Game_Map::SetDisplayX(max(0, min((x * 128 - center_x), max_x)));
-	Game_Map::SetDisplayY(max(0, min((y * 128 - center_y), max_y)));
+	Game_Map::SetDisplayX(std::max(0, std::min((x * 128 - center_x), max_x)));
+	Game_Map::SetDisplayY(std::max(0, std::min((y * 128 - center_y), max_y)));
 }
 
 // MoveTo

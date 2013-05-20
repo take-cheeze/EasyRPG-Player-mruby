@@ -21,8 +21,8 @@
 #include "window_skill.h"
 #include "game_actor.h"
 #include "game_actors.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_Skill::Window_Skill(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight), actor_id(-1) {
@@ -77,7 +77,7 @@ void Window_Skill::DrawItem(int index) {
 		bool enabled = CheckEnable(skill_id);
 		int color = !enabled ? Font::ColorDisabled : Font::ColorDefault;
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << costs;
 		contents->draw_text(rect.x + rect.width - 28, rect.y, "-", color);
 		contents->draw_text(rect.x + rect.width - 6, rect.y, ss.str(), color, Text::AlignRight);

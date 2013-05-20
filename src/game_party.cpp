@@ -24,7 +24,6 @@
 #include "game_player.h"
 #include "game_battle.h"
 #include "output.h"
-#include "util_macro.h"
 
 static RPG::SaveInventory& data = Main_Data::game_data.inventory;
 
@@ -67,7 +66,7 @@ int Game_Party::ItemNumber(int item_id, bool get_equipped) {
 			if (data.item_ids[i] == item_id)
 				return data.item_counts[i];
 	}
-	
+
 	return 0;
 }
 
@@ -106,7 +105,7 @@ void Game_Party::GainItem(int item_id, int amount) {
 	}
 
 	// Item isn't in the inventory yet
-	
+
 	if (amount <= 0) {
 		return;
 	}
@@ -157,7 +156,7 @@ void Game_Party::RemoveActor(int actor_id) {
 	Main_Data::game_player->Refresh();
 }
 
-bool Game_Party::IsActorInParty(int actor_id) {	
+bool Game_Party::IsActorInParty(int actor_id) {
 	return std::find(data.party.begin(), data.party.end(), actor_id) != data.party.end();
 }
 
@@ -239,7 +238,7 @@ void Game_Party::UpdateTimers() {
 	if (data.timer1_active && (!data.timer1_battle || !battle) && data.timer1_secs > 0) {
 		data.timer1_secs--;
 		Game_Map::SetNeedRefresh(true);
-	} 
+	}
 	if (data.timer2_active && (!data.timer2_battle || !battle) && data.timer2_secs > 0) {
 		data.timer2_secs--;
 		Game_Map::SetNeedRefresh(true);
@@ -256,4 +255,3 @@ int Game_Party::ReadTimer(int which) {
 			return 0;
 	}
 }
-

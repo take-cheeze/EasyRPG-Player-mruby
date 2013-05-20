@@ -23,8 +23,8 @@
 #include "game_system.h"
 #include "game_temp.h"
 #include "game_party.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_ShopBuy::Window_ShopBuy(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight) {
@@ -61,7 +61,7 @@ void Window_ShopBuy::DrawItem(int index) {
 	contents->fill(rect, Color());
 	DrawItemName(&Data::items[item_id - 1], rect.x, rect.y, enabled);
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << Data::items[item_id - 1].price;
 	contents->draw_text(rect.width + 4, rect.y, ss.str(), enabled ? Font::ColorDefault : Font::ColorDisabled, Text::AlignRight);
 }

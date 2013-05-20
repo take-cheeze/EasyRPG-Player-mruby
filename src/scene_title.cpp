@@ -23,7 +23,6 @@
 #include <vector>
 #include "scene_title.h"
 #include "audio.h"
-#include "bitmap.h"
 #include "cache.h"
 #include "filefinder.h"
 #include "game_actors.h"
@@ -49,7 +48,6 @@
 #include "scene_battle.h"
 #include "scene_load.h"
 #include "scene_map.h"
-#include "util_macro.h"
 #include "window_command.h"
 
 Scene_Title::Scene_Title() : Scene("Title") {}
@@ -161,7 +159,7 @@ void Scene_Title::CreateGameObjects() {
 bool Scene_Title::CheckContinue() {
 	for (int i = 1; i <= 15; i++)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Save" << (i <= 9 ? "0" : "") << i << ".lsd";
 
 		if (!FileFinder().FindDefault(ss.str()).empty()) {

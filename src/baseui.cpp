@@ -18,7 +18,6 @@
 // Headers
 #include "baseui.h"
 #include "system.h"
-#include "bitmap.h"
 
 #ifdef USE_SDL
 #include "sdl_ui.h"

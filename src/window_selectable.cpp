@@ -19,7 +19,6 @@
 #include "window_selectable.h"
 #include "game_system.h"
 #include "input.h"
-#include "util_macro.h"
 #include "bitmap.h"
 
 // Constructor
@@ -32,7 +31,7 @@ Window_Selectable::Window_Selectable(int ix, int iy, int iwidth, int iheight) :
 }
 
 void Window_Selectable::CreateContents() {
-	SetContents(Bitmap::Create(width - 16, max(height - 16, GetRowMax() * 16)));
+	SetContents(Bitmap::Create(width - 16, std::max(height - 16, GetRowMax() * 16)));
 }
 
 // Properties
@@ -41,7 +40,7 @@ int Window_Selectable::GetIndex() const {
 	return index;
 }
 void Window_Selectable::SetIndex(int nindex) {
-	index = min(nindex, item_max - 1);
+	index = std::min(nindex, item_max - 1);
 	if (active && help_window != NULL) {
 		UpdateHelp();
 	}

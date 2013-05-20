@@ -22,10 +22,9 @@
 #include "bitmap_screen.h"
 #include "player.h"
 #include "rect.h"
-#include "util_macro.h"
 #include "window.h"
-#include "bitmap.h"
 #include "baseui.h"
+#include "bitmap.h"
 
 Window::Window():
 	type(TypeWindow),
@@ -136,10 +135,10 @@ void Window::Draw(int /* z_order */) {
 			if (cursor_needs_refresh) RefreshCursor();
 
 			Rect src_rect(
-				-min(cursor_rect.x + border_x, 0),
-				-min(cursor_rect.y + border_y, 0),
-				min(cursor_rect.width, width - cursor_rect.x + border_x),
-				min(cursor_rect.height, height - cursor_rect.y + border_y)
+				-std::min(cursor_rect.x + border_x, 0),
+				-std::min(cursor_rect.y + border_y, 0),
+				std::min(cursor_rect.width, width - cursor_rect.x + border_x),
+				std::min(cursor_rect.height, height - cursor_rect.y + border_y)
 			);
 
 			if (cursor_frame < 16)
@@ -153,14 +152,14 @@ void Window::Draw(int /* z_order */) {
 		if (width > 2 * border_x && height > 2 * border_y &&
 			-ox < width - 2 * border_x && -oy < height - 2 * border_y &&
 			contents_opacity > 0 && animation_frames == 0) {
-			Rect src_rect(-min(-ox, 0), -min(-oy, 0),
-						  min(width - 2 * border_x, width - 2 * border_x + ox),
-						  min(height - 2 * border_y, height - 2 * border_y + oy));
+			Rect src_rect(-std::min(-ox, 0), -std::min(-oy, 0),
+						  std::min(width - 2 * border_x, width - 2 * border_x + ox),
+						  std::min(height - 2 * border_y, height - 2 * border_y + oy));
 
 			contents_screen->SetOpacityEffect(contents_opacity);
 
-			contents_screen->BlitScreen(max(x + border_x, x + border_x - ox),
-										max(y + border_y, y + border_y - oy), src_rect);
+			contents_screen->BlitScreen(std::max(x + border_x, x + border_x - ox),
+										std::max(y + border_y, y + border_y - oy), src_rect);
 		}
 	}
 
@@ -213,12 +212,12 @@ void Window::RefreshFrame() {
 
 	// Border Up
 	src_rect.Set(32 + 8, 0, 16, 8);
-	dst_rect.Set(8, 0, max(width - 16, 1), 8);
+	dst_rect.Set(8, 0, std::max(width - 16, 1), 8);
 	up_bitmap->tiled_blit(BlitCommon(8, 0, *windowskin, src_rect), dst_rect, 255);
 
 	// Border Down
 	src_rect.Set(32 + 8, 32 - 8, 16, 8);
-	dst_rect.Set(8, 0, max(width - 16, 1), 8);
+	dst_rect.Set(8, 0, std::max(width - 16, 1), 8);
 	down_bitmap->tiled_blit(BlitCommon(8, 0, *windowskin, src_rect), dst_rect, 255);
 
 	// Upper left corner

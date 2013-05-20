@@ -18,12 +18,11 @@
 // Headers
 #include "data.h"
 #include "color.h"
-#include "cache.h"
-#include "bitmap.h"
 #include "input.h"
 #include "game_system.h"
 #include "game_temp.h"
 #include "window_battleoption.h"
+#include "bitmap.h"
 
 Window_BattleOption::Window_BattleOption(int x, int y, int width, int height) :
 	Window_Base(x, y, width, height) {

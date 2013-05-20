@@ -23,8 +23,8 @@
 #include "window_keyboard.h"
 #include "game_system.h"
 #include "input.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 #include <boost/regex/pending/unicode_iterator.hpp>
 

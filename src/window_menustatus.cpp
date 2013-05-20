@@ -16,10 +16,7 @@
  */
 
 // Headers
-#include "baseui.h"
 #include "window_menustatus.h"
-#include "graphics.h"
-#include "cache.h"
 #include "game_party.h"
 #include "player.h"
 #include "bitmap.h"

@@ -28,7 +28,6 @@
 #include "map_data.h"
 #include "main_data.h"
 #include "output.h"
-#include "util_macro.h"
 #include "game_system.h"
 #include "filefinder.h"
 #include <boost/scoped_ptr.hpp>
@@ -211,19 +210,19 @@ Game_Interpreter& Game_Map::GetInterpreter() {
 }
 
 void Game_Map::ScrollDown(int distance) {
-	display_y = min(display_y + distance, (GetHeight() - 15) * 128);
+	display_y = std::min(display_y + distance, (GetHeight() - 15) * 128);
 }
 
 void Game_Map::ScrollLeft(int distance) {
-	display_x = max(display_x - distance, 0);
+	display_x = std::max(display_x - distance, 0);
 }
 
 void Game_Map::ScrollRight(int distance) {
-	display_x = min(display_x + distance, (GetWidth() - 20) * 128);
+	display_x = std::min(display_x + distance, (GetWidth() - 20) * 128);
 }
 
 void Game_Map::ScrollUp(int distance) {
-	display_y = max(display_y - distance, 0);
+	display_y = std::max(display_y - distance, 0);
 }
 
 bool Game_Map::IsValid(int x, int y) {

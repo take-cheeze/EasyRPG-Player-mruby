@@ -20,9 +20,8 @@
 #include "game_system.h"
 #include "input.h"
 #include "main_data.h"
-#include "util_macro.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 #include <cstdio>
 
@@ -64,7 +63,7 @@ void Window_NumberInput::SetNumber(unsigned inumber) {
 	for (int i = 0; i < digits_max; ++i) {
 		num *= 10;
 	}
-	number = min(max(inumber, (unsigned)0), num - 1);
+	number = std::min(std::max(inumber, (unsigned)0), num - 1);
 	index = 0;
 	Refresh();
 }

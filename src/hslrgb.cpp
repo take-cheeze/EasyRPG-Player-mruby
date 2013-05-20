@@ -17,7 +17,6 @@
 
 // Headers
 #include "hslrgb.h"
-#include "util_macro.h"
 
 struct ColorHSL {
 	double h;
@@ -35,8 +34,8 @@ ColorHSL RGB2HSL(Color col) {
 	r = col.red / 255.0;
 	g = col.green / 255.0;
 	b = col.blue / 255.0;
-	vmin = min(min(r, g), b);
-	vmax = max(max(r, g), b);
+	vmin = std::min(std::min(r, g), b);
+	vmax = std::max(std::max(r, g), b);
 	delta = vmax - vmin;
 	ncol.l = (vmax + vmin) / 2;
 	if (delta == 0) {

@@ -41,7 +41,6 @@
 #include "main_data.h"
 #include "output.h"
 #include "player.h"
-#include "util_macro.h"
 
 // Forward declarations.
 
@@ -594,8 +593,8 @@ bool Game_Interpreter::CommandControlVariables(RPG::EventCommand const& com) { /
 		case 3:
 			// Random between range
 			int a, b;
-			a = max(com.parameters[5], com.parameters[6]);
-			b = min(com.parameters[5], com.parameters[6]);
+			a = std::max(com.parameters[5], com.parameters[6]);
+			b = std::min(com.parameters[5], com.parameters[6]);
 			value = rand() % (a-b+1)+b;
 			break;
 		case 4:

@@ -16,7 +16,6 @@
  */
 
 // Headers
-#include "bitmap.h"
 #include "rpg_animation.h"
 #include "output.h"
 #include "graphics.h"

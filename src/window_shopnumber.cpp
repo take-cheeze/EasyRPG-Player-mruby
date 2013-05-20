@@ -19,10 +19,9 @@
 #include <sstream>
 #include "game_system.h"
 #include "input.h"
-#include "util_macro.h"
 #include "window_shopnumber.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_ShopNumber::Window_ShopNumber(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight),
@@ -34,7 +33,7 @@ Window_ShopNumber::Window_ShopNumber(int ix, int iy, int iwidth, int iheight) :
 
 void Window_ShopNumber::SetData(int item_id, int item_max, int price) {
 	this->item_id = item_id;
-	this->item_max = min(item_max, 99);
+	this->item_max = std::min(item_max, 99);
 	this->price = price;
 	number = 1;
 }
@@ -45,7 +44,7 @@ void Window_ShopNumber::Refresh() {
 	int y = 34;
 	DrawItemName(&Data::items[item_id - 1], 0, y);
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << number;
 
 	contents->draw_text(132, y, "x", Font::ColorDefault);
@@ -69,9 +68,9 @@ void Window_ShopNumber::Update() {
 		} else if (Input().IsRepeated(Input_::LEFT) && number > 1) {
 			number--;
 		} else if (Input().IsRepeated(Input_::UP) && number < item_max) {
-			number = min(number + 10, item_max);
+			number = std::min(number + 10, item_max);
 		} else if (Input().IsRepeated(Input_::DOWN) && number > 1) {
-			number = max(number - 10, 1);
+			number = std::max(number - 10, 1);
 		}
 
 		if (last_number != number) {

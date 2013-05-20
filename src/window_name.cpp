@@ -18,10 +18,10 @@
 // Headers
 #include <string>
 #include "window_name.h"
-#include "bitmap.h"
 #include "font.h"
 #include "data.h"
 #include "game_system.h"
+#include "bitmap.h"
 
 #include <boost/regex/pending/unicode_iterator.hpp>
 

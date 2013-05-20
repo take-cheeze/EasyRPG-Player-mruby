@@ -20,8 +20,8 @@
 #include <sstream>
 #include "game_party.h"
 #include "window_shopstatus.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_ShopStatus::Window_ShopStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight), item_id(0) {
@@ -40,7 +40,7 @@ void Window_ShopStatus::Refresh() {
 		contents->draw_text(0, 2, Data::terms.possessed_items, 1);
 		contents->draw_text(0, 18, Data::terms.equipped_items, 1);
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << number;
 
 		contents->draw_text(120, 2, ss.str(), Font::ColorDefault, Text::AlignRight);

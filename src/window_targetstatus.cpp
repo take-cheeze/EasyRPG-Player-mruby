@@ -19,8 +19,8 @@
 #include <sstream>
 #include "window_targetstatus.h"
 #include "game_party.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_TargetStatus::Window_TargetStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight), id(-1), use_item(false) {
@@ -41,7 +41,7 @@ void Window_TargetStatus::Refresh() {
 		contents->draw_text(0, 0, Data::terms.sp_cost, 1);
 	}
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	if (use_item) {
 		ss << Game_Party::ItemNumber(id);
 	} else {

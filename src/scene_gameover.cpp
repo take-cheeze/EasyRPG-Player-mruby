@@ -18,7 +18,6 @@
 // Headers
 #include "scene_gameover.h"
 #include "audio.h"
-#include "bitmap.h"
 #include "cache.h"
 #include "game_system.h"
 #include "graphics.h"

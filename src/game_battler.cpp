@@ -21,7 +21,6 @@
 #include "player.h"
 #include "game_battler.h"
 #include "game_actor.h"
-#include "util_macro.h"
 #include "main_data.h"
 
 bool Game_Battler::HasState(int state_id) const {
@@ -155,7 +154,7 @@ static int AffectParameter(int const type, int const val) {
 
 int Game_Battler::GetAtk() const {
 	int base_atk = GetBaseAtk();
-	int n = min(max(base_atk, 1), 999);
+	int n = std::min(std::max(base_atk, 1), 999);
 
 	const std::vector<int16_t>& states = GetStates();
 	for (std::vector<int16_t>::const_iterator i = states.begin(); i != states.end(); i++) {
@@ -165,14 +164,14 @@ int Game_Battler::GetAtk() const {
 		}
 	}
 
-	n = min(max(n, 1), 999);
+	n = std::min(std::max(n, 1), 999);
 
 	return n;
 }
 
 int Game_Battler::GetDef() const {
 	int base_def = GetBaseDef();
-	int n = min(max(base_def, 1), 999);
+	int n = std::min(std::max(base_def, 1), 999);
 
 	const std::vector<int16_t>& states = GetStates();
 	for (std::vector<int16_t>::const_iterator i = states.begin(); i != states.end(); i++) {
@@ -182,14 +181,14 @@ int Game_Battler::GetDef() const {
 		}
 	}
 
-	n = min(max(n, 1), 999);
+	n = std::min(std::max(n, 1), 999);
 
 	return n;
 }
 
 int Game_Battler::GetSpi() const {
 	int base_spi = GetBaseSpi();
-	int n = min(max(base_spi, 1), 999);
+	int n = std::min(std::max(base_spi, 1), 999);
 
 	const std::vector<int16_t>& states = GetStates();
 	for (std::vector<int16_t>::const_iterator i = states.begin(); i != states.end(); i++) {
@@ -199,14 +198,14 @@ int Game_Battler::GetSpi() const {
 		}
 	}
 
-	n = min(max(n, 1), 999);
+	n = std::min(std::max(n, 1), 999);
 
 	return n;
 }
 
 int Game_Battler::GetAgi() const {
 	int base_agi = GetBaseAgi();
-	int n = min(max(base_agi, 1), 999);
+	int n = std::min(std::max(base_agi, 1), 999);
 
 	const std::vector<int16_t>& states = GetStates();
 	for (std::vector<int16_t>::const_iterator i = states.begin(); i != states.end(); i++) {
@@ -216,7 +215,7 @@ int Game_Battler::GetAgi() const {
 		}
 	}
 
-	n = min(max(n, 1), 999);
+	n = std::min(std::max(n, 1), 999);
 
 	return n;
 }

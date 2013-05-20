@@ -20,8 +20,8 @@
 #include <sstream>
 #include "window_item.h"
 #include "game_party.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_Item::Window_Item(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight) {
@@ -90,7 +90,7 @@ void Window_Item::DrawItem(int index) {
 		bool enabled = CheckEnable(item_id);
 		DrawItemName(&Data::items[item_id - 1], rect.x, rect.y, enabled);
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << number;
 		Font::SystemColor color = enabled ? Font::ColorDefault : Font::ColorDisabled;
 		contents->draw_text(rect.x + rect.width - 28, rect.y, "x", color);

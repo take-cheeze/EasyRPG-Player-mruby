@@ -17,8 +17,6 @@
 
 // Headers
 #include "window_actortarget.h"
-#include "baseui.h"
-#include "cache.h"
 #include "game_party.h"
 #include "bitmap.h"
 

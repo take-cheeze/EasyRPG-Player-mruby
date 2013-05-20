@@ -16,8 +16,6 @@
  */
 
 // Headers
-#include <iomanip>
-#include <sstream>
 #include "window_actorstatus.h"
 #include "game_actor.h"
 #include "game_party.h"

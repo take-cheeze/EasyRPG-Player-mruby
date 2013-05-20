@@ -16,8 +16,6 @@
  */
 
 // Headers
-#include <iomanip>
-#include <sstream>
 #include "window_gold.h"
 #include "game_party.h"
 #include "main_data.h"

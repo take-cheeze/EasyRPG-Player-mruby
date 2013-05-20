@@ -123,7 +123,9 @@ pixman_image_ptr create_color_mask(Color const& c) {
 	static Color const ignore_color(0, 0, 0, 255);
 
 	pixman_color_t const col = to_pixman(c);
-	return pixman_image_ptr(pixman_image_create_solid_fill(&col), pixman_releaser());
+	return pixman_image_ptr(
+		c == ignore_color? NULL : pixman_image_create_solid_fill(&col),
+		pixman_releaser());
 }
 
 pixman_image_ptr create_opacity_mask(int op) {

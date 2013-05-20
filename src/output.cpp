@@ -36,10 +36,10 @@
 #include "options.h"
 #include "output.h"
 #include "player.h"
-#include "bitmap.h"
 #include "main_data.h"
 #include "baseui.h"
 #include "image_io.h"
+#include "bitmap.h"
 
 #include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
@@ -79,7 +79,7 @@ static void HandleScreenOutput(char const* type, std::string const& msg, bool is
 
 	if(ignore_pause) { return; }
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << type << ":\n" << msg << "\n\n";
 	if (is_error) {
 		ss << "EasyRPG Player will close now.\nPress any key to exit...";

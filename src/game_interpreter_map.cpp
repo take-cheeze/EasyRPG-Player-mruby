@@ -41,7 +41,6 @@
 #include "main_data.h"
 #include "output.h"
 #include "player.h"
-#include "util_macro.h"
 #include "game_interpreter_map.h"
 
 Game_Interpreter_Map::Game_Interpreter_Map(int depth, bool main_flag) :

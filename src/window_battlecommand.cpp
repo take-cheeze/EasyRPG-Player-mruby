@@ -20,7 +20,6 @@
 
 #include "data.h"
 #include "color.h"
-#include "cache.h"
 #include "input.h"
 #include "player.h"
 #include "game_system.h"

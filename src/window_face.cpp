@@ -16,9 +16,9 @@
  */
 
 // Headers
-#include "bitmap.h"
 #include "game_actors.h"
 #include "window_face.h"
+#include "bitmap.h"
 
 Window_Face::Window_Face(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {

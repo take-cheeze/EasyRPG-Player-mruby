@@ -22,8 +22,8 @@
 #include "cache.h"
 #include "data.h"
 #include "game_system.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_Base::Window_Base(int x, int y, int width, int height) {
 	windowskin_name = Game_System::GetSystemName();
@@ -82,7 +82,7 @@ void Window_Base::DrawActorLevel(Game_Actor* actor, int cx, int cy) {
 	contents->draw_text(cx, cy, Data::terms.lvl_short, 1);
 
 	// Draw Level of the Actor
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << actor->GetLevel();
 	contents->draw_text(cx + 24, cy, ss.str(), Font::ColorDefault, Text::AlignRight);
 }
@@ -105,7 +105,7 @@ void Window_Base::DrawActorExp(Game_Actor* actor, int cx, int cy) {
 
 	// Current Exp of the Actor
 	// ------/------
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << std::setfill(' ') << std::setw(6) << actor->GetExpString();
 
 	// Delimiter
@@ -129,7 +129,7 @@ void Window_Base::DrawActorHp(Game_Actor* actor, int cx, int cy, bool draw_max) 
 	} else if (actor->GetHp() <= actor->GetMaxHp() / 4) {
 		color = Font::ColorCritical;
 	}
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << actor->GetHp();
 	contents->draw_text(cx + 18, cy, ss.str(), color, Text::AlignRight);
 
@@ -158,7 +158,7 @@ void Window_Base::DrawActorSp(Game_Actor* actor, int cx, int cy, bool draw_max) 
 	if (actor->GetMaxSp() != 0 && actor->GetSp() <= actor->GetMaxSp() / 4) {
 		color = Font::ColorCritical;
 	}
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << actor->GetSp();
 	contents->draw_text(cx + 18, cy, ss.str(), color, Text::AlignRight);
 
@@ -205,7 +205,7 @@ void Window_Base::DrawActorParameter(Game_Actor* actor, int cx, int cy, int type
 	contents->draw_text(cx, cy, name, 1);
 
 	// Draw Value
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << value;
 	contents->draw_text(cx + 78, cy, ss.str(), Font::ColorDefault, Text::AlignRight);
 }
@@ -253,7 +253,7 @@ void Window_Base::DrawSkillName(RPG::Skill* skill, int cx, int cy, bool enabled)
 void Window_Base::DrawCurrencyValue(int money, int cx, int cy) {
 	// This function draws right aligned because of the dynamic with of the
 	// gold output (cx and cy define the right border)
-	std::stringstream gold;
+	std::ostringstream gold;
 	gold << money;
 
 	Rect gold_text_size = contents->text_size(Data::terms.gold);

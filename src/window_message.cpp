@@ -30,11 +30,9 @@
 #include "graphics.h"
 #include "input.h"
 #include "player.h"
-#include "util_macro.h"
-#include "utils.h"
-#include "bitmap.h"
 #include "font.h"
 #include "text.h"
+#include "bitmap.h"
 
 #include <boost/next_prior.hpp>
 
@@ -548,8 +546,8 @@ std::string Window_Message::ParseCommandCode(int call_depth) {
 			parameter = ParseParameter(is_valid, call_depth);
 		}
 
-		speed_modifier = min(parameter, 20);
-		speed_modifier = max(0, speed_modifier);
+		speed_modifier = std::min(parameter, 20);
+		speed_modifier = std::max(0, speed_modifier);
 		break;
 	case 'v':
 		// Show Variable value
@@ -560,12 +558,12 @@ std::string Window_Message::ParseCommandCode(int call_depth) {
 			parameter = ParseParameter(is_valid, call_depth);
 		}
 		if (is_valid && Game_Variables.isValidVar(parameter)) {
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << Game_Variables[parameter];
 			return ss.str();
 		} else {
 			// Invalid Var is always 0
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "0";
 			return ss.str();
 		}

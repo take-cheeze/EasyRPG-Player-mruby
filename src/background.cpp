@@ -23,8 +23,8 @@
 #include "graphics.h"
 #include "cache.h"
 #include "background.h"
-#include "bitmap_screen.h"
 #include "bitmap.h"
+#include "bitmap_screen.h"
 
 Background::Background(const std::string& name) :
 	ID(Graphics().drawable_id++), zobj(NULL), visible(true),

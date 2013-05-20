@@ -16,15 +16,13 @@
  */
 
 // Headers
-#include "bitmap.h"
-#include "bitmap.h"
 #include "cache.h"
 #include "game_party.h"
 #include "game_actor.h"
 #include "window_shopparty.h"
-#include "bitmap.h"
 #include "font.h"
 #include "tone.h"
+#include "bitmap.h"
 
 Window_ShopParty::Window_ShopParty(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {

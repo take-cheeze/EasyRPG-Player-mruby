@@ -16,7 +16,6 @@
  */
 
 // Headers
-#include "bitmap.h"
 #include "bot_ui.h"
 #include "lua_bot.h"
 #include "player.h"

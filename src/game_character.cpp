@@ -23,7 +23,6 @@
 #include "game_switches.h"
 #include "game_system.h"
 #include "main_data.h"
-#include "util_macro.h"
 #include <cassert>
 #include <cstdlib>
 
@@ -190,16 +189,16 @@ void Game_Character::Update() {
 void Game_Character::UpdateMove() {
 	int distance = (1 << move_speed);
 	if (y * 128 > real_y)
-		real_y = min(real_y + distance, y * 128);
+		real_y = std::min(real_y + distance, y * 128);
 
 	if (x * 128 < real_x)
-		real_x = max(real_x - distance, x * 128);
+		real_x = std::max(real_x - distance, x * 128);
 
 	if (x * 128 > real_x)
-		real_x = min(real_x + distance, x * 128);
+		real_x = std::min(real_x + distance, x * 128);
 
 	if (y * 128 < real_y)
-		real_y = max(real_y - distance, y * 128);
+		real_y = std::max(real_y - distance, y * 128);
 
 	if (walk_animation)
 		anime_count += 1.5;
@@ -417,16 +416,16 @@ void Game_Character::MoveTypeCustom() {
 				Unlock();
 				break;
 			case RPG::MoveCommand::Code::increase_movement_speed:
-				move_speed = min(move_speed + 1, 6);
+				move_speed = std::min(move_speed + 1, 6);
 				break;
 			case RPG::MoveCommand::Code::decrease_movement_speed:
-				move_speed = max(move_speed - 1, 1);
+				move_speed = std::max(move_speed - 1, 1);
 				break;
 			case RPG::MoveCommand::Code::increase_movement_frequence:
-				move_frequency = min(move_frequency - 1, 1);
+				move_frequency = std::min(move_frequency - 1, 1);
 				break;
 			case RPG::MoveCommand::Code::decrease_movement_frequence:
-				move_frequency = max(move_frequency - 1, 1);
+				move_frequency = std::max(move_frequency - 1, 1);
 				break;
 			case RPG::MoveCommand::Code::switch_on: // Parameter A: Switch to turn on
 				Game_Switches[move_command.parameter_a] = true;
@@ -459,7 +458,7 @@ void Game_Character::MoveTypeCustom() {
 				walk_animation = true;
 				break;
 			case RPG::MoveCommand::Code::increase_transp:
-				SetOpacity(max(40, GetOpacity() - 45));
+				SetOpacity(std::max(40, GetOpacity() - 45));
 				break;
 			case RPG::MoveCommand::Code::decrease_transp:
 				SetOpacity(GetOpacity() + 45);
@@ -880,7 +879,7 @@ bool Game_Character::IsInPosition(int x, int y) const {
 }
 
 void Game_Character::SetOpacity(int opacity) {
-	this->opacity = min(max(0, opacity), 255);
+	this->opacity = std::min(std::max(0, opacity), 255);
 }
 
 int Game_Character::GetOpacity() const {

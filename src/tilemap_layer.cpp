@@ -23,9 +23,9 @@
 #include "output.h"
 #include "player.h"
 #include "map_data.h"
-#include "bitmap.h"
 #include "bitmap_screen.h"
 #include "baseui.h"
+#include "bitmap.h"
 
 // Blocks subtiles IDs
 // Mess with this code and you will die in 3 days...

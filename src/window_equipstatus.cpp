@@ -20,8 +20,8 @@
 #include <sstream>
 #include "game_actors.h"
 #include "window_equipstatus.h"
-#include "bitmap.h"
 #include "font.h"
+#include "bitmap.h"
 
 Window_EquipStatus::Window_EquipStatus(int ix, int iy, int iwidth, int iheight, int actor_id, bool draw_actorname) :
 	Window_Base(ix, iy, iwidth, iheight),
@@ -123,7 +123,7 @@ void Window_EquipStatus::DrawParameter(int cx, int cy, int type) {
 
 	// Draw Value
 	cx += 60;
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << value;
 	contents->draw_text(cx + 18, cy, ss.str(), Font::ColorDefault, Text::AlignRight);
 

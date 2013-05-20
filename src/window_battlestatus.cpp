@@ -17,8 +17,6 @@
 
 // Headers
 #include <algorithm>
-#include "bitmap.h"
-#include "bitmap.h"
 #include "cache.h"
 #include "input.h"
 #include "game_party.h"
@@ -26,6 +24,7 @@
 #include "game_system.h"
 #include "game_battle.h"
 #include "window_battlestatus.h"
+#include "bitmap.h"
 
 Window_BattleStatus::Window_BattleStatus() :
 	Window_Base(0, 172, 244, 68) {

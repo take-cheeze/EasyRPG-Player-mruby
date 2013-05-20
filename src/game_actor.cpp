@@ -23,7 +23,6 @@
 #include "game_party.h"
 #include "main_data.h"
 #include "player.h"
-#include "util_macro.h"
 
 Game_Actor::Game_Actor(int actor_id) :
 	data(Main_Data::game_data.actors[actor_id - 1]) {
@@ -140,7 +139,7 @@ int Game_Actor::GetBaseMaxHp(bool mod) const {
 	if (mod)
 		n += data.hp_mod;
 
-	return min(max(n, 1), 999);
+	return std::min(std::max(n, 1), 999);
 }
 
 int Game_Actor::GetBaseMaxHp() const {
@@ -155,7 +154,7 @@ int Game_Actor::GetBaseMaxSp(bool mod) const {
 	if (mod)
 		n += data.sp_mod;
 
-	return min(max(n, 0), 999);
+	return std::min(std::max(n, 0), 999);
 }
 
 int Game_Actor::GetBaseMaxSp() const {
@@ -175,7 +174,7 @@ int Game_Actor::GetBaseAtk(bool mod, bool equip) const {
 			if (*it > 0)
 				n += Data::items[*it - 1].atk_points1;
 
-	return min(max(n, 1), 999);
+	return std::min(std::max(n, 1), 999);
 }
 
 int Game_Actor::GetBaseAtk() const {
@@ -195,7 +194,7 @@ int Game_Actor::GetBaseDef(bool mod, bool equip) const {
 			if (*it > 0)
 				n += Data::items[*it - 1].def_points1;
 
-	return min(max(n, 1), 999);
+	return std::min(std::max(n, 1), 999);
 }
 
 int Game_Actor::GetBaseDef() const {
@@ -215,7 +214,7 @@ int Game_Actor::GetBaseSpi(bool mod, bool equip) const {
 			if (*it > 0)
 				n += Data::items[*it - 1].spi_points1;
 
-	return min(max(n, 1), 999);
+	return std::min(std::max(n, 1), 999);
 }
 
 int Game_Actor::GetBaseSpi() const {
@@ -235,7 +234,7 @@ int Game_Actor::GetBaseAgi(bool mod, bool equip) const {
 			if (*it > 0)
 				n += Data::items[*it - 1].agi_points1;
 
-	return min(max(n, 1), 999);
+	return std::min(std::max(n, 1), 999);
 }
 
 int Game_Actor::GetBaseAgi() const {
@@ -269,7 +268,7 @@ int Game_Actor::CalculateExp(int level) const
 		base = base * inflation;
 		inflation = ((level+1) * 0.002 + 0.8) * (inflation - 1) + 1;
 	}
-	return min(result, 1000000);
+	return std::min(result, 1000000);
 }
 
 void Game_Actor::MakeExpList() {
@@ -281,7 +280,7 @@ void Game_Actor::MakeExpList() {
 }
 
 std::string Game_Actor::GetExpString() const {
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << GetExp();
 	return ss.str();
 }
@@ -290,7 +289,7 @@ std::string Game_Actor::GetNextExpString() const {
 	if (GetNextExp() == -1) {
 		return "------";
 	} else {
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << GetNextExp();
 		return ss.str();
 	}
@@ -373,12 +372,12 @@ int Game_Actor::GetExp() const {
 }
 
 void Game_Actor::SetExp(int _exp) {
-	data.exp = min(max(_exp, 0), 999999);
+	data.exp = std::min(std::max(_exp, 0), 999999);
 }
 
 void Game_Actor::ChangeExp(int exp, bool level_up_message) {
 	int new_level = GetLevel();
-	int new_exp = min(max(exp, 0), 999999);
+	int new_exp = std::min(std::max(exp, 0), 999999);
 
 	if (new_exp > GetExp()) {
 		for (int i = GetLevel() + 1; i <= GetMaxLevel(); ++i) {
@@ -404,7 +403,7 @@ void Game_Actor::ChangeExp(int exp, bool level_up_message) {
 }
 
 void Game_Actor::SetLevel(int _level) {
-	data.level = min(max(_level, 1), GetMaxLevel());
+	data.level = std::min(std::max(_level, 1), GetMaxLevel());
 }
 
 void Game_Actor::ChangeLevel(int new_level, bool level_up_message) {
@@ -417,7 +416,7 @@ void Game_Actor::ChangeLevel(int new_level, bool level_up_message) {
 
 	if (new_level > old_level) {
 		if (level_up_message) {
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << data.name << " ";
 			ss << Data::terms.level << " " << new_level;
 			ss << Data::terms.level_up;
@@ -431,7 +430,7 @@ void Game_Actor::ChangeLevel(int new_level, bool level_up_message) {
 			// Skill learning, up to current level
 			if (it->level > old_level && it->level <= new_level) {
 				if (LearnSkill(it->skill_id) && level_up_message) {
-					std::stringstream ss;
+					std::ostringstream ss;
 					ss << Data::skills[it->skill_id - 1].name;
 					ss << Data::terms.skill_learned;
 					Game_Message::texts.push_back(ss.str());
@@ -447,7 +446,7 @@ void Game_Actor::ChangeLevel(int new_level, bool level_up_message) {
 
 		// Experience adjustment:
 		// At least level minimum
-		SetExp(max(GetBaseExp(), GetExp()));
+		SetExp(std::max(GetBaseExp(), GetExp()));
 	} else if (new_level < old_level) {
 		// Set HP and SP to maximum possible value
 		SetHp(GetHp());
@@ -541,11 +540,11 @@ void Game_Actor::SetBaseMaxSp(int maxsp) {
 }
 
 void Game_Actor::SetHp(int hp) {
-	data.current_hp = min(max(hp, 0), GetMaxHp());
+	data.current_hp = std::min(std::max(hp, 0), GetMaxHp());
 }
 
 void Game_Actor::SetSp(int sp) {
-	data.current_sp = min(max(sp, 0), GetMaxSp());
+	data.current_sp = std::min(std::max(sp, 0), GetMaxSp());
 }
 
 void Game_Actor::SetBaseAtk(int atk) {

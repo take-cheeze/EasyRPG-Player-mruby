@@ -18,7 +18,6 @@
 // Headers
 #include "tilemap.h"
 #include "tilemap_layer.h"
-#include "bitmap.h"
 
 // Constructor
 Tilemap::Tilemap(): layer_down(0), layer_up(1) {

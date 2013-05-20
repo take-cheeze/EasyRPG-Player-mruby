@@ -20,7 +20,6 @@
 #include "game_actor.h"
 #include "game_actors.h"
 #include "bitmap.h"
-#include "font.h"
 
 Window_SkillStatus::Window_SkillStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight), actor_id(-1) {

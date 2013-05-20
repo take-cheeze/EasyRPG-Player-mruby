@@ -29,7 +29,7 @@ Scene_Save::Scene_Save() :
 		Scene_File("Save", Data::terms.save_game_message) {}
 
 void Scene_Save::Action(int index) {
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "Save" << (index <= 8 ? "0" : "") << (index + 1) << ".lsd";
 
 	// TODO: Maybe find a better place to setup the save file?

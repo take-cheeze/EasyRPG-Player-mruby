@@ -20,7 +20,6 @@
 #include "sprite.h"
 #include "player.h"
 #include "graphics.h"
-#include "util_macro.h"
 #include "bitmap.h"
 #include "bitmap_screen.h"
 

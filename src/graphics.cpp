@@ -29,7 +29,6 @@
 #include "cache.h"
 #include "baseui.h"
 #include "drawable.h"
-#include "util_macro.h"
 #include "player.h"
 
 #include <boost/math/special_functions/round.hpp>

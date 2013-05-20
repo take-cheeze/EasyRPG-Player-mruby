@@ -43,7 +43,7 @@ void Scene_File::Start() {
 		w->SetIndex(i);
 
 		// Try to access file
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Save" << (i <= 8 ? "0" : "") << (i+1) << ".lsd";
 		std::string file = FileFinder().FindDefault(ss.str());
 		if (!file.empty()) {
