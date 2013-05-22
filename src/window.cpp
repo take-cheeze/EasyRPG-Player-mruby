@@ -23,7 +23,6 @@
 #include "player.h"
 #include "rect.h"
 #include "window.h"
-#include "baseui.h"
 #include "bitmap.h"
 
 Window::Window():
@@ -87,7 +86,7 @@ void Window::SetCloseAnimation(int frames) {
 void Window::Draw(int /* z_order */) {
 	if (!visible) return;
 	if (width <= 0 || height <= 0) return;
-	if (x < -width || x > DisplayUi->GetWidth() || y < -height || y > DisplayUi->GetHeight()) return;
+	if (x < -width || x > int(Graphics().ScreenBuffer()->width()) || y < -height || y > int(Graphics().ScreenBuffer()->height())) return;
 
 
 	if (windowskin) {

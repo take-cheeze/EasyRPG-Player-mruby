@@ -19,7 +19,6 @@
 #include <string>
 #include "data.h"
 #include "rpg_terrain.h"
-#include "baseui.h"
 #include "graphics.h"
 #include "cache.h"
 #include "background.h"

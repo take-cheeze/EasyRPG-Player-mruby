@@ -24,7 +24,6 @@
 #include "player.h"
 #include "map_data.h"
 #include "bitmap_screen.h"
-#include "baseui.h"
 #include "bitmap.h"
 
 // Blocks subtiles IDs
@@ -157,7 +156,7 @@ TilemapLayer::TilemapLayer(int ilayer) :
 	memset(autotiles_ab, 0, sizeof(autotiles_ab));
 	memset(autotiles_d, 0, sizeof(autotiles_d));
 
-	int tiles_y = (int)ceil(DisplayUi->GetHeight() / 16.0) + 1;
+	int tiles_y = (int)ceil(Graphics().ScreenBuffer()->height() / 16.0) + 1;
 	for (int i = 0; i < tiles_y + 2; i++) {
 		Graphics().RegisterZObj(16 * i, ID, true);
 	}
@@ -178,8 +177,8 @@ void TilemapLayer::Draw(int z_order) {
 	if (!visible) return;
 
 	// Get the number of tiles that can be displayed on window
-	int tiles_x = (int)ceil(DisplayUi->GetWidth() / 16.0);
-	int tiles_y = (int)ceil(DisplayUi->GetHeight() / 16.0);
+	int tiles_x = (int)ceil(Graphics().ScreenBuffer()->width() / 16.0);
+	int tiles_y = (int)ceil(Graphics().ScreenBuffer()->height() / 16.0);
 
 	// If ox or oy are not equal to the tile size draw the next tile too
 	// to prevent black (empty) tiles at the borders

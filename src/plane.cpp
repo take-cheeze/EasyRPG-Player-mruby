@@ -21,7 +21,6 @@
 #include "player.h"
 #include "bitmap.h"
 #include "bitmap_screen.h"
-#include "baseui.h"
 
 Plane::Plane() :
 	type(TypePlane),
@@ -45,9 +44,8 @@ Plane::~Plane() {
 void Plane::Draw(int /* z_order */) {
 	if (!visible || !bitmap) return;
 
-	Rect dst_rect(0, 0, DisplayUi->GetWidth(), DisplayUi->GetHeight());
-
-	bitmap_screen->BlitScreenTiled(bitmap->rect(), dst_rect, ox, oy);
+	bitmap_screen->BlitScreenTiled(
+		bitmap->rect(), Graphics().ScreenBuffer()->rect(), ox, oy);
 }
 
 BitmapRef const& Plane::GetBitmap() const {

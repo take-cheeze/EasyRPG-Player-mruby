@@ -25,7 +25,8 @@
 #include "input.h"
 #include "main_data.h"
 #include "player.h"
-#include "baseui.h"
+#include "graphics.h"
+#include "bitmap.h"
 #include <algorithm>
 
 // Constructor
@@ -86,11 +87,11 @@ bool Game_Player::IsTeleporting() const {
 
 // Center
 void Game_Player::Center(int x, int y) {
-	int center_x = (DisplayUi->GetWidth() / 2 - 16) * 8;
-	int center_y = (DisplayUi->GetHeight() / 2 - 8) * 8;
+	int center_x = (Graphics().ScreenBuffer()->width() / 2 - 16) * 8;
+	int center_y = (Graphics().ScreenBuffer()->height() / 2 - 8) * 8;
 
-	int max_x = (Game_Map::GetWidth() - DisplayUi->GetWidth() / 16) * 128;
-	int max_y = (Game_Map::GetHeight() - DisplayUi->GetHeight() / 16) * 128;
+	int max_x = (Game_Map::GetWidth() - Graphics().ScreenBuffer()->width() / 16) * 128;
+	int max_y = (Game_Map::GetHeight() - Graphics().ScreenBuffer()->height() / 16) * 128;
 	Game_Map::SetDisplayX(std::max(0, std::min((x * 128 - center_x), max_x)));
 	Game_Map::SetDisplayY(std::max(0, std::min((y * 128 - center_y), max_y)));
 }
@@ -108,8 +109,8 @@ void Game_Player::MoveTo(int x, int y) {
 }
 
 void Game_Player::UpdateScroll(int last_real_x, int last_real_y) {
-	int center_x = (DisplayUi->GetWidth() / 2 - 16) * 8;
-	int center_y = (DisplayUi->GetHeight() / 2 - 8) * 8;
+	int center_x = (Graphics().ScreenBuffer()->width() / 2 - 16) * 8;
+	int center_y = (Graphics().ScreenBuffer()->height() / 2 - 8) * 8;
 
 	if (Game_Map::IsPanLocked())
 		return;

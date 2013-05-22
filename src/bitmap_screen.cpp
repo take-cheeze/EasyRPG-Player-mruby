@@ -21,7 +21,6 @@
 
 #include "system.h"
 #include "bitmap_screen.h"
-#include "baseui.h"
 #include "bitmap.h"
 #include "graphics.h"
 
