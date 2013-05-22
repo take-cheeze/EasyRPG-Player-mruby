@@ -47,8 +47,8 @@ namespace {
 	int parallax_x;
 	int parallax_y;
 
-	std::vector<unsigned char> passages_down;
-	std::vector<unsigned char> passages_up;
+	std::vector<uint8_t> passages_down;
+	std::vector<uint8_t> passages_up;
 	tEventHash events;
 	tCommonEventHash common_events;
 
@@ -516,11 +516,11 @@ void Game_Map::ResetEncounterSteps() {
 	location.encounter_steps = 0;
 }
 
-std::vector<short>& Game_Map::GetMapDataDown() {
+std::vector<int16_t>& Game_Map::GetMapDataDown() {
 	return map->lower_layer;
 }
 
-std::vector<short>& Game_Map::GetMapDataUp() {
+std::vector<int16_t>& Game_Map::GetMapDataUp() {
 	return map->upper_layer;
 }
 
@@ -559,15 +559,15 @@ void Game_Map::SetNeedRefresh(bool new_need_refresh) {
 	need_refresh = new_need_refresh;
 }
 
-std::vector<unsigned char>& Game_Map::GetPassagesDown() {
+std::vector<uint8_t>& Game_Map::GetPassagesDown() {
 	return passages_down;
 }
 
-std::vector<unsigned char>& Game_Map::GetPassagesUp() {
+std::vector<uint8_t>& Game_Map::GetPassagesUp() {
 	return passages_up;
 }
 
-std::vector<short>& Game_Map::GetTerrainTags() {
+std::vector<int16_t>& Game_Map::GetTerrainTags() {
 	return Data::chipsets[map_info.chipset_id - 1].terrain_data;
 }
 

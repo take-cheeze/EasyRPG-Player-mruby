@@ -20,7 +20,7 @@
 
 // Headers
 #include <vector>
-#include <map>
+#include <boost/container/flat_map.hpp>
 #include "system.h"
 #include "drawable.h"
 
@@ -39,10 +39,10 @@ public:
 
 	BitmapRef const& GetChipset() const;
 	void SetChipset(BitmapRef const& nchipset);
-	std::vector<short> GetMapData() const;
-	void SetMapData(std::vector<short> nmap_data);
-	std::vector<unsigned char> GetPassable() const;
-	void SetPassable(std::vector<unsigned char> npassable);
+	std::vector<int16_t> const& GetMapData() const;
+	void SetMapData(std::vector<int16_t> const& nmap_data);
+	std::vector<uint8_t> const& GetPassable() const;
+	void SetPassable(std::vector<uint8_t> const& npassable);
 	bool GetVisible() const;
 	void SetVisible(bool nvisible);
 	int GetOx() const;
@@ -66,7 +66,7 @@ public:
 private:
 	BitmapRef chipset;
 	BitmapScreenRef chipset_screen;
-	std::vector<short> map_data;
+	std::vector<int16_t> map_data;
 	std::vector<uint8_t> passable;
 	std::vector<uint8_t> substitutions;
 	bool visible;
@@ -97,7 +97,9 @@ private:
 		TileXY(uint8_t x, uint8_t y) : x(x), y(y), valid(true) {}
 	};
 
-	BitmapScreenRef GenerateAutotiles(int count, const std::map<uint32_t, TileXY>& map);
+	typedef boost::container::flat_map<uint32_t, TileXY> autotiles_map_type;
+
+	BitmapScreenRef GenerateAutotiles(int count, autotiles_map_type const& map);
 
 	TileXY GetCachedAutotileAB(short ID, short animID);
 	TileXY GetCachedAutotileD(short ID);
@@ -111,8 +113,8 @@ private:
 	TileXY autotiles_ab[3][3][16][47];
 	TileXY autotiles_d[12][50];
 
-	std::map<uint32_t, TileXY> autotiles_ab_map;
-	std::map<uint32_t, TileXY> autotiles_d_map;
+	autotiles_map_type autotiles_ab_map;
+	autotiles_map_type autotiles_d_map;
 
 	struct TileData {
 		short ID;

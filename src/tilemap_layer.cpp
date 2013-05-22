@@ -383,7 +383,7 @@ void TilemapLayer::GenerateAutotileAB(short ID, short animID) {
 			}
 
 	// check whether we have already generated this tile
-	std::map<uint32_t, TileXY>::iterator it;
+	autotiles_map_type::iterator it;
 	it = autotiles_ab_map.find(quarters_hash);
 	if (it != autotiles_ab_map.end()) {
 		autotiles_ab[animID][block][b_subtile][a_subtile] = it->second;
@@ -447,7 +447,7 @@ void TilemapLayer::GenerateAutotileD(short ID) {
 
 
 	// check whether we have already generated this tile
-	std::map<uint32_t, TileXY>::iterator it;
+	autotiles_map_type::iterator it;
 	it = autotiles_d_map.find(quarters_hash);
 	if (it != autotiles_d_map.end()) {
 		autotiles_d[block][subtile] = it->second;
@@ -464,12 +464,12 @@ void TilemapLayer::GenerateAutotileD(short ID) {
 }
 
 
-BitmapScreenRef TilemapLayer::GenerateAutotiles(int count, const std::map<uint32_t, TileXY>& map) {
+BitmapScreenRef TilemapLayer::GenerateAutotiles(int count, autotiles_map_type const& map) {
 	int rows = (count + TILES_PER_ROW - 1) / TILES_PER_ROW;
 	BitmapRef tiles = Bitmap::Create(TILES_PER_ROW * 16, rows * 16);
 	Rect rect(0, 0, 8, 8);
 
-	std::map<uint32_t, TileXY>::const_iterator it;
+	autotiles_map_type::const_iterator it;
 	for (it = map.begin(); it != map.end(); it++) {
 		uint32_t quarters_hash = it->first;
 		TileXY dst = it->second;
@@ -527,10 +527,10 @@ void TilemapLayer::SetChipset(BitmapRef const& nchipset) {
 	chipset_screen->SetBitmap(chipset);
 	chipset_screen->SetSrcRect(chipset->rect());
 }
-std::vector<short> TilemapLayer::GetMapData() const {
+std::vector<int16_t> const& TilemapLayer::GetMapData() const {
 	return map_data;
 }
-void TilemapLayer::SetMapData(std::vector<short> nmap_data) {
+void TilemapLayer::SetMapData(std::vector<int16_t> const& nmap_data) {
 	if (map_data != nmap_data) {
 		// Create the tiles data cache
 		data_cache.resize(width);
@@ -598,10 +598,10 @@ void TilemapLayer::SetMapData(std::vector<short> nmap_data) {
 	}
 	map_data = nmap_data;
 }
-std::vector<unsigned char> TilemapLayer::GetPassable() const {
+std::vector<uint8_t> const& TilemapLayer::GetPassable() const {
 	return passable;
 }
-void TilemapLayer::SetPassable(std::vector<unsigned char> npassable) {
+void TilemapLayer::SetPassable(std::vector<uint8_t> const& npassable) {
 	passable = npassable;
 
 	if (substitutions.size() < passable.size())

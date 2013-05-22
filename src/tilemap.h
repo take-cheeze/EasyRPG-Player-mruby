@@ -34,16 +34,16 @@ public:
 
 	BitmapRef const& GetChipset() const;
 	void SetChipset(BitmapRef const& nchipset);
-	std::vector<short> GetMapDataDown() const;
-	void SetMapDataDown(std::vector<short> down);
-	std::vector<short> GetMapDataUp() const;
-	void SetMapDataUp(std::vector<short> up);
-	std::vector<unsigned char> GetPassableUp() const;
-	void SetPassableUp(std::vector<unsigned char> up);
-	std::vector<unsigned char> GetPassableDown() const;
-	void SetPassableDown(std::vector<unsigned char> down);
-	std::vector<short> GetProperties() const;
-	void SetProperties(std::vector<short> nproperties);
+	std::vector<int16_t> const& GetMapDataDown() const;
+	void SetMapDataDown(std::vector<int16_t> const& down);
+	std::vector<int16_t> const& GetMapDataUp() const;
+	void SetMapDataUp(std::vector<int16_t> const& up);
+	std::vector<uint8_t> const& GetPassableUp() const;
+	void SetPassableUp(std::vector<uint8_t> const& up);
+	std::vector<uint8_t> const& GetPassableDown() const;
+	void SetPassableDown(std::vector<uint8_t> const& down);
+	std::vector<int16_t> const& GetProperties() const;
+	void SetProperties(std::vector<int16_t> const& nproperties);
 	bool GetVisible() const;
 	void SetVisible(bool nvisible);
 	int GetOx() const;
