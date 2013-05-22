@@ -486,13 +486,13 @@ void Bitmap::fill(Rect const& r, Color const& c) {
 	pixman_color_t const color = to_pixman(c);
 	pixman_rectangle16_t const rect = to_pixman(r);
 	pixman_image_fill_rectangles(
-		PIXMAN_OP_SRC, ref_.get(), &color, 1, &rect);
+		pixman_operation, ref_.get(), &color, 1, &rect);
 
 	mark_dirty();
 }
 
 void Bitmap::clear() {
-	pixman_color_t const c = to_pixman(Color());
+	pixman_color_t const c = to_pixman(Color(0, 0, 0, 0));
 	pixman_rectangle16_t const r = to_pixman(rect());
 	pixman_image_fill_rectangles(PIXMAN_OP_CLEAR, ref_.get(), &c, 1, &r);
 
