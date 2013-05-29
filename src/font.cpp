@@ -140,11 +140,13 @@ Rect Font::GetSize(std::string const& txt) const {
 	Rect ret;
 
 	for(; i != end; ++i) {
-		iterator const next_c = boost::next(i);
-		append_font_size(ret,
-						 next_c != end and *i == '$' and std::isalpha(*next_c)
-						 ? ++i, Rect(0, 0, pixel_size(), pixel_size())
-						 : GetSize(*i));
+		append_font_size(
+			ret,
+			boost::next(i) != end and *i == '$'
+			? ++i, (std::isalpha(*i)? Rect(0, 0, pixel_size(), pixel_size()):
+					*i == '$'? Rect(0, 0, pixel_size() / 2, pixel_size()):
+					(--i, GetSize(*i)))
+			: GetSize(*i));
 	}
 
 	return ret;
@@ -154,9 +156,12 @@ ShinonomeFont::ShinonomeFont(ShinonomeFont::function_type func)
 	: Font("Shinonome", POINT, false, false), func_(func) {}
 
 Rect ShinonomeFont::GetSize(unsigned const g) const {
+	// specialization for ASCII chars
+	if(g < 0x80) { return Rect(0, 0, HALF_WIDTH, HEIGHT); }
+
 	ShinonomeGlyph const* const info = func_(g);
 	assert(info);
-	return Rect(0, 0, (info->is_full? 2 : 1) * HALF_WIDTH, HEIGHT);
+	return Rect(0, 0, info->is_full? FULL_WIDTH : HALF_WIDTH, HEIGHT);
 }
 
 void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& sys, int color, unsigned code) {
