@@ -41,10 +41,12 @@
 #include "al_audio.h"
 #include "font.h"
 #include "utils.h"
+#include "matrix.h"
 
 #include <cstdlib>
 #include <cstring>
 #include <SDL.h>
+#include <pixman.h>
 
 AudioInterface& SdlUi::GetAudio() {
 	return *audio_;
@@ -411,12 +413,9 @@ void SdlUi::UpdateDisplay() {
 		return;
 	}
 
-	pixman_format_code_t const format = to_pixman_format(*screen->format);
-	pixman_transform_t mat;
-
 	pixman_image_ptr const img(
 		pixman_image_create_bits_no_clear(
-			format, screen->w, screen->h,
+			to_pixman_format(*screen->format), screen->w, screen->h,
 			reinterpret_cast<uint32_t*>(screen->pixels),
 			screen->pitch),
 		&pixman_image_unref);
@@ -424,17 +423,12 @@ void SdlUi::UpdateDisplay() {
 
 	BitmapRef const& buffer = Graphics().ScreenBuffer();
 
-	pixman_transform_init_scale(
-		&mat,
-		pixman_double_to_fixed(buffer->width () / double(screen->w)),
-		pixman_double_to_fixed(buffer->height() / double(screen->h)));
-	pixman_image_set_transform(buffer->image(), &mat);
+	SET_MATRIX(buffer->image(), Matrix::scale(
+		buffer->width () / double(screen->w),
+		buffer->height() / double(screen->h)));
 
 	pixman_image_composite(PIXMAN_OP_SRC, buffer->image(), NULL, img.get(),
 						   0, 0, 0, 0, 0, 0, screen->w, screen->h);
-
-	pixman_transform_init_identity(&mat);
-	pixman_image_set_transform(buffer->image(), &mat);
 
 	if(SDL_MUSTLOCK(screen)) {
 		SDL_UnlockSurface(screen);

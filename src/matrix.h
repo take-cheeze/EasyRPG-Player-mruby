@@ -157,4 +157,8 @@ struct set_matrix {
 	pixman_image_t* const img_;
 };
 
+#define SET_MATRIX(bmp, m)						\
+	set_matrix mat__ ## __LINE__(bmp, m);		\
+	(void)mat__ ## __LINE__						\
+
 #endif

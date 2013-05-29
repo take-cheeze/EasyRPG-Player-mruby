@@ -18,7 +18,6 @@
 #ifndef _BITMAP_H_
 #define _BITMAP_H_
 
-#include <pixman.h>
 #include <string>
 
 #include <boost/container/vector.hpp>
@@ -32,6 +31,7 @@
 
 class Tone;
 struct Matrix;
+union pixman_image;
 
 struct BlitCommon {
 	BlitCommon(int x_, int y_, Bitmap const& src_, Rect const& src_rect_)
@@ -42,7 +42,7 @@ struct BlitCommon {
 	Rect src_rect;
 };
 
-typedef EASYRPG_SHARED_PTR<pixman_image_t> pixman_image_ptr;
+typedef EASYRPG_SHARED_PTR<pixman_image> pixman_image_ptr;
 
 class Bitmap : boost::noncopyable {
   public:
@@ -98,7 +98,7 @@ class Bitmap : boost::noncopyable {
 
 	bool clear_dirty_flag();
 
-	pixman_image_t* image();
+	pixman_image* image();
 
   public:
 	FontRef font;

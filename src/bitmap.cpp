@@ -23,6 +23,8 @@
 #include "matrix.h"
 #include "utils.h"
 
+#include <pixman.h>
+
 #include <cmath>
 #include <sstream>
 #include <fstream>
@@ -38,10 +40,6 @@ Matrix const Matrix::identity;
 		op = std::max(0, std::min(op, 255));	\
 		if(op == 0) { return; }					\
 	} while(false)								\
-
-#define SET_MATRIX(bmp, m)						\
-	set_matrix mat__ ## __LINE__(bmp, m);		\
-	(void)mat__ ## __LINE__						\
 
 namespace {
 
