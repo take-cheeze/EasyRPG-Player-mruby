@@ -30,8 +30,23 @@
 #include <boost/next_prior.hpp>
 #include <boost/regex/pending/unicode_iterator.hpp>
 
-void Text::Draw(Bitmap& dest, int x, int y, std::string const& text, Text::Alignment align) {
-	if (text.length() == 0) return;
+namespace {
+
+unsigned to_exfont_index(char const c) {
+	int const ret =
+			std::islower(c)? c - 'a' + 26:
+			std::isupper(c)? c - 'A':
+			-1;
+	assert(ret != -1);
+	return ret;
+}
+
+typedef boost::u8_to_u32_iterator<std::string::const_iterator> u8_to_u32_iterator;
+
+}
+
+void Text::Draw(Bitmap& dest, int const x, int const y, std::string const& text, Text::Alignment align) {
+	if (text.empty()) return;
 
 	Rect const text_size = dest.text_size(text);
 	Rect dst_rect = text_size;
@@ -47,64 +62,49 @@ void Text::Draw(Bitmap& dest, int x, int y, std::string const& text, Text::Align
 	}
 
 	dst_rect.y = y;
-	dst_rect.width += 1; dst_rect.height += 1; // Need place for shadow
-	if (dst_rect.IsOutOfBounds(dest.width(), dest.height())) return;
-
-	// Where to draw the next glyph (x pos)
-	int next_glyph_pos = 0;
-
-	Rect src_rect(0, 0, dst_rect.width, dst_rect.height);
-	int iy = dst_rect.y;
 	if (dst_rect.height > text_size.height + 1) {
-		iy += ((dst_rect.height - text_size.height + 1) / 2);
+		dst_rect.y += ((dst_rect.height - text_size.height + 1) / 2);
 	}
-	int ix = dst_rect.x;
 
 	// This loops always renders a single char, color blends it and then puts
 	// it onto the text_surface (including the drop shadow)
-	for (boost::u8_to_u32_iterator<std::string::const_iterator>
-			 c(text.begin(), text.begin(), text.end()),
-			 end(text.end(), text.begin(), text.end()); c != end; ++c) {
-		Rect const next_glyph_rect(ix + next_glyph_pos, iy, 0, 0);
-
-		boost::u8_to_u32_iterator<std::string::const_iterator> const next_c_it = boost::next(c);
+	for (u8_to_u32_iterator
+				 c(text.begin(), text.begin(), text.end()),
+				 end(text.end(), text.begin(), text.end()); c != end; ++c) {
+		u8_to_u32_iterator const next_c_it = boost::next(c);
 		uint32_t const next_c = std::distance(c, end) > 1? *next_c_it : 0;
 
 		// ExFont-Detection: Check for A-Z or a-z behind the $
 		if (*c == '$' && std::isalpha(next_c)) {
-			int const exfont_index =
-					std::islower(next_c)? next_c - 'a' + 26:
-					std::isupper(next_c)? next_c - 'A':
-					-1;
-			assert(exfont_index != -1);
+			unsigned const exfont_index = to_exfont_index(next_c);
 
-			for(size_t y = 0; y < 12; ++y) {
-				for(size_t x = 0; x < 12; ++x) {
-					if(EASYRPG_EXFONT[exfont_index][y] & (0x01 << x)) {
+			for(size_t font_y = 0; font_y < 12; ++font_y) {
+				for(size_t font_x = 0; font_x < 12; ++font_x) {
+					if(EASYRPG_EXFONT[exfont_index][font_y] & (0x01 << font_x)) {
 						// color
 						dest.set_pixel(
-							next_glyph_rect.x + x, next_glyph_rect.y + y,
+							dst_rect.x + font_x, dst_rect.y + font_y,
 							Font::default_color);
 					}
 				}
 			}
 
-			next_glyph_pos += 12;
+			dst_rect.x += 12;
 			// Skip the alphabet part of exfont
 			++c;
 		} else { // Not ExFont, draw normal text
-			dest.font->Render(dest, next_glyph_rect.x, next_glyph_rect.y, *c);
+			dest.font->Render(dest, dst_rect.x, dst_rect.y, *c);
 			std::string const glyph(c.base(), next_c_it.base());
-			next_glyph_pos += Font::Default()->GetSize(glyph).width;
+			dst_rect.x += Font::Default()->GetSize(glyph).width;
 		}
 	}
 }
 
 void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, Text::Alignment align) {
-	if (text.length() == 0) return;
+	if (text.empty()) return;
 
 	FontRef font = dest.font;
-	Rect const text_size = Font::Default()->GetSize(text);
+	Rect const text_size = font->GetSize(text);
 	Rect dst_rect = text_size;
 
 	switch (align) {
@@ -122,35 +122,23 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, 
 	if (dst_rect.IsOutOfBounds(dest.width(), dest.height())) return;
 
 	// Load the system file for the shadow and text color
-	BitmapRef system = Cache().System(Data::system.system_name);
+	BitmapRef const system = Cache().System(Data::system.system_name);
 
-	// Where to draw the next glyph (x pos)
-	int next_glyph_pos = 0;
-
-	Rect src_rect(0, 0, dst_rect.width, dst_rect.height);
-	int iy = dst_rect.y;
 	if (dst_rect.height > text_size.height + 1) {
-		iy += ((dst_rect.height - text_size.height + 1) / 2);
+		dst_rect.y += ((dst_rect.height - text_size.height + 1) / 2);
 	}
-	int ix = dst_rect.x;
 
 	// This loops always renders a single char, color blends it and then puts
 	// it onto the text_surface (including the drop shadow)
-	for (boost::u8_to_u32_iterator<std::string::const_iterator>
-			 c(text.begin(), text.begin(), text.end()),
-			 end(text.end(), text.begin(), text.end()); c != end; ++c) {
-		Rect const next_glyph_rect(ix + next_glyph_pos, iy, 0, 0);
-
-		boost::u8_to_u32_iterator<std::string::const_iterator> const next_c_it = boost::next(c);
+	for (u8_to_u32_iterator
+				 c(text.begin(), text.begin(), text.end()),
+				 end(text.end(), text.begin(), text.end()); c != end; ++c) {
+		u8_to_u32_iterator const next_c_it = boost::next(c);
 		uint32_t const next_c = std::distance(c, end) > 1? *next_c_it : 0;
 
 		// ExFont-Detection: Check for A-Z or a-z behind the $
 		if (*c == '$' && std::isalpha(next_c)) {
-			int const exfont_index =
-					std::islower(next_c)? next_c - 'a' + 26:
-					std::isupper(next_c)? next_c - 'A':
-					-1;
-			assert(exfont_index != -1);
+			unsigned const exfont_index = to_exfont_index(next_c);
 
 			size_t const color_base = (16 - 12) / 2;
 			unsigned const
@@ -158,28 +146,28 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, 
 					src_x = color % 10 * 16 + color_base,
 					src_y = color / 10 * 16 + 48 + color_base;
 
-			for(size_t y = 0; y < 12; ++y) {
-				for(size_t x = 0; x < 12; ++x) {
-					if(EASYRPG_EXFONT[exfont_index][y] & (0x01 << x)) {
+			for(size_t font_y = 0; font_y < 12; ++font_y) {
+				for(size_t font_x = 0; font_x < 12; ++font_x) {
+					if(EASYRPG_EXFONT[exfont_index][font_y] & (0x01 << font_x)) {
 						// color
 						dest.set_pixel(
-							next_glyph_rect.x + x, next_glyph_rect.y + y,
-							system->get_pixel(src_x + x, src_y + y));
+							dst_rect.x + font_x, dst_rect.y + font_y,
+							system->get_pixel(src_x + font_x, src_y + font_y));
 						// shadow
 						dest.set_pixel(
-							next_glyph_rect.x + x + 1, next_glyph_rect.y + y + 1,
-							system->get_pixel(shadow_x + x, shadow_y + y));
+							dst_rect.x + font_x + 1, dst_rect.y + font_y + 1,
+							system->get_pixel(shadow_x + font_x, shadow_y + font_y));
 					}
 				}
 			}
 
-			next_glyph_pos += 12;
+			dst_rect.x += 12;
 			// Skip the alphabet part of exfont
 			++c;
 		} else { // Not ExFont, draw normal text
-			font->Render(dest, next_glyph_rect.x, next_glyph_rect.y, *system, color, *c);
+			font->Render(dest, dst_rect.x, dst_rect.y, *system, color, *c);
 			std::string const glyph(c.base(), next_c_it.base());
-			next_glyph_pos += Font::Default()->GetSize(glyph).width;
+			dst_rect.x += Font::Default()->GetSize(glyph).width;
 		}
 	}
 }

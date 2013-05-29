@@ -162,15 +162,15 @@ void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& 
 	}
 }
 
-void ShinonomeFont::Render(Bitmap& bmp, int x, int y, unsigned code) {
+void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, unsigned code) {
 	ShinonomeGlyph const* const glyph = func_(code);
 	assert(glyph);
 	size_t const width = glyph->is_full? FULL_WIDTH : HALF_WIDTH;
 
 	for(size_t y_ = 0; y_ < HEIGHT; ++y_) {
 		for(size_t x_ = 0; x_ < width; ++x_) {
-			if(glyph->data[y] & (0x1 << x_)) {
-				bmp.set_pixel(x + x_, y + y_, default_color);
+			if(glyph->data[y_] & (0x1 << x_)) {
+				bmp.set_pixel(x + x_, y + y_, Font::default_color);
 			}
 		}
 	}
@@ -225,7 +225,7 @@ void FTFont::Render(Bitmap& bmp, int const x, int const y, unsigned const glyph)
 			unsigned c = ft_bitmap.buffer[pitch * row + col];
 			for(int bit = 7; bit >= 0; --bit) {
 				if(c & (0x01 << bit)) {
-					bmp.set_pixel(x + col * 8 + (7 - bit), y + row, default_color);
+					bmp.set_pixel(x + col * 8 + (7 - bit), y + row, Font::default_color);
 				}
 			}
 		}

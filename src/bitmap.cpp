@@ -151,6 +151,8 @@ pixman_image_ptr create_image(size_t w, size_t h, void* data, size_t stride) {
 	// pixman_image_set_alpha_map(ret.get(), ret.get(), 0, 0);
 	BOOST_VERIFY(pixman_image_set_filter(ret.get(), PIXMAN_FILTER_FAST, NULL, 0));
 
+	assert(pixman_image_get_data(ret.get()) == data);
+
 	return ret;
 }
 
