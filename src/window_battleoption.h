@@ -22,7 +22,6 @@
 #include <string>
 #include <vector>
 #include "window_base.h"
-#include "font.h"
 
 /**
  * Window_BattleOption class.
@@ -55,7 +54,7 @@ protected:
 	int num_rows;
 	int top_row;
 
-	void DrawItem(int index, Font::SystemColor color);
+	void DrawItem(int index, int color);
 };
 
 #endif

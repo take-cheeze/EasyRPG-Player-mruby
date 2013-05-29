@@ -24,7 +24,6 @@
 #include "window_base.h"
 #include "window_help.h"
 #include "rpg_battlecommand.h"
-#include "font.h"
 
 /**
  * Window_BattleCommand class.
@@ -72,7 +71,7 @@ protected:
 	std::vector<bool> disabled;
 	int cycle;
 
-	void DrawItem(int index, Font::SystemColor color);
+	void DrawItem(int index, int color);
 };
 
 #endif

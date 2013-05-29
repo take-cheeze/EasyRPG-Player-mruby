@@ -26,6 +26,7 @@
 #include "game_actors.h"
 #include "window_battlecommand.h"
 #include "bitmap.h"
+#include "font.h"
 
 Window_BattleCommand::Window_BattleCommand(int x, int y, int width, int height) :
 	Window_Base(x, y, width, height) {
@@ -103,7 +104,7 @@ void Window_BattleCommand::Refresh() {
 
 	contents->clear();
 	for (int i = 0; i < num_commands; i++) {
-		Font::SystemColor color = disabled[i] ? Font::ColorDisabled : Font::ColorDefault;
+		int color = disabled[i] ? Font::ColorDisabled : Font::ColorDefault;
 		DrawItem(i, color);
 	}
 
@@ -117,7 +118,7 @@ void Window_BattleCommand::Refresh() {
 	}
 }
 
-void Window_BattleCommand::DrawItem(int index, Font::SystemColor color) {
+void Window_BattleCommand::DrawItem(int index, int color) {
 	int y = 16 * (index - top_row);
 	if (y < 0 || y + 16 > int(contents->height()))
 		return;

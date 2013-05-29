@@ -94,8 +94,7 @@ void Text::Draw(Bitmap& dest, int const x, int const y, std::string const& text,
 			++c;
 		} else { // Not ExFont, draw normal text
 			dest.font->Render(dest, dst_rect.x, dst_rect.y, *c);
-			std::string const glyph(c.base(), next_c_it.base());
-			dst_rect.x += Font::Default()->GetSize(glyph).width;
+			dst_rect.x += Font::Default()->GetSize(*c).width;
 		}
 	}
 }
@@ -166,8 +165,7 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, 
 			++c;
 		} else { // Not ExFont, draw normal text
 			font->Render(dest, dst_rect.x, dst_rect.y, *system, color, *c);
-			std::string const glyph(c.base(), next_c_it.base());
-			dst_rect.x += Font::Default()->GetSize(glyph).width;
+			dst_rect.x += Font::Default()->GetSize(*c).width;
 		}
 	}
 }

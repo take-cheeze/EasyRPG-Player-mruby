@@ -23,6 +23,7 @@
 #include "game_temp.h"
 #include "window_battleoption.h"
 #include "bitmap.h"
+#include "font.h"
 
 Window_BattleOption::Window_BattleOption(int x, int y, int width, int height) :
 	Window_Base(x, y, width, height) {
@@ -90,7 +91,7 @@ void Window_BattleOption::UpdateCursorRect() {
 void Window_BattleOption::Refresh() {
 	contents->clear();
 
-	Font::SystemColor color = Font::ColorDefault;
+	int color = Font::ColorDefault;
 
 	DrawItem(0, color);
 	color = Game_Temp::battle_defeat_mode == 0 ? Font::ColorDisabled : Font::ColorDefault;
@@ -105,7 +106,7 @@ void Window_BattleOption::Refresh() {
 	}*/
 }
 
-void Window_BattleOption::DrawItem(int index, Font::SystemColor color) {
+void Window_BattleOption::DrawItem(int index, int color) {
 	int y = 16 * (index - top_row);
 	if (y < 0 || y + 16 > int(contents->height()))
 		return;

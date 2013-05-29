@@ -72,13 +72,16 @@ namespace {
 	}
 
 	struct ShinonomeFont : public Font {
-		enum { HEIGHT = 12, FULL_WIDTH = HEIGHT, HALF_WIDTH = FULL_WIDTH / 2, };
+		enum {
+			HEIGHT = 12, FULL_WIDTH = HEIGHT, HALF_WIDTH = FULL_WIDTH / 2,
+			POINT = HEIGHT * 72 / 96,
+		};
 
 		typedef ShinonomeGlyph const*(*function_type)(uint32_t);
 
 		ShinonomeFont(function_type func);
 
-		Rect GetSize(std::string const& txt) const;
+		Rect GetSize(unsigned glyph) const;
 
 		void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, unsigned glyph);
 		void Render(Bitmap& bmp, int x, int y, unsigned glyph);
@@ -103,7 +106,7 @@ namespace {
 	struct FTFont : public Font  {
 		FTFont(const std::string& name, int size, bool bold, bool italic);
 
-		Rect GetSize(std::string const& txt) const;
+		Rect GetSize(unsigned glyph) const;
 
 		void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, unsigned glyph);
 		void Render(Bitmap& bmp, int x, int y, unsigned glyph);
@@ -120,24 +123,40 @@ namespace {
 
 	FontRef const gothic = EASYRPG_MAKE_SHARED<ShinonomeFont>(&find_gothic_glyph);
 	FontRef const mincho = EASYRPG_MAKE_SHARED<ShinonomeFont>(&find_mincho_glyph);
+
+	void append_font_size(Rect& result, Rect const& r) {
+		result.width += r.width;
+		result.height = std::max(result.height, r.height);
+	}
 } // anonymous namespace
 
 Color Font::default_color(255, 255, 255, 255);
 
-ShinonomeFont::ShinonomeFont(ShinonomeFont::function_type func)
-	: Font("Shinonome", HEIGHT, false, false), func_(func) {}
-
-Rect ShinonomeFont::GetSize(std::string const& txt) const {
+Rect Font::GetSize(std::string const& txt) const {
 	typedef boost::u8_to_u32_iterator<std::string::const_iterator> iterator;
-	size_t units = 0;
 	iterator i(txt.begin(), txt.begin(), txt.end());
 	iterator const end(txt.end(), txt.begin(), txt.end());
+
+	Rect ret;
+
 	for(; i != end; ++i) {
-		ShinonomeGlyph const* const glyph = func_(*i);
-		assert(glyph);
-		units += glyph->is_full? 2 : 1;
+		iterator const next_c = boost::next(i);
+		append_font_size(ret,
+						 next_c != end and *i == '$' and std::isalpha(*next_c)
+						 ? ++i, Rect(0, 0, pixel_size(), pixel_size())
+						 : GetSize(*i));
 	}
-	return Rect(0, 0, units * HALF_WIDTH, HEIGHT);
+
+	return ret;
+}
+
+ShinonomeFont::ShinonomeFont(ShinonomeFont::function_type func)
+	: Font("Shinonome", POINT, false, false), func_(func) {}
+
+Rect ShinonomeFont::GetSize(unsigned const g) const {
+	ShinonomeGlyph const* const info = func_(g);
+	assert(info);
+	return Rect(0, 0, (info->is_full? 2 : 1) * HALF_WIDTH, HEIGHT);
 }
 
 void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& sys, int color, unsigned code) {
@@ -181,18 +200,11 @@ EASYRPG_WEAK_PTR<boost::remove_pointer<FT_Library>::type> FTFont::library_checke
 FTFont::FTFont(const std::string& name, int size, bool bold, bool italic)
 	: Font(name, size, bold, italic), current_size_(0) {}
 
-Rect FTFont::GetSize(std::string const& txt) const {
-	Utils::wstring tmp = Utils::ToWideString(txt);
-	int const s = Font::Default()->GetSize(txt).width;
-
-	if (s == -1) {
-		Output::Warning("Text contains invalid chars.\n"\
-			"Is the encoding correct?");
-
-		return Rect(0, 0, pixel_size() * txt.size() / 2, pixel_size());
-	} else {
-		return Rect(0, 0, s, pixel_size());
-	}
+Rect FTFont::GetSize(unsigned const glyph) const {
+	return Rect(
+		0, 0,
+		Font::Default()->GetSize(glyph).width * pixel_size() / ShinonomeFont::FULL_WIDTH,
+		pixel_size());
 }
 
 void FTFont::Render(Bitmap& bmp, int x, int y, Bitmap const& /* sys */, int /* color */, unsigned glyph) {

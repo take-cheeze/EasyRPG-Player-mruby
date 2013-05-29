@@ -40,6 +40,7 @@
 #include "battle_actions.h"
 #include "scene_battle.h"
 #include "bitmap.h"
+#include "font.h"
 
 Scene_Battle::Scene_Battle() : Scene("Battle") {}
 

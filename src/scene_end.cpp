@@ -23,6 +23,7 @@
 #include "scene_end.h"
 #include "scene_menu.h"
 #include "scene_title.h"
+#include "font.h"
 
 Scene_End::Scene_End() : Scene("End") {}
 

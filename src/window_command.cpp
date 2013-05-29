@@ -19,6 +19,7 @@
 #include "window_command.h"
 #include "color.h"
 #include "bitmap.h"
+#include "font.h"
 
 Window_Command::Window_Command(std::vector<std::string> commands, int width, int max_item) :
 	Window_Selectable(0, 0, GetRequiredWidth(commands, width), (max_item == -1 ? commands.size() : max_item) * 16 + 16),
@@ -39,7 +40,7 @@ void Window_Command::Refresh() {
 	}
 }
 
-void Window_Command::DrawItem(int index, Font::SystemColor color) {
+void Window_Command::DrawItem(int index, int color) {
 	contents->fill(Rect(0, 16 * index, contents->width() - 0, 16), Color());
 	contents->draw_text(0, 16 * index + 2, commands[index], color);
 }

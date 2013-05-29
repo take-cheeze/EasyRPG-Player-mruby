@@ -21,7 +21,6 @@
 // Headers
 #include <vector>
 #include "window_selectable.h"
-#include "font.h"
 
 /**
  * Window Command class.
@@ -63,7 +62,7 @@ public:
 protected:
 	std::vector<std::string> commands;
 
-	void DrawItem(int index, Font::SystemColor color);
+	void DrawItem(int index, int color);
 
 	int GetRequiredWidth(std::vector<std::string>& commands, int width);
 };

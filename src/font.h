@@ -32,7 +32,8 @@ class Font {
  public:
 	virtual ~Font() {}
 
-	virtual Rect GetSize(std::string const& txt) const = 0;
+	virtual Rect GetSize(unsigned glyph) const = 0;
+	Rect GetSize(std::string const& txt) const;
 
 	virtual void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, unsigned glyph) = 0;
 	virtual void Render(Bitmap& bmp, int x, int y, unsigned glyph) = 0;
