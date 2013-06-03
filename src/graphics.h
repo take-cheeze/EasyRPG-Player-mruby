@@ -19,10 +19,8 @@
 #define _GRAPHICS_H_
 
 // Headers
-#include <string>
-#include <list>
-#include <map>
 #include <vector>
+#include <list>
 
 #include "system.h"
 #include "color.h"
@@ -138,8 +136,7 @@ struct Graphics_ : boost::noncopyable {
 
 	ZObj* RegisterZObj(int z, Drawable* ID);
 	void RegisterZObj(int z, Drawable* ID, bool multiz);
-	void RemoveZObj(Drawable* ID);
-	void RemoveZObj(Drawable* ID, bool multiz);
+	void RemoveZObj(Drawable* ID, bool multiz = false);
 	void UpdateZObj(ZObj* zobj, int z);
 
 	bool fps_on_screen;

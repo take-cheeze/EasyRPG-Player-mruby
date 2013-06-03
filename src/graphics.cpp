@@ -32,6 +32,7 @@
 #include "player.h"
 #include "zobj.h"
 
+#include <boost/bind.hpp>
 #include <boost/math/special_functions/round.hpp>
 
 
@@ -413,24 +414,12 @@ void Graphics_::RegisterZObj(int z, Drawable* ID, bool /* multiz */) {
 	state->zlist_dirty = true;
 }
 
-void Graphics_::RemoveZObj(Drawable* ID) {
-	RemoveZObj(ID, false);
+static bool check_id(EASYRPG_SHARED_PTR<ZObj> const& z, Drawable* const ID) {
+	return z->GetId() == ID;
 }
 
 void Graphics_::RemoveZObj(Drawable* ID, bool multiz) {
-	std::vector<std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator> to_erase;
-
-	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
-	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
-		if ((*it_zlist)->GetId() == ID) {
-			to_erase.push_back(it_zlist);
-			if (!multiz) break;
-		}
-	}
-
-	for (size_t i = 0; i < to_erase.size(); i++) {
-		state->zlist.erase(to_erase[i]);
-	}
+	state->zlist.remove_if(boost::bind(&check_id, _1, ID));
 }
 
 void Graphics_::UpdateZObj(ZObj* zobj, int z) {
