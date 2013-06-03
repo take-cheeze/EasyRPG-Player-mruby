@@ -33,20 +33,15 @@ public:
 	void Draw(int z_order);
 	void Update();
 
-	unsigned long GetId() const;
 	int GetZ() const;
-	DrawableType GetType() const;
 
 private:
 	static const int z = -1000;
-	static const DrawableType type = TypeBackground;
 
 	static void Update(int& rate, int& value);
 	static int Scale(int x);
 
-	unsigned long ID;
 	ZObj* zobj;
-	bool visible;
 
 	BitmapScreenRef bg_screen;
 	int bg_hscroll;

@@ -24,13 +24,17 @@
 #include "battle_animation.h"
 #include "bitmap_screen.h"
 
-BattleAnimation::BattleAnimation(int x, int y, const RPG::Animation* animation) :
-	x(x), y(y), animation(animation), frame(0), initialized(false), visible(false),
-	ID(Graphics().drawable_id++) {
+BattleAnimation::BattleAnimation(int x, int y, const RPG::Animation* animation)
+		: Drawable(TypeDefault), x(x), y(y)
+		, animation(animation), frame(0), initialized(false)
+{
+	zobj = Graphics().RegisterZObj(GetZ(), ID);
+	Graphics().RegisterDrawable(ID, this);
 }
 
 BattleAnimation::~BattleAnimation() {
-	SetVisible(false);
+	Graphics().RemoveZObj(ID);
+	Graphics().RemoveDrawable(ID);
 }
 
 void BattleAnimation::Setup() {
@@ -59,16 +63,8 @@ void BattleAnimation::Setup() {
 	initialized = true;
 }
 
-unsigned long BattleAnimation::GetId() const {
-	return ID;
-}
-
 int BattleAnimation::GetZ() const {
 	return 400;
-}
-
-DrawableType BattleAnimation::GetType() const {
-	return TypeDefault;
 }
 
 void BattleAnimation::Draw(int /* z_order */) {
@@ -113,26 +109,6 @@ int BattleAnimation::GetFrame() const {
 
 int BattleAnimation::GetFrames() const {
 	return animation->frames.size();
-}
-
-void BattleAnimation::SetVisible(bool _visible) {
-	if (visible == _visible)
-		return;
-
-	visible = _visible;
-
-	if (visible) {
-		zobj = Graphics().RegisterZObj(GetZ(), ID);
-		Graphics().RegisterDrawable(ID, this);
-	}
-	else {
-		Graphics().RemoveZObj(ID);
-		Graphics().RemoveDrawable(ID);
-	}
-}
-
-bool BattleAnimation::GetVisible() {
-	return visible;
 }
 
 bool BattleAnimation::IsDone() const {

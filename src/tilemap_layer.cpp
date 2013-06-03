@@ -137,7 +137,7 @@ static const uint8_t BlockD_Subtiles_IDS[50][2][2][2] = {
 };
 
 TilemapLayer::TilemapLayer(int ilayer) :
-	visible(true),
+	Drawable(TypeTilemap),
 	ox(0),
 	oy(0),
 	width(0),
@@ -147,8 +147,6 @@ TilemapLayer::TilemapLayer(int ilayer) :
 	animation_step_c(0),
 	animation_speed(24),
 	animation_type(1),
-	ID(Graphics().drawable_id++),
-	type(TypeTilemap),
 	layer(ilayer) {
 
 	chipset_screen = BitmapScreen::Create();
@@ -174,8 +172,6 @@ void TilemapLayer::DrawTile(BitmapScreen& screen, int x, int y, int row, int col
 }
 
 void TilemapLayer::Draw(int z_order) {
-	if (!visible) return;
-
 	// Get the number of tiles that can be displayed on window
 	int tiles_x = (int)ceil(Graphics().ScreenBuffer()->width() / 16.0);
 	int tiles_y = (int)ceil(Graphics().ScreenBuffer()->height() / 16.0);
@@ -610,12 +606,7 @@ void TilemapLayer::SetPassable(std::vector<uint8_t> const& npassable) {
 			substitutions[i] = i;
 	}
 }
-bool TilemapLayer::GetVisible() const {
-	return visible;
-}
-void TilemapLayer::SetVisible(bool nvisible) {
-	visible = nvisible;
-}
+
 int TilemapLayer::GetOx() const {
 	return ox;
 }
@@ -655,14 +646,6 @@ void TilemapLayer::SetAnimationType(int type) {
 
 int TilemapLayer::GetZ() const {
 	return -1;
-}
-
-unsigned long TilemapLayer::GetId() const {
-	return ID;
-}
-
-DrawableType TilemapLayer::GetType() const {
-	return type;
 }
 
 void TilemapLayer::Substitute(int old_id, int new_id) {

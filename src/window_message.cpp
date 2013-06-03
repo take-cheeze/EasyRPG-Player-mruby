@@ -56,9 +56,9 @@ Window_Message::Window_Message(int ix, int iy, int iwidth, int iheight) :
 	index = -1;
 	text_color = Font::ColorDefault;
 
-	number_input_window->SetVisible(false);
+	number_input_window->visible = false;
 
-	gold_window->SetVisible(false);
+	gold_window->visible = false;
 
 	Game_Message::Init();
 }
@@ -114,7 +114,7 @@ void Window_Message::StartNumberInputProcessing() {
 	}
 	number_input_window->SetY(y + contents_y - 2);
 	number_input_window->SetActive(true);
-	number_input_window->SetVisible(true);
+	number_input_window->visible = true;
 	number_input_window->Update();
 }
 
@@ -210,13 +210,13 @@ void Window_Message::TerminateMessage() {
 	index = -1;
 
 	Game_Message::message_waiting = false;
-	if (number_input_window->GetVisible()) {
+	if (number_input_window->visible) {
 		number_input_window->SetActive(false);
-		number_input_window->SetVisible(false);
+		number_input_window->visible = false;
 	}
 
-	if (gold_window->GetVisible()) {
-		gold_window->SetVisible(false);
+	if (gold_window->visible) {
+		gold_window->visible = false;
 	}
 	// The other flag resetting is done in Game_Interpreter::CommandEnd
 	Game_Message::SemiClear();
@@ -255,7 +255,7 @@ void Window_Message::Update() {
 		WaitForInput();
 	} else if (active) {
 		InputChoice();
-	} else if (number_input_window->GetVisible()) {
+	} else if (number_input_window->visible) {
 		InputNumber();
 	} else if (!text.empty()) {
 		// Output the remaining text for the current page
@@ -360,7 +360,7 @@ void Window_Message::UpdateMessage() {
 				gold_window->SetY(y == 0 ? 240 - 32 : 0);
 				gold_window->Refresh();
 				gold_window->SetOpenAnimation(5);
-				gold_window->SetVisible(true);
+				gold_window->visible = true;
 				break;
 			case '!':
 				// Text pause

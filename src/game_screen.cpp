@@ -170,7 +170,7 @@ void Game_Screen::ShowBattleAnimation(int animation_id, int target_id, bool glob
 
 	animation.reset(new BattleAnimation(target->GetScreenX(), target->GetScreenY(),
 										&Data::animations[animation_id - 1]));
-	animation->SetVisible(true);
+	animation->visible = true;
 	// FIXME: target
 	// FIXME: global
 }

@@ -18,30 +18,29 @@
 #ifndef _DRAWABLE_H_
 #define _DRAWABLE_H_
 
-// What kind of drawable is the current one?
-enum DrawableType {
-	TypeWindow,
-	TypeTilemap,
-	TypeSprite,
-	TypePlane,
-	TypeBackground,
-	TypeDefault
-};
-
 /**
  * Drawable virtual
  */
 class Drawable {
 public:
+	// What kind of drawable is the current one?
+	enum Type {
+		TypeWindow,
+		TypeTilemap,
+		TypeSprite,
+		TypePlane,
+		TypeBackground,
+		TypeDefault
+	};
+
+	Drawable(Type t);
 	virtual ~Drawable() {};
 
 	virtual void Draw(int z_order) = 0;
 
-	virtual unsigned long GetId() const = 0;
-
-	virtual int GetZ() const = 0;
-
-	virtual DrawableType GetType() const = 0;
+	Type const type;
+	unsigned const ID;
+	bool visible;
 };
 
 #endif

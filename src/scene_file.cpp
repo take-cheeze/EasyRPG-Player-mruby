@@ -100,7 +100,7 @@ void Scene_File::Refresh() {
 		Window_SaveFile *w = file_windows[i].get();
 		w->SetY(40 + (i - top_index) * 64);
 		w->SetActive(i == index);
-		w->SetVisible(i >= top_index && i < top_index + 3);
+		w->visible = i >= top_index && i < top_index + 3;
 	}
 }
 

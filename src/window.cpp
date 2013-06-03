@@ -26,11 +26,9 @@
 #include "bitmap.h"
 
 Window::Window():
-	type(TypeWindow),
-	ID(Graphics().drawable_id++),
+	Drawable(TypeWindow),
 	stretch(true),
 	active(true),
-	visible(true),
 	pause(false),
 	up_arrow(false),
 	down_arrow(false),
@@ -84,7 +82,6 @@ void Window::SetCloseAnimation(int frames) {
 }
 
 void Window::Draw(int /* z_order */) {
-	if (!visible) return;
 	if (width <= 0 || height <= 0) return;
 	if (x < -width || x > int(Graphics().ScreenBuffer()->width()) || y < -height || y > int(Graphics().ScreenBuffer()->height())) return;
 
@@ -365,13 +362,6 @@ void Window::SetActive(bool nactive) {
 	active = nactive;
 }
 
-bool Window::GetVisible() const {
-	return visible;
-}
-void Window::SetVisible(bool nvisible) {
-	visible = nvisible;
-}
-
 bool Window::GetPause() const {
 	return pause;
 }
@@ -493,12 +483,4 @@ int Window::GetContentsOpacity() const {
 }
 void Window::SetContentsOpacity(int ncontents_opacity) {
 	contents_opacity = ncontents_opacity;
-}
-
-unsigned long Window::GetId() const {
-	return ID;
-}
-
-DrawableType Window::GetType() const {
-	return type;
 }

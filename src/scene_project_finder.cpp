@@ -57,7 +57,7 @@ struct Scene_ProjectFinder::Entry {
 			size_t const font_size = Font::Default()->pixel_size();
 			sprite_.SetX(font_size);
 			sprite_.SetY(font_size);
-			sprite_.SetVisible(false);
+			sprite_.visible = false;
 		}
 		return sprite_;
 	}
@@ -171,7 +171,7 @@ void Scene_ProjectFinder::scroll_entry(bool forward) {
 void Scene_ProjectFinder::select_entry() {
 	assert(current_index() < current_children_count());
 
-	current_sprite().SetVisible(false);
+	current_sprite().visible = false;
 	current_entry_ = *(current_entry_? current_entry_->children() : root_)[current_index()];
 
 	if(FileFinder().IsRPG2kProject(
@@ -183,17 +183,17 @@ void Scene_ProjectFinder::select_entry() {
 	} else if(current_entry_->children().empty()) {
 		to_parent(); // return to parent
 	} else {
-		current_sprite().SetVisible(true);
+		current_sprite().visible = true;
 		set_index(current_index());
 	}
 }
 
 void Scene_ProjectFinder::to_parent() {
 	if(current_entry_) {
-		current_entry_->sprite().SetVisible(false);
+		current_entry_->sprite().visible = false;
 		current_entry_ = current_entry_->parent;
 
-		current_sprite().SetVisible(true);
+		current_sprite().visible = true;
 		set_index(current_index());
 	} else {
 		Player().exit_flag = true;
@@ -280,7 +280,7 @@ Scene_ProjectFinder::Scene_ProjectFinder()
 }
 
 void Scene_ProjectFinder::Continue() {
-	current_sprite().SetVisible(true);
+	current_sprite().visible = true;
 }
 
 void Scene_ProjectFinder::Update() {

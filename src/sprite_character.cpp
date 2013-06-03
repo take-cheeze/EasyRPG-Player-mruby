@@ -76,8 +76,8 @@ void Sprite_Character::Update() {
 		Flash(col, dur);
 	}
 
-	SetVisible(character->GetVisible());
-	if (GetVisible()) {
+	visible = character->GetVisible();
+	if (visible) {
 		SetOpacity(character->GetOpacity());
 	}
 

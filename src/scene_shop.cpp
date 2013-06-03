@@ -38,17 +38,17 @@ void Scene_Shop::Start() {
 	number_window.reset(new Window_ShopNumber(0, 32, 184, 128));
 
 	buy_window->SetActive(false);
-	buy_window->SetVisible(false);
+	buy_window->visible = false;
 	buy_window->SetHelpWindow(help_window.get());
 
 	sell_window->SetActive(false);
-	sell_window->SetVisible(false);
+	sell_window->visible = false;
 	sell_window->SetHelpWindow(help_window.get());
 
 	number_window->SetActive(false);
-	number_window->SetVisible(false);
+	number_window->visible = false;
 
-	status_window->SetVisible(false);
+	status_window->visible = false;
 	sell_window->Refresh();
 	sell_window->SetIndex(0);
 	sell_window->SetActive(true);
@@ -68,7 +68,7 @@ void Scene_Shop::Start() {
 }
 
 static void Enable(Window* window, bool state) {
-	window->SetVisible(state);
+	window->visible = state;
 	window->SetActive(state);
 }
 
@@ -80,11 +80,11 @@ void Scene_Shop::SetMode(int nmode) {
 	switch (mode) {
 		case BuySellLeave:
 		case BuySellLeave2:
-			empty_window->SetVisible(true);
+			empty_window->visible = true;
 			Enable(sell_window.get(), false);
 			break;
 		case Sell:
-			empty_window->SetVisible(false);
+			empty_window->visible = false;
 			Enable(sell_window.get(), true);
 			break;
 		case Buy:
@@ -92,7 +92,7 @@ void Scene_Shop::SetMode(int nmode) {
 		case SellHowMany:
 		case Bought:
 		case Sold:
-			empty_window->SetVisible(false);
+			empty_window->visible = false;
 			Enable(sell_window.get(), false);
 			break;
 	}
@@ -102,18 +102,18 @@ void Scene_Shop::SetMode(int nmode) {
 		case BuySellLeave:
 		case BuySellLeave2:
 		case Sell:
-			party_window->SetVisible(false);
-			status_window->SetVisible(false);
-			gold_window->SetVisible(false);
+			party_window->visible = false;
+			status_window->visible = false;
+			gold_window->visible = false;
 			break;
 		case Buy:
 		case BuyHowMany:
 		case SellHowMany:
 		case Bought:
 		case Sold:
-			party_window->SetVisible(true);
-			status_window->SetVisible(true);
-			gold_window->SetVisible(true);
+			party_window->visible = true;
+			status_window->visible = true;
+			gold_window->visible = true;
 			break;
 	}
 
@@ -124,13 +124,13 @@ void Scene_Shop::SetMode(int nmode) {
 		case Sell:
 			Enable(buy_window.get(), false);
 			Enable(number_window.get(), false);
-			empty_window2->SetVisible(false);
+			empty_window2->visible = false;
 			break;
 		case Buy:
 			buy_window->Refresh();
 			Enable(buy_window.get(), true);
 			Enable(number_window.get(), false);
-			empty_window2->SetVisible(false);
+			empty_window2->visible = false;
 			break;
 		case BuyHowMany:
 		case SellHowMany:
@@ -142,7 +142,7 @@ void Scene_Shop::SetMode(int nmode) {
 		case Sold:
 			Enable(buy_window.get(), false);
 			Enable(number_window.get(), false);
-			empty_window2->SetVisible(true);
+			empty_window2->visible = true;
 
 			timer = DEFAULT_FPS;
 			break;

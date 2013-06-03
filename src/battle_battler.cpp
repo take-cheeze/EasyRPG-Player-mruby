@@ -96,7 +96,7 @@ void Battle::Enemy::CreateSprite() {
 	sprite->SetX(member->x);
 	sprite->SetY(member->y);
 	sprite->SetZ(member->y);
-	sprite->SetVisible(!game_enemy->IsHidden());
+	sprite->visible = !game_enemy->IsHidden();
 }
 
 void Battle::Enemy::Transform(int enemy_id) {

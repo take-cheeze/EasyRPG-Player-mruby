@@ -101,11 +101,11 @@ void Scene_Title::TransitionOut() {
 }
 
 void Scene_Title::Resume() {
-	command_window->SetVisible(true);
+	command_window->visible = true;
 }
 
 void Scene_Title::Suspend() {
-	command_window->SetVisible(false);
+	command_window->visible = false;
 }
 
 void Scene_Title::Update() {
@@ -200,7 +200,7 @@ void Scene_Title::CreateCommandWindow() {
 	// Set the number of frames for the opening animation to last
 	command_window->SetOpenAnimation(32);
 
-	command_window->SetVisible(false);
+	command_window->visible = false;
 }
 
 void Scene_Title::PlayTitleMusic() {

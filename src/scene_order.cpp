@@ -69,7 +69,7 @@ void Scene_Order::UpdateOrder() {
 				window_left->SetActive(false);
 				window_confirm->SetIndex(0);
 				window_confirm->SetActive(true);
-				window_confirm->SetVisible(true);
+				window_confirm->visible = true;
 			}
 		}
 	}
@@ -118,7 +118,7 @@ void Scene_Order::CreateCommandWindow() {
 	window_confirm->SetX(120);
 	window_confirm->SetY(144);
 	window_confirm->SetActive(false);
-	window_confirm->SetVisible(false);
+	window_confirm->visible = false;
 }
 
 void Scene_Order::Redo() {
@@ -136,7 +136,7 @@ void Scene_Order::Redo() {
 	window_left->SetIndex(0);
 
 	window_confirm->SetActive(false);
-	window_confirm->SetVisible(false);
+	window_confirm->visible = false;
 	window_confirm->SetIndex(-1);
 
 	actor_counter = 0;

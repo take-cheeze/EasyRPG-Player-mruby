@@ -43,8 +43,6 @@ public:
 	void SetMapData(std::vector<int16_t> const& nmap_data);
 	std::vector<uint8_t> const& GetPassable() const;
 	void SetPassable(std::vector<uint8_t> const& npassable);
-	bool GetVisible() const;
-	void SetVisible(bool nvisible);
 	int GetOx() const;
 	void SetOx(int nox);
 	int GetOy() const;
@@ -59,8 +57,6 @@ public:
 	void SetAnimationType(int type);
 
 	int GetZ() const;
-	unsigned long GetId() const;
-	DrawableType GetType() const;
 	void Substitute(int old_id, int new_id);
 
 private:
@@ -69,7 +65,6 @@ private:
 	std::vector<int16_t> map_data;
 	std::vector<uint8_t> passable;
 	std::vector<uint8_t> substitutions;
-	bool visible;
 	int ox;
 	int oy;
 	int width;
@@ -80,8 +75,6 @@ private:
 	int animation_speed;
 	int animation_type;
 
-	unsigned long ID;
-	DrawableType type;
 	int layer;
 
 	void GenerateAutotileAB(short ID, short animID);

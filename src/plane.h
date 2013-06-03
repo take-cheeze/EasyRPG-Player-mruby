@@ -37,8 +37,6 @@ public:
 
 	BitmapRef const& GetBitmap() const;
 	void SetBitmap(BitmapRef const& bitmap);
-	bool GetVisible() const;
-	void SetVisible(bool visible);
 	int GetZ() const;
 	void SetZ(int z);
 	int GetOx() const;
@@ -58,18 +56,12 @@ public:
 	Tone GetTone() const;
 	void SetTone(Tone tone);
 
-	unsigned long GetId() const;
-	DrawableType GetType() const;
-
 private:
-	DrawableType type;
-	unsigned long ID;
 	ZObj* zobj;
 
 	BitmapRef bitmap;
 	BitmapScreenRef bitmap_screen;
 
-	bool visible;
 	int z;
 	int ox;
 	int oy;

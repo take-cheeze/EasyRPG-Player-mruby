@@ -69,8 +69,8 @@ Battle::AnimationAction::AnimationAction(int x, int y, const RPG::Animation* ani
 }
 
 bool Battle::AnimationAction::operator()() {
-	if (!animation->GetVisible())
-		animation->SetVisible(true);
+	if (!animation->visible)
+		animation->visible = true;
 	else
 		animation->Update();
 

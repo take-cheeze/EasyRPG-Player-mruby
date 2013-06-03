@@ -23,9 +23,7 @@
 #include "bitmap_screen.h"
 
 Plane::Plane() :
-	type(TypePlane),
-	ID(Graphics().drawable_id++),
-	visible(true),
+	Drawable(TypePlane),
 	z(0),
 	ox(0),
 	oy(0) {
@@ -42,7 +40,7 @@ Plane::~Plane() {
 }
 
 void Plane::Draw(int /* z_order */) {
-	if (!visible || !bitmap) return;
+	if (!bitmap) return;
 
 	bitmap_screen->BlitScreenTiled(
 		bitmap->rect(), Graphics().ScreenBuffer()->rect(), ox, oy);
@@ -56,12 +54,6 @@ void Plane::SetBitmap(BitmapRef const& nbitmap) {
 	bitmap_screen->SetBitmap(nbitmap);
 }
 
-bool Plane::GetVisible() const {
-	return visible;
-}
-void Plane::SetVisible(bool nvisible) {
-	visible = nvisible;
-}
 int Plane::GetZ() const {
 	return z;
 }
@@ -116,12 +108,4 @@ Tone Plane::GetTone() const {
 }
 void Plane::SetTone(Tone tone) {
 	bitmap_screen->SetToneEffect(tone);
-}
-
-unsigned long Plane::GetId() const {
-	return ID;
-}
-
-DrawableType Plane::GetType() const {
-	return type;
 }

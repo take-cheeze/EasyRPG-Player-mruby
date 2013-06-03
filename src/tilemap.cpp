@@ -61,11 +61,11 @@ void Tilemap::SetPassableUp(std::vector<uint8_t> const& up) {
 	layer_up.SetPassable(up);
 }
 bool Tilemap::GetVisible() const {
-	return layer_down.GetVisible();
+	return layer_down.visible;
 }
 void Tilemap::SetVisible(bool nvisible) {
-	layer_down.SetVisible(nvisible);
-	layer_up.SetVisible(nvisible);
+	layer_down.visible = nvisible;
+	layer_up.visible = nvisible;
 }
 int Tilemap::GetOx() const {
 	return layer_down.GetOx();

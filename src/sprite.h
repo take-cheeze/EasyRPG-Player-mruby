@@ -47,8 +47,6 @@ public:
 	Rect const& GetSrcRect() const;
 	void SetSrcRect(Rect const& src_rect);
 	void SetSpriteRect(Rect const& sprite_rect);
-	bool GetVisible() const;
-	void SetVisible(bool visible);
 	int GetX() const;
 	void SetX(int x);
 	int GetY() const;
@@ -84,19 +82,13 @@ public:
 	double GetWaverPhase() const;
 	void SetWaverPhase(double phase);
 
-	unsigned long GetId() const;
-	DrawableType GetType() const;
-
 private:
-	DrawableType type;
-	unsigned long ID;
 	ZObj* zobj;
 
 	BitmapRef bitmap;
 	BitmapScreenRef bitmap_screen;
 
 	Rect src_rect;
-	bool visible;
 	int x;
 	int y;
 	int z;

@@ -25,9 +25,7 @@
 
 // Constructor
 Sprite::Sprite() :
-	type(TypeSprite),
-	ID(Graphics().drawable_id++),
-	visible(true),
+	Drawable(TypeSprite),
 	x(0),
 	y(0),
 	z(0),
@@ -50,7 +48,6 @@ Sprite::~Sprite() {
 
 // Draw
 void Sprite::Draw(int /* z_order */) {
-	if (!visible) return;
 	if (GetWidth() <= 0 || GetHeight() <= 0) return;
 
 	bitmap_screen->BlitScreen(x - ox, y - oy, src_rect);
@@ -115,13 +112,6 @@ void Sprite::SetSrcRect(Rect const& nsrc_rect) {
 }
 void Sprite::SetSpriteRect(Rect const& nsprite_rect) {
 	bitmap_screen->SetSrcRect(nsprite_rect);
-}
-
-bool Sprite::GetVisible() const {
-	return visible;
-}
-void Sprite::SetVisible(bool nvisible) {
-	visible = nvisible;
 }
 
 int Sprite::GetX() const {
@@ -242,12 +232,4 @@ double Sprite::GetWaverPhase() const {
 }
 void Sprite::SetWaverPhase(double phase) {
 	bitmap_screen->SetWaverEffectPhase(phase);
-}
-
-unsigned long Sprite::GetId() const {
-	return ID;
-}
-
-DrawableType Sprite::GetType() const {
-	return type;
 }

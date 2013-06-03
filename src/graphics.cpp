@@ -116,7 +116,8 @@ void Graphics_::DrawFrame() {
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
 	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
-		state->drawable_map[(*it_zlist)->GetId()]->Draw((*it_zlist)->GetZ());
+		Drawable* const d = state->drawable_map[(*it_zlist)->GetId()];
+		if(d->visible) { d->Draw((*it_zlist)->GetZ()); }
 	}
 
 	if (overlay_visible) {
@@ -139,7 +140,8 @@ BitmapRef Graphics_::SnapToBitmap() {
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
 	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
-		state->drawable_map[(*it_zlist)->GetId()]->Draw((*it_zlist)->GetZ());
+		Drawable* const d = state->drawable_map[(*it_zlist)->GetId()];
+		if(d->visible) { d->Draw((*it_zlist)->GetZ()); }
 	}
 
 	return Bitmap::Create(screen_buffer_);

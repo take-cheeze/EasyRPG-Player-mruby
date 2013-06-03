@@ -45,8 +45,6 @@ public:
 	void SetCursorRect(Rect const& ncursor_rect);
 	bool GetActive() const;
 	void SetActive(bool nactive);
-	bool GetVisible() const;
-	void SetVisible(bool nvisible);
 	bool GetPause() const;
 	void SetPause(bool npause);
 	bool GetUpArrow() const;
@@ -80,18 +78,12 @@ public:
 	void SetOpenAnimation(int frames);
 	void SetCloseAnimation(int frames);
 
-	unsigned long GetId() const;
-	DrawableType GetType() const;
-
 protected:
-	DrawableType type;
-	unsigned long ID;
 	ZObj* zobj;
 	BitmapRef windowskin, contents;
 	bool stretch;
 	Rect cursor_rect;
 	bool active;
-	bool visible;
 	bool pause;
 	bool up_arrow;
 	bool down_arrow;

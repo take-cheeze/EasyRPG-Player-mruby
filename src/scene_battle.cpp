@@ -73,18 +73,18 @@ void Scene_Battle::CreateCursors() {
 	ally_cursor->SetBitmap(system2);
 	ally_cursor->SetSrcRect(Rect(0, 16, 16, 16));
 	ally_cursor->SetZ(999);
-	ally_cursor->SetVisible(false);
+	ally_cursor->visible = false;
 
 	enemy_cursor.reset(new Sprite());
 	enemy_cursor->SetBitmap(system2);
 	enemy_cursor->SetSrcRect(Rect(0, 0, 16, 16));
 	enemy_cursor->SetZ(999);
-	enemy_cursor->SetVisible(false);
+	enemy_cursor->visible = false;
 }
 
 void Scene_Battle::CreateWindows() {
 	help_window.reset(new Window_Help(0, 0, 320, 32));
-	help_window->SetVisible(false);
+	help_window->visible = false;
 
 	options_window.reset(new Window_BattleOption(0, 172, 76, 68));
 
@@ -93,10 +93,10 @@ void Scene_Battle::CreateWindows() {
 	command_window.reset(new Window_BattleCommand(244, 172, 76, 68));
 
 	skill_window.reset(new Window_BattleSkill(0, 172, 320, 68));
-	skill_window->SetVisible(false);
+	skill_window->visible = false;
 
 	item_window.reset(new Window_BattleItem(0, 172, 320, 68));
-	item_window->SetVisible(false);
+	item_window->visible = false;
 	item_window->Refresh();
 	item_window->SetIndex(0);
 }
@@ -181,21 +181,21 @@ void Scene_Battle::SetState(Scene_Battle::State new_state) {
 			break;
 	}
 
-	options_window->SetVisible(false);
-	status_window->SetVisible(false);
-	command_window->SetVisible(false);
-	item_window->SetVisible(false);
-	skill_window->SetVisible(false);
-	help_window->SetVisible(false);
+	options_window->visible = false;
+	status_window->visible = false;
+	command_window->visible = false;
+	item_window->visible = false;
+	skill_window->visible = false;
+	help_window->visible = false;
 
 	item_window->SetHelpWindow(NULL);
 	skill_window->SetHelpWindow(NULL);
 
 	switch (state) {
 		case State_Options:
-			help_window->SetVisible(true);
-			options_window->SetVisible(true);
-			status_window->SetVisible(true);
+			help_window->visible = true;
+			options_window->visible = true;
+			status_window->visible = true;
 			status_window->SetX(76);
 			break;
 		case State_Battle:
@@ -205,33 +205,33 @@ void Scene_Battle::SetState(Scene_Battle::State new_state) {
 		case State_TargetAlly:
 		case State_AllyAction:
 		case State_EnemyAction:
-			status_window->SetVisible(true);
+			status_window->visible = true;
 			status_window->SetX(0);
-			command_window->SetVisible(true);
+			command_window->visible = true;
 			break;
 		case State_Item:
-			item_window->SetVisible(true);
+			item_window->visible = true;
 			item_window->SetHelpWindow(help_window.get());
-			help_window->SetVisible(true);
+			help_window->visible = true;
 			break;
 		case State_Skill:
-			skill_window->SetVisible(true);
+			skill_window->visible = true;
 			skill_window->SetHelpWindow(help_window.get());
-			help_window->SetVisible(true);
+			help_window->visible = true;
 			break;
 		case State_Victory:
 		case State_Defeat:
-			status_window->SetVisible(true);
+			status_window->visible = true;
 			status_window->SetX(0);
-			command_window->SetVisible(true);
-			help_window->SetVisible(true);
+			command_window->visible = true;
+			help_window->visible = true;
 			break;
 	}
 }
 
 void Scene_Battle::Message(const std::string& msg, bool pause) {
 	help_window->SetText(msg);
-	help_window->SetVisible(true);
+	help_window->visible = true;
 	help_window->SetPause(pause);
 	if (!pause)
 		message_timer = 60;
@@ -709,10 +709,10 @@ void Scene_Battle::ProcessActions() {
 			CheckAbort();
 			CheckFlee();
 
-			if (help_window->GetVisible() && message_timer > 0) {
+			if (help_window->visible && message_timer > 0) {
 				message_timer--;
 				if (message_timer <= 0)
-					help_window->SetVisible(false);
+					help_window->visible = false;
 			}
 
 			while (Game_Battle::NextActiveEnemy())
@@ -872,7 +872,7 @@ void Scene_Battle::UpdateCursors() {
 		const Battle::Ally& ally = state == State_TargetAlly && Game_Battle::HaveTargetAlly()
 			? Game_Battle::GetTargetAlly()
 			: Game_Battle::GetActiveAlly();
-		ally_cursor->SetVisible(true);
+		ally_cursor->visible = true;
 		ally_cursor->SetX(ally.rpg_actor->battle_x - ally_cursor->GetWidth() / 2);
 		ally_cursor->SetY(ally.rpg_actor->battle_y - ally.sprite->GetHeight() / 2 - ally_cursor->GetHeight() - 2);
 		static const int frames[] = {0,1,2,1};
@@ -880,11 +880,11 @@ void Scene_Battle::UpdateCursors() {
 		ally_cursor->SetSrcRect(Rect(frame * 16, 16, 16, 16));
 	}
 	else
-		ally_cursor->SetVisible(false);
+		ally_cursor->visible = false;
 
 	if (state == State_TargetEnemy && Game_Battle::HaveTargetEnemy()) {
 		const Battle::Enemy& enemy = Game_Battle::GetTargetEnemy();
-		enemy_cursor->SetVisible(true);
+		enemy_cursor->visible = true;
 		enemy_cursor->SetX(enemy.member->x + enemy.sprite->GetWidth() / 2 + 2);
 		enemy_cursor->SetY(enemy.member->y - enemy_cursor->GetHeight() / 2);
 		static const int frames[] = {0,1,2,1};
@@ -892,19 +892,19 @@ void Scene_Battle::UpdateCursors() {
 		enemy_cursor->SetSrcRect(Rect(frame * 16, 0, 16, 16));
 	}
 	else
-		enemy_cursor->SetVisible(false);
+		enemy_cursor->visible = false;
 }
 
 void Scene_Battle::UpdateSprites() {
 	for (std::vector<Battle::Enemy>::iterator it = Game_Battle::enemies.begin(); it != Game_Battle::enemies.end(); it++) {
-		if (it->sprite->GetVisible() && !it->game_enemy->Exists() && it->fade == 0)
+		if (it->sprite->visible && !it->game_enemy->Exists() && it->fade == 0)
 			it->fade = 60;
 
 		if (it->fade > 0) {
 			it->sprite->SetOpacity(it->fade * 255 / 60);
 			it->fade--;
 			if (it->fade == 0)
-				it->sprite->SetVisible(false);
+				it->sprite->visible = false;
 		}
 
 		if (!it->rpg_enemy->levitate)

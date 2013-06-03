@@ -26,9 +26,9 @@
 #include "bitmap_screen.h"
 
 Background::Background(const std::string& name) :
-	ID(Graphics().drawable_id++), zobj(NULL), visible(true),
-	bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
-	fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
+		Drawable(TypeBackground), zobj(NULL),
+		bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
+		fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
 
 	zobj = Graphics().RegisterZObj(0, ID);
 	Graphics().RegisterDrawable(ID, this);
@@ -37,9 +37,9 @@ Background::Background(const std::string& name) :
 }
 
 Background::Background(int terrain_id) :
-	ID(Graphics().drawable_id++), zobj(NULL), visible(true),
-	bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
-	fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
+		Drawable(TypeBackground), zobj(NULL),
+		bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
+		fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
 
 	zobj = Graphics().RegisterZObj(0, ID);
 	Graphics().RegisterDrawable(ID, this);
@@ -71,14 +71,6 @@ int Background::GetZ() const {
 	return z;
 }
 
-unsigned long Background::GetId() const {
-	return ID;
-}
-
-DrawableType Background::GetType() const {
-	return type;
-}
-
 void Background::Update(int& rate, int& value) {
 	int step =
 		(rate > 0) ? 1 << rate :
@@ -99,9 +91,6 @@ int Background::Scale(int x) {
 }
 
 void Background::Draw(int /* z_order */) {
-	if (!visible)
-		return;
-
 	if (bg_screen)
 		bg_screen->BlitScreenTiled(bg_screen->GetBitmap()->rect(),
 								   Graphics().ScreenBuffer()->rect(),
