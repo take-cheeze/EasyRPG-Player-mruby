@@ -362,11 +362,12 @@ std::string FileFinder_::FindDefault(std::string const& name) {
 }
 
 bool FileFinder_::IsRPG2kProject(ProjectTree const& dir) {
-	string_map::const_iterator const
-		ldb_it = dir.files.find(Utils::LowerCase(DATABASE_NAME)),
-		lmt_it = dir.files.find(Utils::LowerCase(TREEMAP_NAME));
+	return IsRPG2kProject(dir.files);
+}
 
-	return(ldb_it != dir.files.end() && lmt_it != dir.files.end());
+bool FileFinder_::IsRPG2kProject(string_map const& dir) {
+	return(dir.find(Utils::LowerCase(DATABASE_NAME)) != dir.end() &&
+		   dir.find(Utils::LowerCase(TREEMAP_NAME)) != dir.end());
 }
 
 std::string FileFinder_::FindMusic(const std::string& name) {
@@ -381,6 +382,24 @@ std::string FileFinder_::FindMovie(const std::string& name) {
 	return FindFile("Movie", name, MOVIE_TYPES);
 }
 
+std::string FileFinder_::fullpath(std::string const& f) const {
+#ifdef _WIN32
+	wchar_t buf[MAX_PATH + 1];
+	if(not _wfullpath(buf, Utils::ToWideString(f).c_str(), MAX_PATH)) {
+		Output::Debug("path resolving failed: \"%s\"", f.c_str());
+		return std::string();
+	}
+	return Utils::FromWideString(buf);
+#else
+	char buf[PATH_MAX + 1];
+	if(not realpath(f.c_str(), buf)) {
+		Output::Debug("path resolving failed: \"%s\"", f.c_str());
+		return std::string();
+	}
+	return buf;
+#endif
+}
+
 bool FileFinder_::Exists(std::string const& filename) {
 #ifdef _WIN32
 	return ::GetFileAttributesW(Utils::ToWideString(filename).c_str()) != (DWORD)-1;
@@ -393,13 +412,11 @@ bool FileFinder_::Exists(std::string const& filename) {
 }
 
 bool FileFinder_::IsDirectory(std::string const& dir) {
-	assert(Exists(dir));
 #ifdef _WIN32
 	return(::GetFileAttributesW(Utils::ToWideString(dir).c_str()) & FILE_ATTRIBUTE_DIRECTORY);
 #else
 	struct stat sb;
-	BOOST_VERIFY(::stat(dir.c_str(), &sb) != -1);
-	return S_ISDIR(sb.st_mode);
+	return (::stat(dir.c_str(), &sb) != -1) and S_ISDIR(sb.st_mode);
 #endif
 }
 

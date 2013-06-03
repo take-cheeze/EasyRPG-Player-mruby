@@ -195,6 +195,15 @@ struct FileFinder_ : boost::noncopyable {
 	ProjectTree const& GetProjectTree();
 	EASYRPG_SHARED_PTR<ProjectTree> CreateProjectTree(std::string const& p);
 	bool IsRPG2kProject(ProjectTree const& dir);
+	bool IsRPG2kProject(string_map const& dir);
+
+	/*
+	 * extract relative path to absolute path
+	 *
+	 * @param f a path
+	 * @return absolute path
+	 */
+	std::string fullpath(std::string const& f) const;
 
   private:
 	boost::optional<std::string> FindFile(ProjectTree const& tree,

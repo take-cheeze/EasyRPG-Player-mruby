@@ -101,9 +101,11 @@ namespace Utils {
 	 */
 	std::string FromWideString(const wstring& str);
 
-
+	/*
+	 * detects endianess dynamically
+	 * @return returns true if byte order is big endian
+	 */
 	bool IsBigEndian();
-
 } // namespace Utils
 
 #endif

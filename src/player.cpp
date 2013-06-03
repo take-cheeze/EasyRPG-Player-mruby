@@ -28,7 +28,7 @@
 #include "scene_logo.h"
 #include "scene_title.h"
 #include "scene_battle.h"
-#include "scene_bitmap_test.h"
+#include "scene_project_finder.h"
 #include "utils.h"
 #include "baseui.h"
 
@@ -271,10 +271,11 @@ void Player_::Run() {
 
 	Scene::Push(Scene::CreateNullScene());
 	Scene::Push(SceneRef
-				(debug_flag
-				 // ? static_cast<Scene*>(new Scene_BitmapTest())
-				 ? static_cast<Scene*>(new Scene_Title())
-				 : static_cast<Scene*>(new Scene_Logo())));
+				(not FileFinder().IsRPG2kProject(FileFinder().GetProjectTree())
+				 ? static_cast<Scene*>(new Scene_ProjectFinder()):
+				 debug_flag
+				 ? static_cast<Scene*>(new Scene_Title()):
+				 static_cast<Scene*>(new Scene_Logo())));
 
 	reset_flag = false;
 
