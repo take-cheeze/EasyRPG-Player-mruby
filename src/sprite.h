@@ -23,7 +23,8 @@
 #include "drawable.h"
 #include "rect.h"
 #include "tone.h"
-#include "zobj.h"
+
+class ZObj;
 
 /**
  * Sprite class.

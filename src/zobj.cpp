@@ -18,7 +18,7 @@
 // Headers
 #include "zobj.h"
 
-ZObj::ZObj(int z, uint32_t creation, uint32_t ID)  :
+ZObj::ZObj(int z, uint32_t creation, Drawable* ID)  :
 	z(z),
 	creation(creation),
 	ID(ID) {
@@ -35,6 +35,6 @@ uint32_t ZObj::GetCreation() const {
 	return creation;
 }
 
-uint32_t ZObj::GetId() const {
+Drawable* ZObj::GetId() const {
 	return ID;
 }

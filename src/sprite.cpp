@@ -36,14 +36,12 @@ Sprite::Sprite() :
 
 	bitmap_screen = BitmapScreen::Create();
 
-	zobj = Graphics().RegisterZObj(0, ID);
-	Graphics().RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, this);
 }
 
 // Destructor
 Sprite::~Sprite() {
-	Graphics().RemoveZObj(ID);
-	Graphics().RemoveDrawable(ID);
+	Graphics().RemoveZObj(this);
 }
 
 // Draw

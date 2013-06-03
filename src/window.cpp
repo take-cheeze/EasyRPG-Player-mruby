@@ -50,8 +50,7 @@ Window::Window():
 	animation_count(0.0),
 	animation_increment(0.0) {
 
-	zobj = Graphics().RegisterZObj(0, ID);
-	Graphics().RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, this);
 
 	windowskin_screen = BitmapScreen::Create();
 	contents_screen = BitmapScreen::Create();
@@ -66,8 +65,7 @@ Window::Window():
 }
 
 Window::~Window() {
-	Graphics().RemoveZObj(ID);
-	Graphics().RemoveDrawable(ID);
+	Graphics().RemoveZObj(this);
 }
 
 void Window::SetOpenAnimation(int frames) {

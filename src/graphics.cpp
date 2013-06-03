@@ -30,6 +30,7 @@
 #include "baseui.h"
 #include "drawable.h"
 #include "player.h"
+#include "zobj.h"
 
 #include <boost/math/special_functions/round.hpp>
 
@@ -116,7 +117,7 @@ void Graphics_::DrawFrame() {
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
 	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
-		Drawable* const d = state->drawable_map[(*it_zlist)->GetId()];
+		Drawable* const d = (*it_zlist)->GetId();
 		if(d->visible) { d->Draw((*it_zlist)->GetZ()); }
 	}
 
@@ -140,7 +141,7 @@ BitmapRef Graphics_::SnapToBitmap() {
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
 	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
-		Drawable* const d = state->drawable_map[(*it_zlist)->GetId()];
+		Drawable* const d = (*it_zlist)->GetId();
 		if(d->visible) { d->Draw((*it_zlist)->GetZ()); }
 	}
 
@@ -401,31 +402,22 @@ void Graphics_::SetFrameCount(int nframecount) {
 	framecount = nframecount;
 }
 
-void Graphics_::RegisterDrawable(uint32_t ID, Drawable* drawable) {
-	state->drawable_map[ID] = drawable;
-}
-
-void Graphics_::RemoveDrawable(uint32_t ID) {
-	std::map<uint32_t, Drawable*>::iterator it = state->drawable_map.find(ID);
-	if(it != state->drawable_map.end()) { state->drawable_map.erase(it); }
-}
-
-ZObj* Graphics_::RegisterZObj(int z, uint32_t ID) {
+ZObj* Graphics_::RegisterZObj(int z, Drawable* ID) {
 	state->zlist.push_back(EASYRPG_MAKE_SHARED<ZObj>(z, drawable_creation++, ID));
 	state->zlist_dirty = true;
 	return state->zlist.back().get();
 }
 
-void Graphics_::RegisterZObj(int z, uint32_t ID, bool /* multiz */) {
+void Graphics_::RegisterZObj(int z, Drawable* ID, bool /* multiz */) {
 	state->zlist.push_back(EASYRPG_MAKE_SHARED<ZObj>(z, 999999, ID));
 	state->zlist_dirty = true;
 }
 
-void Graphics_::RemoveZObj(uint32_t ID) {
+void Graphics_::RemoveZObj(Drawable* ID) {
 	RemoveZObj(ID, false);
 }
 
-void Graphics_::RemoveZObj(uint32_t ID, bool multiz) {
+void Graphics_::RemoveZObj(Drawable* ID, bool multiz) {
 	std::vector<std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator> to_erase;
 
 	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;

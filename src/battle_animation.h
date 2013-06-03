@@ -22,7 +22,8 @@
 #include "system.h"
 #include "rpg_animation.h"
 #include "drawable.h"
-#include "zobj.h"
+
+class ZObj;
 
 class BattleAnimation : public Drawable {
 public:

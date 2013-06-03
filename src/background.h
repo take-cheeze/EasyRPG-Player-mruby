@@ -22,7 +22,8 @@
 #include <string>
 #include "system.h"
 #include "drawable.h"
-#include "zobj.h"
+
+class ZObj;
 
 class Background : public Drawable {
 public:

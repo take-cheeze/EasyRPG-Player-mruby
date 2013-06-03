@@ -23,7 +23,8 @@
 #include "color.h"
 #include "drawable.h"
 #include "tone.h"
-#include "zobj.h"
+
+class ZObj;
 
 /**
  * Plane class.

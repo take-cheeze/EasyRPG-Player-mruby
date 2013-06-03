@@ -30,8 +30,7 @@ Background::Background(const std::string& name) :
 		bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
 		fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
 
-	zobj = Graphics().RegisterZObj(0, ID);
-	Graphics().RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, this);
 
 	bg_screen = BitmapScreen::Create(Cache().Backdrop(name));
 }
@@ -41,8 +40,7 @@ Background::Background(int terrain_id) :
 		bg_hscroll(0), bg_vscroll(0), bg_x(0), bg_y(0),
 		fg_hscroll(0), fg_vscroll(0), fg_x(0), fg_y(0) {
 
-	zobj = Graphics().RegisterZObj(0, ID);
-	Graphics().RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, this);
 
 	const RPG::Terrain& terrain = Data::terrains[terrain_id - 1];
 
@@ -63,8 +61,7 @@ Background::Background(int terrain_id) :
 }
 
 Background::~Background() {
-	Graphics().RemoveZObj(ID);
-	Graphics().RemoveDrawable(ID);
+	Graphics().RemoveZObj(this);
 }
 
 int Background::GetZ() const {

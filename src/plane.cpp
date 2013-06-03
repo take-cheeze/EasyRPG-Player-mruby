@@ -30,13 +30,11 @@ Plane::Plane() :
 
 	bitmap_screen = BitmapScreen::Create();
 
-	zobj = Graphics().RegisterZObj(0, ID);
-	Graphics().RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(0, this);
 }
 
 Plane::~Plane() {
-	Graphics().RemoveZObj(ID);
-	Graphics().RemoveDrawable(ID);
+	Graphics().RemoveZObj(this);
 }
 
 void Plane::Draw(int /* z_order */) {

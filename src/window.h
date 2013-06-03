@@ -21,8 +21,9 @@
 // Headers
 #include "system.h"
 #include "drawable.h"
-#include "zobj.h"
 #include "rect.h"
+
+class ZObj;
 
 /**
  * Window class.

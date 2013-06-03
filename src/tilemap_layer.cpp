@@ -156,15 +156,13 @@ TilemapLayer::TilemapLayer(int ilayer) :
 
 	int tiles_y = (int)ceil(Graphics().ScreenBuffer()->height() / 16.0) + 1;
 	for (int i = 0; i < tiles_y + 2; i++) {
-		Graphics().RegisterZObj(16 * i, ID, true);
+		Graphics().RegisterZObj(16 * i, this, true);
 	}
-	Graphics().RegisterZObj(9999, ID, true);
-	Graphics().RegisterDrawable(ID, this);
+	Graphics().RegisterZObj(9999, this, true);
 }
 
 TilemapLayer::~TilemapLayer() {
-	Graphics().RemoveZObj(ID, true);
-	Graphics().RemoveDrawable(ID);
+	Graphics().RemoveZObj(this, true);
 }
 
 void TilemapLayer::DrawTile(BitmapScreen& screen, int x, int y, int row, int col, bool) {

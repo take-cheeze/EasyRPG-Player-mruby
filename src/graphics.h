@@ -25,12 +25,13 @@
 #include <vector>
 
 #include "system.h"
-#include "drawable.h"
-#include "zobj.h"
 #include "color.h"
 #include "memory_management.h"
 
 #include <boost/noncopyable.hpp>
+
+class ZObj;
+class Drawable;
 
 /**
  * Graphics.
@@ -135,12 +136,10 @@ struct Graphics_ : boost::noncopyable {
 	 */
 	void SetFrameCount(int framecount);
 
-	void RegisterDrawable(uint32_t ID, Drawable* drawable);
-	void RemoveDrawable(uint32_t ID);
-	ZObj* RegisterZObj(int z, uint32_t ID);
-	void RegisterZObj(int z, uint32_t ID, bool multiz);
-	void RemoveZObj(uint32_t ID);
-	void RemoveZObj(uint32_t ID, bool multiz);
+	ZObj* RegisterZObj(int z, Drawable* ID);
+	void RegisterZObj(int z, Drawable* ID, bool multiz);
+	void RemoveZObj(Drawable* ID);
+	void RemoveZObj(Drawable* ID, bool multiz);
 	void UpdateZObj(ZObj* zobj, int z);
 
 	bool fps_on_screen;
@@ -201,7 +200,6 @@ struct Graphics_ : boost::noncopyable {
 
 	struct State {
 		State() : zlist_dirty(false) {}
-		std::map<uint32_t, Drawable*> drawable_map;
 		std::list<EASYRPG_SHARED_PTR<ZObj> > zlist;
 		bool zlist_dirty;
 	};

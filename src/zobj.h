@@ -21,22 +21,24 @@
 // Headers
 #include "system.h"
 
+class Drawable;
+
 /**
  * ZObj class
  */
 class ZObj {
 public:
-	ZObj(int z, uint32_t creation, uint32_t id);
+	ZObj(int z, uint32_t creation, Drawable* id);
 
 	void SetZ(int z);
 	int GetZ() const ;
 	uint32_t GetCreation() const;
-	uint32_t GetId() const;
+	Drawable* GetId() const;
 
 private:
 	int z;
 	uint32_t creation;
-	uint32_t ID;
+	Drawable* ID;
 };
 
 #endif

@@ -28,13 +28,11 @@ BattleAnimation::BattleAnimation(int x, int y, const RPG::Animation* animation)
 		: Drawable(TypeDefault), x(x), y(y)
 		, animation(animation), frame(0), initialized(false)
 {
-	zobj = Graphics().RegisterZObj(GetZ(), ID);
-	Graphics().RegisterDrawable(ID, this);
+	zobj = Graphics().RegisterZObj(GetZ(), this);
 }
 
 BattleAnimation::~BattleAnimation() {
-	Graphics().RemoveZObj(ID);
-	Graphics().RemoveDrawable(ID);
+	Graphics().RemoveZObj(this);
 }
 
 void BattleAnimation::Setup() {
