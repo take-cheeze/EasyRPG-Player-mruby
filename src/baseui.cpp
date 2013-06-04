@@ -18,6 +18,9 @@
 // Headers
 #include "baseui.h"
 #include "system.h"
+#include "font.h"
+#include "graphics.h"
+#include "bitmap.h"
 
 #ifdef USE_SDL
 #include "sdl_ui.h"
@@ -56,4 +59,21 @@ int BaseUi::GetMousePosX() const {
 
 int BaseUi::GetMousePosY() const {
 	return mouse_y;
+}
+
+void BaseUi::DrawScreenText(const std::string &text) {
+	DrawScreenText(text, 10, 10);
+}
+
+void BaseUi::DrawScreenText(const std::string &text, int x, int y, Color const& color) {
+	Font::default_color = color;
+	FontRef const font = Font::Default();
+	unsigned line = 0;
+	std::string::const_iterator i = text.begin();
+	do {
+		std::string::const_iterator const line_end = std::find(i, text.end(), '\n');
+		Graphics().ScreenBuffer()->draw_text(
+			x, y + font->pixel_size() * line++, std::string(i, line_end));
+		i = line_end;
+	} while(i != text.end());
 }

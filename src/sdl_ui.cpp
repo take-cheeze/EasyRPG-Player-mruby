@@ -39,7 +39,6 @@
 #include "audio.h"
 #include "sdl_audio.h"
 #include "al_audio.h"
-#include "font.h"
 #include "utils.h"
 #include "matrix.h"
 
@@ -440,20 +439,6 @@ void SdlUi::UpdateDisplay() {
 
 void SdlUi::SetTitle(const std::string &title) {
 	SDL_WM_SetCaption(title.c_str(), NULL);
-}
-
-void SdlUi::DrawScreenText(const std::string &text) {
-	DrawScreenText(text, 10, 10);
-}
-
-void SdlUi::DrawScreenText(const std::string &text, int x, int y, Color const& color) {
-	Font::default_color = color;
-	Graphics().ScreenBuffer()->draw_text(x, y, text);
-}
-
-void SdlUi::DrawScreenText(const std::string &text, Rect const& dst_rect, Color const& color) {
-	Font::default_color = color;
-	Graphics().ScreenBuffer()->draw_text(dst_rect, text);
 }
 
 bool SdlUi::ShowCursor(bool flag) {

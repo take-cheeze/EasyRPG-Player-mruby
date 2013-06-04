@@ -35,9 +35,6 @@ struct BotUi : public BaseUi {
 	void ToggleZoom() {}
 	void UpdateDisplay() {}
 	void SetTitle(const std::string&) {}
-	void DrawScreenText(const std::string&) {}
-	void DrawScreenText(const std::string&, int, int, Color const&) {}
-	void DrawScreenText(const std::string&, Rect const&, Color const&) {}
 	bool ShowCursor(bool) { return false; }
 	bool IsFullscreen() { return false; }
 
