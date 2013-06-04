@@ -423,7 +423,7 @@ void SdlUi::UpdateDisplay() {
 
 	BitmapRef const& buffer = Graphics().ScreenBuffer();
 
-	SET_MATRIX(buffer->image(), Matrix::scale(
+	SET_MATRIX(buffer->image(), Matrix::scale_(
 		buffer->width () / double(screen->w),
 		buffer->height() / double(screen->h)));
 

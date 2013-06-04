@@ -54,7 +54,7 @@ struct Matrix {
 		pixman_transform_init_identity(&data);
 	}
 
-	static Matrix rotate(double const angle) {
+	static Matrix rotate_(double const angle) {
 		Matrix ret = no_init();
 		pixman_transform_init_rotate(
 			&ret.data,
@@ -62,12 +62,12 @@ struct Matrix {
 			pixman_double_to_fixed(std::sin(angle)));
 		return ret;
 	}
-	static Matrix scale(fixed const& x, fixed const& y) {
+	static Matrix scale_(fixed const& x, fixed const& y) {
 		Matrix ret = no_init();
 		pixman_transform_init_scale(&ret.data, x.data, y.data);
 		return ret;
 	}
-	static Matrix translate(fixed const x, fixed const y) {
+	static Matrix translate_(fixed const x, fixed const y) {
 		Matrix ret = no_init();
 		pixman_transform_init_translate(&ret.data, x.data, y.data);
 		return ret;
@@ -79,18 +79,18 @@ struct Matrix {
 		return ret;
 	}
 
-	Matrix& rotate_(double const angle, bool const forward = true) {
+	Matrix& rotate(double const angle, bool const forward = true) {
 		pixman_transform_rotate(forward? &data : NULL, forward? NULL : &data,
 								pixman_double_to_fixed(std::cos(angle)),
 								pixman_double_to_fixed(std::sin(angle)));
 		return *this;
 	}
-	Matrix& scale_(fixed const& x, fixed const& y, bool const forward = true) {
+	Matrix& scale(fixed const& x, fixed const& y, bool const forward = true) {
 		pixman_transform_scale(
 			forward? &data : NULL, forward? NULL : &data, x.data, y.data);
 		return *this;
 	}
-	Matrix& translate_(fixed const& x, fixed const& y, bool const forward = true) {
+	Matrix& translate(fixed const& x, fixed const& y, bool const forward = true) {
 		pixman_transform_translate(
 			forward? &data : NULL, forward? NULL : &data, x.data, y.data);
 		return *this;

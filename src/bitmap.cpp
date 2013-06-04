@@ -415,7 +415,7 @@ void Bitmap::tiled_blit(BlitCommon const& info, Rect const& dst_rect, int opacit
 
 	pixman_image_set_repeat(src_bmp.get(), PIXMAN_REPEAT_NORMAL);
 
-	SET_MATRIX(src_bmp.get(), Matrix::translate(ox, oy));
+	SET_MATRIX(src_bmp.get(), Matrix::translate_(ox, oy));
 	pixman_image_composite(
 		src_bmp, create_opacity_mask(opacity),
 		0, 0, 0, 0, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
@@ -427,8 +427,8 @@ void Bitmap::stretch_blit(Rect const& dst_rect, Bitmap const& src, Rect const& s
 	double const zoom_x = double(src_rect.width ) / dst_rect.width ,
 				 zoom_y = double(src_rect.height) / dst_rect.height;
 	SET_MATRIX(src.ref_.get(),
-			   Matrix::scale(zoom_x, zoom_y)
-			   .translate_(src_rect.x, src_rect.y));
+			   Matrix::scale_(zoom_x, zoom_y)
+			   .translate(src_rect.x, src_rect.y));
 
 	pixman_image_composite(
 		src.ref_, create_opacity_mask(opacity),
@@ -439,7 +439,7 @@ void Bitmap::stretch_blit(Rect const& dst_rect, Bitmap const& src, Rect const& s
 void Bitmap::flip_blit(BlitCommon const& info, bool const horizontal, bool const vertical) {
 	SET_MATRIX(
 		info.src.ref_.get(),
-		Matrix::scale(horizontal? -1 : 1, vertical? -1 : 1)
+		Matrix::scale_(horizontal? -1 : 1, vertical? -1 : 1)
 		.translate(horizontal? info.src.width() : 0,
 				   vertical? info.src.height() : 0));
 	pixman_image_composite(info.src.ref_, pixman_image_ptr(),
@@ -461,8 +461,8 @@ BitmapRef Bitmap::resample(int const scale_w, int const scale_h, Rect const& src
 
 	SET_MATRIX(
 		ref_.get(),
-		Matrix::scale(double(scale_w) / src_rect.width,
-					  double(scale_h) / src_rect.height));
+		Matrix::scale_(double(scale_w) / src_rect.width,
+					   double(scale_h) / src_rect.height));
 	pixman_image_composite(ref_, pixman_image_ptr(), ret->ref_,
 						   src_rect.x, src_rect.y, 0, 0, 0, 0, scale_w, scale_h);
 
@@ -471,7 +471,7 @@ BitmapRef Bitmap::resample(int const scale_w, int const scale_h, Rect const& src
 BitmapRef Bitmap::sub_image(Rect const& rect) const {
 	BitmapRef const ret = Bitmap::Create(rect.width, rect.height);
 
-	SET_MATRIX(ref_.get(), Matrix::translate(rect.x, rect.y));
+	SET_MATRIX(ref_.get(), Matrix::translate_(rect.x, rect.y));
 	pixman_image_composite(
 		ref_, pixman_image_ptr(), ret->ref_,
 		rect.x, rect.y, 0, 0, 0, 0, rect.width, rect.height);
@@ -559,8 +559,6 @@ void Bitmap::effect_blit(BlitCommon const& info,
 
 	effect_blit(
 		BlitCommon(info.x, info.y, *draw, src_rect),
-		Matrix::translate(src_rect.x, src_rect.y)
-		.scale_(zoom_x, zoom_y)
-		.rotate_(angle),
+		Matrix::scale_(zoom_x, zoom_y).rotate(angle),
 		top_opacity, bottom_opacity, opacity_split);
 }
