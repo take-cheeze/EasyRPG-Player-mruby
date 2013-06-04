@@ -22,6 +22,7 @@
 
 #include <map>
 
+#include <boost/format.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/static_assert.hpp>
 
@@ -66,9 +67,9 @@ BitmapRef Cache_::LoadBitmap(std::string const& f) {
 
 	if(ret->width () < s.min_width  || s.max_width  < ret->width () ||
 	   ret->height() < s.min_height || s.max_height < ret->height()) {
-		Output::Debug("Image size error in: %s/%s", s.directory, f.c_str());
-		Output::Debug("width  (min, max, actual) = (%d, %d, %d)", s.min_width , s.max_width , ret->width ());
-		Output::Debug("height (min, max, actual) = (%d, %d, %d)", s.min_height, s.max_height, ret->height());
+		Output().Debug(boost::format("Image size error in: %s/%s") % s.directory % f);
+		Output().Debug(boost::format("width  (min, max, actual) = (%d, %d, %d)") % s.min_width  % s.max_width  % ret->width ());
+		Output().Debug(boost::format("height (min, max, actual) = (%d, %d, %d)") % s.min_height % s.max_height % ret->height());
 	}
 
 	return ret;
@@ -85,7 +86,7 @@ BitmapRef Cache_::LoadBitmap(Spec const& spec, std::string const& filename) {
 		if (path.empty()) {
 			// TODO:
 			// Load a dummy image with correct size (issue #32)
-			Output::Warning("Image not found: %s/%s\n\nPlayer will exit now.", spec.directory, filename.c_str());
+			Output().Warning(boost::format("Image not found: %s/%s\n\nPlayer will exit now.") % spec.directory % filename);
 			// Delayed termination, otherwise it segfaults in Graphics().Quit
 			Player().exit_flag = true;
 		}
@@ -146,15 +147,15 @@ BitmapRef Cache_::Tile(const std::string& filename, int tile_id) {
 void Cache_::Clear() {
 	for(cache_type::const_iterator i = cache.begin(); i != cache.end(); ++i) {
 		if(i->second.expired()) { continue; }
-		Output::Debug("possible leak in cached bitmap %s/%s",
-					  i->first.first.c_str(), i->first.second.c_str());
+		Output().Debug(boost::format("possible leak in cached bitmap %s/%s")
+					   % i->first.first % i->first.second);
 	}
 	cache.clear();
 
 	for(cache_tiles_type::const_iterator i = cache_tiles.begin(); i != cache_tiles.end(); ++i) {
 		if(i->second.expired()) { continue; }
-		Output::Debug("possible leak in cached tilemap %s/%d",
-					  i->first.first.c_str(), i->first.second);
+		Output().Debug(boost::format("possible leak in cached tilemap %s/%d")
+					   % i->first.first % i->first.second);
 	}
 	cache_tiles.clear();
 }

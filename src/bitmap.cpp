@@ -206,7 +206,7 @@ BitmapRef Bitmap::Create(uint8_t const* data, size_t data_size, bool transparent
 
 	if(data_size < std::max(sizeof(XYZ_SIGNATURE),
 							std::max(sizeof(PNG_SIGNATURE), sizeof(BMP_SIGNATURE)))) {
-		return Output::Error("too small image data size: %d", data_size), BitmapRef();
+		return Output().Error(boost::format("too small image data size: %d") % data_size), BitmapRef();
 	}
 
 	std::istringstream iss(
@@ -225,7 +225,7 @@ BitmapRef Bitmap::Create(uint8_t const* data, size_t data_size, bool transparent
 
 #undef PP_check_image
 
-	return ret? ret : (Output::Error("Image loading error"), BitmapRef());
+	return ret? ret : (Output().Error("Image loading error"), BitmapRef());
 }
 
 Rect Bitmap::rect() const {

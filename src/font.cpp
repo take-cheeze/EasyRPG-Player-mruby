@@ -19,6 +19,7 @@
 #include <map>
 #include <ciso646>
 
+#include <boost/format.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/regex/pending/unicode_iterator.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
@@ -54,7 +55,7 @@ namespace {
 			return ret;
 		} else {
 			static ShinonomeGlyph const empty_glyph = { 0, true, {0} };
-			Output::Debug("glyph not found: 0x%04x", code);
+			Output().Debug(boost::format("glyph not found: 0x%04x") % code);
 			return &empty_glyph;
 		}
 	}
@@ -93,13 +94,13 @@ namespace {
 
 	void delete_face(FT_Face f) {
 		if(FT_Done_Face(f) != FT_Err_Ok) {
-			Output::Warning("FT_Face deleting error.");
+			Output().Warning("FT_Face deleting error.");
 		}
 	}
 
 	void delete_library(FT_Library f) {
 		if(FT_Done_Library(f) != FT_Err_Ok) {
-			Output::Warning("FT_Library deleting error.");
+			Output().Warning("FT_Library deleting error.");
 		}
 	}
 
@@ -223,12 +224,12 @@ void FTFont::Render(Bitmap& bmp, int const x, int const y, unsigned const glyph)
 	}
 
 	if (FT_Load_Char(face_.get(), glyph, FT_LOAD_NO_BITMAP) != FT_Err_Ok) {
-		Output::Error("Couldn't load FreeType character %d\n", glyph);
+		Output().Error(boost::format("Couldn't load FreeType character %d") % glyph);
 		return;
 	}
 
     if (FT_Render_Glyph(face_->glyph, FT_RENDER_MODE_MONO) != FT_Err_Ok) {
-		Output::Error("Couldn't render FreeType character %d\n", glyph);
+		Output().Error(boost::format("Couldn't render FreeType character %d") % glyph);
 		return;
 	}
 
@@ -260,7 +261,7 @@ FontRef Font::Create(const std::string& name, int size, bool bold, bool italic) 
 void Font::Dispose() {
 	for(face_cache_type::const_iterator i = face_cache.begin(); i != face_cache.end(); ++i) {
 		if(i->second.expired()) { continue; }
-		Output::Debug("possible leak in cached font face %s", i->first.c_str());
+		Output().Debug(boost::format("possible leak in cached font face %s") % i->first);
 	}
 	face_cache.clear();
 }
@@ -279,7 +280,7 @@ bool FTFont::check_face() {
 		if(library_checker_.expired()) {
 			FT_Library lib;
 			if(FT_Init_FreeType(&lib) != FT_Err_Ok) {
-				Output::Error("Couldn't initialize FreeType\n");
+				Output().Error("Couldn't initialize FreeType");
 				return false;
 			}
 			library_.reset(lib, delete_library);
@@ -295,16 +296,16 @@ bool FTFont::check_face() {
 			std::string const face_path = FileFinder().FindFont(name);
 			FT_Face face;
 			if(FT_New_Face(library_.get(), face_path.c_str(), 0, &face) != FT_Err_Ok) {
-				Output::Error("Couldn't initialize FreeType face: %s(%s)\n",
-							  name.c_str(), face_path.c_str());
+				Output().Error(boost::format("Couldn't initialize FreeType face: %s(%s)")
+							   % name % face_path);
 				return false;
 			}
 
 			for (int i = 0; i < face_->num_fixed_sizes; i++) {
 				FT_Bitmap_Size* size = &face_->available_sizes[i];
-				Output::Debug("Font Size %d: %d %d %f %f %f", i,
-							  size->width, size->height, size->size / 64.0,
-							  size->x_ppem / 64.0, size->y_ppem / 64.0);
+				Output().Debug(boost::format("Font Size %d: %d %d %f %f %f")
+							   % i % size->width % size->height % (size->size / 64.0)
+							   % (size->x_ppem / 64.0) % (size->y_ppem / 64.0));
 			}
 
 			face_.reset(face, delete_face);
@@ -330,7 +331,7 @@ bool FTFont::check_face() {
 		}
 
 		if (FT_Set_Char_Size(face_.get(), sz, sz, dpi, dpi) != FT_Err_Ok) {
-			Output::Error("Couldn't set FreeType face size\n");
+			Output().Error("Couldn't set FreeType face size");
 			return false;
 		}
 		current_size_ = size;

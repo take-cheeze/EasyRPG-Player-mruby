@@ -20,18 +20,32 @@
 
 // Headers
 #include <string>
-#include <iosfwd>
+#include <fstream>
+#include <ctime>
+
+#include <boost/optional.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/circular_buffer.hpp>
+#include <boost/format/format_fwd.hpp>
 
 /**
  * Output Namespace.
  */
-namespace Output {
+struct Output_ : boost::noncopyable {
+	/**
+	 * generate path to screenshot image file from index
+	 *
+	 * @param idx index of screenshot
+	 * @return generated screenshot path
+	 */
+	std::string CreateScreenshotPath(unsigned idx) const;
+
 	/**
 	 * Takes screenshot and save it to Main_Data::project_path.
 	 *
-	 * @return true if success, otherwise false.
+	 * @return path of screenshot if success, otherwise none.
 	 */
-	bool TakeScreenshot();
+	boost::optional<std::string> TakeScreenshot();
 
 	/**
 	 * Takes screenshot and save it to specified file.
@@ -57,39 +71,12 @@ namespace Output {
 	void IgnorePause(bool val);
 
 	/**
-	 * Displays a string with formatted string.
-	 *
-	 * @param fmt formatted string to display.
-	 */
-	void Post(char* fmt, ...);
-
-	/**
-	 * Displays a string with formatted string.
-	 *
-	 * @param fmt formatted string to display.
-	 */
-	void Post(const char* fmt, ...);
-
-	/**
-	 * Displays a string msg.
-	 *
-	 * @param msg string to display.
-	 */
-	void PostStr(std::string const& msg);
-
-	/**
 	 * Display a warning with formatted string.
 	 *
 	 * @param fmt formatted warning to display.
 	 */
-	void Warning(const char* fmt, ...);
-
-	/**
-	 * Display a warning.
-	 *
-	 * @param warn : warning to display.
-	 */
-	void WarningStr(std::string const& warn);
+	void Warning(boost::format const& fmt);
+	void Warning(std::string const& fmt);
 
 	/**
 	 * Raises an error message with formatted string and
@@ -97,29 +84,60 @@ namespace Output {
 	 *
 	 * @param fmt formatted error to display.
 	 */
-	void Error(const char* fmt, ...);
-
-	/**
-	 * Display an error message and closes the player
-	 * afterwards.
-	 *
-	 * @param err error to display.
-	 */
-	void ErrorStr(std::string const& err);
+	void Error(boost::format const& fmt);
+	void Error(std::string const& fmt);
 
 	/**
 	 * Prints a debug message to the console.
 	 *
 	 * @param fmt formatted debug text to display.
 	 */
-	void Debug(const char* fmt, ...);
+	void Debug(boost::format const& fmt);
+	void Debug(std::string const& fmt);
 
-	/**
-	 * Prints a debug message to the console.
+	Output_();
+
+	enum Type { TypeDebug, TypeWarning, TypeError, TYPE_END };
+
+	/*
+	 * convert Type to string
 	 *
-	 * @param msg formatted debug text to display.
+	 * @param t type
+	 * @return string expression of type
 	 */
-	void DebugStr(std::string const& msg);
-}
+	char const* Type2String(Type t) const;
+
+	struct Message {
+		std::time_t time;
+		Type type;
+		std::string message;
+		boost::optional<std::string> screenshot;
+
+		Message(Type t, std::string const& m, boost::optional<std::string> const& ss);
+	};
+
+	enum { BUFFER_SIZE = 100, };
+	typedef boost::circular_buffer<Message> buffer_type;
+
+	/*
+	 * returns circular buffer with size BUFFER_SIZE
+	 *
+	 * @return output log buffer
+	 */
+	buffer_type const& buffer() const;
+
+  private:
+	bool ignore_pause_;
+	std::ofstream log_file_;
+
+	buffer_type buffer_;
+
+  private:
+	std::ostream& output_time(std::time_t t);
+	template<Type T>
+	void HandleScreenOutput(std::string const& msg, bool exit);
+};
+
+Output_& Output();
 
 #endif

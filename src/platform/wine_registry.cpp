@@ -78,11 +78,11 @@ struct parse_registry {
 
 	void error(format const& fmt) {
 		if(line_number > 0) {
-			Output::Warning(
-				"Wine registry error: %s\nline %d: \"%s\"",
-				fmt.str().c_str(), line_number, line.c_str());
+			Output().Warning(
+				boost::format("Wine registry error: %s\nline %d: \"%s\"")
+				% fmt.str() % line_number % line);
 		} else {
-			Output::Warning( "Wine registry error: %s", fmt.str().c_str());
+			Output().Warning(boost::format("Wine registry error: %s") % fmt.str());
 		}
 	}
 
@@ -143,7 +143,7 @@ struct parse_registry {
 			   escaping, escaping_end,
 			   *(('\\' >> (('x' >> hex) | octal)) | char_),
 			   ~char_, escaped) or escaping != utf16.end()) {
-			Output::Debug("unicode escaping error");
+			Output().Debug("unicode escaping error");
 		}
 
 		// utf-16 -> utf-8
@@ -282,7 +282,7 @@ section_list const& get_section(HKEY key) {
 	std::string const prefix = get_wine_prefix();
 
 	if(prefix.empty() or not FileFinder().Exists(prefix)) {
-		Output::Debug("wine prefix not found: \"%s\"", prefix.c_str());
+		Output().Debug(boost::format("wine prefix not found: \"%s\"") % prefix);
 		return empty_sec;
 	}
 
@@ -314,11 +314,11 @@ T const& get_value_with_type(HKEY hkey, std::string const& key, std::string cons
 	static T const err_val;
 	section_value_opt const v = get_value(get_section(hkey), key, val);
 	if(v == boost::none) {
-		Output::Debug("registry not found: %s, %s", key.c_str(), val.c_str());
+		Output().Debug(boost::format("registry not found: %s, %s") % key % val);
 		return err_val;
 	}
 	if(not boost::get<T>(&*v)) {
-		Output::Debug("type mismatch: %s, %s", key.c_str(), val.c_str());
+		Output().Debug(boost::format("type mismatch: %s, %s") % key % val);
 		return err_val;
 	}
 	return boost::get<T const>(*v);
@@ -343,7 +343,7 @@ std::string Registry::ReadStrValue(HKEY hkey, std::string const& key, std::strin
 	}
 	std::replace(path.begin(), path.end(), '\\', '/');
 
-	Output::Debug("Path registry %s, %s: \"%s\"", key.c_str(), val.c_str(), path.c_str());
+	Output().Debug(boost::format("Path registry %s, %s: \"%s\"") % key % val % path);
 
 	return path;
 }

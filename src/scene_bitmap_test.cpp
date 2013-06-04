@@ -40,7 +40,7 @@ Scene_BitmapTest::Scene_BitmapTest()
 
 void Scene_BitmapTest::Update() {
 	if(Input().IsAnyPressed()) {
-		BOOST_VERIFY(Output::TakeScreenshot());
+		BOOST_VERIFY(Output().TakeScreenshot());
 		Player().exit_flag = true;
 	}
 }

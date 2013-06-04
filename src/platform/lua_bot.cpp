@@ -23,6 +23,7 @@
 #include "player.h"
 
 #include <cassert>
+#include <boost/format.hpp>
 
 extern "C" {
 #include "lua.h"
@@ -35,7 +36,7 @@ namespace {
 	bool take_screenshot_per_each_key_input = true;
 
 	int take_screenshot(lua_State* L) {
-		Output::TakeScreenshot();
+		Output().TakeScreenshot();
 		return lua_yield(L, 0);
 	}
 
@@ -48,7 +49,7 @@ namespace {
 		DisplayUi->GetKeyStates()[Key] = true;
 
 		if(take_screenshot_per_each_key_input) {
-			Output::TakeScreenshot();
+			Output().TakeScreenshot();
 		}
 
 		return lua_yield(L, 0);
@@ -98,7 +99,7 @@ LuaBot::LuaBot(std::string const& script)
 	case LUA_ERRMEM:
 	default: // case LUA_ERRGCMM:
 		assert(lua_isstring(executer_, -1));
-		Output::Debug("Script loading error: %s", lua_tostring(executer_, -1));
+		Output().Debug(boost::format("Script loading error: %s") % lua_tostring(executer_, -1));
 
 		lua_pop(executer_, 1);
 		finish();
@@ -120,14 +121,14 @@ void LuaBot::resume() {
 	switch(lua_resume(executer_, 0)) {
 #endif
 	case 0: // LUA_OK
-		Output::Debug("Script ended. Quiting");
+		Output().Debug("Script ended. Quiting");
 		finish();
 	case LUA_YIELD:
 		break;
 
 	default:
 		assert(lua_isstring(L, -1));
-		Output::Debug("Error while executing script: %s", lua_tostring(L, -1));
+		Output().Debug(boost::format("Error while executing script: %s") % lua_tostring(L, -1));
 
 		lua_pop(L, 1);
 		finish();

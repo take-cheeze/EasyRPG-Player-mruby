@@ -22,6 +22,7 @@
 #include "main_data.h"
 #include "output.h"
 #include <vector>
+#include <boost/format.hpp>
 
 /**
  * Game_Variables class.
@@ -33,8 +34,7 @@ public:
 
 	int& operator[] (int variable_id) {
 		if (!isValidVar(variable_id)) {
-			Output::Warning("Variable index %d is invalid.\n",
-							variable_id);
+			Output().Warning(boost::format("Variable index %d is invalid.") % variable_id);
 			dummy = 0;
 			return dummy;
 		}

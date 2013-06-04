@@ -371,7 +371,7 @@ void Graphics_::InternUpdate() {
 	if(frame_end_time >= next_fps_calculation_time) {
 		// check critical frame rate drop
 		if(fps_draw_counter == 0) {
-			Output::Debug("Critical frame rate drop.(Cannot draw a single frame in this second)");
+			Output().Debug("Critical frame rate drop.(Cannot draw a single frame in this second)");
 		}
 
 		double const base = frame_end_time - next_fps_calculation_time + 1000.0;
@@ -418,7 +418,7 @@ static bool check_id(EASYRPG_SHARED_PTR<ZObj> const& z, Drawable* const ID) {
 	return z->GetId() == ID;
 }
 
-void Graphics_::RemoveZObj(Drawable* ID, bool multiz) {
+void Graphics_::RemoveZObj(Drawable* ID, bool) {
 	state->zlist.remove_if(boost::bind(&check_id, _1, ID));
 }
 

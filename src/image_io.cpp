@@ -14,6 +14,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/container/vector.hpp>
 #include <boost/container/flat_map.hpp>
+#include <boost/format.hpp>
 
 
 namespace {
@@ -71,7 +72,7 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 	EASYRPG_ARRAY<char, SIGNATURE_SIZE> signature_buf;
 	is.read(signature_buf.data(), SIGNATURE_SIZE);
 	if (std::string(signature_buf.begin(), signature_buf.end()) == SIGNATURE) {
-		return Output::Debug("Not a valid BMP file."), BitmapRef();
+		return Output().Debug("Not a valid BMP file."), BitmapRef();
 	}
 
 	// file size is skipped because every program writes other data into
@@ -96,7 +97,7 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 
 	static const unsigned BITMAPINFOHEADER_SIZE = 40;
 	if (get_4(is) != BITMAPINFOHEADER_SIZE) {
-		return Output::Debug("Incorrect BMP header size."), BitmapRef();
+		return Output().Debug("Incorrect BMP header size."), BitmapRef();
 	}
 
 	int32_t width = get_4(is), raw_height = get_4(is);
@@ -106,23 +107,23 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 
 	const int planes = get_2(is);
 	if (planes != 1) {
-		return Output::Debug("BMP planes is not 1."), BitmapRef();
+		return Output().Debug("BMP planes is not 1."), BitmapRef();
 	}
 
 	const int depth = get_2(is);
 	if (depth != 8) {
-		return Output::Debug("BMP image is not 8-bit."), BitmapRef();
+		return Output().Debug("BMP image is not 8-bit."), BitmapRef();
 	}
 
 	const int compression = get_4(is);
 	static const int BI_RGB = 0;
 	if (compression != BI_RGB) {
-		return Output::Debug("compressed BMP not supported."), BitmapRef();
+		return Output().Debug("compressed BMP not supported."), BitmapRef();
 	}
 
 	int const image_size = get_4(is);
 	if (image_size != 0 && image_size != width * height) {
-		return Output::Debug("Invalid BMP image size."), BitmapRef();
+		return Output().Debug("Invalid BMP image size."), BitmapRef();
 	}
 
 	int const num_colors = std::min(256U, get_4(is));
@@ -162,12 +163,12 @@ BitmapRef ImageIO::ReadPNG(std::istream& is, bool const transparent) {
 	png_struct* png_ptr = png_create_read_struct(
 		PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (not png_ptr) {
-		return Output::Debug("Couldn't allocate PNG structure"), BitmapRef();
+		return Output().Debug("Couldn't allocate PNG structure"), BitmapRef();
 	}
 
 	png_info* info_ptr = png_create_info_struct(png_ptr);
 	if (not info_ptr) {
-		return Output::Debug("Couldn't allocate PNG info structure"), BitmapRef();
+		return Output().Debug("Couldn't allocate PNG info structure"), BitmapRef();
 	}
 
 	png_set_read_fn(png_ptr, (png_voidp) &is, read_data);
@@ -185,7 +186,7 @@ BitmapRef ImageIO::ReadPNG(std::istream& is, bool const transparent) {
 	switch (color_type) {
 		case PNG_COLOR_TYPE_PALETTE:
 			if (!png_get_valid(png_ptr, info_ptr, PNG_INFO_PLTE)) {
-				return Output::Debug("Palette PNG without PLTE block"), BitmapRef();
+				return Output().Debug("Palette PNG without PLTE block"), BitmapRef();
 			}
 			if (transparent) {
 				png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette);
@@ -215,7 +216,7 @@ BitmapRef ImageIO::ReadPNG(std::istream& is, bool const transparent) {
 		case PNG_COLOR_TYPE_RGB_ALPHA:
 			break;
 		default:
-			return Output::Debug("unsupported color type: %d", color_type), BitmapRef();
+			return Output().Debug(boost::format("unsupported color type: %d") % color_type), BitmapRef();
 	}
 
 	if (bit_depth < 8) { png_set_packing(png_ptr); }
@@ -258,7 +259,7 @@ BitmapRef ImageIO::ReadXYZ(std::istream& is, bool const transparent) {
 	EASYRPG_ARRAY<char, SIGNATURE_SIZE> signature_buf;
 	is.read(signature_buf.data(), SIGNATURE_SIZE);
 	if (std::string(signature_buf.begin(), signature_buf.end()) == SIGNATURE) {
-		return Output::Debug("Not a valid XYZ file."), BitmapRef();
+		return Output().Debug("Not a valid XYZ file."), BitmapRef();
 	}
 
 	uint16_t const width = get_2(is), height = get_2(is);
@@ -279,7 +280,7 @@ BitmapRef ImageIO::ReadXYZ(std::istream& is, bool const transparent) {
 
 	if (uncompress(dst_buf.data(), &dst_size,
 				   reinterpret_cast<Bytef const*>(src_buf.data()), src_size) != Z_OK) {
-		return Output::Debug("Error decompressing XYZ file."), BitmapRef();
+		return Output().Debug("Error decompressing XYZ file."), BitmapRef();
 	}
 	assert(dst_size == 0);
 
@@ -317,8 +318,7 @@ bool ImageIO::WritePNG(BitmapRef const& bmp, std::ostream& os) {
 
 	png_structp write = NULL;
 	if(!(write = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL))) {
-		Output::Debug("error in png_create_write");
-		return false;
+		return Output().Debug("error in png_create_write"), false;
 	}
 
 	png_infop info = NULL;
@@ -326,8 +326,7 @@ bool ImageIO::WritePNG(BitmapRef const& bmp, std::ostream& os) {
 		png_destroy_write_struct(&write, &info);
 	} BOOST_SCOPE_EXIT_END do {} while(0);
 	if(!(info = png_create_info_struct(write))) {
-		Output::Debug("error in png_create_info_struct");
-		return false;
+		return Output().Debug("error in png_create_info_struct"), false;
 	}
 
 	png_set_write_fn(write, &os, &write_data, &flush_stream);
@@ -344,13 +343,13 @@ bool ImageIO::WritePNG(BitmapRef const& bmp, std::ostream& os) {
 
 BitmapRef ImageIO::ReadImage(std::string const& file, bool const transparent) {
 	if(not FileFinder().Exists(file)) {
-		return Output::Debug("image file not found: %s", file.c_str()), BitmapRef();
+		return Output().Debug(boost::format("image file not found: %s") % file), BitmapRef();
 	}
 
 	std::string const ext = Utils::GetExt(file);
 	ext_map_type::const_iterator const it = ext_map.find(ext);
 	return (it == ext_map.end())
-			? Output::Debug("Unsupported extension: %s", ext.c_str()), BitmapRef()
+			? Output().Debug(boost::format("Unsupported extension: %s") % ext), BitmapRef()
 			: it->second(*FileFinder().openUTF8(
 				file, std::ios::binary | std::ios::in), transparent);
 }

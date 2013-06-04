@@ -40,6 +40,7 @@
 #include <ciso646>
 
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 
 namespace {
 
@@ -60,6 +61,7 @@ struct Player_::Internal {
 	FileFinder_ filefinder;
 	Graphics_ graphics;
 	Input_ input;
+	Output_ output;
 
 	struct {
 		/** Current scene. */
@@ -94,7 +96,7 @@ void Scene::PopUntil(std::string const& type) {
 		++count;
 	}
 
-	Output::Warning("The requested scene %s was not on the stack", type.c_str());
+	Output().Warning(boost::format("The requested scene %s was not on the stack") % type);
 }
 
 EASYRPG_SHARED_PTR<Scene> Scene::Find(std::string const& type) {
@@ -206,6 +208,10 @@ Graphics_& Graphics() {
 	return Player().internal->graphics;
 }
 
+Output_& Output() {
+	return Player().internal->output;
+}
+
 Player_& Player() {
 	assert(not current_player_.expired());
 	return *current_player_.lock();
@@ -256,7 +262,7 @@ void Player_::ParseArgs(int argc, char* argv[]) {
 		hide_title_flag = arg_exists(lowered_args, "hidetitle");
 
 		if(not lowered_args.empty()) {
-			Output::Debug("Unknown arguments passed.");
+			Output().Debug("Unknown arguments passed.");
 		}
 	}
 
@@ -307,7 +313,7 @@ void Player_::Update() {
 		Graphics().fps_on_screen = !Graphics().fps_on_screen;
 	}
 	if (Input().IsTriggered(Input_::TAKE_SCREENSHOT)) {
-		Output::TakeScreenshot();
+		Output().TakeScreenshot();
 	}
 
 	DisplayUi->ProcessEvents();

@@ -534,7 +534,7 @@ std::string Window_Message::ParseCommandCode(int call_depth) {
 				return actor->GetName();
 			}
 		} else {
-			Output::Warning("Invalid argument for \\n-Command");
+			Output().Warning("Invalid argument for \\n-Command");
 		}
 		break;
 	case 's':

@@ -30,7 +30,9 @@
 #include "output.h"
 #include "game_system.h"
 #include "filefinder.h"
+
 #include <boost/scoped_ptr.hpp>
+#include <boost/format.hpp>
 
 namespace {
 	RPG::SaveMapInfo& map_info = Main_Data::game_data.map_info;
@@ -117,7 +119,7 @@ void Game_Map::Setup(int _id) {
 
 	map = LMU_Reader::Load(FileFinder().FindDefault(file));
 	if (map.get() == NULL) {
-		Output::ErrorStr(LcfReader::GetError());
+		Output().Error(LcfReader::GetError());
 	}
 
 	if (map->parallax_flag) {

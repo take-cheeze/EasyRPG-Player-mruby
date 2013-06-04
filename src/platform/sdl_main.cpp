@@ -29,6 +29,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <SDL.h>
+#include <boost/format.hpp>
 
 #ifdef GEKKO
 #  include <fat.h>
@@ -191,9 +192,9 @@ extern "C" int main(int argc, char* argv[]) {
 			std::string const script(std::istreambuf_iterator<char>(ifs), eos);
 
 			DisplayUi = EASYRPG_MAKE_SHARED<BotUi>(EASYRPG_MAKE_SHARED<LuaBot>(script));
-			Output::IgnorePause(true);
+			Output().IgnorePause(true);
 		} else {
-			Output::Debug("luabost script not found in \"%s\"", luabot_script);
+			Output().Debug(boost::format("luabot script not found in \"%s\"") % luabot_script);
 		}
 	}
 #endif

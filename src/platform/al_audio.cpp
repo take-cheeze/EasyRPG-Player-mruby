@@ -18,6 +18,7 @@
 // Headers
 #include <cassert>
 #include <boost/assert.hpp>
+#include <boost/format.hpp>
 
 #include "system.h"
 #include "al_audio.h"
@@ -44,13 +45,13 @@ namespace {
 		case AL_OUT_OF_MEMORY: err = "out of memory"; break;
 		default:
 			err = "unkown error";
-			Output::Debug("unkown error code %x", err_code);
+			Output().Debug(boost::format("unkown error code %x") % err_code);
 			break;
 
 		case AL_NO_ERROR: return true;
 		}
 
-		Output::Debug("AL error: %s", err);
+		Output().Debug(boost::format("AL error: %s") % err);
 		return false;
 	}
 
@@ -64,13 +65,13 @@ namespace {
 		case ALC_OUT_OF_MEMORY: err = "out of memory"; break;
 		default:
 			err = "unkown error";
-			Output::Debug("unkown error code %x", err_code);
+			Output().Debug(boost::format("unkown error code %x") % err_code);
 			break;
 
 		case ALC_NO_ERROR: return true;
 		}
 
-		Output::Debug("ALC error: %s", err);
+		Output().Debug(boost::format("ALC error: %s") % err);
 		return false;
 	}
 
@@ -253,7 +254,7 @@ EASYRPG_SHARED_PTR<ALAudio::buffer> ALAudio::load_buffer(std::string const& file
 
 	if(! filename.empty() && load_sndfile(filename, buf)) { return buf; }
 
-	Output::Debug("Failed loading audio file: ", filename.c_str());
+	Output().Debug(boost::format("Failed loading audio file: ") % filename);
 
 	return EASYRPG_SHARED_PTR<buffer>();
 }

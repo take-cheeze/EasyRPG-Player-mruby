@@ -20,6 +20,8 @@
 #include "filefinder.h"
 #include "output.h"
 
+#include <boost/format.hpp>
+
 
 #ifdef _WIN32
 // FIXME: A bug in sdl_mixer causes that the player is muted forever when a
@@ -36,7 +38,7 @@ SdlAudio::SdlAudio() :
 {
 	if (!(SDL_WasInit(SDL_INIT_AUDIO) & SDL_INIT_AUDIO)) {
 		if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
-			Output::Error("Couldn't initialize audio.\n%s\n", SDL_GetError());
+			Output().Error(boost::format("Couldn't initialize audio.\n%s\n") % SDL_GetError());
 		}
 	}
 #ifdef GEKKO
@@ -45,7 +47,7 @@ SdlAudio::SdlAudio() :
 	int const frequency = MIX_DEFAULT_FREQUENCY;
 #endif
 	if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) < 0) {
-		Output::Error("Couldn't initialize audio.\n%s\n", Mix_GetError());
+		Output().Error(boost::format("Couldn't initialize audio.\n%s\n") % Mix_GetError());
 	}
 	/*int flags = MIX_INIT_MP3;
 	int initted = Mix_Init(flags);
@@ -61,17 +63,17 @@ SdlAudio::~SdlAudio() {
 void SdlAudio::BGM_Play(std::string const& file, int volume, int /* pitch */) {
 	std::string const path = FileFinder().FindMusic(file);
 	if (path.empty()) {
-		Output::Warning("No such file or directory - %s", file.c_str());
+		Output().Warning(boost::format("No such file or directory - %s") % file);
 		return;
 	}
 	bgm.reset(Mix_LoadMUS(path.c_str()), &Mix_FreeMusic);
 	if (!bgm) {
-		Output::Warning("Couldn't load %s BGM.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't load %s BGM.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 	BGM_Volume(volume);
 	if (!me_stopped_bgm && Mix_PlayMusic(bgm.get(), -1) == -1) {
-		Output::Warning("Couldn't play %s BGM.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't play %s BGM.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 }
@@ -113,18 +115,18 @@ void SdlAudio::BGM_Fade(int fade) {
 void SdlAudio::BGS_Play(std::string const& file, int volume, int /* pitch */) {
 	std::string const path = FileFinder().FindMusic(file);
 	if (path.empty()) {
-		Output::Warning("No such file or directory - %s", file.c_str());
+		Output().Warning(boost::format("No such file or directory - %s") % file);
 		return;
 	}
 	bgs.reset(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
 	if (!bgs) {
-		Output::Warning("Couldn't load %s BGS.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't load %s BGS.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 	bgs_channel = Mix_PlayChannel(-1, bgs.get(), -1);
 	Mix_Volume(bgs_channel, volume * MIX_MAX_VOLUME / 100);
 	if (bgs_channel == -1) {
-		Output::Warning("Couldn't play %s BGS.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't play %s BGS.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 }
@@ -152,18 +154,18 @@ void me_finish(int channel) {
 void SdlAudio::ME_Play(std::string const& file, int volume, int /* pitch */) {
 	std::string const path = FileFinder().FindMusic(file);
 	if (path.empty()) {
-		Output::Warning("No such file or directory - %s", file.c_str());
+		Output().Warning(boost::format("No such file or directory - %s") % file);
 		return;
 	}
 	me.reset(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
 	if (!me) {
-		Output::Warning("Couldn't load %s ME.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't load %s ME.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 	me_channel = Mix_PlayChannel(-1, me.get(), 0);
 	Mix_Volume(me_channel, volume * MIX_MAX_VOLUME / 100);
 	if (me_channel == -1) {
-		Output::Warning("Couldn't play %s ME.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't play %s ME.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 	me_stopped_bgm = (Mix_PlayingMusic() == 1);
@@ -183,18 +185,18 @@ void SdlAudio::ME_Fade(int fade) {
 void SdlAudio::SE_Play(std::string const& file, int volume, int /* pitch */) {
 	std::string const path = FileFinder().FindSound(file);
 	if (path.empty()) {
-		Output::Warning("No such file or directory - %s", file.c_str());
+		Output().Warning(boost::format("No such file or directory - %s") % file);
 		return;
 	}
 	EASYRPG_SHARED_PTR<Mix_Chunk> sound(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
 	if (!sound) {
-		Output::Warning("Couldn't load %s SE.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't load %s SE.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 	int channel = Mix_PlayChannel(-1, sound.get(), 0);
 	Mix_Volume(channel, volume * MIX_MAX_VOLUME / 100);
 	if (channel == -1) {
-		Output::Warning("Couldn't play %s SE.\n%s\n", file.c_str(), Mix_GetError());
+		Output().Warning(boost::format("Couldn't play %s SE.\n%s\n") % file % Mix_GetError());
 		return;
 	}
 	sounds[channel] = sound;

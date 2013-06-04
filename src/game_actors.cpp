@@ -16,8 +16,10 @@
  */
 
 // Headers
-#include "system.h"
 #include <vector>
+#include <boost/format.hpp>
+
+#include "system.h"
 #include "game_actors.h"
 #include "main_data.h"
 #include "output.h"
@@ -38,7 +40,7 @@ void Game_Actors::Dispose() {
 
 Game_Actor* Game_Actors::GetActor(int actor_id) {
 	if (!ActorExists(actor_id)) {
-		Output::Warning("Actor ID %d is invalid.", actor_id);
+		Output().Warning(boost::format("Actor ID %d is invalid.") % actor_id);
 		return NULL;
 	}
 	else if (!data[actor_id])

@@ -19,6 +19,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <boost/format.hpp>
+
 #include "game_interpreter.h"
 #include "audio.h"
 #include "game_map.h"
@@ -50,7 +52,7 @@ Game_Interpreter::Game_Interpreter(int _depth, bool _main_flag) {
 	active = false;
 
 	if (depth > 100) {
-		Output::Warning("Too many event calls (over 9000)");
+		Output().Warning("Too many event calls (over 9000)");
 	}
 
 	Clear();
@@ -227,7 +229,7 @@ void Game_Interpreter::Update() {
 
 	// Executed Events Count exceeded (10000)
 	active = true;
-	Output::Debug("Event %d exceeded execution limit", event_id);
+	Output().Debug(boost::format("Event %d exceeded execution limit") % event_id);
 	CloseMessageWindow();
 }
 
@@ -888,7 +890,7 @@ std::vector<Game_Actor*> Game_Interpreter::GetActors(int mode, int id) {
 Game_Character* Game_Interpreter::GetCharacter(int character_id) {
 	Game_Character* ch = Game_Character::GetCharacter(character_id, event_id);
 	if (ch == NULL) {
-		Output::Warning("Unknown event with id %d", event_id);
+		Output().Warning(boost::format("Unknown event with id %d") % event_id);
 	}
 	return Game_Character::GetCharacter(character_id, event_id);
 }

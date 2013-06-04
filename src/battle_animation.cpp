@@ -24,6 +24,8 @@
 #include "battle_animation.h"
 #include "bitmap_screen.h"
 
+#include <boost/format.hpp>
+
 BattleAnimation::BattleAnimation(int x, int y, const RPG::Animation* animation)
 		: Drawable(TypeDefault), x(x), y(y)
 		, animation(animation), frame(0), initialized(false)
@@ -51,7 +53,7 @@ void BattleAnimation::Setup() {
 		graphic = Cache().Battle2(name);
 	}
 	else {
-		Output::Warning("Couldn't find animation: %s", name.c_str());
+		Output().Warning(boost::format("Couldn't find animation: %s") % name);
 		screen.reset();
 		return;
 	}

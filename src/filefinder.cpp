@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/format.hpp>
+
 #include "system.h"
 #include "options.h"
 #include "utils.h"
@@ -115,7 +117,7 @@ std::string FileFinder_::FindFile(const std::string &dir, const std::string& nam
 	if (ret != boost::none) { return *ret; }
 
 	std::string const& rtp_name = translate_rtp(dir, name);
-	Output::Debug("RTP name %s(%s)", rtp_name.c_str(), name.c_str());
+	Output().Debug(boost::format("RTP name %s(%s)") % rtp_name % name);
 
 	for(search_path_list::const_iterator i = search_paths.begin(); i != search_paths.end(); ++i) {
 		if (! *i) { continue; }
@@ -127,7 +129,7 @@ std::string FileFinder_::FindFile(const std::string &dir, const std::string& nam
 		if (ret_rtp != boost::none) { return *ret_rtp; }
 	}
 
-	Output::Debug("Cannot find: %s/%s", dir.c_str(), name.c_str());
+	Output().Debug(boost::format("Cannot find: %s/%s") % dir % name);
 
 	return "";
 }
@@ -268,7 +270,7 @@ FileFinder_::ProjectTree const& FileFinder_::GetProjectTree() {
 	if(tree_.project_path != Main_Data::project_path) {
 		EASYRPG_SHARED_PTR<ProjectTree> t = CreateProjectTree(Main_Data::project_path);
 		if(! t) {
-			Output::Error("invalid project path: %s", Main_Data::project_path.c_str());
+			Output().Error(boost::format("invalid project path: %s") % Main_Data::project_path);
 			return tree_;
 		}
 		tree_ = *t;
@@ -284,7 +286,7 @@ FileFinder_::FileFinder_() {
 void FileFinder_::add_rtp_path(std::string const& p) {
 	EASYRPG_SHARED_PTR<ProjectTree> tree(CreateProjectTree(p));
 	if(tree) {
-		Output::Debug("Adding %s to RTP path", p.c_str());
+		Output().Debug(boost::format("Adding %s to RTP path") % p);
 		search_paths.push_back(tree);
 	}
 }
@@ -386,14 +388,14 @@ std::string FileFinder_::fullpath(std::string const& f) const {
 #ifdef _WIN32
 	wchar_t buf[MAX_PATH + 1];
 	if(not _wfullpath(buf, Utils::ToWideString(f).c_str(), MAX_PATH)) {
-		Output::Debug("path resolving failed: \"%s\"", f.c_str());
+		Output().Debug("path resolving failed: \"%s\"", f.c_str());
 		return std::string();
 	}
 	return Utils::FromWideString(buf);
 #else
 	char buf[PATH_MAX + 1];
 	if(not realpath(f.c_str(), buf)) {
-		Output::Debug("path resolving failed: \"%s\"", f.c_str());
+		Output().Debug(boost::format("path resolving failed: \"%s\"") % f);
 		return std::string();
 	}
 	return buf;
@@ -441,8 +443,7 @@ FileFinder_::Directory FileFinder_::GetDirectoryMembers(const std::string& path,
 
 	EASYRPG_SHARED_PTR< ::DIR> dir(::opendir(wpath.c_str()), ::closedir);
 	if (!dir) {
-		Output::Error("Error opening dir %s: %s", path.c_str(),
-					  ::strerror(errno));
+		Output().Error(boost::format("Error opening dir %s: %s") % path % ::strerror(errno));
 		return result;
 	}
 

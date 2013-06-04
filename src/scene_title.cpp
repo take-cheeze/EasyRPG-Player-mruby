@@ -58,7 +58,7 @@ void Scene_Title::Start() {
 	static bool init = false;
 	if (!init) {
 		if (Data::system.ldb_id == 2003) {
-			Output::Debug("Switching to Rpg2003 Interpreter");
+			Output().Debug("Switching to Rpg2003 Interpreter");
 			Player().engine = Player_::EngineRpg2k3;
 		}
 
@@ -135,14 +135,14 @@ void Scene_Title::LoadDatabase() {
 	Data::Clear();
 
 	if(! FileFinder().IsRPG2kProject(FileFinder().GetProjectTree())) {
-		Output::Debug("%s is not an RPG2k project", Main_Data::project_path.c_str());
+		Output().Debug(boost::format("%s is not an RPG2k project") % Main_Data::project_path);
 	}
 
 	if (!LDB_Reader::Load(FileFinder().FindDefault(DATABASE_NAME))) {
-		Output::ErrorStr(LcfReader::GetError());
+		Output().Error(LcfReader::GetError());
 	}
 	if (!LMT_Reader::Load(FileFinder().FindDefault(TREEMAP_NAME))) {
-		Output::ErrorStr(LcfReader::GetError());
+		Output().Error(LcfReader::GetError());
 	}
 }
 
@@ -223,7 +223,7 @@ void Scene_Title::PrepareBattleTest() {
 
 void Scene_Title::CommandNewGame() {
 	if (!CheckValidPlayerLocation()) {
-		Output::Warning("The game has no start location set.");
+		Output().Warning("The game has no start location set.");
 	} else {
 		Game_System::SePlay(Main_Data::game_data.system.decision_se);
 		Audio().BGM_Stop();

@@ -17,7 +17,8 @@
 
 // Headers
 #include <cstring>
-#include <math.h>
+#include <cmath>
+#include <boost/format.hpp>
 #include "tilemap_layer.h"
 #include "graphics.h"
 #include "output.h"
@@ -303,16 +304,16 @@ void TilemapLayer::GenerateAutotileAB(short ID, short animID) {
 	// Calculate the B block combination
 	short b_subtile = (ID - block * 1000) / 50;
 	if (b_subtile >= 16) {
-		Output::Warning("Invalid AB autotile ID: %d (b_subtile = %d)",
-						ID, b_subtile);
+		Output().Warning(boost::format("Invalid AB autotile ID: %d (b_subtile = %d)")
+						 % ID % b_subtile);
 		return;
 	}
 
 	// Calculate the A block combination
 	short a_subtile = ID - block * 1000 - b_subtile * 50;
 	if (a_subtile >= 47) {
-		Output::Warning("Invalid AB autotile ID: %d (a_subtile = %d)",
-						ID, a_subtile);
+		Output().Warning(boost::format("Invalid AB autotile ID: %d (a_subtile = %d)")
+						 % ID % a_subtile);
 		return;
 	}
 
@@ -400,7 +401,7 @@ void TilemapLayer::GenerateAutotileD(short ID) {
 	short subtile = ID - 4000 - block * 50;
 
 	if (block >= 12 || subtile >= 50 || block < 0 || subtile < 0)
-		Output::Error("Index out of range: %d %d", block, subtile);
+		Output().Error(boost::format("Index out of range: %d %d") % block % subtile);
 
 	if (autotiles_d[block][subtile].valid)
 		return;

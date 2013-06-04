@@ -47,6 +47,7 @@
 #include <cstring>
 #include <SDL.h>
 #include <pixman.h>
+#include <boost/format.hpp>
 
 AudioInterface& SdlUi::GetAudio() {
 	return *audio_;
@@ -102,14 +103,14 @@ SdlUi::SdlUi(long width, long height, const std::string& title, bool fs_flag) :
 #endif
 
 	if (SDL_Init(flags) < 0) {
-		Output::Error("Couldn't initialize SDL.\n%s\n", SDL_GetError());
+		Output().Error(boost::format("Couldn't initialize SDL.\n%s\n") % SDL_GetError());
 	}
 
 	SetAppIcon();
 
 	BeginDisplayModeChange();
 		if (!RequestVideoMode(width, height, fs_flag)) {
-			Output::Error("No suitable video resolution found. Aborting.");
+			Output().Error("No suitable video resolution found. Aborting.");
 		}
 	EndDisplayModeChange();
 
@@ -117,7 +118,7 @@ SdlUi::SdlUi(long width, long height, const std::string& title, bool fs_flag) :
 
 #if (defined(USE_JOYSTICK) && defined(SUPPORT_JOYSTICK)) || (defined(USE_JOYSTICK_AXIS) && defined(SUPPORT_JOYSTICK_AXIS)) || (defined(USE_JOYSTICK_HAT) && defined(SUPPORT_JOYSTICK_HAT))
 	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
-		Output::Warning("Couldn't initialize joystick.\n%s\n", SDL_GetError());
+		Output().Warning(boost::format("Couldn't initialize joystick.\n%s\n") % SDL_GetError());
 	}
 
 	SDL_JoystickEventState(1);
@@ -292,10 +293,10 @@ void SdlUi::EndDisplayModeChange() {
 
 					// Try a rollback to last mode
 					if (!RefreshDisplayMode()) {
-						Output::Error("Couldn't rollback to last display mode.\n%s\n", SDL_GetError());
+						Output().Error(boost::format("Couldn't rollback to last display mode.\n%s\n") % SDL_GetError());
 					}
 				} else {
-					Output::Error("Couldn't set display mode.\n%s\n", SDL_GetError());
+					Output().Error(boost::format("Couldn't set display mode.\n%s\n") % SDL_GetError());
 				}
 			}
 
