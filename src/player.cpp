@@ -316,8 +316,10 @@ void Player_::Update() {
 	if (Input().IsTriggered(Input_::TAKE_SCREENSHOT)) {
 		Output().TakeScreenshot();
 	}
-	if (Input().IsTriggered(Input_::LOG_VIEWER) and not Scene::Find("Log Viewer")) {
-		Scene::Push(EASYRPG_MAKE_SHARED<Scene_LogViewer>());
+	if (Input().IsTriggered(Input_::LOG_VIEWER)) {
+		Scene::Find("Log Viewer")
+				? Scene::Pop()
+				: Scene::Push(EASYRPG_MAKE_SHARED<Scene_LogViewer>());
 	}
 
 	DisplayUi->ProcessEvents();
