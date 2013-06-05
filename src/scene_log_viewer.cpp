@@ -111,7 +111,7 @@ void Scene_LogViewer::set_cursor_index(int const idx) {
 		s->SetSrcRect(Rect(0, 0, font_size_ * col_max_, font_size_));
 
 		if(cursor_offset_ + i == cursor_index_) {
-			enable_line_scroll_ = font_->GetSize(buf.message).width > int(font_size_ * col_max_);
+			enable_line_scroll_ = font_->GetSize(generate_line(buf)).width > int(font_size_ * col_max_);
 			line_scroll_counter_ = 0;
 		}
 	}
