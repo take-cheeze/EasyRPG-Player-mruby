@@ -502,9 +502,7 @@ void Bitmap::clear() {
 void Bitmap::transform_blit(BlitCommon const& info, Matrix const& mat, int opacity) {
 	check_opacity(opacity);
 
-	Rect src_rect = mat.transform(info.src_rect);
-	src_rect.Adjust(rect());
-	if(src_rect.IsEmpty()) { return; }
+	Rect const src_rect = mat.transform(info.src_rect);
 
 	SET_MATRIX(info.src.ref_.get(), mat.invert());
 	pixman_image_composite(
