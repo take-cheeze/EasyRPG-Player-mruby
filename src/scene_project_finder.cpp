@@ -148,9 +148,8 @@ void Scene_ProjectFinder::set_index(int const idx) {
 	unsigned& offset = current_offset();
 
 	dst_idx = (idx + current_children_count()) % current_children_count();
-	offset = (dst_idx < offset)? dst_idx:
-			 (dst_idx >= (offset + ROW_MAX))? std::max(0, int(dst_idx) - int(ROW_MAX - 1)):
-			 offset;
+	offset = std::max(0, std::max<int>(
+		int(dst_idx) - int(ROW_MAX - 1), std::min(offset, dst_idx)));
 
 	assert(dst_idx < current_children_count());
 

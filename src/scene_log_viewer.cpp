@@ -89,10 +89,9 @@ void Scene_LogViewer::hide_lines() {
 
 void Scene_LogViewer::set_cursor_index(int const idx) {
 	cursor_index_ = (idx + lines_.size()) % lines_.size();
-	cursor_offset_ = (cursor_index_ < cursor_offset_)? cursor_index_:
-					 (cursor_index_ >= (cursor_offset_ + row_max_))
-					 ? std::max(0, int(cursor_index_) - int(row_max_ - 1)):
-					 cursor_offset_;
+	cursor_offset_ = std::max(0, std::max<int>(
+		int(cursor_index_) - int(row_max_ - 1),
+		std::min(cursor_offset_, cursor_index_)));
 
 	hide_lines();
 
