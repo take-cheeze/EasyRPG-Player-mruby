@@ -126,10 +126,11 @@ struct Output_ : boost::noncopyable {
 	 * generate time string from time_t
 	 *
 	 * @param t time
+	 * @param time_only if true returns string without date and day of week
 	 * @param string expression of time
 	 */
-	std::string local_time(std::time_t const t) const;
-	std::string utc_time(std::time_t const t) const;
+	std::string local_time(std::time_t const t, bool time_only = false) const;
+	std::string utc_time(std::time_t const t, bool time_only = false) const;
 
 	struct Message {
 		std::time_t time;

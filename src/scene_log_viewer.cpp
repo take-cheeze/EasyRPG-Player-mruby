@@ -72,7 +72,8 @@ void Scene_LogViewer::Start() {
 std::string Scene_LogViewer::generate_line(Output_::Message const& msg) const {
 	std::ostringstream oss;
 	oss << Output().Type2String(msg.type)[0] << " "
-		<< (use_local_time_? Output().local_time(msg.time) : Output().utc_time(msg.time))
+		<< (use_local_time_
+			? Output().local_time(msg.time, true) : Output().utc_time(msg.time, true))
 		<< " " << msg.message;
 	return oss.str();
 }

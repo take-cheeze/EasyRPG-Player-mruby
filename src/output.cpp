@@ -82,17 +82,20 @@ Output_::Message::Message() {}
 Output_::Message::Message(Type t, std::string const& m, boost::optional<std::string> const& ss)
 		: time(std::time(NULL)), type(t), message(m), screenshot(ss) {}
 
-static char const time_fmt[] = "%Y/%m/%d %a %H:%M:%S";
+namespace {
+char const time_fmt[] = "%Y/%m/%d %a %H:%M:%S";
+char const time_only_fmt[] = "%H:%M:%S";
+}
 
-std::string Output_::local_time(std::time_t const t) const {
-	char buf[sizeof(time_fmt) + 20];
-	strftime(buf, sizeof(buf), time_fmt, std::localtime(&t));
+std::string Output_::local_time(std::time_t const t, bool time_only) const {
+	char buf[256];
+	strftime(buf, sizeof(buf), time_only? time_only_fmt : time_fmt, std::localtime(&t));
 	return buf;
 }
 
-std::string Output_::utc_time(std::time_t const t) const {
-	char buf[sizeof(time_fmt) + 20];
-	strftime(buf, sizeof(buf), time_fmt, std::gmtime(&t));
+std::string Output_::utc_time(std::time_t const t, bool time_only) const {
+	char buf[256];
+	strftime(buf, sizeof(buf), time_only? time_only_fmt : time_fmt, std::gmtime(&t));
 	return buf;
 }
 
