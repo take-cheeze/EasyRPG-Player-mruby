@@ -214,7 +214,7 @@ BitmapRef Bitmap::Create(uint8_t const* data, size_t data_size, bool transparent
 		std::ios::binary | std::ios::in);
 
 #define PP_check_image(type)											\
-	(std::string(data, data + sizeof(type ## _SIGNATURE - 1))			\
+	(std::string(data, data + sizeof(type ## _SIGNATURE) - 1)			\
 	 == std::string(type ## _SIGNATURE,									\
 					type ## _SIGNATURE + sizeof(type ## _SIGNATURE) - 1)) \
 			? ImageIO::Read ## type (iss, transparent)					\
