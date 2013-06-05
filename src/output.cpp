@@ -60,24 +60,46 @@ char const* Output_::Type2String(Type t) const {
 	return type_str[t];
 }
 
+Color const& Output_::TypeColor(Type t) const {
+	assert(t < TYPE_END);
+
+	static Color const type_color[Output_::TYPE_END] =
+			{ Color(0, 0, 255, 255), Color(255, 183, 76, 255), Color(255, 0, 0, 255), };
+	return type_color[t];
+}
+
+Output_::buffer_type const& Output_::buffer() const {
+	return buffer_;
+}
+
 Output_::Output_()
 		: ignore_pause_(false)
 		, log_file_(OUTPUT_FILENAME, std::ios_base::out | std::ios_base::app)
 		, buffer_(BUFFER_SIZE)
 {}
 
+Output_::Message::Message() {}
 Output_::Message::Message(Type t, std::string const& m, boost::optional<std::string> const& ss)
 		: time(std::time(NULL)), type(t), message(m), screenshot(ss) {}
 
-std::ostream& Output_::output_time(std::time_t const t) {
-	char const time_fmt[] = "%Y/%m/%d %a %H:%M:%S";
+static char const time_fmt[] = "%Y/%m/%d %a %H:%M:%S";
 
-	char buf[sizeof(time_fmt) + 10];
+std::string Output_::local_time(std::time_t const t) const {
+	char buf[sizeof(time_fmt) + 20];
 	strftime(buf, sizeof(buf), time_fmt, std::localtime(&t));
-	log_file_ << "Local: "  << buf;
+	return buf;
+}
 
+std::string Output_::utc_time(std::time_t const t) const {
+	char buf[sizeof(time_fmt) + 20];
 	strftime(buf, sizeof(buf), time_fmt, std::gmtime(&t));
-	return log_file_ << ", UTC: " << buf << std::endl;
+	return buf;
+}
+
+std::ostream& Output_::output_time(std::time_t const t) {
+	return log_file_
+			<< "Local: " << local_time(t) << ", "
+			<< "UTC: " << utc_time(t) << std::endl;
 }
 
 void Output_::IgnorePause(bool const val) {

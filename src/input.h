@@ -63,6 +63,7 @@ struct Input_ : boost::noncopyable {
 		DEBUG_THROUGH,
 		TOGGLE_FPS,
 		TAKE_SCREENSHOT,
+		LOG_VIEWER,
 		BUTTON_COUNT
 	};
 

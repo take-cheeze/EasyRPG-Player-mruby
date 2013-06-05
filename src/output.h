@@ -28,8 +28,10 @@
 #include <boost/circular_buffer.hpp>
 #include <boost/format/format_fwd.hpp>
 
+class Color;
+
 /**
- * Output Namespace.
+ * Output
  */
 struct Output_ : boost::noncopyable {
 	/**
@@ -107,12 +109,35 @@ struct Output_ : boost::noncopyable {
 	 */
 	char const* Type2String(Type t) const;
 
+	/*
+	 * get color corresponding to output type
+	 * this color will be used in screen output
+	 *
+	 * Debug: blue
+	 * Warning: orange
+	 * Error: red
+	 *
+	 * @param t type
+	 * @return color of output type
+	 */
+	Color const& TypeColor(Type t) const;
+
+	/*
+	 * generate time string from time_t
+	 *
+	 * @param t time
+	 * @param string expression of time
+	 */
+	std::string local_time(std::time_t const t) const;
+	std::string utc_time(std::time_t const t) const;
+
 	struct Message {
 		std::time_t time;
 		Type type;
 		std::string message;
 		boost::optional<std::string> screenshot;
 
+		Message();
 		Message(Type t, std::string const& m, boost::optional<std::string> const& ss);
 	};
 

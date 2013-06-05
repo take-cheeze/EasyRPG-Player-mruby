@@ -29,6 +29,7 @@
 #include "scene_title.h"
 #include "scene_battle.h"
 #include "scene_project_finder.h"
+#include "scene_log_viewer.h"
 #include "utils.h"
 #include "baseui.h"
 
@@ -314,6 +315,9 @@ void Player_::Update() {
 	}
 	if (Input().IsTriggered(Input_::TAKE_SCREENSHOT)) {
 		Output().TakeScreenshot();
+	}
+	if (Input().IsTriggered(Input_::LOG_VIEWER) and not Scene::Find("Log Viewer")) {
+		Scene::Push(EASYRPG_MAKE_SHARED<Scene_LogViewer>());
 	}
 
 	DisplayUi->ProcessEvents();
