@@ -35,7 +35,7 @@ void Scene_LogViewer::Start() {
 	screenshot_->visible = false;
 	screenshot_->SetZ(100); // give higher priority than log lines
 
-	font_ = Font::Default();
+	font_ = Font::Shinonome();
 	font_size_ = font_->pixel_size();
 
 	row_max_ = SCREEN_TARGET_HEIGHT / font_size_ - 2,
@@ -61,8 +61,6 @@ void Scene_LogViewer::Start() {
 		SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT, Color(255, 255, 255, 255)));
 	background_->SetZ(-100);
 	background_->visible = true;
-
-	FontRef const font = Font::Default();
 
 	Output_::buffer_type const& buf = Output().buffer();
 	lines_.resize(buf.size());

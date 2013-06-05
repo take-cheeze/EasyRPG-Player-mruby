@@ -75,14 +75,14 @@ void Window_SaveFile::Refresh() {
 
 	contents->draw_text(8, 32 + 2, Data::terms.lvl_short, 1);
 
-	int lx = Font::Default()->GetSize(Data::terms.lvl_short).width;
+	int lx = contents->font->GetSize(Data::terms.lvl_short).width;
 	out.str("");
 	out << std::setw(2) << std::setfill(' ') << hero_level;
 	contents->draw_text(8 + lx, 32 + 2, out.str(), Font::ColorDefault);
 
 	contents->draw_text(42, 32 + 2, Data::terms.hp_short, 1);
 
-	int hx = Font::Default()->GetSize(Data::terms.hp_short).width;
+	int hx = contents->font->GetSize(Data::terms.hp_short).width;
 	out.str("");
 	out << hero_hp;
 	contents->draw_text(42 + hx, 32 + 2, out.str(), Font::ColorDefault);

@@ -39,7 +39,9 @@ class Font {
 	virtual void Render(Bitmap& bmp, int x, int y, unsigned glyph) = 0;
 
 	static FontRef Create(const std::string& name, int size, bool bold, bool italic);
-	static FontRef Default(bool mincho = false);
+	static FontRef Shinonome(bool mincho = false);
+	static FontRef Default();
+	static void SetDefault(FontRef const& f);
 	static void Dispose();
 
 	static const int default_size = 9;

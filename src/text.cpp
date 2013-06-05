@@ -94,7 +94,7 @@ void Text::Draw(Bitmap& dest, int const x, int const y, std::string const& text,
 			++c;
 		} else { // Not ExFont, draw normal text
 			dest.font->Render(dest, dst_rect.x, dst_rect.y, *c);
-			dst_rect.x += Font::Default()->GetSize(*c).width;
+			dst_rect.x += dest.font->GetSize(*c).width;
 		}
 	}
 }
@@ -102,8 +102,7 @@ void Text::Draw(Bitmap& dest, int const x, int const y, std::string const& text,
 void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, Text::Alignment align) {
 	if (text.empty()) return;
 
-	FontRef font = dest.font;
-	Rect const text_size = font->GetSize(text);
+	Rect const text_size = dest.font->GetSize(text);
 	Rect dst_rect = text_size;
 
 	switch (align) {
@@ -164,8 +163,8 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, 
 			// Skip the alphabet part of exfont
 			++c;
 		} else { // Not ExFont, draw normal text
-			font->Render(dest, dst_rect.x, dst_rect.y, *system, color, *c);
-			dst_rect.x += Font::Default()->GetSize(*c).width;
+			dest.font->Render(dest, dst_rect.x, dst_rect.y, *system, color, *c);
+			dst_rect.x += dest.font->GetSize(*c).width;
 		}
 	}
 }

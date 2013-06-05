@@ -53,10 +53,6 @@ struct Scene_ProjectFinder::Entry {
 			children_ = create_children();
 			sprite_.SetBitmap(children_.empty()
 							  ? Bitmap::Create(1, 1) : create_bitmap(children_));
-
-			size_t const font_size = Font::Default()->pixel_size();
-			sprite_.SetX(font_size);
-			sprite_.SetY(font_size);
 			sprite_.visible = false;
 		}
 		return sprite_;
@@ -107,9 +103,10 @@ BitmapRef Scene_ProjectFinder::create_bitmap(EntryList const& list) {
 	assert(not list.empty());
 
 	size_t const
-			font_size = Font::Default()->pixel_size(),
-			width = font_size * COLUMN_MAX;
-	BitmapRef const ret = Bitmap::Create(width, font_size * list.size());
+			font_size_ = Font::Shinonome()->pixel_size(),
+			width = font_size_ * COLUMN_MAX;
+	BitmapRef const ret = Bitmap::Create(width, font_size_ * list.size());
+	ret->font = Font::Shinonome();
 
 	for(EntryList::const_iterator i = list.begin(); i < list.end(); ++i) {
 		Font::default_color =
@@ -117,13 +114,13 @@ BitmapRef Scene_ProjectFinder::create_bitmap(EntryList const& list) {
 					FileFinder().GetDirectoryMembers((*i)->fullpath()).members)
 				? Color(255, 0, 0, 255) : Color(0, 0, 0, 255);
 
-		int const y = font_size * (i - list.begin());
+		int const y = font_size_ * (i - list.begin());
 		ret->draw_text(0, y, (*i)->name);
 
 		// fill with .... if directory name is too long
 		if(ret->text_size((*i)->name).width > int(width)) {
-			ret->fill(Rect(width - font_size * 2, y, font_size * 2, font_size), Color(0, 0, 0, 0));
-			ret->draw_text(width - font_size * 2, y, "....");
+			ret->fill(Rect(width - font_size_ * 2, y, font_size_ * 2, font_size_), Color(0, 0, 0, 0));
+			ret->draw_text(width - font_size_ * 2, y, "....");
 		}
 	}
 
@@ -146,26 +143,20 @@ Sprite& Scene_ProjectFinder::current_sprite() {
 	return current_entry_? current_entry_->sprite() : *root_sprite_;
 }
 
-void Scene_ProjectFinder::set_index(unsigned const idx) {
-	assert(idx < current_children_count());
-
+void Scene_ProjectFinder::set_index(int const idx) {
 	unsigned& dst_idx = current_index();
 	unsigned& offset = current_offset();
 
-	dst_idx = idx;
-	offset = (idx < offset)? idx:
-			 (idx >= (offset + ROW_MAX))? std::max(0, int(idx) - int(ROW_MAX - 1)):
+	dst_idx = (idx + current_children_count()) % current_children_count();
+	offset = (dst_idx < offset)? dst_idx:
+			 (dst_idx >= (offset + ROW_MAX))? std::max(0, int(dst_idx) - int(ROW_MAX - 1)):
 			 offset;
 
-	size_t const font_size = Font::Default()->pixel_size();
-	cursor_->SetY(font_size * (idx - offset + 1) - 1);
-	current_sprite().SetSrcRect(Rect(
-		0, font_size * offset, font_size * COLUMN_MAX, font_size * ROW_MAX));
-}
+	assert(dst_idx < current_children_count());
 
-void Scene_ProjectFinder::scroll_entry(bool forward) {
-	set_index((int(current_index()) + (forward? 1 : -1) + current_children_count())
-			  % current_children_count());
+	cursor_->SetY(font_size_ * (dst_idx - offset + 1) - 1);
+	current_sprite().SetSrcRect(Rect(
+		0, font_size_ * offset, font_size_ * COLUMN_MAX, font_size_ * ROW_MAX));
 }
 
 void Scene_ProjectFinder::select_entry() {
@@ -179,10 +170,12 @@ void Scene_ProjectFinder::select_entry() {
 	{
 		Main_Data::project_path = current_entry_->fullpath();
 		Scene::Push(EASYRPG_MAKE_SHARED<Scene_Title>());
-		current_entry_ = current_entry_->parent;
+		to_parent();
 	} else if(current_entry_->children().empty()) {
 		to_parent(); // return to parent
 	} else {
+		current_sprite().SetX(font_size_);
+		current_sprite().SetY(font_size_);
 		current_sprite().visible = true;
 		set_index(current_index());
 	}
@@ -201,12 +194,41 @@ void Scene_ProjectFinder::to_parent() {
 
 }
 
+void Scene_ProjectFinder::Start() {
+	font_ = Font::Shinonome();
+	font_size_ = font_->pixel_size();
+
+	root_sprite_.reset(new Sprite());
+	background_.reset(new Sprite());
+	cursor_.reset(new Sprite());
+
+	background_->SetBitmap(Bitmap::Create(SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT, Color(255, 255, 255, 255)));
+	background_->SetZ(-1000);
+
+	root_sprite_->SetBitmap(create_bitmap(root_));
+	root_sprite_->SetX(font_size_);
+	root_sprite_->SetY(font_size_);
+	root_sprite_->SetSrcRect(Rect(0, 0, font_size_ * COLUMN_MAX, font_size_ * ROW_MAX));
+
+	BitmapRef const cursor_bmp = Bitmap::Create(font_size_ * COLUMN_MAX + 4, font_size_ + 2);
+	Color const blue(0, 0, 255, 255);
+	// top
+	cursor_bmp->fill(Rect(0, 0, cursor_bmp->width(), 1), blue);
+	// left
+	cursor_bmp->fill(Rect(0, 0, 1, cursor_bmp->height()), blue);
+	// right
+	cursor_bmp->fill(Rect(cursor_bmp->width() - 1, 0, 1, cursor_bmp->height()), blue);
+	// bottom
+	cursor_bmp->fill(Rect(0, cursor_bmp->height() - 1, cursor_bmp->width(), 1), blue);
+
+	cursor_->SetBitmap(cursor_bmp);
+	cursor_->SetX(font_size_ - 2);
+	cursor_->SetY(font_size_ - 1);
+}
+
 Scene_ProjectFinder::Scene_ProjectFinder()
 		: Scene("ProjectFinder")
 		, root_index_(0), root_offset_(0)
-		, root_sprite_(new Sprite())
-		, background_(new Sprite())
-		, cursor_(new Sprite())
 {
 	std::ostringstream current_path;
 	current_path << ". (" << FileFinder().fullpath(".") << ")";
@@ -252,42 +274,13 @@ Scene_ProjectFinder::Scene_ProjectFinder()
 #endif
 
 	root_.resize(root_.end() - std::remove_if(root_.begin(), root_.end(), Entry::no_children));
-
-	size_t const font_size = Font::Default()->pixel_size();
-
-	background_->SetBitmap(Bitmap::Create(SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT, Color(255, 255, 255, 255)));
-	background_->SetZ(-1000);
-
-	root_sprite_->SetBitmap(create_bitmap(root_));
-	root_sprite_->SetX(font_size);
-	root_sprite_->SetY(font_size);
-	root_sprite_->SetSrcRect(Rect(0, 0, font_size * COLUMN_MAX, font_size * ROW_MAX));
-
-	BitmapRef const cursor_bmp = Bitmap::Create(font_size * COLUMN_MAX + 4, font_size + 2);
-	Color const blue(0, 0, 255, 255);
-	// top
-	cursor_bmp->fill(Rect(0, 0, cursor_bmp->width(), 1), blue);
-	// left
-	cursor_bmp->fill(Rect(0, 0, 1, cursor_bmp->height()), blue);
-	// right
-	cursor_bmp->fill(Rect(cursor_bmp->width() - 1, 0, 1, cursor_bmp->height()), blue);
-	// bottom
-	cursor_bmp->fill(Rect(0, cursor_bmp->height() - 1, cursor_bmp->width(), 1), blue);
-
-	cursor_->SetBitmap(cursor_bmp);
-	cursor_->SetX(font_size - 2);
-	cursor_->SetY(font_size - 1);
-}
-
-void Scene_ProjectFinder::Continue() {
-	current_sprite().visible = true;
 }
 
 void Scene_ProjectFinder::Update() {
 	if(Input().IsTriggered(Input_::DECISION) or
 	   Input().IsTriggered(Input_::RIGHT)) { select_entry(); }
-	else if(Input().IsRepeated(Input_::UP)) { scroll_entry(false); }
-	else if(Input().IsRepeated(Input_::DOWN)) { scroll_entry(true); }
+	else if(Input().IsRepeated(Input_::UP)) { set_index(int(current_index()) - 1); }
+	else if(Input().IsRepeated(Input_::DOWN)) { set_index(int(current_index()) + 1); }
 	else if(Input().IsTriggered(Input_::CANCEL) or
 			Input().IsTriggered(Input_::LEFT)) { to_parent(); }
 }

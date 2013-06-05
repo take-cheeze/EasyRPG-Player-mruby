@@ -32,6 +32,7 @@
 #include "scene_log_viewer.h"
 #include "utils.h"
 #include "baseui.h"
+#include "font.h"
 
 #include <algorithm>
 #include <set>
@@ -58,6 +59,7 @@ bool SceneFinder(SceneRef const& r, std::string const& t) {
 }
 
 struct Player_::Internal {
+	FontRef font;
 	Cache_ cache;
 	FileFinder_ filefinder;
 	Graphics_ graphics;
@@ -76,7 +78,7 @@ struct Player_::Internal {
 		PushPopOperation push_pop_operation;
 	} scene;
 
-	Internal() {
+	Internal() : font(Font::Shinonome()) {
 		scene.push_pop_operation = SceneNop;
 	}
 };
@@ -192,6 +194,14 @@ void Scene::MainFunction() {
 }
 
 static EASYRPG_WEAK_PTR<Player_> current_player_;
+
+FontRef Font::Default() {
+	return current_player_.lock()? Player().internal->font : Font::Shinonome();
+}
+
+void Font::SetDefault(FontRef const& f) {
+	Player().internal->font = f;
+}
 
 Cache_& Cache() {
 	return Player().internal->cache;

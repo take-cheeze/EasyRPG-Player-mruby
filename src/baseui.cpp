@@ -67,11 +67,12 @@ void BaseUi::DrawScreenText(const std::string &text) {
 
 void BaseUi::DrawScreenText(const std::string &text, int x, int y, Color const& color) {
 	Font::default_color = color;
-	FontRef const font = Font::Default();
+	FontRef const font = Font::Shinonome();
 	unsigned line = 0;
 	std::string::const_iterator i = text.begin();
 	do {
 		std::string::const_iterator const line_end = std::find(i, text.end(), '\n');
+		Graphics().ScreenBuffer()->font = font;
 		Graphics().ScreenBuffer()->draw_text(
 			x, y + font->pixel_size() * line++, std::string(i, line_end));
 		i = line_end;

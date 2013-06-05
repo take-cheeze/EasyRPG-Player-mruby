@@ -16,8 +16,8 @@ struct Scene_ProjectFinder : public Scene {
 	Scene_ProjectFinder();
 	~Scene_ProjectFinder();
 
+	void Start();
 	void Update();
-	void Continue();
 
   private:
 	struct Entry;
@@ -28,11 +28,13 @@ struct Scene_ProjectFinder : public Scene {
 	boost::optional<Entry&> current_entry_;
 	unsigned root_index_, root_offset_;
 
-	boost::scoped_ptr<Sprite> const root_sprite_, background_, cursor_;
+	boost::scoped_ptr<Sprite> root_sprite_, background_, cursor_;
+
+	size_t font_size_;
+	FontRef font_;
 
   private:
-	void set_index(unsigned idx);
-	void scroll_entry(bool forward = true);
+	void set_index(int idx);
 	void select_entry();
 	void to_parent();
 

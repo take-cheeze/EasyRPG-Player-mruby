@@ -209,7 +209,7 @@ FTFont::FTFont(const std::string& name, int size, bool bold, bool italic)
 Rect FTFont::GetSize(unsigned const glyph) const {
 	return Rect(
 		0, 0,
-		Font::Default()->GetSize(glyph).width * pixel_size() / ShinonomeFont::FULL_WIDTH,
+		Font::Shinonome()->GetSize(glyph).width * pixel_size() / ShinonomeFont::FULL_WIDTH,
 		pixel_size());
 }
 
@@ -219,7 +219,7 @@ void FTFont::Render(Bitmap& bmp, int x, int y, Bitmap const& /* sys */, int /* c
 
 void FTFont::Render(Bitmap& bmp, int const x, int const y, unsigned const glyph) {
 	if(!check_face()) {
-		Font::Default()->Render(bmp, x, y, glyph);
+		Font::Shinonome()->Render(bmp, x, y, glyph);
 		return;
 	}
 
@@ -250,7 +250,7 @@ void FTFont::Render(Bitmap& bmp, int const x, int const y, unsigned const glyph)
 	}
 }
 
-FontRef Font::Default(bool const m) {
+FontRef Font::Shinonome(bool const m) {
 	return m? mincho : gothic;
 }
 
