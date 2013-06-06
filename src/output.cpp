@@ -161,13 +161,21 @@ std::string Output_::CreateScreenshotPath(unsigned const idx) const {
 		"screenshot_" + boost::lexical_cast<std::string>(idx) + ".png");
 }
 
+void Output_::Update() {
+	frame_screenshot_ = boost::none;
+}
+
 boost::optional<std::string> Output_::TakeScreenshot() {
+	if(frame_screenshot_ and FileFinder().Exists(*frame_screenshot_))
+	{ return frame_screenshot_; }
+
 	unsigned index = 0;
 	std::string p;
 	do {
 		p = CreateScreenshotPath(index++);
 	} while(FileFinder().Exists(p));
-	return TakeScreenshot(p)? p : boost::optional<std::string>();
+	return frame_screenshot_ =
+			TakeScreenshot(p)? p : boost::optional<std::string>();
 }
 
 bool Output_::TakeScreenshot(std::string const& file) {

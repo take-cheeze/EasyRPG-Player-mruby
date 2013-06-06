@@ -152,11 +152,18 @@ struct Output_ : boost::noncopyable {
 	 */
 	buffer_type const& buffer() const;
 
+	/*
+	 * clear frame screenshot
+	 */
+	void Update();
+
   private:
 	bool ignore_pause_;
 	std::ofstream log_file_;
 
 	buffer_type buffer_;
+
+	boost::optional<std::string> frame_screenshot_;
 
   private:
 	std::ostream& output_time(std::time_t t);
