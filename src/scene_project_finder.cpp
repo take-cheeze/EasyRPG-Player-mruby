@@ -34,7 +34,11 @@ enum { COLUMN_MAX = 25, ROW_MAX = 18, };
 struct Scene_ProjectFinder::Entry {
 	Entry(std::string const& n, std::string const& p)
 			: name(n), path(FileFinder().fullpath(p))
-			, cursor(0), offset(0) {}
+			, cursor(0), offset(0)
+	{
+		assert(not is_project_);
+		assert(not path.empty());
+	}
 
 	std::string fullpath() const {
 		return parent
@@ -69,9 +73,17 @@ struct Scene_ProjectFinder::Entry {
 		return e->children_.empty();
 	}
 
+	bool is_project() {
+		FileFinder_& f = FileFinder();
+		return *(is_project_ = is_project_? *is_project_ :
+				 f.IsRPG2kProject(f.GetDirectoryMembers(
+					 fullpath(), FileFinder_::DIRECTORIES).members));
+	}
+
   private:
 	EntryList children_;
 	Sprite sprite_;
+	boost::optional<bool> is_project_;
 
 	EntryList create_children() {
 		typedef FileFinder_::Directory Directory;
@@ -86,17 +98,21 @@ struct Scene_ProjectFinder::Entry {
 			if(d.members.empty()) { continue; }
 
 			ret.push_back(EASYRPG_SHARED_PTR<Entry>(new Entry(
-				*this,
-				f.IsRPG2kProject(d.members)? i->second : i->second + "/",
-				i->second)));
+				*this, i->second,
+				f.IsRPG2kProject(f.GetDirectoryMembers(
+					f.MakePath(dir.base, i->second), FileFinder_::FILES).members))));
 		}
 
 		return ret;
 	}
 
-	Entry(Entry& p, std::string const& n, std::string const& pth)
-			: parent(p), name(n), path(pth)
-			, cursor(0), offset(0) {}
+	Entry(Entry& p, std::string const& pth, bool const is_proj)
+			: parent(p), name(pth + (is_proj? "" : "/")), path(pth)
+			, cursor(0), offset(0), is_project_(is_proj)
+	{
+		assert(is_project_);
+		assert(not path.empty());
+	}
 };
 
 BitmapRef Scene_ProjectFinder::create_bitmap(EntryList const& list) {
@@ -110,9 +126,7 @@ BitmapRef Scene_ProjectFinder::create_bitmap(EntryList const& list) {
 
 	for(EntryList::const_iterator i = list.begin(); i < list.end(); ++i) {
 		Font::default_color =
-				FileFinder().IsRPG2kProject(
-					FileFinder().GetDirectoryMembers((*i)->fullpath()).members)
-				? Color(255, 0, 0, 255) : Color(0, 0, 0, 255);
+				(*i)->is_project()? Color(255, 0, 0, 255) : Color(0, 0, 0, 255);
 
 		int const y = font_size_ * (i - list.begin());
 		ret->draw_text(0, y, (*i)->name);
@@ -164,9 +178,7 @@ void Scene_ProjectFinder::select_entry() {
 	current_sprite().visible = false;
 	current_entry_ = *(current_entry_? current_entry_->children() : root_)[current_index()];
 
-	if(FileFinder().IsRPG2kProject(
-		   FileFinder().GetDirectoryMembers(current_entry_->fullpath()).members))
-	{
+	if(current_entry_->is_project()) {
 		Main_Data::project_path = current_entry_->fullpath();
 		Scene::Push(EASYRPG_MAKE_SHARED<Scene_Title>());
 		to_parent();
