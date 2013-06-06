@@ -38,6 +38,10 @@ void Scene_LogViewer::Start() {
 	screenshot_->visible = false;
 	screenshot_->SetZ(100); // give higher priority than log lines
 
+	screenshot_time_.reset(new Sprite());
+	screenshot_time_->visible = false;
+	screenshot_time_->SetZ(200);
+
 	font_ = Font::Shinonome();
 	font_size_ = font_->pixel_size();
 
@@ -73,12 +77,16 @@ void Scene_LogViewer::Start() {
 	set_cursor_index(lines_.size() - 1);
 }
 
+std::string Scene_LogViewer::time_string(Output_::Message const& msg) const {
+	return use_local_time_
+			? Output().local_time(msg.time, true)
+			: Output().utc_time(msg.time, true);
+}
+
 std::string Scene_LogViewer::generate_line(Output_::Message const& msg) const {
 	std::ostringstream oss;
 	oss << Output().Type2String(msg.type)[0] << " "
-		<< (use_local_time_
-			? Output().local_time(msg.time, true) : Output().utc_time(msg.time, true))
-		<< " " << msg.message;
+		<< time_string(msg) << " " << msg.message;
 	return oss.str();
 }
 
@@ -125,6 +133,7 @@ void Scene_LogViewer::Update() {
 
 	if(screenshot_->visible and Input().IsTriggered(Input_::CANCEL)) {
 		screenshot_->visible = false;
+		screenshot_time_->visible = false;
 		set_cursor_index(cursor_index_);
 	} else if(Input().IsTriggered(Input_::DECISION) and
 			  line.screenshot and FileFinder().Exists(*line.screenshot)) {
@@ -133,6 +142,18 @@ void Scene_LogViewer::Update() {
 		screenshot_->visible = true;
 		screenshot_->SetBitmap(ImageIO::ReadPNG(*FileFinder().openUTF8(
 			*line.screenshot, std::ios::binary | std::ios::in), false));
+
+		std::string const time_str = time_string(line);
+		if(not screenshot_time_->GetBitmap()) {
+			Rect const time_size = font_->GetSize(time_str);
+			screenshot_time_->SetBitmap(
+				Bitmap::Create(time_size.width + 1, time_size.height + 1));
+		}
+		Font::default_color = Color(0, 0, 0, 255);
+		screenshot_time_->GetBitmap()->draw_text(1, 1, time_str);
+		Font::default_color = Color(255, 255, 255, 255);
+		screenshot_time_->GetBitmap()->draw_text(0, 0, time_str);
+		screenshot_time_->visible = true;
 	} else if(Input().IsTriggered(Input_::CANCEL)) { // exit log viewer
 		Scene::Pop();
 	} else if(Input().IsRepeated(Input_::DOWN)) {
