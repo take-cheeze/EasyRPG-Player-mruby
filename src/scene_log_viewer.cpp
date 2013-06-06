@@ -149,6 +149,8 @@ void Scene_LogViewer::Update() {
 			screenshot_time_->SetBitmap(
 				Bitmap::Create(time_size.width + 1, time_size.height + 1));
 		}
+		else { screenshot_time_->GetBitmap()->clear(); }
+
 		Font::default_color = Color(0, 0, 0, 255);
 		screenshot_time_->GetBitmap()->draw_text(1, 1, time_str);
 		Font::default_color = Color(255, 255, 255, 255);
