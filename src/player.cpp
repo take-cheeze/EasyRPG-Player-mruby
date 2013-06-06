@@ -324,7 +324,9 @@ void Player_::Update() {
 		Graphics().fps_on_screen = !Graphics().fps_on_screen;
 	}
 	if (Input().IsTriggered(Input_::TAKE_SCREENSHOT)) {
-		Output().TakeScreenshot();
+		// use debug output for log viewer
+		// Output().TakeScreenshot();
+		Output().Debug("Screenshot request from user.");
 	}
 	if (Input().IsTriggered(Input_::LOG_VIEWER)) {
 		Scene::Find("Log Viewer")
