@@ -335,6 +335,7 @@ void Player_::Update() {
 	}
 
 	DisplayUi->ProcessEvents();
+	Output().Update();
 
 	if (exit_flag) {
 		Scene::PopUntil(std::string());
