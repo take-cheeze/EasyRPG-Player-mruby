@@ -29,7 +29,7 @@ class Scene_LogViewer : public Scene {
 
   private:
 	std::vector<EASYRPG_SHARED_PTR<Sprite> > lines_;
-	boost::scoped_ptr<Sprite> screenshot_, background_, cursor_;
+	boost::scoped_ptr<Sprite> screenshot_, background_, cursor_, line_repeat_;
 
 	typedef std::vector<Output_::Message> buffer_cache_type;
 	buffer_cache_type buffer_cache_;

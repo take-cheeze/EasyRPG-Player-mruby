@@ -31,6 +31,9 @@ BitmapRef Scene_LogViewer::create_line(Output_::Message const& msg) const {
 }
 
 void Scene_LogViewer::Start() {
+	line_repeat_.reset(new Sprite());
+	line_repeat_->visible = false;
+
 	screenshot_.reset(new Sprite());
 	screenshot_->visible = false;
 	screenshot_->SetZ(100); // give higher priority than log lines
@@ -112,6 +115,7 @@ void Scene_LogViewer::set_cursor_index(int const idx) {
 		if(cursor_offset_ + i == cursor_index_) {
 			enable_line_scroll_ = font_->GetSize(generate_line(buf)).width > int(font_size_ * col_max_);
 			line_scroll_counter_ = 0;
+			line_repeat_->SetBitmap(s->GetBitmap());
 		}
 	}
 }
@@ -136,10 +140,21 @@ void Scene_LogViewer::Update() {
 	} else if(Input().IsRepeated(Input_::UP)) {
 		set_cursor_index(int(cursor_index_) - 1);
 	} else if(enable_line_scroll_) {
+		int const repeat_blank = font_size_ * 5;
+
 		Sprite& s = *lines_[cursor_index_];
 		Rect src_rect = s.GetSrcRect();
-		line_scroll_counter_ %= s.GetBitmap()->width();
+		line_scroll_counter_ %= (s.GetBitmap()->width() + repeat_blank);
 		src_rect.x = line_scroll_counter_++;
 		s.SetSrcRect(src_rect);
+
+		int const repeat_x = std::max(
+			0, std::min(int(s.GetBitmap()->width()) - src_rect.x + repeat_blank, int(font_size_ * col_max_)));
+
+		line_repeat_->visible = true;
+		line_repeat_->SetX(font_size_ + repeat_x);
+		line_repeat_->SetY(s.GetY());
+		line_repeat_->SetSrcRect(Rect(
+			0, 0, std::max(0, int(font_size_ * col_max_) - repeat_x), font_size_));
 	}
 }
