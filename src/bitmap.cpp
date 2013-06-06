@@ -154,13 +154,20 @@ pixman_image_ptr create_image(size_t w, size_t h, void* data, size_t stride) {
 	return ret;
 }
 
-pixman_image_ptr create_sub_image(pixman_image_t* ptr, Rect const& rect) {
-	size_t const stride = pixman_image_get_stride(ptr);
+pixman_image_ptr create_sub_image(pixman_image_ptr const& ptr, Rect const& rect) {
+	size_t const stride = pixman_image_get_stride(ptr.get());
 	assert((stride % 4) == 0);
 
+	int const w = pixman_image_get_width(ptr.get()), h = pixman_image_get_height(ptr.get());
+
 	return create_image(
-		rect.width, rect.height,
-		pixman_image_get_data(ptr) + stride / 4 * rect.y + rect.x, stride);
+		std::max(0, std::min(rect.width , w - rect.x)),
+		std::max(0, std::min(rect.height, h - rect.y)),
+		pixman_image_get_data(ptr.get()) + stride / 4 * rect.y + rect.x, stride);
+}
+
+Rect create_rect(pixman_image_ptr const& ptr) {
+	return Rect(0, 0, pixman_image_get_width(ptr.get()), pixman_image_get_height(ptr.get()));
 }
 
 }
@@ -410,9 +417,7 @@ void Bitmap::tiled_blit(BlitCommon const& info, Rect const& dst_rect, int opacit
 	if(ox < 0) ox += info.src_rect.width  * ((-ox + info.src_rect.width  - 1) / info.src_rect.width );
 	if(oy < 0) ox += info.src_rect.height * ((-ox + info.src_rect.height - 1) / info.src_rect.height);
 
-	pixman_image_ptr const src_bmp =
-			create_sub_image(info.src.ref_.get(), info.src_rect);
-
+	pixman_image_ptr const src_bmp = create_sub_image(info.src.ref_, info.src_rect);
 	pixman_image_set_repeat(src_bmp.get(), PIXMAN_REPEAT_NORMAL);
 
 	SET_MATRIX(src_bmp.get(), Matrix::translate_(ox, oy));
@@ -502,11 +507,19 @@ void Bitmap::clear() {
 void Bitmap::transform_blit(BlitCommon const& info, Matrix const& mat, int opacity) {
 	check_opacity(opacity);
 
-	Rect const src_rect = mat.transform(info.src_rect);
+	Rect adjusted = info.src_rect;
+	adjusted.Adjust(info.src.width(), info.src.height());
+	if(adjusted.IsEmpty()) { return; }
+
+	pixman_image_ptr const src =
+			info.src_rect == info.src.rect()
+			? info.src.ref_ : create_sub_image(info.src.ref_, adjusted);
+
+	Rect const src_rect = mat.transform(create_rect(src));
 
 	SET_MATRIX(info.src.ref_.get(), mat.invert());
 	pixman_image_composite(
-		info.src.ref_, create_opacity_mask(opacity),
+		src, create_opacity_mask(opacity),
 		src_rect.x, src_rect.y, 0, 0,
 		info.x, info.y, src_rect.width, src_rect.height);
 }
