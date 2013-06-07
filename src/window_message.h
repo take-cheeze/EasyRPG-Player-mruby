@@ -21,10 +21,11 @@
 // Headers
 #include <string>
 #include <boost/regex/pending/unicode_iterator.hpp>
-#include "window_gold.h"
-#include "window_numberinput.h"
-#include "window_selectable.h"
 #include <boost/scoped_ptr.hpp>
+#include "window_selectable.h"
+
+class Window_NumberInput;
+class Window_Gold;
 
 /**
  * Window Message Class.

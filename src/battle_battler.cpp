@@ -22,6 +22,8 @@
 #include "cache.h"
 #include "battle_battler.h"
 #include "bitmap.h"
+#include "game_actor.h"
+#include "game_enemy.h"
 
 bool Battle::Battler::IsReady() const {
 	return gauge >= gauge_full;
@@ -68,6 +70,12 @@ void Battle::Battler::ModifyAgi(int effect) {
 	agi_mod += effect;
 }
 
+Game_Battler* Battle::Ally::GetActor() {
+	return game_actor;
+}
+Game_Battler const* Battle::Ally::GetActor() const {
+	return game_actor;
+}
 
 Battle::Enemy::Enemy(const RPG::TroopMember* member, int id) :
 	Battler(id),
@@ -107,6 +115,13 @@ void Battle::Enemy::Transform(int enemy_id) {
 
 bool Battle::Enemy::CanAct() const {
 	return GetActor()->Exists() && !escaped;
+}
+
+Game_Battler* Battle::Enemy::GetActor() {
+	return game_enemy;
+}
+Game_Battler const* Battle::Enemy::GetActor() const {
+	return game_enemy;
 }
 
 Battle::Ally::Ally(Game_Actor* game_actor, int id) :

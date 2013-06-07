@@ -23,6 +23,7 @@
 #include "sprite_character.h"
 #include "game_character.h"
 #include "game_player.h"
+#include "game_event.h"
 
 // Constructor
 Spriteset_Map::Spriteset_Map() {

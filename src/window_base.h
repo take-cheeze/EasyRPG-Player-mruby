@@ -21,8 +21,12 @@
 // Headers
 #include <string>
 #include "window.h"
-#include "game_actor.h"
-#include "main_data.h"
+
+class Game_Actor;
+namespace RPG {
+class Item;
+class Skill;
+}
 
 /**
  * Window Base class.

@@ -18,11 +18,14 @@
 // Headers
 #include "audio.h"
 #include "game_character.h"
+#include "game_event.h"
 #include "game_map.h"
 #include "game_player.h"
 #include "game_switches.h"
 #include "game_system.h"
+#include "game_interpreter.h"
 #include "main_data.h"
+#include "rpg_event.h"
 #include <cassert>
 #include <cstdlib>
 

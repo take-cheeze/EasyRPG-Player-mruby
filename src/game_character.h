@@ -21,11 +21,14 @@
 // Headers
 #include <string>
 #include "color.h"
-#include "rpg_moveroute.h"
 
 class Game_Event;
 class Game_Player;
 class Game_Interpreter;
+
+namespace RPG {
+class MoveRoute;
+}
 
 /**
  * Game_Character class.
@@ -244,7 +247,7 @@ public:
 	 * Jump action begins. Does nothing when EndJump-Command is missing.
 	 */
 	void BeginJump();
-	
+
 	/**
 	 * Jump action ends.
 	 */
@@ -470,7 +473,7 @@ public:
 	/**
 	 * Sets the Flash effect settings.
 	 * After calling this IsFlashPending returns true.
-	 * 
+	 *
 	 * @param color Flash color
 	 * @param duration Flash duration
 	 */
@@ -510,7 +513,7 @@ protected:
 	bool move_route_forcing;
 	bool through;
 	int animation_id;
-	
+
 	RPG::MoveRoute* move_route;
 	RPG::MoveRoute* original_move_route;
 	int move_route_index;

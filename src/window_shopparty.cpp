@@ -23,6 +23,7 @@
 #include "font.h"
 #include "tone.h"
 #include "bitmap.h"
+#include "data.h"
 
 Window_ShopParty::Window_ShopParty(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {

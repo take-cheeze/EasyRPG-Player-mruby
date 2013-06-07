@@ -20,9 +20,10 @@
 
 // Headers
 #include "scene.h"
-#include "window_help.h"
-#include "window_item.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Help;
+class Window_Item;
 
 /**
  * Scene_Item class.
@@ -36,6 +37,7 @@ public:
 	 * @param item_index index to select.
 	 */
 	Scene_Item(int item_index = 0);
+	~Scene_Item();
 
 	void Start();
 	void Update();

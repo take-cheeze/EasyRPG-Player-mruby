@@ -22,6 +22,8 @@
 #include "data.h"
 #include "game_system.h"
 #include "bitmap.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 #include <boost/regex/pending/unicode_iterator.hpp>
 

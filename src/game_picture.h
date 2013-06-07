@@ -21,10 +21,13 @@
 // Headers
 #include <string>
 #include <vector>
-#include "system.h"
-#include "rpg_save.h"
-#include "sprite.h"
 #include <boost/scoped_ptr.hpp>
+#include "system.h"
+
+class Sprite;
+namespace RPG {
+class SavePicture;
+}
 
 /**
  * Picture class.

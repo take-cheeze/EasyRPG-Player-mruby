@@ -22,6 +22,9 @@
 #include "window_shopnumber.h"
 #include "font.h"
 #include "bitmap.h"
+#include "data.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Window_ShopNumber::Window_ShopNumber(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight),

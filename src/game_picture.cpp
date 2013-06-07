@@ -16,13 +16,14 @@
  */
 
 // Headers
+#include <vector>
 #include "bitmap.h"
 #include "options.h"
 #include "cache.h"
 #include "main_data.h"
 #include "sprite.h"
 #include "game_picture.h"
-#include <vector>
+#include "rpg_save.h"
 
 /**
  * Picture class.

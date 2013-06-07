@@ -22,7 +22,6 @@
 #include <string>
 
 #include "system.h"
-#include "color.h"
 #include "memory_management.h"
 
 #include <boost/noncopyable.hpp>

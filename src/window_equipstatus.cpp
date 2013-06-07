@@ -18,10 +18,12 @@
 // Headers
 #include <iomanip>
 #include <sstream>
+#include "game_actor.h"
 #include "game_actors.h"
 #include "window_equipstatus.h"
 #include "font.h"
 #include "bitmap.h"
+#include "data.h"
 
 Window_EquipStatus::Window_EquipStatus(int ix, int iy, int iwidth, int iheight, int actor_id, bool draw_actorname) :
 	Window_Base(ix, iy, iwidth, iheight),

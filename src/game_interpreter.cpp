@@ -21,8 +21,10 @@
 #include <sstream>
 #include <boost/format.hpp>
 
-#include "game_interpreter.h"
 #include "audio.h"
+#include "game_actor.h"
+#include "game_interpreter.h"
+#include "game_commonevent.h"
 #include "game_map.h"
 #include "game_event.h"
 #include "game_player.h"
@@ -34,15 +36,18 @@
 #include "game_system.h"
 #include "game_message.h"
 #include "game_picture.h"
+#include "game_screen.h"
 #include "spriteset_map.h"
 #include "sprite_character.h"
 #include "scene_map.h"
 #include "scene.h"
 #include "graphics.h"
 #include "input.h"
+#include "data.h"
 #include "main_data.h"
 #include "output.h"
 #include "player.h"
+#include "command_codes.h"
 
 // Forward declarations.
 

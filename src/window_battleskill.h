@@ -19,7 +19,6 @@
 #define _WINDOW_BATTLESKILL_H_
 
 // Headers
-#include <vector>
 #include "window_skill.h"
 
 /**

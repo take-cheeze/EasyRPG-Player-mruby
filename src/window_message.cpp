@@ -20,6 +20,9 @@
 #include <sstream>
 
 #include "window_message.h"
+#include "window_numberinput.h"
+#include "window_gold.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "game_map.h"
 #include "game_message.h"
@@ -33,6 +36,8 @@
 #include "font.h"
 #include "text.h"
 #include "bitmap.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 #include <boost/next_prior.hpp>
 

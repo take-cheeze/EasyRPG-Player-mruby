@@ -20,8 +20,9 @@
 
 // Headers
 #include "scene.h"
-#include "sprite.h"
 #include <boost/scoped_ptr.hpp>
+
+class Sprite;
 
 /**
  * Scene Game Over class.
@@ -34,6 +35,7 @@ public:
 	 * Constructor.
 	 */
 	Scene_Gameover();
+	~Scene_Gameover();
 
 	void Start();
 	void Update();

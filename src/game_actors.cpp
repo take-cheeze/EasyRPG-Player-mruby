@@ -20,9 +20,11 @@
 #include <boost/format.hpp>
 
 #include "system.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "main_data.h"
 #include "output.h"
+#include "data.h"
 
 namespace {
 	std::vector<EASYRPG_SHARED_PTR<Game_Actor> > data;

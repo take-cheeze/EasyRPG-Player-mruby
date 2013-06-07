@@ -20,6 +20,7 @@
 #include "scene_menu.h"
 #include "audio.h"
 #include "graphics.h"
+#include "game_actor.h"
 #include "game_party.h"
 #include "game_system.h"
 #include "game_temp.h"
@@ -33,9 +34,18 @@
 #include "scene_order.h"
 #include "scene_save.h"
 #include "scene_status.h"
+#include "window_command.h"
+#include "window_gold.h"
+#include "window_menustatus.h"
+#include "window_help.h"
+#include "data.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Scene_Menu::Scene_Menu(int menu_index) :
 		Scene("Menu"), menu_index(menu_index) {}
+
+Scene_Menu::~Scene_Menu() {}
 
 void Scene_Menu::Start() {
 	CreateCommandWindow();

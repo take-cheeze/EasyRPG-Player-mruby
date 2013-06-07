@@ -19,8 +19,6 @@
 #define _WINDOW_BATTLEITEM_H_
 
 // Headers
-#include <vector>
-#include "window_help.h"
 #include "window_item.h"
 
 /**

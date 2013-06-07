@@ -27,6 +27,12 @@
 #include "lsd_reader.h"
 #include "rpg_save.h"
 #include "scene_file.h"
+#include "window_help.h"
+#include "window_savefile.h"
+#include "main_data.h"
+#include "rpg_save.h"
+
+Scene_File::~Scene_File() {}
 
 Scene_File::Scene_File(char const* t, std::string const& message) :
 		Scene(t), index(0), top_index(0),

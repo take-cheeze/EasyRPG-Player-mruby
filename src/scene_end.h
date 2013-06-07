@@ -20,9 +20,10 @@
 
 // Headers
 #include "scene.h"
-#include "window_command.h"
-#include "window_help.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Help;
+class Window_Command;
 
 /**
  * Scene End class.

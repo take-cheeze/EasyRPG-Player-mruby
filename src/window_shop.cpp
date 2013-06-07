@@ -25,6 +25,10 @@
 #include "window_shop.h"
 #include "font.h"
 #include "bitmap.h"
+#include "data.h"
+#include "window_help.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Window_Shop::Window_Shop(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {

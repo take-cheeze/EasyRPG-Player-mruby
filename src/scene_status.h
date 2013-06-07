@@ -20,12 +20,13 @@
 
 // Headers
 #include "scene.h"
-#include "window_actorinfo.h"
-#include "window_actorstatus.h"
-#include "window_equip.h"
-#include "window_equipstatus.h"
-#include "window_gold.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_ActorInfo;
+class Window_ActorStatus;
+class Window_Gold;
+class Window_EquipStatus;
+class Window_Equip;
 
 /**
  * Scene Status class.
@@ -39,6 +40,7 @@ public:
 	 * @param actor_index party index of the actor.
 	 */
 	Scene_Status(int actor_index);
+	~Scene_Status();
 
 	void Start();
 	void Update();

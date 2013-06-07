@@ -49,8 +49,12 @@
 #include "scene_load.h"
 #include "scene_map.h"
 #include "window_command.h"
+#include "data.h"
+#include "sprite.h"
+#include "rpg_save.h"
 
 Scene_Title::Scene_Title() : Scene("Title") {}
+Scene_Title::~Scene_Title() {}
 
 void Scene_Title::Start() {
 	LoadDatabase();

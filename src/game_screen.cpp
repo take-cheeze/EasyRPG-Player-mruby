@@ -22,13 +22,21 @@
 #include "options.h"
 #include "main_data.h"
 #include "game_screen.h"
+#include "game_picture.h"
+#include "game_character.h"
+#include "battle_animation.h"
+#include "plane.h"
+#include "rpg_save.h"
 #include "bitmap.h"
+#include "sprite.h"
 
 Game_Screen::Game_Screen() :
 	data(Main_Data::game_data.screen)
 {
 	Reset();
 }
+
+Game_Screen::~Game_Screen() {}
 
 void Game_Screen::Reset()
 {

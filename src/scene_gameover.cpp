@@ -23,8 +23,11 @@
 #include "graphics.h"
 #include "input.h"
 #include "scene_title.h"
+#include "sprite.h"
+#include "data.h"
 
 Scene_Gameover::Scene_Gameover() : Scene("Gameover") {}
+Scene_Gameover::~Scene_Gameover() {}
 
 void Scene_Gameover::Start() {
 	// Load Background Graphic

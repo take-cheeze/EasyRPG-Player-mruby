@@ -19,7 +19,7 @@
 #define _WINDOW_EQUIP_H_
 
 // Headers
-#include "window_help.h"
+#include <vector>
 #include "window_selectable.h"
 
 /**

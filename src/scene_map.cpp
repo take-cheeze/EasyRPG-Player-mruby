@@ -25,17 +25,24 @@
 #include "scene_save.h"
 #include "scene_battle.h"
 #include "main_data.h"
+
 #include "game_map.h"
 #include "game_message.h"
 #include "game_party.h"
 #include "game_player.h"
 #include "game_system.h"
 #include "game_temp.h"
+#include "game_interpreter.h"
+#include "game_screen.h"
+
+#include "rpg_save.h"
 #include "rpg_system.h"
 #include "player.h"
 #include "graphics.h"
 #include "audio.h"
 #include "input.h"
+#include "spriteset_map.h"
+#include "window_message.h"
 
 Scene_Map::Scene_Map() : Scene("Map") {}
 

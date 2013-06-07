@@ -16,17 +16,20 @@
  */
 
 // Headers
+#include "game_event.h"
 #include "game_player.h"
 #include "game_actor.h"
 #include "game_map.h"
 #include "game_message.h"
 #include "game_party.h"
 #include "game_system.h"
+#include "game_interpreter.h"
 #include "input.h"
 #include "main_data.h"
 #include "player.h"
 #include "graphics.h"
 #include "bitmap.h"
+#include "rpg_event.h"
 #include <algorithm>
 
 // Constructor

@@ -17,6 +17,7 @@
 
 // Headers
 #include "scene_equip.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "game_party.h"
 #include "game_system.h"
@@ -24,11 +25,18 @@
 #include "input.h"
 #include "player.h"
 #include "scene_menu.h"
+#include "window_help.h"
+#include "window_equip.h"
+#include "window_equipstatus.h"
+#include "window_equipitem.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Scene_Equip::Scene_Equip(int actor_index, int equip_index) :
 		Scene("Equip"),
 		actor_index(actor_index),
 		equip_index(equip_index) {}
+Scene_Equip::~Scene_Equip() {}
 
 void Scene_Equip::Start() {
 	Game_Actor* actor = Game_Party::GetActors()[actor_index];

@@ -20,10 +20,9 @@
 
 // Headers
 #include <vector>
+#include <boost/scoped_ptr.hpp>
 #include "game_character.h"
 #include "rpg_event.h"
-#include "game_interpreter.h"
-#include <boost/scoped_ptr.hpp>
 
 /**
  * Game_Event class.

@@ -20,8 +20,12 @@
 
 // Headers
 #include <string>
-#include "sprite.h"
-#include "battle_battler.h"
+
+class Sprite;
+namespace Battle {
+struct Ally;
+struct Enemy;
+}
 
 /**
  * Battle interface class.
@@ -40,4 +44,3 @@ public:
 };
 
 #endif
-

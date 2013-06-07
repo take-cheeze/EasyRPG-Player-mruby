@@ -20,10 +20,11 @@
 
 // Headers
 #include "scene.h"
-#include "window_command.h"
-#include "window_gold.h"
-#include "window_menustatus.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Command;
+class Window_Gold;
+class Window_MenuStatus;
 
 /**
  * Scene Menu class.
@@ -36,6 +37,7 @@ public:
 	 * @param menu_index selected index in the menu.
 	 */
 	Scene_Menu(int menu_index = 0);
+	~Scene_Menu();
 
 	void Start();
 	void Continue();

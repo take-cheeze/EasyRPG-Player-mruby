@@ -154,7 +154,7 @@ public:
 	 *
 	 * @param tone tone effect.
 	 */
-	void SetToneEffect(Tone tone);
+	void SetToneEffect(Tone const& tone);
 
 	/**
 	 * Sets flash effect.

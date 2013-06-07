@@ -18,12 +18,11 @@
 #ifndef _HSLRGB_H_
 #define _HSLRGB_H_
 
-// Headers
-#include "color.h"
+class Color;
 
 /**
  * Ajusts RGB with HSL.
  */
-Color RGBAdjustHSL(Color col, double h, double s, double l);
+Color RGBAdjustHSL(Color const& col, double h, double s, double l);
 
 #endif

@@ -20,9 +20,10 @@
 
 // Headers
 #include "scene.h"
-#include "sprite.h"
-#include "window_command.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Command;
+class Sprite;
 
 /**
  * Scene Title class.
@@ -33,6 +34,7 @@ public:
 	 * Constructor.
 	 */
 	Scene_Title();
+	~Scene_Title();
 
 	void Start();
 	void Continue();

@@ -20,10 +20,11 @@
 
 // Headers
 #include "scene.h"
-#include "window_name.h"
-#include "window_face.h"
-#include "window_keyboard.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Keyboard;
+class Window_Name;
+class Window_Face;
 
 /**
  * Scene_Item class.
@@ -35,6 +36,7 @@ public:
 	 * Constructor.
 	 */
 	Scene_Name();
+	~Scene_Name();
 
 	void Start();
 	void Update();

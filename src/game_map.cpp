@@ -19,17 +19,22 @@
 #include <cassert>
 
 #include "system.h"
+#include "game_commonevent.h"
+#include "game_event.h"
 #include "game_map.h"
 #include "game_interpreter_map.h"
 #include "game_temp.h"
 #include "game_player.h"
+#include "game_screen.h"
+#include "game_system.h"
 #include "lmu_reader.h"
 #include "reader_lcf.h"
 #include "map_data.h"
 #include "main_data.h"
 #include "output.h"
-#include "game_system.h"
 #include "filefinder.h"
+#include "rpg_save.h"
+#include "data.h"
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/format.hpp>

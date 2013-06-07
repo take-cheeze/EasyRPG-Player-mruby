@@ -19,13 +19,19 @@
 #define _BATTLE_BATTLER_H_
 
 // Headers
+#include <string>
 #include "system.h"
-#include "rpg_troopmember.h"
-#include "rpg_actor.h"
-#include "rpg_enemy.h"
-#include "game_actor.h"
-#include "game_enemy.h"
-#include "sprite.h"
+
+class Game_Battler;
+class Game_Actor;
+class Game_Enemy;
+class Sprite;
+
+namespace RPG {
+class Actor;
+class TroopMember;
+class Enemy;
+}
 
 namespace Battle {
 
@@ -86,8 +92,8 @@ struct Ally : public Battler {
 
 	Ally(Game_Actor* game_actor, int id);
 
-	Game_Battler* GetActor() { return game_actor; }
-	const Game_Battler* GetActor() const { return game_actor; }
+	Game_Battler* GetActor();
+	const Game_Battler* GetActor() const;
 	void CreateSprite();
 	void SetAnimState(int state);
 	void UpdateAnim(int cycle);
@@ -108,8 +114,8 @@ struct Ally : public Battler {
 struct Enemy : public Battler {
 	Enemy(const RPG::TroopMember* member, int id);
 
-	Game_Battler* GetActor() { return game_enemy; }
-	const Game_Battler* GetActor() const { return game_enemy; }
+	Game_Battler* GetActor();
+	const Game_Battler* GetActor() const;
 	void CreateSprite();
 	void Transform(int enemy_id);
 	bool CanAct() const;

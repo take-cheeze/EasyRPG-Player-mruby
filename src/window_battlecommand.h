@@ -22,8 +22,6 @@
 #include <string>
 #include <vector>
 #include "window_base.h"
-#include "window_help.h"
-#include "rpg_battlecommand.h"
 
 /**
  * Window_BattleCommand class.

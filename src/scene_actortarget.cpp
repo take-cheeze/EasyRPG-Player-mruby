@@ -22,6 +22,12 @@
 #include "main_data.h"
 #include "scene_item.h"
 #include "scene_skill.h"
+#include "window_help.h"
+#include "window_actortarget.h"
+#include "window_targetstatus.h"
+#include "data.h"
+#include "rpg_skill.h"
+#include "rpg_save.h"
 
 Scene_ActorTarget::Scene_ActorTarget(int item_id, int item_index) :
 		Scene("ActorTarget"),
@@ -32,6 +38,8 @@ Scene_ActorTarget::Scene_ActorTarget(
 		Scene("ActorTarget"),
 		id(skill_id), index(skill_index),
 		actor_index(actor_index), use_item(false) {}
+
+Scene_ActorTarget::~Scene_ActorTarget() {}
 
 void Scene_ActorTarget::Start() {
 	// Create the windows

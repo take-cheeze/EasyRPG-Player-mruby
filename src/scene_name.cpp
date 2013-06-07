@@ -17,15 +17,22 @@
 
 // Headers
 #include "scene_name.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "game_system.h"
 #include "game_temp.h"
 #include "input.h"
+#include "window_name.h"
+#include "window_face.h"
+#include "window_keyboard.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 #include <ciso646>
 #include <cassert>
 
 Scene_Name::Scene_Name() : Scene("Name") {}
+Scene_Name::~Scene_Name() {}
 
 void Scene_Name::Start() {
 	// Create the windows

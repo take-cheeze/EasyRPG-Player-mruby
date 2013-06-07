@@ -19,6 +19,7 @@
 #include "window_battleskill.h"
 #include "game_actors.h"
 #include "game_actor.h"
+#include "data.h"
 
 Window_BattleSkill::Window_BattleSkill(int ix, int iy, int iwidth, int iheight) :
 	Window_Skill(ix, iy, iwidth, iheight) {
@@ -42,4 +43,3 @@ bool Window_BattleSkill::CheckEnable(int skill_id) {
 		? skill.occasion_battle
 		: true;
 }
-

@@ -16,7 +16,10 @@
  */
 
 // Headers
+#include "battle_animation.h"
 #include "battle_actions.h"
+#include "scene_battle.h"
+#include "sprite.h"
 
 bool Battle::WaitAction::operator()() {
 	duration--;

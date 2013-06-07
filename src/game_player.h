@@ -19,9 +19,9 @@
 #define _GAME_PLAYER_H_
 
 // Headers
-#include "rpg_music.h"
-#include "game_character.h"
 #include <vector>
+#include "game_character.h"
+#include "rpg_music.h"
 
 /**
  * Game Player class

@@ -20,8 +20,9 @@
 
 // Headers
 #include "scene.h"
-#include "window_command.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Command;
 
 /**
  * Scene Order class.
@@ -33,6 +34,7 @@ public:
 	 * Constructor.
 	 */
 	Scene_Order();
+	~Scene_Order();
 
 	void Start();
 	void Terminate();

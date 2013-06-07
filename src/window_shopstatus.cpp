@@ -22,6 +22,7 @@
 #include "window_shopstatus.h"
 #include "font.h"
 #include "bitmap.h"
+#include "data.h"
 
 Window_ShopStatus::Window_ShopStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight), item_id(0) {

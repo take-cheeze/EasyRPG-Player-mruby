@@ -20,6 +20,7 @@
 #include <iostream>
 #include <sstream>
 #include "audio.h"
+#include "game_actor.h"
 #include "game_map.h"
 #include "game_event.h"
 #include "game_player.h"
@@ -32,6 +33,7 @@
 #include "game_message.h"
 #include "game_picture.h"
 #include "game_targets.h"
+#include "game_screen.h"
 #include "spriteset_map.h"
 #include "sprite_character.h"
 #include "scene_map.h"
@@ -42,6 +44,9 @@
 #include "output.h"
 #include "player.h"
 #include "game_interpreter_map.h"
+#include "command_codes.h"
+#include "rpg_sound.h"
+#include "data.h"
 
 Game_Interpreter_Map::Game_Interpreter_Map(int depth, bool main_flag) :
 	Game_Interpreter(depth, main_flag) {

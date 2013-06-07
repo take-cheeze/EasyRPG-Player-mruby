@@ -22,6 +22,7 @@
 #include "game_map.h"
 #include "game_player.h"
 #include "game_vehicle.h"
+#include "rpg_event.h"
 
 Game_Vehicle::Game_Vehicle(Type _type) {
 	type = _type;

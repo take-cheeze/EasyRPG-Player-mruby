@@ -21,6 +21,7 @@
 #include "game_party.h"
 #include "font.h"
 #include "bitmap.h"
+#include "data.h"
 
 Window_TargetStatus::Window_TargetStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight), id(-1), use_item(false) {

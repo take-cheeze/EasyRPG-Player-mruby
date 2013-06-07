@@ -20,10 +20,12 @@
 
 // Headers
 #include "system.h"
-#include "rpg_animation.h"
 #include "drawable.h"
 
 class ZObj;
+namespace RPG {
+class Animation;
+}
 
 class BattleAnimation : public Drawable {
 public:

@@ -21,12 +21,16 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "game_character.h"
-#include "game_actor.h"
-#include "rpg_eventcommand.h"
-#include "system.h"
-#include "command_codes.h"
 #include <boost/scoped_ptr.hpp>
+#include "system.h"
+
+class Game_Character;
+class Game_Actor;
+
+namespace RPG {
+class EventCommand;
+class MoveRoute;
+}
 
 class Game_Event;
 class Game_CommonEvent;

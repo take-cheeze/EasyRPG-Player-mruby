@@ -21,8 +21,11 @@
 // Headers
 #include <string>
 #include <vector>
-#include "rpg_save.h"
 #include "game_battler.h"
+
+namespace RPG {
+class SaveActor;
+}
 
 /**
  * Game_Actor class.
@@ -253,7 +256,7 @@ public:
 	/**
 	 * Sets exp of actor.
 	 * The value is adjusted to the boundary 0 up 999999.
-	 * Other actor attributes are not altered. Use ChangeExp to do a proper 
+	 * Other actor attributes are not altered. Use ChangeExp to do a proper
 	 * experience change.
 	 *
 	 * @param _exp exp to set.
@@ -281,7 +284,7 @@ public:
 	/**
 	 * Sets level of actor.
 	 * The value is adjusted to the boundary 1 up to max level.
-	 * Other actor attributes are not altered. Use ChangeLevel to do a proper 
+	 * Other actor attributes are not altered. Use ChangeLevel to do a proper
 	 * level change.
 	 *
 	 * @param _level level to set.

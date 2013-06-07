@@ -22,6 +22,8 @@
 #include "game_battler.h"
 #include "game_actor.h"
 #include "main_data.h"
+#include "data.h"
+#include "rpg_state.h"
 
 bool Game_Battler::HasState(int state_id) const {
 	return (std::find(GetStates().begin(), GetStates().end(), state_id) != GetStates().end());

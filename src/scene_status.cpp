@@ -19,12 +19,21 @@
 #include <string>
 #include <vector>
 #include "scene_status.h"
+#include "game_actor.h"
 #include "game_party.h"
 #include "game_system.h"
 #include "input.h"
+#include "window_actorinfo.h"
+#include "window_actorstatus.h"
+#include "window_gold.h"
+#include "window_equipstatus.h"
+#include "window_equip.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Scene_Status::Scene_Status(int actor_index) :
 		Scene("Status"), actor_index(actor_index) {}
+Scene_Status::~Scene_Status() {}
 
 void Scene_Status::Start() {
 	int actor = Game_Party::GetActors()[actor_index]->GetId();

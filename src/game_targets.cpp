@@ -19,6 +19,7 @@
 #include <vector>
 #include "main_data.h"
 #include "game_targets.h"
+#include "rpg_save.h"
 
 static std::vector<RPG::SaveTarget>& data = Main_Data::game_data.targets;
 
@@ -74,4 +75,3 @@ RPG::SaveTarget* Game_Targets::GetEscapeTarget() {
 	std::vector<RPG::SaveTarget>::iterator target = FindTarget(0, false);
 	return target == data.end() ? NULL : &*target;
 }
-

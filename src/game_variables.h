@@ -19,7 +19,6 @@
 #define _GAME_VARIABLES_H_
 
 // Headers
-#include "main_data.h"
 #include "output.h"
 #include <vector>
 #include <boost/format.hpp>

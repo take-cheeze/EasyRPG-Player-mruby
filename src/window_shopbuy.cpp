@@ -25,6 +25,8 @@
 #include "game_party.h"
 #include "font.h"
 #include "bitmap.h"
+#include "data.h"
+#include "window_help.h"
 
 Window_ShopBuy::Window_ShopBuy(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight) {

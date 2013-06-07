@@ -20,11 +20,11 @@
 
 // Headers
 #include "system.h"
-#include "color.h"
 #include "drawable.h"
-#include "tone.h"
 
 class ZObj;
+class Color;
+class Tone;
 
 /**
  * Plane class.

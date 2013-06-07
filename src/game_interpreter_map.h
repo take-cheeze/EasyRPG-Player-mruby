@@ -22,13 +22,12 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "game_character.h"
-#include "rpg_eventcommand.h"
 #include "system.h"
 #include "game_interpreter.h"
 
-class Game_Event;
-class Game_CommonEvent;
+namespace RPG {
+class MoveCommand;
+}
 
 /**
  * Game_Interpreter_Map class
@@ -125,4 +124,3 @@ private:
 };
 
 #endif
-

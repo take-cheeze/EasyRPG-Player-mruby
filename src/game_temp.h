@@ -20,9 +20,12 @@
 
 // Headers
 #include <string>
-#include "game_battler.h"
 #include "graphics.h"
-#include "rpg_music.h"
+
+class Game_Battler;
+namespace RPG {
+class Music;
+}
 
 /**
  * Game Temp static class.

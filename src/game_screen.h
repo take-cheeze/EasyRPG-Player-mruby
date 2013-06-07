@@ -19,17 +19,21 @@
 #define _GAME_SCREEN_
 
 #include <vector>
-#include "system.h"
-#include "plane.h"
-#include "game_picture.h"
-#include "game_character.h"
-#include "battle_animation.h"
 #include <boost/scoped_ptr.hpp>
+#include "system.h"
+
+class BattleAnimation;
+class Picture;
+class Plane;
+namespace RPG {
+class SaveScreen;
+}
 
 class Game_Screen {
 
 public:
 	Game_Screen();
+	~Game_Screen();
 
 	Picture* GetPicture(int id);
 

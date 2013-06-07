@@ -19,11 +19,12 @@
 #define _MAIN_DATA_H_
 
 // Headers
-#include "data.h"
-#include "rpg_save.h"
-#include "game_screen.h"
 #include <string>
 #include <boost/scoped_ptr.hpp>
+
+namespace RPG {
+class Save;
+}
 
 /**
  * Main Data namespace.

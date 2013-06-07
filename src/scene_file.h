@@ -19,11 +19,12 @@
 #define _SCENE_FILE_H_
 
 // Headers
-#include <vector>
 #include "scene.h"
-#include "window_help.h"
-#include "window_savefile.h"
+#include <vector>
 #include <boost/scoped_ptr.hpp>
+
+class Window_Help;
+class Window_SaveFile;
 
 /**
  * Base class used by the save and load scenes.
@@ -37,6 +38,7 @@ public:
 	 * @param message title message.
 	 */
 	Scene_File(char const* t, std::string const& message);
+	~Scene_File();
 
 	void Start();
 	void Update();

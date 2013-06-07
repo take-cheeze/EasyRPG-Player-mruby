@@ -21,16 +21,17 @@
 
 // Headers
 #include "scene.h"
-#include "window_base.h"
-#include "window_help.h"
-#include "window_gold.h"
-#include "window_shopparty.h"
-#include "window_shopbuy.h"
-#include "window_shopnumber.h"
-#include "window_shopstatus.h"
-#include "window_shopsell.h"
-#include "window_shop.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Shop;
+class Window_ShopBuy;
+class Window_ShopParty;
+class Window_ShopStatus;
+class Window_ShopSell;
+class Window_ShopNumber;
+class Window_Base;
+class Window_Gold;
+class Window_Help;
 
 /**
  * Scene Shop class.
@@ -43,6 +44,7 @@ public:
 	 * Constructor.
 	 */
 	Scene_Shop();
+	~Scene_Shop();
 
 	void Start();
 

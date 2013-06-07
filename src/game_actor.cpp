@@ -23,6 +23,8 @@
 #include "game_party.h"
 #include "main_data.h"
 #include "player.h"
+#include "rpg_save.h"
+#include "data.h"
 
 Game_Actor::Game_Actor(int actor_id) :
 	data(Main_Data::game_data.actors[actor_id - 1]) {

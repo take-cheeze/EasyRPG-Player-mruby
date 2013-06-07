@@ -21,9 +21,12 @@
 // Headers
 #include <string>
 #include <vector>
-#include "game_interpreter.h"
-#include "rpg_commonevent.h"
 #include <boost/scoped_ptr.hpp>
+
+class Game_Interpreter;
+namespace RPG {
+class EventCommand;
+}
 
 /**
  * Game_CommonEvent class.

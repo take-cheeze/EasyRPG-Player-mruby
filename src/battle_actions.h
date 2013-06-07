@@ -19,11 +19,16 @@
 #define _BATTLE_ACTIONS_H_
 
 // Headers
-#include "rpg_animation.h"
-#include "battle_battler.h"
-#include "battle_animation.h"
-#include "scene_battle.h"
 #include <boost/scoped_ptr.hpp>
+
+class BattleAnimation;
+class Sprite;
+namespace RPG {
+class Animation;
+}
+namespace Battle {
+struct Ally;
+}
 
 namespace Battle {
 

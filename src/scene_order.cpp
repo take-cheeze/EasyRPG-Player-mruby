@@ -20,14 +20,20 @@
 #include <string>
 #include <vector>
 #include "scene_order.h"
+#include "game_actor.h"
 #include "game_party.h"
 #include "game_player.h"
 #include "game_system.h"
 #include "input.h"
 #include "scene_map.h"
+#include "window_command.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Scene_Order::Scene_Order() :
 		Scene("Order"), actor_counter(0) {}
+
+Scene_Order::~Scene_Order() {}
 
 void Scene_Order::Start() {
 	actors.resize(Game_Party::GetActors().size());

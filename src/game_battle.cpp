@@ -18,7 +18,11 @@
 // Headers
 #include <deque>
 #include <algorithm>
+#include <boost/scoped_ptr.hpp>
 #include "data.h"
+#include "game_actor.h"
+#include "game_battle.h"
+#include "game_enemy.h"
 #include "game_party.h"
 #include "game_temp.h"
 #include "game_switches.h"
@@ -26,8 +30,7 @@
 #include "game_interpreter_battle.h"
 #include "battle_animation.h"
 #include "battle_battler.h"
-#include "game_battle.h"
-#include <boost/scoped_ptr.hpp>
+#include "battle_interface.h"
 
 namespace Game_Battle {
 	Battle_Interface* scene;
@@ -52,6 +55,8 @@ namespace Game_Battle {
 	const RPG::TroopPage* script_page;
 	boost::scoped_ptr<Game_Interpreter> interpreter;
 }
+
+int const Game_Battle::gauge_full = Battle::Battler::gauge_full;
 
 void Game_Battle::Init(Battle_Interface* _scene) {
 	scene = _scene;

@@ -25,6 +25,10 @@
 #include "game_battle.h"
 #include "window_battlestatus.h"
 #include "bitmap.h"
+#include "battle_battler.h"
+#include "data.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Window_BattleStatus::Window_BattleStatus() :
 	Window_Base(0, 172, 244, 68) {

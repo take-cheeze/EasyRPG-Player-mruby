@@ -20,7 +20,8 @@
 
 // Headers
 #include "window_base.h"
-#include "window_help.h"
+
+class Window_Help;
 
 /**
  * Window Selectable class.

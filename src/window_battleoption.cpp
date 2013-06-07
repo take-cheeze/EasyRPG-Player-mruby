@@ -24,6 +24,8 @@
 #include "window_battleoption.h"
 #include "bitmap.h"
 #include "font.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Window_BattleOption::Window_BattleOption(int x, int y, int width, int height) :
 	Window_Base(x, y, width, height) {

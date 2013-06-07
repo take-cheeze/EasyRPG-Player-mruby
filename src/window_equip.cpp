@@ -17,8 +17,11 @@
 
 // Headers
 #include "window_equip.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "bitmap.h"
+#include "data.h"
+#include "window_help.h"
 
 Window_Equip::Window_Equip(int ix, int iy, int iwidth, int iheight, int actor_id) :
 	Window_Selectable(ix, iy, iwidth, iheight),

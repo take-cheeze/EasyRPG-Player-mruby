@@ -29,6 +29,7 @@
 #include "graphics.h"
 #include "filefinder.h"
 #include "cache.h"
+#include "game_actor.h"
 #include "game_system.h"
 #include "game_temp.h"
 #include "game_party.h"
@@ -41,6 +42,18 @@
 #include "scene_battle.h"
 #include "bitmap.h"
 #include "font.h"
+#include "sprite.h"
+#include "data.h"
+#include "rpg_save.h"
+#include "window_help.h"
+#include "window_battleoption.h"
+#include "window_battlestatus.h"
+#include "window_battlecommand.h"
+#include "window_battleitem.h"
+#include "window_battleskill.h"
+#include "background.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Scene_Battle::Scene_Battle() : Scene("Battle") {}
 

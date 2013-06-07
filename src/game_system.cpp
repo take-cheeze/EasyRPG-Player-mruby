@@ -20,6 +20,8 @@
 #include "audio.h"
 #include "graphics.h"
 #include "main_data.h"
+#include "rpg_save.h"
+#include "rpg_music.h"
 
 static RPG::SaveSystem& data = Main_Data::game_data.system;
 

@@ -21,6 +21,7 @@
 #include "window_base.h"
 #include "cache.h"
 #include "data.h"
+#include "game_actor.h"
 #include "game_system.h"
 #include "font.h"
 #include "bitmap.h"

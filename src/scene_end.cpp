@@ -24,6 +24,11 @@
 #include "scene_menu.h"
 #include "scene_title.h"
 #include "font.h"
+#include "main_data.h"
+#include "data.h"
+#include "rpg_save.h"
+#include "window_command.h"
+#include "window_help.h"
 
 Scene_End::Scene_End() : Scene("End") {}
 

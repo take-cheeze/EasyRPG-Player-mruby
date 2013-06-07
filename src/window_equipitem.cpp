@@ -17,8 +17,10 @@
 
 // Headers
 #include "window_equipitem.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "game_party.h"
+#include "data.h"
 
 Window_EquipItem::Window_EquipItem(int actor_id, int equip_type) :
 	Window_Item(0, 128, 320, 112),

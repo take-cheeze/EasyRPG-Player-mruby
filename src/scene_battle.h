@@ -20,29 +20,28 @@
 
 // Headers
 #include <deque>
-#include "rpg_troopmember.h"
-#include "rpg_actor.h"
-#include "rpg_enemy.h"
-#include "game_actor.h"
-#include "game_enemy.h"
-#include "scene.h"
-#include "background.h"
-#include "drawable.h"
-#include "window_help.h"
-#include "window_battleitem.h"
-#include "window_battleskill.h"
-#include "window_battleoption.h"
-#include "window_battlecommand.h"
-#include "window_battlestatus.h"
-#include "battle_battler.h"
-#include "battle_animation.h"
-#include "battle_interface.h"
 #include <boost/scoped_ptr.hpp>
+#include "battle_interface.h"
+#include "scene.h"
 
 namespace Battle {
 class Action;
 class SpriteAction;
+struct Battler;
 }
+namespace RPG {
+class EnemyAction;
+class Item;
+class Skill;
+}
+class Window_Help;
+class Window_BattleOption;
+class Window_BattleStatus;
+class Window_BattleCommand;
+class Window_BattleItem;
+class Window_BattleSkill;
+class Background;
+class BattleAnimation;
 
 /**
  * Scene_Battle class.

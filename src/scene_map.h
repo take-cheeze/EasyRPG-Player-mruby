@@ -20,9 +20,10 @@
 
 // Headers
 #include "scene.h"
-#include "spriteset_map.h"
-#include "window_message.h"
 #include <boost/scoped_ptr.hpp>
+
+class Spriteset_Map;
+class Window_Message;
 
 /**
  * Scene Map class.

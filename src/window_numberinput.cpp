@@ -20,6 +20,7 @@
 #include "game_system.h"
 #include "input.h"
 #include "main_data.h"
+#include "rpg_save.h"
 #include "font.h"
 #include "bitmap.h"
 

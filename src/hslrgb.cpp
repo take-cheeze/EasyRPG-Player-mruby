@@ -17,6 +17,7 @@
 
 // Headers
 #include "hslrgb.h"
+#include "color.h"
 
 struct ColorHSL {
 	double h;
@@ -27,7 +28,7 @@ struct ColorHSL {
 /**
  ** RGB to HSL.
  */
-ColorHSL RGB2HSL(Color col) {
+ColorHSL RGB2HSL(Color const& col) {
 	ColorHSL ncol;
 	double vmin, vmax, delta;
 	double r, g, b;

@@ -20,11 +20,16 @@
 #include "rpg_item.h"
 #include "rpg_skill.h"
 #include "rpg_enemyaction.h"
+#include "game_actor.h"
+#include "game_enemy.h"
 #include "game_system.h"
 #include "game_party.h"
 #include "game_switches.h"
 #include "game_battle.h"
 #include "font.h"
+#include "data.h"
+#include "battle_battler.h"
+#include "battle_interface.h"
 
 void Game_Battle::AttackEnemy(Battle::Ally& ally, Battle::Enemy& enemy) {
 	const RPG::Item& weapon = Data::items[ally.game_actor->GetWeaponId() - 1];

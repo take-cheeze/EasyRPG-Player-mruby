@@ -20,6 +20,8 @@
 #include "game_system.h"
 #include "input.h"
 #include "bitmap.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 // Constructor
 Window_Selectable::Window_Selectable(int ix, int iy, int iwidth, int iheight) :

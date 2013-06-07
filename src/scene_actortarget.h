@@ -20,10 +20,11 @@
 
 // Headers
 #include "scene.h"
-#include "window_actortarget.h"
-#include "window_help.h"
-#include "window_targetstatus.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_ActorTarget;
+class Window_Help;
+class Window_TargetStatus;
 
 /**
  * Scene ActorTarget class.
@@ -39,6 +40,7 @@ public:
 	 * @param item_index index of item in Scene_Item.
 	 */
 	Scene_ActorTarget(int item_id, int item_index);
+	~Scene_ActorTarget();
 
 	/**
 	 * Constructor.

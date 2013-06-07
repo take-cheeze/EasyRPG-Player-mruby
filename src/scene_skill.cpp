@@ -17,6 +17,7 @@
 
 // Headers
 #include "scene_skill.h"
+#include "game_actor.h"
 #include "game_map.h"
 #include "game_party.h"
 #include "game_switches.h"
@@ -25,10 +26,18 @@
 #include "scene_actortarget.h"
 #include "scene_map.h"
 #include "scene_menu.h"
+#include "window_help.h"
+#include "window_skillstatus.h"
+#include "window_skill.h"
+#include "data.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Scene_Skill::Scene_Skill(int actor_index, int skill_index) :
 		Scene("Skill"),
 		actor_index(actor_index), skill_index(skill_index) {}
+
+Scene_Skill::~Scene_Skill() {}
 
 void Scene_Skill::Start() {
 	// Create the windows

@@ -23,10 +23,13 @@
 #include "input.h"
 #include "player.h"
 #include "game_system.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "window_battlecommand.h"
 #include "bitmap.h"
 #include "font.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Window_BattleCommand::Window_BattleCommand(int x, int y, int width, int height) :
 	Window_Base(x, y, width, height) {

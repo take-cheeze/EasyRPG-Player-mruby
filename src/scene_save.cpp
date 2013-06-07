@@ -24,6 +24,8 @@
 #include "lsd_reader.h"
 #include "scene_save.h"
 #include "scene_file.h"
+#include "main_data.h"
+#include "rpg_save.h"
 
 Scene_Save::Scene_Save() :
 		Scene_File("Save", Data::terms.save_game_message) {}

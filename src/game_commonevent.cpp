@@ -22,6 +22,8 @@
 #include "game_interpreter_map.h"
 #include "game_interpreter_battle.h"
 #include "main_data.h"
+#include "data.h"
+#include "rpg_event.h"
 
 #include <ciso646>
 

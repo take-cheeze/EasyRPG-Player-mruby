@@ -20,6 +20,7 @@
 
 // Headers
 #include <string>
+#include <vector>
 #include "window_base.h"
 
 /**

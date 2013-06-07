@@ -25,9 +25,16 @@
 #include "scene_actortarget.h"
 #include "scene_map.h"
 #include "scene_menu.h"
+#include "window_help.h"
+#include "window_item.h"
+#include "data.h"
+#include "main_data.h"
+#include "rpg_save.h"
+#include "rpg_item.h"
 
 Scene_Item::Scene_Item(int item_index) :
 		Scene("Item"), item_index(item_index) {}
+Scene_Item::~Scene_Item() {}
 
 void Scene_Item::Start() {
 	// Create the windows

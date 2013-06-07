@@ -22,8 +22,22 @@
 #include "input.h"
 #include "scene_shop.h"
 #include "output.h"
+#include "window_shop.h"
+#include "window_help.h"
+#include "window_gold.h"
+#include "window_base.h"
+#include "window_shopbuy.h"
+#include "window_shopparty.h"
+#include "window_shopsell.h"
+#include "window_shopstatus.h"
+#include "window_shopnumber.h"
+#include "main_data.h"
+#include "data.h"
+#include "rpg_save.h"
+#include "rpg_item.h"
 
 Scene_Shop::Scene_Shop() : Scene("Shop") {}
+Scene_Shop::~Scene_Shop() {}
 
 void Scene_Shop::Start() {
 	shop_window.reset(new Window_Shop(0, 160, 320, 80));

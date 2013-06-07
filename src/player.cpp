@@ -33,6 +33,7 @@
 #include "utils.h"
 #include "baseui.h"
 #include "font.h"
+#include "sprite.h"
 
 #include <algorithm>
 #include <set>

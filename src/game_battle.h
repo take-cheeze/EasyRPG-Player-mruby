@@ -15,10 +15,19 @@
  * along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Headers
-#include "rpg_troop.h"
-#include "battle_battler.h"
-#include "battle_interface.h"
+class Battle_Interface;
+namespace Battle {
+struct Ally;
+struct Enemy;
+struct Battler;
+}
+namespace RPG {
+class Troop;
+class TroopPageCondition;
+class EnemyAction;
+class Item;
+class Skill;
+}
 
 namespace Game_Battle {
 	extern const RPG::Troop* troop;
@@ -31,7 +40,7 @@ namespace Game_Battle {
 	extern std::string background_name;
 	extern const RPG::EnemyAction* enemy_action;
 
-	static const int gauge_full = Battle::Battler::gauge_full;
+	extern const int gauge_full;
 	static const int turn_length = 333; // frames
 
 	void Init(Battle_Interface* scene);
@@ -121,4 +130,3 @@ namespace Game_Battle {
 	void EnemySkill(Battle::Enemy& enemy, const RPG::Skill& skill);
 	const RPG::EnemyAction* ChooseEnemyAction(Battle::Enemy& enemy);
 }
-

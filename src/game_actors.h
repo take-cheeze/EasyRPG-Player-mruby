@@ -18,8 +18,7 @@
 #ifndef _GAME_ACTORS_H_
 #define _GAME_ACTORS_H_
 
-// Headers
-#include "game_actor.h"
+class Game_Actor;
 
 /**
  * Game_Actors namespace.

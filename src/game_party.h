@@ -21,8 +21,8 @@
 // Headers
 #include <vector>
 #include <map>
-#include "game_actor.h"
-#include "main_data.h"
+
+class Game_Actor;
 
 /**
  * Game_Party class.

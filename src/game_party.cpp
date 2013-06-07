@@ -20,11 +20,15 @@
 #include <boost/format.hpp>
 #include "system.h"
 #include "game_party.h"
+#include "game_actor.h"
 #include "game_actors.h"
 #include "game_map.h"
 #include "game_player.h"
 #include "game_battle.h"
 #include "output.h"
+#include "rpg_save.h"
+#include "data.h"
+#include "main_data.h"
 
 static RPG::SaveInventory& data = Main_Data::game_data.inventory;
 

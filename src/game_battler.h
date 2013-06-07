@@ -21,10 +21,12 @@
 // Headers
 #include <string>
 #include <vector>
-#include "rpg_state.h"
 #include "system.h"
 
 class Game_Actor;
+namespace RPG {
+class State;
+}
 
 /**
  * Game_Battler class.

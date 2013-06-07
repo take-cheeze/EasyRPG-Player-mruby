@@ -19,9 +19,8 @@
 #define _GAME_VEHICLE_H_
 
 // Headers
-#include <string>
-#include "rpg_music.h"
 #include "game_character.h"
+#include "rpg_music.h"
 
 /**
  * Game_Vehicle class.

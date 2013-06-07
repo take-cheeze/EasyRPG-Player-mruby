@@ -29,6 +29,9 @@
 #include "game_variables.h"
 #include "game_switches.h"
 #include "font.h"
+#include "plane.h"
+#include "battle_animation.h"
+#include "rpg_save.h"
 
 // Global variables.
 

@@ -21,6 +21,7 @@
 #include "player.h"
 #include "game_battle.h"
 #include "window_battleitem.h"
+#include "data.h"
 
 Window_BattleItem::Window_BattleItem(int ix, int iy, int iwidth, int iheight) :
 	Window_Item(ix, iy, iwidth, iheight), actor_id(0) {}

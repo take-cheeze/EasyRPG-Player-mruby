@@ -17,11 +17,18 @@
 
 // Headers
 #include "battle_battler.h"
+#include "game_actor.h"
+#include "game_enemy.h"
 #include "game_switches.h"
 #include "game_variables.h"
 #include "game_battle.h"
 #include "game_temp.h"
 #include "game_interpreter_battle.h"
+#include "rpg_event.h"
+#include "rpg_commonevent.h"
+#include "command_codes.h"
+#include "data.h"
+#include "battle_interface.h"
 
 Game_Interpreter_Battle::Game_Interpreter_Battle(int depth, bool main_flag) :
 	Game_Interpreter(depth, main_flag) {

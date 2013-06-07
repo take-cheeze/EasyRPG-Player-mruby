@@ -20,12 +20,13 @@
 
 // Headers
 #include <vector>
-#include "scene.h"
-#include "window_equipitem.h"
-#include "window_equip.h"
-#include "window_equipstatus.h"
-#include "window_help.h"
 #include <boost/scoped_ptr.hpp>
+#include "scene.h"
+
+class Window_EquipItem;
+class Window_EquipStatus;
+class Window_Equip;
+class Window_Help;
 
 /**
  * Scene Equip class.
@@ -41,6 +42,7 @@ public:
 	 * @param equip_index selected equipment.
 	 */
 	Scene_Equip(int actor_index = 0, int equip_index = 0);
+	~Scene_Equip();
 
 	void Start();
 	void Update();

@@ -21,11 +21,17 @@
 // Headers
 #include <vector>
 #include <string>
+#include <map>
 #include "system.h"
-#include "game_commonevent.h"
-#include "game_event.h"
 #include "game_vehicle.h"
-#include "rpg_encounter.h"
+
+class Game_Event;
+class Game_CommonEvent;
+class Game_Character;
+namespace RPG {
+class Encounter;
+class Map;
+}
 
 typedef std::map<int, EASYRPG_SHARED_PTR<Game_Event> > tEventHash;
 typedef std::map<int, EASYRPG_SHARED_PTR<Game_CommonEvent> > tCommonEventHash;

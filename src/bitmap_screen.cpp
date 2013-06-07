@@ -190,7 +190,7 @@ void BitmapScreen::SetBushDepthEffect(int bush_depth) {
 	}
 }
 
-void BitmapScreen::SetToneEffect(Tone tone) {
+void BitmapScreen::SetToneEffect(Tone const& tone) {
 	if (tone_effect != tone) {
 		tone_effect = tone;
 		needs_refresh = true;

@@ -20,10 +20,11 @@
 
 // Headers
 #include "scene.h"
-#include "window_help.h"
-#include "window_skill.h"
-#include "window_skillstatus.h"
 #include <boost/scoped_ptr.hpp>
+
+class Window_Skill;
+class Window_SkillStatus;
+class Window_Help;
 
 /**
  * Scene_Skill class.
@@ -35,6 +36,7 @@ public:
 	 * Constructor.
 	 */
 	Scene_Skill(int actor_index, int skill_index = 0);
+	~Scene_Skill();
 
 	void Start();
 	void Update();

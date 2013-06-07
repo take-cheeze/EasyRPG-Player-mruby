@@ -20,8 +20,6 @@
 
 // Headers
 #include "baseui.h"
-#include "color.h"
-#include "rect.h"
 #include "system.h"
 
 #include <boost/scoped_ptr.hpp>
