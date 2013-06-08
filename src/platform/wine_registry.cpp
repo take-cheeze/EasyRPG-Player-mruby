@@ -96,8 +96,11 @@ struct parse_registry {
 			++line_number;
 			line += tmp;
 		} while(stream and not tmp.empty() and *tmp.rbegin() == '\\');
+
 		if(not line.empty()) { assert(*line.rbegin() != '\\'); }
+		line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 		i = line.begin(), end = line.end();
+
 		return stream;
 	}
 
@@ -215,7 +218,7 @@ struct parse_registry {
 		while(i < end and std::isspace(*i)) { ++i; }
 	}
 
-	parse_registry(std::string const& name)
+	parse_registry(std::string const& name, bool const is_wine_registry = true)
 			: line_number(0)
 			, stream(name.c_str(), std::ios_base::binary | std::ios_base::in)
 	{
@@ -224,10 +227,12 @@ struct parse_registry {
 			return;
 		}
 
-		getline();
-		if(line != "WINE REGISTRY Version 2") {
-			error(format("file signature error"));
-			return;
+		if(is_wine_registry) {
+			getline();
+			if(line != "WINE REGISTRY Version 2") {
+				error(format("file signature error"));
+				return;
+			}
 		}
 
 		section current_section;
@@ -266,9 +271,21 @@ struct parse_registry {
 				} break;
 				case '#': break; // skip
 				case ';': break; // comment line
+
 				default:
-					error(format("invalid line"));
-					return;
+					if(not is_wine_registry and std::isalpha(*i)) {
+						if(current_section_name.empty()) {
+							error(format("value without key"));
+							return;
+						}
+						std::string const val_name = parse_str<'='>();
+						current_section[val_name] =
+								std::string(i, static_cast<std::string const&>(line).end());
+						break;
+					} else {
+						error(format("invalid line"));
+						return;
+					}
 			}
 		}
 		current_section.swap(result[current_section_name]);
@@ -323,32 +340,50 @@ T const& get_value_with_type(HKEY hkey, std::string const& key, std::string cons
 	}
 	return boost::get<T const>(*v);
 }
+
+bool is_wine_path(std::string const& p) {
+	return (p.size() >= 3 and std::isupper(*p.begin()) and
+			std::string(p.c_str() + 1, 2) == ":\\");
+}
+
+std::string from_wine_path(std::string const& p) {
+	std::string ret;
+	char const drive = std::tolower(*p.begin());
+	switch(drive) {
+		default:
+			ret.assign(get_wine_prefix()).append("/drive_")
+					.append(&drive, 1).append(p.begin() + 2, p.end());
+			break;
+		case 'z':
+			ret.assign(p.begin() + 2, p.end());
+			break;
+	}
+	std::replace(ret.begin(), ret.end(), '\\', '/');
+
+	return ret;
+}
 }
 
 std::string Registry::ReadStrValue(HKEY hkey, std::string const& key, std::string const& val) {
 	std::string const ret = get_value_with_type<std::string>(hkey, key, val);
-	if(ret.size() < 3
-	   or not std::isupper(*ret.begin())
-	   or std::string(ret.begin() + 1, ret.begin() + 3) != ":\\")
-	{ return ret; }
+	if(not is_wine_path(ret)) { return ret; }
 
-	std::string path;
-	char const drive = std::tolower(*ret.begin());
-	switch(drive) {
-		default:
-			path.assign(get_wine_prefix()).append("/drive_")
-					.append(&drive, 1).append(ret.begin() + 2, ret.end());
-			break;
-		case 'Z': path.assign(ret.begin() + 2, ret.end()); break;
-	}
-	std::replace(path.begin(), path.end(), '\\', '/');
-
+	std::string const path = from_wine_path(ret);
 	Output().Debug(boost::format("Path registry %s, %s: \"%s\"") % key % val % path);
-
 	return path;
 }
 int Registry::ReadBinValue(HKEY hkey, std::string const& key, std::string const& val, unsigned char* out) {
 	binary_type const bin = get_value_with_type<binary_type>(hkey, key, val);
 	std::copy(bin.begin(), bin.end(), out);
 	return bin.size();
+}
+
+std::string Registry::ReadStrValue(
+	std::string const& file, std::string const& section, std::string const& key)
+{
+	if(not FileFinder().Exists(file)) { return std::string(); }
+
+	std::string const ret = boost::get<std::string>(
+		parse_registry(file, false).result[section][key]);
+	return is_wine_path(ret)? from_wine_path(ret) : ret;
 }

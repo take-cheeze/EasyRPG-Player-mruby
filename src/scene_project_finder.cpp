@@ -7,6 +7,7 @@
 #include "main_data.h"
 #include "scene_title.h"
 #include "player.h"
+#include "registry.h"
 
 #include <cstdlib>
 
@@ -70,6 +71,7 @@ struct Scene_ProjectFinder::Entry {
 
 	static bool no_children(EntryRef const& e) {
 		assert(e);
+		e->sprite();
 		return e->children_.empty();
 	}
 
@@ -284,7 +286,40 @@ Scene_ProjectFinder::Scene_ProjectFinder()
 	root_.push_back(EASYRPG_MAKE_SHARED<Entry>("root (/)", "/"));
 #endif
 
-	root_.resize(root_.end() - std::remove_if(root_.begin(), root_.end(), Entry::no_children));
+	if(boost::optional<std::string> const p = get_app_path("RPG2000T")) {
+		register_project_base_path(*p, "RPG2000T", "RPG2000");
+	}
+	if(boost::optional<std::string> const p = get_app_path("RPG2000")) {
+		register_project_base_path(*p, "RPG2000", "RPG2000");
+	}
+
+	root_.erase(std::remove_if(root_.begin(), root_.end(), Entry::no_children), root_.end());
+}
+
+void Scene_ProjectFinder::register_project_base_path(
+	std::string const& app_path, std::string const& ini, std::string const& section)
+{
+	assert(FileFinder().Exists(app_path));
+
+	std::string const base_path = Registry::ReadStrValue(
+		FileFinder().MakePath(app_path, ini + ".ini"), section, "ProjectBasePath");
+
+	if(not base_path.empty() and FileFinder().Exists(base_path)) {
+		std::ostringstream oss;
+		oss << "Project Base Path " << ini << " (" << base_path << ")";
+
+		root_.push_back(EASYRPG_MAKE_SHARED<Entry>(oss.str(), base_path));
+	}
+}
+
+boost::optional<std::string> Scene_ProjectFinder::get_app_path(std::string const& exec) const {
+	std::string const ret = Registry::ReadStrValue(
+		HKEY_LOCAL_MACHINE,
+		"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\" + exec + ".exe",
+		"Path");
+	return not ret.empty()
+			? boost::optional<std::string>(ret)
+			: boost::optional<std::string>();
 }
 
 void Scene_ProjectFinder::Update() {

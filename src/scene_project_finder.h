@@ -33,6 +33,10 @@ struct Scene_ProjectFinder : public Scene {
 	size_t font_size_;
 	FontRef font_;
 
+	boost::optional<std::string> get_app_path(std::string const& exec) const;
+	void register_project_base_path(
+		std::string const& app_path, std::string const& ini, std::string const& section);
+
   private:
 	void set_index(int idx);
 	void select_entry();

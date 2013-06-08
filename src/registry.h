@@ -20,9 +20,10 @@
 
 // Headers
 #include <string>
+
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
 #else
 enum HKEY {
 	HKEY_LOCAL_MACHINE,
@@ -37,12 +38,21 @@ namespace Registry {
 	/**
 	 * Reads string value.
 	 */
-	std::string ReadStrValue(HKEY hkey, std::string const& key, std::string const& val);
+	std::string ReadStrValue(HKEY hkey, std::string const& section, std::string const& key);
 
 	/**
 	 * Reads binary value.
 	 */
-	int ReadBinValue(HKEY hkey, std::string const& key, std::string const& val, unsigned char* bin);
+	int ReadBinValue(HKEY hkey, std::string const& section, std::string const& key, unsigned char* bin);
+
+	/*
+	 * Read string value from ini file
+	 *
+	 * @file ini file name
+	 * @section section
+	 * @key key inside section
+	 */
+	std::string ReadStrValue(std::string const& file, std::string const& section, std::string const& key);
 }
 
 #endif

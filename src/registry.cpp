@@ -18,4 +18,8 @@ int Registry::ReadBinValue(HKEY, std::string const&, std::string const&, unsigne
 	return 0; // empty binary
 }
 
+std::string Registry::ReadStrValue(std::string const&, std::string const&, std::string const&) {
+	return std::string();
+}
+
 #endif
