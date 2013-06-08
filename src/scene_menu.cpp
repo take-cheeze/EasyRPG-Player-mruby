@@ -41,11 +41,28 @@
 #include "data.h"
 #include "main_data.h"
 #include "rpg_save.h"
+#include "sprite.h"
+#include "cache.h"
+#include "bitmap.h"
+
+#include "matrix.h"
 
 Scene_Menu::Scene_Menu(int menu_index) :
 		Scene("Menu"), menu_index(menu_index) {}
 
 Scene_Menu::~Scene_Menu() {}
+
+EASYRPG_SHARED_PTR<Sprite> Scene_Menu::create_background() {
+	EASYRPG_SHARED_PTR<Sprite> const ret = EASYRPG_MAKE_SHARED<Sprite>();
+
+	ret->SetBitmap(Bitmap::Create(SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT));
+	ret->GetBitmap()->stretch_blit(
+		ret->GetBitmap()->rect(), *Cache().System(Data::system.system_name),
+		Rect(0, 32, 16, 16), 255);
+	ret->SetZ(-1000);
+
+	return ret;
+}
 
 void Scene_Menu::Start() {
 	CreateCommandWindow();
@@ -56,6 +73,8 @@ void Scene_Menu::Start() {
 	// Status Window
 	menustatus_window.reset(new Window_MenuStatus(88, 0, 232, 240));
 	menustatus_window->SetActive(false);
+
+	background_ = create_background();
 }
 
 void Scene_Menu::Continue() {

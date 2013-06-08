@@ -25,6 +25,7 @@
 class Window_Command;
 class Window_Gold;
 class Window_MenuStatus;
+class Sprite;
 
 /**
  * Scene Menu class.
@@ -71,6 +72,8 @@ public:
 		Quit
 	};
 
+	static EASYRPG_SHARED_PTR<Sprite> create_background();
+
 private:
 	/** Selected index on startup. */
 	int menu_index;
@@ -86,6 +89,8 @@ private:
 
 	/** Options available in the menu. */
 	std::vector<CommandOptionType> command_options;
+
+	EASYRPG_SHARED_PTR<Sprite> background_;
 };
 
 #endif

@@ -24,6 +24,7 @@
 
 class Window_Help;
 class Window_Command;
+class Sprite;
 
 /**
  * Scene End class.
@@ -56,6 +57,8 @@ private:
 	boost::scoped_ptr<Window_Help> help_window;
 	/** Command window containing the yes and no option. */
 	boost::scoped_ptr<Window_Command> command_window;
+
+	EASYRPG_SHARED_PTR<Sprite> background_;
 };
 
 #endif

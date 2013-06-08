@@ -35,6 +35,8 @@ Scene_End::Scene_End() : Scene("End") {}
 void Scene_End::Start() {
 	CreateCommandWindow();
 	CreateHelpWindow();
+
+	background_ = Scene_Menu::create_background();
 }
 
 void Scene_End::Update() {
