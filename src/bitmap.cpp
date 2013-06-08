@@ -512,9 +512,8 @@ void Bitmap::transform_blit(BlitCommon const& info, Matrix const& mat, int opaci
 	if(adjusted.IsEmpty()) { return; }
 
 	pixman_image_ptr const src =
-			info.src_rect == info.src.rect()
+			adjusted == info.src.rect()
 			? info.src.ref_ : create_sub_image(info.src.ref_, adjusted);
-
 	Rect const src_rect = mat.transform(create_rect(src));
 
 	SET_MATRIX(info.src.ref_.get(), mat.invert());
