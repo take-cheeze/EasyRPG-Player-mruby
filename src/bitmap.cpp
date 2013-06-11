@@ -172,6 +172,14 @@ Rect create_rect(pixman_image_ptr const& ptr) {
 
 }
 
+bool Bitmap::operator==(Bitmap const& rhs) const {
+	return
+			(this == &rhs) or (
+				width_ == rhs.width_ and
+				height_ == rhs.height_ and
+				data_ == rhs.data_);
+}
+
 Bitmap::Bitmap(size_t w, size_t h, Color const& col)
 		: font(Font::Default()), dirty_(true)
 		, width_(w), height_(h), data_(w * h, col)
