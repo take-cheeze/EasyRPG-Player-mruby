@@ -27,7 +27,21 @@
 // FIXME: A bug in sdl_mixer causes that the player is muted forever when a
 // fadeout happened.
 // Fade out on Vista and higher has been disabled until this is fixed.
-#include "util_win.h"
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+static int GetWindowsVersion() {
+	static DWORD major_version = 0;
+	if (major_version != 0) {
+		return major_version;
+	}
+
+	OSVERSIONINFO osvi;
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&osvi);
+
+	return osvi.dwMajorVersion;
+}
 #endif
 
 SdlAudio::SdlAudio() :
@@ -103,7 +117,7 @@ void SdlAudio::BGM_Pitch(int /* pitch */) {
 
 void SdlAudio::BGM_Fade(int fade) {
 #ifdef _WIN32
-	if (WindowsUtils::GetWindowsVersion() >= 6) {
+	if (GetWindowsVersion() >= 6) {
 		BGM_Stop();
 		return;
 	}
