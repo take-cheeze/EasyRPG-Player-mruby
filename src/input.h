@@ -208,11 +208,6 @@ struct Input_ : boost::noncopyable {
 	bool IsWaitingInput();
 	void WaitInput(bool val);
 
-	/**
-	 * Initializes input buttons to their mappings.
-	 */
-	void InitButtons();
-
 	/** Buttons list of equivalent keys. */
 	static EASYRPG_ARRAY<std::vector<int>, BUTTON_COUNT> buttons;
 
@@ -221,6 +216,20 @@ struct Input_ : boost::noncopyable {
 
   private:
 	bool wait_input;
+
+	/**
+	 * Initializes input buttons to their mappings.
+	 */
+	void InitButtons();
+
+	void InitButtonsPSP();
+	void InitButtonsGekko();
+	void InitButtonsDingoo();
+	void InitButtonsDesktop();
+
+	void InitButtonsGPH();
+	void InitButtonsCaanoo();
+	void InitButtonsGP2XWIZ();
 };
 
 Input_& Input();
