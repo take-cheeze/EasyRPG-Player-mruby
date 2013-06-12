@@ -170,6 +170,18 @@ foreach(i ${PROJECT_NAME} ${PROJECT_NAME}_com)
 endforeach()
 install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME} DESTINATION bin)
 
+# app bundle shared libraries
+if(APPLE)
+  find_package(Ruby REQUIRED)
+  set(BUNDLE_PATH "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.app")
+  add_custom_target(
+    "BUNDLE_SHARED_LIB" ALL
+    COMMAND "${RUBY_EXECUTABLE}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/osx/dylibbundler.rb"
+    "-od" "-b" "-x" "${BUNDLE_PATH}/Contents/MacOS/${PROJECT_NAME}"
+    DEPENDS "${PROJECT_NAME}")
+endif()
+
 # CPack
 set(CPACK_GENERATOR "ZIP" "TGZ")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
