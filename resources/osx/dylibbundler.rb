@@ -203,7 +203,7 @@ def doneWithDeps_go()
   @deps.each { |v| v.print }
   print "\n"
 
-  if @settings.bundleLibs
+  if not @deps.empty? and @settings.bundleLibs
     createDestDir()
 
     @deps.each { |v|
