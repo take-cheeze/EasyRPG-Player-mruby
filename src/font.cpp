@@ -85,6 +85,7 @@ namespace {
 		Rect GetSize(unsigned glyph) const;
 
 		void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, unsigned glyph);
+		void Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, ShinonomeGlyph const& g);
 		void Render(Bitmap& bmp, int x, int y, unsigned glyph);
 
 	private:
@@ -165,14 +166,12 @@ Rect ShinonomeFont::GetSize(unsigned const g) const {
 	return Rect(0, 0, info->is_full? FULL_WIDTH : HALF_WIDTH, HEIGHT);
 }
 
-void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& sys, int color, unsigned code) {
+void ShinonomeFont::Render(Bitmap& bmp, int x, int y, Bitmap const& sys, int color, ShinonomeGlyph const& g) {
 	if(color != ColorShadow) {
-		Render(bmp, x + 1, y + 1, sys, ColorShadow, code);
+		Render(bmp, x + 1, y + 1, sys, ColorShadow, g);
 	}
 
-	ShinonomeGlyph const* const glyph = func_(code);
-	assert(glyph);
-	size_t const width = glyph->is_full? FULL_WIDTH : HALF_WIDTH;
+	size_t const width = g.is_full? FULL_WIDTH : HALF_WIDTH;
 
 	unsigned const
 			src_x = (color == ColorShadow? 16 : color % 10 * 16) + (16 - width) / 2,
@@ -180,11 +179,17 @@ void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& 
 
 	for(size_t y_ = 0; y_ < HEIGHT; ++y_) {
 		for(size_t x_ = 0; x_ < width; ++x_) {
-			if(glyph->data[y_] & (0x1 << x_)) {
+			if(g.data[y_] & (0x1 << x_)) {
 				bmp.set_pixel(x + x_, y + y_, sys.get_pixel(src_x + x_, src_y + y_));
 			}
 		}
 	}
+}
+
+void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, Bitmap const& sys, int color, unsigned code) {
+	ShinonomeGlyph const* const glyph = func_(code);
+	assert(glyph);
+	Render(bmp, x, y, sys, color, *glyph);
 }
 
 void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, unsigned code) {
