@@ -15,16 +15,20 @@
  * along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#if defined(USE_SDL)
+#  include "platform/sdl_ui.cpp"
+#elif defined(EASYRPG_IS_ANDROID)
+#  include "platform/android_ui.cpp"
+#else
+#  error "no UI implementation available"
+#endif
+
 // Headers
 #include "baseui.h"
 #include "system.h"
 #include "font.h"
 #include "graphics.h"
 #include "bitmap.h"
-
-#ifdef USE_SDL
-#include "sdl_ui.h"
-#endif
 
 EASYRPG_SHARED_PTR<BaseUi> DisplayUi;
 
