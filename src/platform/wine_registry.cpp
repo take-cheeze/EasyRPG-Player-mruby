@@ -79,7 +79,7 @@ struct parse_registry {
 	void error(format const& fmt) {
 		if(line_number > 0) {
 			Output().Warning(
-				boost::format("Wine registry error: %s\nline %d: \"%s\"")
+				boost::format("Wine registry error: %s, line %d: \"%s\"")
 				% fmt.str() % line_number % line);
 		} else {
 			Output().Warning(boost::format("Wine registry error: %s") % fmt.str());

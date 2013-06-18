@@ -102,7 +102,7 @@ SdlUi::SdlUi(long width, long height, const std::string& title, bool fs_flag) :
 #endif
 
 	if (SDL_Init(flags) < 0) {
-		Output().Error(boost::format("Couldn't initialize SDL.\n%s\n") % SDL_GetError());
+		Output().Error(boost::format("couldn't initialize SDL: %s") % SDL_GetError());
 	}
 
 	SetAppIcon();
@@ -117,7 +117,7 @@ SdlUi::SdlUi(long width, long height, const std::string& title, bool fs_flag) :
 
 #if (defined(USE_JOYSTICK) && defined(SUPPORT_JOYSTICK)) || (defined(USE_JOYSTICK_AXIS) && defined(SUPPORT_JOYSTICK_AXIS)) || (defined(USE_JOYSTICK_HAT) && defined(SUPPORT_JOYSTICK_HAT))
 	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
-		Output().Warning(boost::format("Couldn't initialize joystick.\n%s\n") % SDL_GetError());
+		Output().Warning(boost::format("couldn't initialize joystick: %s") % SDL_GetError());
 	}
 
 	SDL_JoystickEventState(1);
@@ -292,10 +292,10 @@ void SdlUi::EndDisplayModeChange() {
 
 					// Try a rollback to last mode
 					if (!RefreshDisplayMode()) {
-						Output().Error(boost::format("Couldn't rollback to last display mode.\n%s\n") % SDL_GetError());
+						Output().Error(boost::format("couldn't rollback to last display mode: %s") % SDL_GetError());
 					}
 				} else {
-					Output().Error(boost::format("Couldn't set display mode.\n%s\n") % SDL_GetError());
+					Output().Error(boost::format("couldn't set display mode: %s") % SDL_GetError());
 				}
 			}
 

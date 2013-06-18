@@ -52,7 +52,7 @@ SdlAudio::SdlAudio() :
 {
 	if (!(SDL_WasInit(SDL_INIT_AUDIO) & SDL_INIT_AUDIO)) {
 		if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
-			Output().Error(boost::format("Couldn't initialize audio.\n%s\n") % SDL_GetError());
+			Output().Error(boost::format("couldn't initialize audio: %s") % SDL_GetError());
 		}
 	}
 #ifdef GEKKO
@@ -61,12 +61,12 @@ SdlAudio::SdlAudio() :
 	int const frequency = MIX_DEFAULT_FREQUENCY;
 #endif
 	if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) < 0) {
-		Output().Error(boost::format("Couldn't initialize audio.\n%s\n") % Mix_GetError());
+		Output().Error(boost::format("couldn't initialize audio: %s") % Mix_GetError());
 	}
 	/*int flags = MIX_INIT_MP3;
 	int initted = Mix_Init(flags);
 	if ((initted & flags) != flags) {
-		Output::Error("Couldn't initialize audio.\n%s\n", Mix_GetError());
+		Output::Error("couldn't initialize audio: %s", Mix_GetError());
 	}*/
 }
 
@@ -82,12 +82,12 @@ void SdlAudio::BGM_Play(std::string const& file, int volume, int /* pitch */) {
 	}
 	bgm.reset(Mix_LoadMUS(path.c_str()), &Mix_FreeMusic);
 	if (!bgm) {
-		Output().Warning(boost::format("Couldn't load %s BGM.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't load BGM: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 	BGM_Volume(volume);
 	if (!me_stopped_bgm && Mix_PlayMusic(bgm.get(), -1) == -1) {
-		Output().Warning(boost::format("Couldn't play %s BGM.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't play BGM: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 }
@@ -134,13 +134,13 @@ void SdlAudio::BGS_Play(std::string const& file, int volume, int /* pitch */) {
 	}
 	bgs.reset(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
 	if (!bgs) {
-		Output().Warning(boost::format("Couldn't load %s BGS.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't load BGS: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 	bgs_channel = Mix_PlayChannel(-1, bgs.get(), -1);
 	Mix_Volume(bgs_channel, volume * MIX_MAX_VOLUME / 100);
 	if (bgs_channel == -1) {
-		Output().Warning(boost::format("Couldn't play %s BGS.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't play BGS: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 }
@@ -173,13 +173,13 @@ void SdlAudio::ME_Play(std::string const& file, int volume, int /* pitch */) {
 	}
 	me.reset(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
 	if (!me) {
-		Output().Warning(boost::format("Couldn't load %s ME.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't load ME: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 	me_channel = Mix_PlayChannel(-1, me.get(), 0);
 	Mix_Volume(me_channel, volume * MIX_MAX_VOLUME / 100);
 	if (me_channel == -1) {
-		Output().Warning(boost::format("Couldn't play %s ME.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't play ME: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 	me_stopped_bgm = (Mix_PlayingMusic() == 1);
@@ -204,13 +204,13 @@ void SdlAudio::SE_Play(std::string const& file, int volume, int /* pitch */) {
 	}
 	EASYRPG_SHARED_PTR<Mix_Chunk> sound(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
 	if (!sound) {
-		Output().Warning(boost::format("Couldn't load %s SE.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't load SE: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 	int channel = Mix_PlayChannel(-1, sound.get(), 0);
 	Mix_Volume(channel, volume * MIX_MAX_VOLUME / 100);
 	if (channel == -1) {
-		Output().Warning(boost::format("Couldn't play %s SE.\n%s\n") % file % Mix_GetError());
+		Output().Warning(boost::format("couldn't play SE: %s (%s)") % file % Mix_GetError());
 		return;
 	}
 	sounds[channel] = sound;

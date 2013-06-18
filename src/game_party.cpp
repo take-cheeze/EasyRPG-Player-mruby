@@ -87,7 +87,7 @@ void Game_Party::LoseGold(int n) {
 
 void Game_Party::GainItem(int item_id, int amount) {
 	if (item_id < 1 || item_id > (int) Data::items.size()) {
-		Output().Warning(boost::format("Can't add item to party.\n%04d is not a valid item ID.")
+		Output().Warning(boost::format("can't add item to party (%04d is not a valid item ID)")
 						 % item_id);
 		return;
 	}
