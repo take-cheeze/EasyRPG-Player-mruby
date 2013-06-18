@@ -267,7 +267,7 @@ struct parse_registry {
 					assert(*i == '=');
 					++i; // skip '='
 					skip_space();
-					current_section[val_name] = parse_value();
+					parse_value().swap(current_section[val_name]);
 				} break;
 				case '#': break; // skip
 				case ';': break; // comment line
@@ -278,8 +278,7 @@ struct parse_registry {
 							error(format("value without key"));
 							return;
 						}
-						std::string const val_name = parse_str<'='>();
-						current_section[val_name] =
+						current_section[parse_str<'='>()] =
 								std::string(i, static_cast<std::string const&>(line).end());
 						break;
 					} else {
@@ -306,12 +305,12 @@ section_list const& get_section(HKEY key) {
 	switch(key) {
 		case HKEY_LOCAL_MACHINE:
 			if(local_machine.empty()) {
-				local_machine = parse_registry(prefix + "/system.reg").result;
+				parse_registry(prefix + "/system.reg").result.swap(local_machine);
 			}
 			return local_machine;
 		case HKEY_CURRENT_USER:
 			if(current_user.empty()) {
-				current_user = parse_registry(prefix + "/user.reg").result;
+				parse_registry(prefix + "/user.reg").result.swap(current_user);
 			}
 			return current_user;
 		default: assert(false); return empty_sec;
