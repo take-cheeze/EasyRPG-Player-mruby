@@ -388,7 +388,7 @@ std::string FileFinder_::fullpath(std::string const& f) const {
 #ifdef _WIN32
 	wchar_t buf[MAX_PATH + 1];
 	if(not _wfullpath(buf, Utils::ToWideString(f).c_str(), MAX_PATH)) {
-		Output().Debug("path resolving failed: \"%s\"", f.c_str());
+		Output().Debug(boost::format("path resolving failed: \"%s\"") % f);
 		return std::string();
 	}
 	return Utils::FromWideString(buf);
