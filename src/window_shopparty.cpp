@@ -19,6 +19,7 @@
 #include "cache.h"
 #include "game_party.h"
 #include "game_actor.h"
+#include "game_system.h"
 #include "window_shopparty.h"
 #include "font.h"
 #include "tone.h"
@@ -62,7 +63,7 @@ Window_ShopParty::Window_ShopParty(int ix, int iy, int iwidth, int iheight) :
 void Window_ShopParty::Refresh() {
 	contents->clear();
 
-	BitmapRef system = Cache().System(Data::system.system_name);
+	BitmapRef system = Cache().System(Game_System::GetSystemName());
 
 	const std::vector<Game_Actor*>& actors = Game_Party::GetActors();
 	for (size_t i = 0; i < actors.size() && i < 4; i++) {

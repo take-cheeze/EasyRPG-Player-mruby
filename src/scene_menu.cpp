@@ -57,7 +57,7 @@ EASYRPG_SHARED_PTR<Sprite> Scene_Menu::create_background() {
 
 	ret->SetBitmap(Bitmap::Create(SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT));
 	ret->GetBitmap()->stretch_blit(
-		ret->GetBitmap()->rect(), *Cache().System(Data::system.system_name),
+		ret->GetBitmap()->rect(), *Cache().System(Game_System::GetSystemName()),
 		Rect(0, 32, 16, 16), 255);
 	ret->SetZ(-1000);
 
