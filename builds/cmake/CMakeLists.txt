@@ -65,6 +65,25 @@ if(${RUBY_FOUND} AND ${IL_FOUND})
     WORKING_DIRECTORY "${EXFONT_PATH}")
 endif()
 
+# utf8proc for unicode normalization
+set(UTF8PROC_VERSION "1.1.5")
+set(UTF8PROC_FILE "utf8proc-v${UTF8PROC_VERSION}")
+set(UTF8PROC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../lib/${UTF8PROC_FILE}")
+if(NOT (IS_DIRECTORY "${UTF8PROC_DIR}"))
+	message(STATUS "downloading ${UTF8PROC_FILE}...")
+	file(DOWNLOAD
+		"http://www.public-software-group.org/pub/projects/utf8proc/v${UTF8PROC_VERSION}/${UTF8PROC_FILE}.tar.gz"
+		"${UTF8PROC_DIR}.tar.gz"
+		SHOW_PROGRESS)
+	message(STATUS "done...")
+	find_program(TAR_EXECUTABLE tar)
+	execute_process(
+		COMMAND "${TAR_EXECUTABLE}" "zxf" "${UTF8PROC_DIR}.tar.gz"
+		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../../lib")
+endif()
+set(UTF8PROC_SRC "${UTF8PROC_DIR}/utf8proc.c")
+include_directories("${UTF8PROC_DIR}")
+
 # endianess check
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   include(TestBigEndian)
@@ -135,7 +154,7 @@ set(MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../../src/main.cpp")
 # static library
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/../../src SRCS)
 list(REMOVE_ITEM SRCS ${MAIN_FILE})
-list(APPEND SRCS ${SHINONOME_SRCS} ${EXFONT_SRC})
+list(APPEND SRCS ${SHINONOME_SRCS} ${EXFONT_SRC} ${UTF8PROC_SRC})
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
   list(APPEND SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/player.rc")
 endif()

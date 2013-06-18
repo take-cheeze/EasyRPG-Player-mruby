@@ -24,6 +24,7 @@
 #include "font.h"
 #include "text.h"
 #include "exfont.hxx"
+#include "utf8proc.h"
 
 #include <cctype>
 
@@ -41,12 +42,20 @@ unsigned to_exfont_index(char const c) {
 	return ret;
 }
 
+std::string to_nfc_string(std::string const& str) {
+	EASYRPG_SHARED_PTR<uint8_t> const result(
+		utf8proc_NFC(reinterpret_cast<uint8_t const*>(str.c_str())), &std::free);
+	return std::string(reinterpret_cast<char*>(result.get()));
+}
+
 typedef boost::u8_to_u32_iterator<std::string::const_iterator> u8_to_u32_iterator;
 
 }
 
-void Text::Draw(Bitmap& dest, int const x, int const y, std::string const& text, Text::Alignment align) {
-	if (text.empty()) return;
+void Text::Draw(Bitmap& dest, int const x, int const y, std::string const& non_nfc_text, Text::Alignment align) {
+	if (non_nfc_text.empty()) return;
+
+	std::string const text = to_nfc_string(non_nfc_text);
 
 	Rect const text_size = dest.text_size(text);
 	Rect dst_rect = text_size;
@@ -99,8 +108,10 @@ void Text::Draw(Bitmap& dest, int const x, int const y, std::string const& text,
 	}
 }
 
-void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& text, Text::Alignment align) {
-	if (text.empty()) return;
+void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& non_nfc_text, Text::Alignment align) {
+	if (non_nfc_text.empty()) return;
+
+	std::string const text = to_nfc_string(non_nfc_text);
 
 	Rect const text_size = dest.font->GetSize(text);
 	Rect dst_rect = text_size;
