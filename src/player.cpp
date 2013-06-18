@@ -226,7 +226,12 @@ Output_& Output() {
 
 Player_& Player() {
 	assert(not current_player_.expired());
+	assert(current_player_.lock()->internal);
 	return *current_player_.lock();
+}
+
+bool PlayerAvailable() {
+	return not current_player_.expired() and current_player_.lock()->internal;
 }
 
 PlayerRef CreatePlayer() {

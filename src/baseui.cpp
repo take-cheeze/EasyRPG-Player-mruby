@@ -66,19 +66,19 @@ int BaseUi::GetMousePosY() const {
 }
 
 void BaseUi::DrawScreenText(const std::string &text) {
-	DrawScreenText(text, 10, 10);
+	DrawScreenText(text, 12, 12);
 }
 
 void BaseUi::DrawScreenText(const std::string &text, int x, int y, Color const& color) {
+	Bitmap& buf = *Graphics().ScreenBuffer();
 	Font::default_color = color;
-	FontRef const font = Font::Shinonome();
+	buf.font = Font::Shinonome();
+
 	unsigned line = 0;
 	std::string::const_iterator i = text.begin();
 	do {
-		std::string::const_iterator const line_end = std::find(i, text.end(), '\n');
-		Graphics().ScreenBuffer()->font = font;
-		Graphics().ScreenBuffer()->draw_text(
-			x, y + font->pixel_size() * line++, std::string(i, line_end));
-		i = line_end;
-	} while(i != text.end());
+		std::string const line_str(i, std::find(i, text.end(), '\n'));
+		buf.draw_text(x, y + buf.font->pixel_size() * line++, line_str);
+		std::advance(i, line_str.size() + 1);
+	} while(i < text.end());
 }

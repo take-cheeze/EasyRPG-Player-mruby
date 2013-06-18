@@ -86,7 +86,7 @@ BitmapRef Cache_::LoadBitmap(Spec const& spec, std::string const& filename) {
 		if (path.empty()) {
 			// TODO:
 			// Load a dummy image with correct size (issue #32)
-			Output().Warning(boost::format("Image not found: %s/%s\n\nPlayer will exit now.") % spec.directory % filename);
+			Output().Error(boost::format("Image not found: %s/%s") % spec.directory % filename);
 			// Delayed termination, otherwise it segfaults in Graphics().Quit
 			Player().exit_flag = true;
 		}

@@ -25,6 +25,7 @@
 
 struct Player_;
 
+bool PlayerAvailable();
 Player_& Player();
 
 typedef EASYRPG_SHARED_PTR<Player_> PlayerRef;

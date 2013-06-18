@@ -125,27 +125,32 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 			? "EasyRPG Player will close now.\nPress any key to exit..."
 			: "Press any key to continue...";
 
-	if(DisplayUi) {
+	std::cout << Type2String(m.type) << " : " << msg << endl;
+
+	if(DisplayUi and PlayerAvailable()) {
 		std::ostringstream ss;
-		ss << Type2String(m.type) << ":" << endl << msg << endl << endl << wait_message;
-		Graphics().ScreenBuffer()->clear();
-		DisplayUi->DrawScreenText(ss.str(), 10, 30 + 10);
+		ss << Type2String(m.type) << ": " << msg << endl << endl << wait_message;
+		Graphics().CleanScreen();
+		DisplayUi->DrawScreenText(ss.str());
 		DisplayUi->UpdateDisplay();
+
 		Input().ResetKeys();
-		while (!Input().IsAnyPressed()) {
-			DisplayUi->Sleep(1);
+		do {
+			DisplayUi->Sleep(20);
 			DisplayUi->ProcessEvents();
-
-			if (Player().exit_flag) break;
-
 			Input().Update();
+
+			if (Player().exit_flag) { break; }
+		} while(not Input().IsAnyPressed());
+
+		if(not exit) {
+			Input().ResetKeys();
+			Graphics().FrameReset();
+			Graphics().Update();
 		}
-		Input().ResetKeys();
-		Graphics().FrameReset();
-		Graphics().Update();
 	} else {
 		// Fallback to Console if the display is not ready yet
-		std::cout << msg << endl << endl << wait_message;
+		std::cout << endl << wait_message;
 #ifdef GEKKO
 		// Wii stdin is non-blocking
 		sleep(5);
