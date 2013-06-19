@@ -29,6 +29,7 @@
 	#include <unistd.h>
 #endif
 
+#include "audio.h"
 #include "filefinder.h"
 #include "graphics.h"
 #include "input.h"
@@ -134,6 +135,7 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 		DisplayUi->DrawScreenText(ss.str());
 		DisplayUi->UpdateDisplay();
 
+		Audio().BGM_Pause();
 		Input().ResetKeys();
 		do {
 			DisplayUi->Sleep(20);
@@ -147,6 +149,7 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 			Input().ResetKeys();
 			Graphics().FrameReset();
 			Graphics().Update();
+			Audio().BGM_Resume();
 		}
 	} else {
 		// Fallback to Console if the display is not ready yet
