@@ -134,7 +134,8 @@ namespace {
 
 Color Font::default_color(255, 255, 255, 255);
 
-Rect Font::GetSize(std::string const& txt) const {
+Rect Font::GetSize(std::string const& non_nfc_txt) const {
+	std::string const txt = Utils::ToNfcString(non_nfc_txt);
 	typedef boost::u8_to_u32_iterator<std::string::const_iterator> iterator;
 	iterator i(txt.begin(), txt.begin(), txt.end());
 	iterator const end(txt.end(), txt.begin(), txt.end());

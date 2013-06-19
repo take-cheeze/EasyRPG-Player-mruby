@@ -17,6 +17,7 @@
 
 // Headers
 #include "utils.h"
+#include "utf8proc.h"
 #include <algorithm>
 #include <cctype>
 #include <boost/regex/pending/unicode_iterator.hpp>
@@ -114,4 +115,10 @@ std::string Utils::GetExt(std::string const& str) {
 	return (i != str.rend())
 			? LowerCase(std::string(i.base(), str.end()))
 			: std::string();
+}
+
+std::string Utils::ToNfcString(std::string const& str) {
+	EASYRPG_SHARED_PTR<uint8_t> const result(
+		utf8proc_NFC(reinterpret_cast<uint8_t const*>(str.c_str())), &std::free);
+	return std::string(reinterpret_cast<char*>(result.get()));
 }

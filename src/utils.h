@@ -106,6 +106,13 @@ namespace Utils {
 	 * @return returns true if byte order is big endian
 	 */
 	bool IsBigEndian();
+
+	/*
+	 * normolize unicode string with NFC
+	 * @param str input string
+	 * @return NFC normalized string
+	 */
+	std::string ToNfcString(std::string const& str);
 } // namespace Utils
 
 #endif
