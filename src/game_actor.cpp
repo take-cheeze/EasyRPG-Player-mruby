@@ -259,18 +259,25 @@ int Game_Actor::CalculateExp(int level) const
 		correction = actor.exp_correction;
 	}
 
-	// This is the Rpg2k formula! Rpg2k3 needs a different.
 	int result = 0;
+	if (Player().engine == Player_::EngineRpg2k)/*Rpg2k*/{
+		inflation = 1.5 + (inflation * 0.01);
 
-	inflation = 1.5 + (inflation * 0.01);
-
-	for (int i = level; i >= 1; i--)
-	{
-		result = result + (int)(correction + base);
-		base = base * inflation;
-		inflation = ((level+1) * 0.002 + 0.8) * (inflation - 1) + 1;
+		for (int i = level; i >= 1; i--)
+		{
+			result = result + (int)(correction + base);
+			base = base * inflation;
+			inflation = ((level+1) * 0.002 + 0.8) * (inflation - 1) + 1;
+		}
+	} else /*Rpg2k3*/ {
+		for (int i = 1; i <= level; i++)
+		{
+			result += (int)base;
+			result += i * (int)inflation;
+			result += (int)correction;
+		}
 	}
-	return std::min(result, 1000000);
+	return std::min(result, Player().engine == Player_::EngineRpg2k ? 1000000 : 10000000);
 }
 
 void Game_Actor::MakeExpList() {
@@ -529,6 +536,13 @@ int Game_Actor::GetClass() const {
 void Game_Actor::SetClass(int _class_id) {
 	data.class_id = _class_id;
 	MakeExpList();
+}
+
+std::string Game_Actor::GetClassName() const {
+    if (GetClass() <= 0) {
+        return "";
+    }
+    return Data::classes[GetClass() - 1].name;
 }
 
 void Game_Actor::SetBaseMaxHp(int maxhp) {
