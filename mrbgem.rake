@@ -15,7 +15,8 @@ MRuby::Gem::Specification.new('EasyRPG_Player') { |spec|
   file "#{dir}/src/font.cpp" => "#{dir}/lib/shinonome/include/shinonome.hxx"
   file "#{dir}/src/text.cpp" => "#{dir}/lib/exfont/include/exfont.hxx"
 
-  ['lcf_reader', 'shinonome', 'exfont', 'utf8proc'].each { |v| spec.add_dependency v }
+  ['lcf_reader', 'shinonome', 'exfont', 'utf8proc', 'mruby-onig-regexp'
+  ].each { |v| spec.add_dependency v }
 
   spec.bins = ['EasyRPG_Player']
 }

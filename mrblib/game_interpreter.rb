@@ -157,16 +157,9 @@ class Game_Interpreter
   end
 
   def input_button
-    n = nil
-
-    if Input.triggered? Input::UP; n = Input::UP
-    elsif Input.triggered? Input::DOWN; n = Input::DOWN
-		elsif Input.triggered? Input::LEFT; n = Input::LEFT
-    elsif Input.triggered? Input::RIGHT; n = Input::RIGHT
-    elsif Input.triggered? Input::DECISION; n = Input::DECISION
-    elsif Input.triggered? Input::CANCEL; n = Input::CANCEL
-    elsif Input.triggered? Input::SHIFT; n = Input::SHIFT
-    end # end first if
+    n = [ Input::UP, Input::DOWN, Input::LEFT, Input::RIGHT,
+          Input::DECISION, Input::CANCEL, Input::SHIFT
+        ].find { |v| Input.triggered? v }
 
     # If a button was pressed
     if not n.nil?
@@ -187,7 +180,7 @@ class Game_Interpreter
   end
 
   CommandTable = {}
-  Cmd.constans.each { |v|
+  Cmd.constants.each { |v|
     CommandTable[Cmd.const_get v] = ('command_' + v.to_s.gusb!(/^[A-Z]/) { |v|
                                        v.downcase
                                      }.gsub!(/[A-Z]/) { |v| '_' + v.downcase }).to_sym
