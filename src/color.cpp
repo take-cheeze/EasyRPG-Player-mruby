@@ -25,13 +25,6 @@ Color::Color() :
 	alpha(0) {
 }
 
-Color::Color(unsigned red, unsigned green, unsigned blue, unsigned alpha) :
-	red((uint8_t)red),
-	green((uint8_t)green),
-	blue((uint8_t)blue),
-	alpha((uint8_t)alpha) {
-}
-
 Color::Color(int red, int green, int blue, int alpha) :
 	red((uint8_t)red),
 	green((uint8_t)green),

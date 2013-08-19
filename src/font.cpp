@@ -29,7 +29,6 @@
 #include FT_BITMAP_H
 #include FT_MODULE_H
 
-#include "reader_util.h"
 #include "shinonome.hxx"
 
 #include "filefinder.h"

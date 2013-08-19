@@ -36,7 +36,6 @@
 #include "options.h"
 #include "output.h"
 #include "player.h"
-#include "main_data.h"
 #include "baseui.h"
 #include "image_io.h"
 #include "bitmap.h"
@@ -128,7 +127,7 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 
 	std::cout << Type2String(m.type) << " : " << msg << endl;
 
-	if(DisplayUi and PlayerAvailable()) {
+	if(DisplayUi and Player::current_vm()) {
 		std::ostringstream ss;
 		ss << Type2String(m.type) << ": " << msg << endl << endl << wait_message;
 		Graphics().CleanScreen();
@@ -142,7 +141,7 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 			DisplayUi->ProcessEvents();
 			Input().Update();
 
-			if (Player().exit_flag) { break; }
+			if (Player::exit_flag()) { break; }
 		} while(not Input().IsAnyPressed());
 
 		if(not exit) {
@@ -165,7 +164,7 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 
 std::string Output_::CreateScreenshotPath(unsigned const idx) const {
 	return FileFinder().MakePath(
-		Main_Data::project_path,
+		FileFinder().project_path,
 		"screenshot_" + boost::lexical_cast<std::string>(idx) + ".png");
 }
 

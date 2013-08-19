@@ -37,7 +37,6 @@
 #include "filefinder.h"
 #include "output.h"
 #include "player.h"
-#include "main_data.h"
 #include "registry.h"
 
 #ifdef _MSC_VER
@@ -88,9 +87,7 @@ bool is_not_ascii_filename(std::string const& n) {
 } // anonymous namespace
 
 std::string const& FileFinder_::translate_rtp(std::string const& dir, std::string const& name) {
-	rtp_table_type const& table =
-			Player().engine == Player_::EngineRpg2k3? RTP_TABLE_2003:
-			RTP_TABLE_2000;
+	rtp_table_type const& table = Player::is_rpg2k3()? RTP_TABLE_2003 : RTP_TABLE_2000;
 
 	rtp_table_type::const_iterator dir_it = table.find(Utils::LowerCase(dir));
 	if (dir_it == table.end()) { return name; }
@@ -267,10 +264,10 @@ std::string FileFinder_::FindFont(const std::string& name) {
 }
 
 FileFinder_::ProjectTree const& FileFinder_::GetProjectTree() {
-	if(tree_.project_path != Main_Data::project_path) {
-		EASYRPG_SHARED_PTR<ProjectTree> t = CreateProjectTree(Main_Data::project_path);
+	if(tree_.project_path != project_path) {
+		EASYRPG_SHARED_PTR<ProjectTree> t = CreateProjectTree(project_path);
 		if(! t) {
-			Output().Error(boost::format("invalid project path: %s") % Main_Data::project_path);
+			Output().Error(boost::format("invalid project path: %s") % project_path);
 			return tree_;
 		}
 		tree_ = *t;
@@ -279,7 +276,12 @@ FileFinder_::ProjectTree const& FileFinder_::GetProjectTree() {
 	return tree_;
 }
 
-FileFinder_::FileFinder_() {
+FileFinder_::FileFinder_()
+		: project_path(
+			  getenv("RPG_TEST_GAME_PATH")? getenv("RPG_TEST_GAME_PATH"):
+			  getenv("RPG_GAME_PATH")? getenv("RPG_GAME_PATH"):
+			  ".")
+ {
 	GetProjectTree(); // empty call
 }
 
@@ -296,14 +298,13 @@ void FileFinder_::UpdateRtpPaths() {
 	search_paths.clear();
 
 	std::string const version_str =
-			Player().engine == Player_::EngineRpg2k? "2000":
-			Player().engine == Player_::EngineRpg2k3? "2003":
+			Player::is_rpg2k()? "2000":
+			Player::is_rpg2k3()? "2003":
 			"";
 
 	assert(!version_str.empty());
 
-	std::string const company =
-			Player().engine == Player_::EngineRpg2k? "ASCII": "Enterbrain";
+	std::string const company = Player::is_rpg2k()? "ASCII": "Enterbrain";
 
 	std::string rtp_path = Registry::ReadStrValue(HKEY_CURRENT_USER, "Software\\" + company + "\\RPG" + version_str, "RuntimePackagePath");
 	if(! rtp_path.empty()) { add_rtp_path(rtp_path); }
@@ -317,9 +318,9 @@ void FileFinder_::UpdateRtpPaths() {
 	add_rtp_path("/data/rtp/" + version_str + "/");
 #endif
 
-	if (Player().engine == Player_::EngineRpg2k && getenv("RPG2K_RTP_PATH"))
+	if (Player::is_rpg2k() && getenv("RPG2K_RTP_PATH"))
 		add_rtp_path(getenv("RPG2K_RTP_PATH"));
-	else if (Player().engine == Player_::EngineRpg2k3 && getenv("RPG2K3_RTP_PATH"))
+	else if (Player::is_rpg2k3() && getenv("RPG2K3_RTP_PATH"))
 		add_rtp_path(getenv("RPG2K3_RTP_PATH"));
 	if(getenv("RPG_RTP_PATH")) { add_rtp_path(getenv("RPG_RTP_PATH")); }
 }

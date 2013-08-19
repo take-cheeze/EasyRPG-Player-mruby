@@ -16,7 +16,6 @@
  */
 
 // Headers
-#include "player.h"
 #include "system.h"
 #include "output.h"
 #include "audio.h"
@@ -24,329 +23,158 @@
 #include "input.h"
 #include "cache.h"
 #include "filefinder.h"
-#include "main_data.h"
-#include "scene_logo.h"
-#include "scene_title.h"
-#include "scene_battle.h"
-#include "scene_project_finder.h"
-#include "scene_log_viewer.h"
 #include "utils.h"
-#include "baseui.h"
 #include "font.h"
-#include "sprite.h"
+#include "binding.h"
+#include "player.h"
 
-#include <algorithm>
-#include <set>
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include <ciso646>
-
-#include <boost/bind.hpp>
-#include <boost/format.hpp>
+#include <mruby/variable.h>
+#include <mruby/array.h>
 
 namespace {
 
-enum PushPopOperation {
-	SceneNop,
-	ScenePushed,
-	ScenePopped
-};
+mrb_state* current_vm_ = NULL;
 
-bool SceneFinder(SceneRef const& r, std::string const& t) {
-	return r->type == t;
-}
-
-}
-
-struct Player_::Internal {
+struct ModuleInternal {
 	FontRef font;
 	Cache_ cache;
 	FileFinder_ filefinder;
 	Graphics_ graphics;
 	Input_ input;
 	Output_ output;
+	mrb_state* const M;
 
-	struct {
-		/** Current scene. */
-		SceneRef instance;
+	ModuleInternal(mrb_state* vm) : font(Font::Shinonome()), M(vm) {
+		filefinder.UpdateRtpPaths();
+	}
 
-		/** Old scenes, temporary save for deleting. */
-		std::vector<SceneRef> old_instances;
-
-		std::vector<SceneRef> instances;
-
-		PushPopOperation push_pop_operation;
-	} scene;
-
-	Internal() : font(Font::Shinonome()) {
-		scene.push_pop_operation = SceneNop;
+	~ModuleInternal() {
+		if(current_vm_ == M) { current_vm_ = NULL; }
 	}
 };
 
-void Scene::PopUntil(std::string const& type) {
-	int count = 0;
+mrb_state* get_vm(mrb_state* M) {
+	assert(current_vm_);
+	return M? M : current_vm_;
+}
 
-	for (int i = (int)Player().internal->scene.instances.size() - 1 ; i >= 0; --i) {
-		if (Player().internal->scene.instances[i]->type == type) {
-			for (i = 0; i < count; ++i) {
-				Player().internal->scene.old_instances.push_back(Player().internal->scene.instances.back());
-				Player().internal->scene.instances.pop_back();
-			}
-			Player().internal->scene.instance = Player().internal->scene.instances.back();
-			Player().internal->scene.push_pop_operation = ScenePopped;
-			return;
-		}
-		++count;
+mrb_value get_player(mrb_state* M) {
+	assert(M);
+	return mrb_obj_value(mrb_class_get(M, "Player"));
+}
+
+}
+
+void Player::make_current(mrb_state* M) {
+	current_vm_ = M;
+}
+mrb_state* Player::current_vm() { return current_vm_; }
+
+mrb_state* Player::create_vm() {
+	mrb_state* const M = mrb_open();
+	make_current(M);
+
+	RClass* const cls = EasyRPG::define_class<ModuleInternal>(M, "_ModuleInternal");
+
+	RData* data = NULL;
+	void* const ptr = EasyRPG::data_make_struct<ModuleInternal>(M, cls, data);
+	assert(data);
+	new(ptr) ModuleInternal(M);
+
+	mrb_vm_iv_set(M, mrb_intern(M, "_module_internal"), mrb_obj_value(data));
+
+	return M;
+}
+
+void Player::parse_args(int argc, char* argv[], mrb_state* M) {
+	M = get_vm(M);
+	mrb_value const ary = mrb_ary_new_capa(M, argc);
+	for(int i = 0; i < argc; ++i) {
+		mrb_ary_push(M, ary, mrb_str_new_cstr(M, argv[i]));
 	}
-
-	Output().Warning(boost::format("The requested scene %s was not on the stack") % type);
+	parse_args(ary, M);
+}
+void Player::parse_args(mrb_value const& args, mrb_state* M) {
+	M = get_vm(M);
+	mrb_funcall(M, get_player(M), "parse_args", 1, args);
 }
 
-EASYRPG_SHARED_PTR<Scene> Scene::Find(std::string const& type) {
-	std::vector<SceneRef> const& instances = Player().internal->scene.instances;
-	std::vector<SceneRef>::const_reverse_iterator it =
-			std::find_if(instances.rbegin(), instances.rend(),
-						 boost::bind(SceneFinder, _1, type));
-	return it != instances.rend()? *it : EASYRPG_SHARED_PTR<Scene>();
+bool Player::exit_flag(mrb_state* M) {
+	M = get_vm(M);
+	return mrb_test(mrb_funcall(M, get_player(M), "exit_flag", 1));
+}
+void Player::exit_flag(bool v, mrb_state* M) {
+	M = get_vm(M);
+	mrb_funcall(M, get_player(M), "exit_flag=", 1, mrb_bool_value(v));
 }
 
-void Scene::Push(SceneRef const& new_scene, bool pop_stack_top) {
-	if (pop_stack_top) {
-		Player().internal->scene.old_instances.push_back(
-			Player().internal->scene.instances.back());
-		Player().internal->scene.instances.pop_back();
-	}
-
-	Player().internal->scene.instances.push_back(new_scene);
-	Player().internal->scene.instance = new_scene;
-
-	Player().internal->scene.push_pop_operation = ScenePushed;
-
-	/*Output::Debug("Scene Stack after Push:");
-	for (size_t i = 0; i < instances.size(); ++i) {
-		Output::Debug(scene_names[instances[i]->type]);
-	}*/
+bool Player::reset_flag(mrb_state* M) {
+	M = get_vm(M);
+	return mrb_test(mrb_funcall(M, get_player(M), "reset_flag", 0));
+}
+void Player::reset_flag(bool v, mrb_state* M) {
+	M = get_vm(M);
+	mrb_funcall(M, get_player(M), "reset_flag=", 1, mrb_bool_value(v));
 }
 
-void Scene::Pop() {
-	Player().internal->scene.old_instances.push_back(
-		Player().internal->scene.instances.back());
-	Player().internal->scene.instances.pop_back();
-
-	if (Player().internal->scene.instances.size() == 0) {
-		Push(Scene::CreateNullScene()); // Null-scene
-	} else {
-		Player().internal->scene.instance = Player().internal->scene.instances.back();
-	}
-
-	Player().internal->scene.push_pop_operation = ScenePopped;
-
-	/*Output::Debug("Scene Stack after Pop:");
-	for (size_t i = 0; i < instances.size(); ++i) {
-		Output::Debug(scene_names[instances[i]->type]);
-	}*/
+bool Player::window_flag(mrb_state* M) {
+	M = get_vm(M);
+	return mrb_test(mrb_funcall(M, get_player(M), "window_flag", 0));
 }
 
-void Scene::MainFunction() {
-	switch(Player().internal->scene.push_pop_operation) {
-	case ScenePushed:
-		Start();
-		break;
-	case ScenePopped:
-		Continue();
-		break;
-	case SceneNop: break;
-	default: assert(false);
-	}
-
-	Player().internal->scene.push_pop_operation = SceneNop;
-
-	TransitionIn();
-	Resume();
-
-	// Scene loop
-	while (Player().internal->scene.instance.get() == this) {
-		Player().Update();
-		Graphics().Update();
-		Audio().Update();
-		Input().Update();
-		Update();
-	}
-
-	assert(Player().internal->scene.instance == Player().internal->scene.instances.back() &&
-		   "Don't set Scene::instance directly, use Push instead!");
-
-	Graphics().Update();
-
-	Suspend();
-	TransitionOut();
-
-	switch (Player().internal->scene.push_pop_operation) {
-	case ScenePushed:
-		Graphics().Push();
-		break;
-	// Graphics().Pop done in Player Loop
-	case ScenePopped:
-	case SceneNop:
-		break;
-	default: assert(false);
-	}
+bool Player::is_rpg2k(mrb_state* M) {
+	M = get_vm(M);
+	return mrb_test(mrb_funcall(M, get_player(M), "rpg2k?", 0));
+}
+bool Player::is_rpg2k3(mrb_state* M) {
+	M = get_vm(M);
+	return mrb_test(mrb_funcall(M, get_player(M), "rpg2k3?", 0));
 }
 
-static EASYRPG_WEAK_PTR<Player_> current_player_;
+#define player_function(name)						\
+	void Player::name(mrb_state* M) {				\
+		M = get_vm(M);								\
+		mrb_funcall(M, get_player(M), #name, 0);	\
+	}												\
 
-FontRef Font::Default() {
-	return current_player_.lock()? Player().internal->font : Font::Shinonome();
+player_function(pause)
+player_function(resume)
+player_function(update)
+player_function(run)
+
+#undef player_function
+
+ModuleInternal& internal(mrb_state* M) {
+	assert(current_vm_);
+	return M
+			? internal(current_vm_)
+			: EasyRPG::get<ModuleInternal>(M, mrb_vm_iv_get(M, mrb_intern(M, "_module_internal")));
 }
 
-void Font::SetDefault(FontRef const& f) {
-	Player().internal->font = f;
+FontRef Font::Default(mrb_state* M) {
+	return internal(M).font;
 }
 
-Cache_& Cache() {
-	return Player().internal->cache;
+void Font::SetDefault(FontRef const& f, mrb_state* M) {
+	internal(M).font = f;
 }
 
-FileFinder_& FileFinder() {
-	return Player().internal->filefinder;
+Cache_& Cache(mrb_state* M) {
+	return internal(M).cache;
 }
 
-Input_& Input() {
-	return Player().internal->input;
+FileFinder_& FileFinder(mrb_state* M) {
+	return internal(M).filefinder;
 }
 
-Graphics_& Graphics() {
-	return Player().internal->graphics;
+Input_& Input(mrb_state* M) {
+	return internal(M).input;
 }
 
-Output_& Output() {
-	return Player().internal->output;
+Graphics_& Graphics(mrb_state* M) {
+	return internal(M).graphics;
 }
 
-Player_& Player() {
-	assert(not current_player_.expired());
-	assert(current_player_.lock()->internal);
-	return *current_player_.lock();
-}
-
-bool PlayerAvailable() {
-	return not current_player_.expired() and current_player_.lock()->internal;
-}
-
-PlayerRef CreatePlayer() {
-	PlayerRef const ret(new Player_());
-	ret->ref_ = ret;
-	ret->MakeCurrent();
-	ret->internal->filefinder.UpdateRtpPaths();
-	return ret;
-}
-
-void Player_::MakeCurrent() {
-	assert(not ref_.expired());
-	current_player_ = ref_;
-}
-
-Player_::Player_()
-		:  exit_flag(false)
-		, reset_flag(false)
-		, debug_flag(false)
-		, hide_title_flag(false)
-		, window_flag(false)
-		, battle_test_flag(false)
-		, battle_test_troop_id(0)
-		, engine(EngineRpg2k)
-		, internal(new Internal())
-{
-}
-
-static bool arg_exists(std::vector<std::string>& lst, std::string const& arg) {
-	std::vector<std::string>::iterator const i = std::find(lst.begin(), lst.end(), arg);
-	return (i == lst.end())? false : (lst.erase(i), true);
-}
-
-void Player_::ParseArgs(int argc, char* argv[]) {
-	if((argc > 1) && Utils::LowerCase(argv[1]) == "battletest") {
-		battle_test_flag = true;
-		battle_test_troop_id = (argc > 4)? atoi(argv[4]) : 0;
-	} else {
-		std::vector<std::string> const args(argv + 1, argv + argc);
-		std::vector<std::string> lowered_args(args.size());
-		std::transform(args.begin(), args.end(), lowered_args.begin(), &Utils::LowerCase);
-
-		window_flag = arg_exists(lowered_args, "window");
-		debug_flag = arg_exists(lowered_args, "testplay");
-		hide_title_flag = arg_exists(lowered_args, "hidetitle");
-
-		if(not lowered_args.empty()) {
-			Output().Debug("Unknown arguments passed.");
-		}
-	}
-
-#ifndef NDEBUG
-	debug_flag = true;
-	window_flag = true; // Debug Build needs no fullscreen
-#endif
-}
-
-void Player_::Run() {
-	assert(DisplayUi);
-
-	Scene::Push(Scene::CreateNullScene());
-	Scene::Push(SceneRef
-				(not FileFinder().IsRPG2kProject(FileFinder().GetProjectTree())
-				 ? static_cast<Scene*>(new Scene_ProjectFinder()):
-				 debug_flag
-				 ? static_cast<Scene*>(new Scene_Title()):
-				 static_cast<Scene*>(new Scene_Logo())));
-
-	reset_flag = false;
-
-	// Reset frames before starting
-	Graphics().FrameReset();
-
-	// Main loop
-	while (not internal->scene.instance->type.empty()) {
-		internal->scene.instance->MainFunction();
-		for (size_t i = 0; i < internal->scene.old_instances.size(); ++i) {
-			Graphics().Pop();
-		}
-		internal->scene.old_instances.clear();
-	}
-}
-
-void Player_::Pause() {
-	Audio().BGM_Pause();
-}
-
-void Player_::Resume() {
-	Input().ResetKeys();
-	Audio().BGM_Resume();
-	Graphics().FrameReset();
-}
-
-void Player_::Update() {
-	if (Input().IsTriggered(Input_::TOGGLE_FPS)) {
-		Graphics().fps_on_screen = !Graphics().fps_on_screen;
-	}
-	if (Input().IsTriggered(Input_::TAKE_SCREENSHOT)) {
-		// use debug output for log viewer
-		// Output().TakeScreenshot();
-		Output().Debug("Screenshot request from user.");
-	}
-	if (Input().IsTriggered(Input_::LOG_VIEWER)) {
-		Scene::Find("Log Viewer")
-				? Scene::Pop()
-				: Scene::Push(EASYRPG_MAKE_SHARED<Scene_LogViewer>());
-	}
-
-	DisplayUi->ProcessEvents();
-	Output().Update();
-
-	if (exit_flag) {
-		Scene::PopUntil(std::string());
-	} else if (reset_flag) {
-		reset_flag = false;
-		Scene::PopUntil("Title");
-	}
+Output_& Output(mrb_state* M) {
+	return internal(M).output;
 }

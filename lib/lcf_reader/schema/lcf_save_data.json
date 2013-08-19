@@ -1,0 +1,292 @@
+{
+  "signature": "LcfSaveData",
+  "root": [
+    {"type": "array1d", "name": "global", "value": [
+      {"index": 100, "type": "array1d", "name": "Preview", "value": [
+        {"index": 1, "type": "float", "name": "timeStamp"},
+
+        {"index": 11, "type": "string", "name": "name"},
+        {"index": 12, "type": "integer", "name": "level", "value": 1},
+        {"index": 13, "type": "integer", "name": "hp"},
+
+        {"index": 21, "type": "string", "name": "face1"},
+        {"index": 22, "type": "integer", "name": "face_pos1", "value": 0},
+        {"index": 23, "type": "string", "name": "face2"},
+        {"index": 24, "type": "integer", "name": "face_pos2", "value": 0},
+        {"index": 25, "type": "string", "name": "face3"},
+        {"index": 26, "type": "integer", "name": "face_pos3", "value": 0},
+        {"index": 27, "type": "string", "name": "face4"},
+        {"index": 28, "type": "integer", "name": "face_pos4", "value": 0}
+      ]},
+
+      {"index": 101, "type": "array1d", "name": "system", "value": [
+        {"index": 1, "type": "integer", "name": "dummy"},
+
+        {"index": 11, "type": "integer", "name": "dummy"},
+
+        {"index": 21, "type": "string", "name": "system"},
+        {"index": 22, "type": "integer", "name": "wallpaper"},
+        {"index": 23, "type": "integer", "name": "font"},
+
+        {"index": 31, "type": "integer", "name": "switch_data_num", "value": 0},
+        {"index": 32, "type": "int8array", "name": "switch_data"},
+        {"index": 33, "type": "integer", "name": "variable_data_num", "value": 0},
+        {"index": 34, "type": "int32array", "name": "variable_data"},
+
+        {"index": 41, "type": "integer", "name": "window_type", "value": 0},
+        {"index": 42, "type": "integer", "name": "windowViewPoint", "value": 2},
+        {"index": 43, "type": "bool", "name": "do_not_hide_party", "value": true},
+        {"index": 44, "type": "bool", "name": "moveWhenWait", "value": false},
+
+        {"index": 51, "type": "string", "name": "face_set"},
+        {"index": 52, "type": "integer", "name": "face_set_pos", "value": 0},
+        {"index": 53, "type": "integer", "name": "side", "value": 0},
+        {"index": 54, "type": "bool", "name": "flip", "value": false},
+        {"index": 55, "type": "bool", "name": "party_transparent", "value": false},
+
+        {"index": 71, "type": "music", "name": "dummy"},
+        {"index": 72, "type": "music", "name": "battle"},
+        {"index": 73, "type": "music", "name": "battleEnd"},
+        {"index": 74, "type": "music", "name": "hotel"},
+        {"index": 75, "type": "music", "name": "current"},
+        {"index": 76, "type": "music", "name": "dummy"},
+        {"index": 77, "type": "music", "name": "dummy"},
+        {"index": 78, "type": "music", "name": "memorized"},
+        {"index": 79, "type": "music", "name": "boat"},
+        {"index": 80, "type": "music", "name": "ship"},
+        {"index": 81, "type": "music", "name": "airShip"},
+        {"index": 82, "type": "music", "name": "gameOver"},
+
+        {"index": 91, "type": "sound", "name": "cursor_move"},
+        {"index": 92, "type": "sound", "name": "enter"},
+        {"index": 93, "type": "sound", "name": "cancel"},
+        {"index": 94, "type": "sound", "name": "buzzer"},
+        {"index": 95, "type": "sound", "name": "battle_start"},
+        {"index": 96, "type": "sound", "name": "run_away"},
+        {"index": 97, "type": "sound", "name": "enemy_attack"},
+        {"index": 98, "type": "sound", "name": "enemy_damaged"},
+        {"index": 99, "type": "sound", "name": "party_damaged"},
+        {"index": 100, "type": "sound", "name": "evasion"},
+        {"index": 101, "type": "sound", "name": "enamyDead"},
+        {"index": 102, "type": "sound", "name": "item_use"},
+
+        {"index": 111, "type": "integer", "name": "move_erase"},
+        {"index": 112, "type": "integer", "name": "move_show"},
+        {"index": 113, "type": "integer", "name": "battle_start_srase"},
+        {"index": 114, "type": "integer", "name": "battle_start_show"},
+        {"index": 115, "type": "integer", "name": "battle_end_erase"},
+        {"index": 116, "type": "integer", "name": "battle_end_show"},
+
+        {"index": 121, "type": "bool", "name": "can_teleport"},
+        {"index": 122, "type": "bool", "name": "can_escape"},
+        {"index": 123, "type": "bool", "name": "can_save"},
+        {"index": 124, "type": "bool", "name": "can_open_menu"},
+        {"index": 125, "type": "string", "name": "backdrop"},
+
+        {"index": 131, "type": "integer", "name": "save_count"},
+        {"index": 132, "type": "integer", "name": "save_id"}
+      ]},
+
+      {"index": 102, "type": "array1d", "name": "screen", "value": [
+        {"index": 1, "type": "integer", "name": "tint_finish_red"},
+        {"index": 2, "type": "integer", "name": "tint_finish_green"},
+        {"index": 3, "type": "integer", "name": "tint_finish_blue"},
+        {"index": 4, "type": "integer", "name": "tint_finish_sat"},
+
+        {"index": 11, "type": "float", "name": "tint_current_red"},
+        {"index": 12, "type": "float", "name": "tint_current_green"},
+        {"index": 13, "type": "float", "name": "tint_current_blue"},
+        {"index": 14, "type": "float", "name": "tint_current_sat"},
+        {"index": 15, "type": "integer", "name": "tint_time_left", "value": 0},
+
+        {"index": 20, "type": "integer", "name": "flash_continuous"},
+        {"index": 21, "type": "integer", "name": "flash_red"},
+        {"index": 22, "type": "integer", "name": "flash_green"},
+        {"index": 23, "type": "integer", "name": "flash_blue"},
+        {"index": 24, "type": "integer", "name": "flash_current_level"},
+        {"index": 25, "type": "integer", "name": "flash_time_left"},
+
+        {"index": 31, "type": "integer", "name": "shacke_continuous"},
+        {"index": 32, "type": "integer", "name": "shacke_strength"},
+        {"index": 33, "type": "integer", "name": "shacke_speed"},
+        {"index": 34, "type": "integer", "name": "shacke_position"},
+        {"index": 35, "type": "integer", "name": "shacke_time_left"},
+
+        {"index": 41, "type": "integer", "name": "pan_x"},
+        {"index": 42, "type": "integer", "name": "pan_y"},
+        {"index": 43, "type": "integer", "name": "animation_id"},
+        {"index": 44, "type": "integer", "name": "animation_target"},
+        {"index": 45, "type": "integer", "name": "dummy"},
+        {"index": 46, "type": "integer", "name": "dummy"},
+        {"index": 47, "type": "integer", "name": "animation_global"},
+
+        {"index": 48, "type": "integer", "name": "weather"},
+        {"index": 49, "type": "integer", "name": "weather_strength"}
+      ]},
+
+      {"index": 103, "type": "array2d", "name": "picture", "value": [
+        {"index": 1, "type": "string", "name": "picture"},
+        {"index": 2, "type": "float", "name": "start_x", "value": 160},
+        {"index": 3, "type": "float", "name": "start_y", "value": 120},
+        {"index": 4, "type": "float", "name": "current_x", "value": 160},
+        {"index": 5, "type": "float", "name": "current_y", "value": 120},
+        {"index": 6, "type": "bool", "name": "picture_scrolls", "value": false},
+        {"index": 8, "type": "float", "name": "dummy"},
+        {"index": 7, "type": "float", "name": "current_maginify"},
+        {"index": 8, "type": "float", "name": "current_top_trans"},
+        {"index": 9, "type": "bool", "name": "transparency", "value": false},
+
+        {"index": 11, "type": "float", "name": "current_red"},
+        {"index": 12, "type": "float", "name": "current_green"},
+        {"index": 13, "type": "float", "name": "current_blue"},
+        {"index": 14, "type": "float", "name": "current_sat"},
+        {"index": 15, "type": "integer", "name": "effect_mode"},
+        {"index": 16, "type": "float", "name": "effect_speed"},
+
+        {"index": 18, "type": "float", "name": "current_bot_trans"},
+
+        {"index": 31, "type": "float", "name": "finish_x"},
+        {"index": 32, "type": "float", "name": "finish_y"},
+        {"index": 33, "type": "integer", "name": "finish_magnify", "value": 100},
+        {"index": 34, "type": "integer", "name": "finish_top_trans", "value": 0},
+        {"index": 35, "type": "integer", "name": "finish_bot_trans", "value": 0},
+
+        {"index": 41, "type": "integer", "name": "finish_red", "value": 100},
+        {"index": 42, "type": "integer", "name": "finish_green", "value": 100},
+        {"index": 43, "type": "integer", "name": "finish_blue", "value": 100},
+        {"index": 44, "type": "integer", "name": "finish_sat", "value": 100},
+
+        {"index": 46, "type": "integer", "name": "effect2_speed"},
+
+        {"index": 51, "type": "integer", "name": "time_left", "value": 0},
+        {"index": 52, "type": "float", "name": "current_rotation"},
+        {"index": 53, "type": "integer", "name": "current_waver"}
+      ]},
+      {"index": 104, "type": "event_state", "name": "party"},
+      {"index": 105, "type": "event_state", "name": "boat"},
+      {"index": 106, "type": "event_state", "name": "ship"},
+      {"index": 107, "type": "event_state", "name": "Airship"},
+      {"index": 108, "type": "array2d", "name": "character", "value": [
+        {"index": 1, "type": "string", "name": "name"},
+        {"index": 2, "type": "string", "name": "title"},
+        {"index": 3, "type": "bool", "name": "semiTrans"},
+
+        {"index": 11, "type": "string", "name": "char_set"},
+        {"index": 12, "type": "integer", "name": "char_set_pos"},
+        {"index": 13, "type": "bool", "name": "trans"},
+
+        {"index": 21, "type": "string", "name": "face_set"},
+        {"index": 22, "type": "integer", "name": "face_set_pos"},
+
+        {"index": 31, "type": "integer", "name": "level"},
+        {"index": 32, "type": "integer", "name": "exp"},
+        {"index": 33, "type": "integer", "name": "hp_"},
+        {"index": 34, "type": "integer", "name": "mp_"},
+
+        {"index": 41, "type": "integer", "name": "attack", "value": 0},
+        {"index": 42, "type": "integer", "name": "gaurd", "value": 0},
+        {"index": 43, "type": "integer", "name": "mind", "value": 0},
+        {"index": 44, "type": "integer", "name": "speed", "value": 0},
+
+        {"index": 51, "type": "integer", "name": "skill_data_num", "value": 0},
+        {"index": 52, "type": "int16array", "name": "skill_data"},
+
+        {"index": 61, "type": "int16array", "name": "equipment"},
+
+        {"index": 71, "type": "integer", "name": "cur_hp_", "value": 0},
+        {"index": 72, "type": "integer", "name": "cur_mp_", "value": 0},
+
+        {"index": 81, "type": "integer", "name": "conditionStep_num", "value": 0},
+        {"index": 82, "type": "int16array", "name": "conditionStep"},
+        {"index": 83, "type": "integer", "name": "condition_num", "value": 0},
+        {"index": 84, "type": "int8array", "name": "condition"},
+
+        {"index": 90, "type": "integer", "name": "job"},
+        {"index": 91, "type": "bool", "name": "doubleHand"}
+      ]},
+
+      {"index": 109, "type": "array1d", "name": "status", "value": [
+        {"index": 1, "type": "integer", "name": "member_num", "value": 0},
+        {"index": 2, "type": "int16array", "name": "member"},
+
+        {"index": 11, "type": "integer", "name": "item_type_num", "value": 0},
+        {"index": 12, "type": "int16array", "name": "item_id"},
+        {"index": 13, "type": "int8array", "name": "item_num"},
+        {"index": 14, "type": "int8array", "name": "item_use"},
+
+        {"index": 21, "type": "integer", "name": "money", "value": 0},
+
+        {"index": 23, "type": "integer", "name": "timer1_secs"},
+        {"index": 24, "type": "bool", "name": "timer1_active"},
+        {"index": 25, "type": "bool", "name": "timer1_visible"},
+        {"index": 26, "type": "bool", "name": "timer1_battle"},
+
+        {"index": 27, "type": "integer", "name": "timer2_secs"},
+        {"index": 28, "type": "bool", "name": "timer2_active"},
+        {"index": 29, "type": "bool", "name": "timer2_visible"},
+        {"index": 30, "type": "bool", "name": "timer2_battle"},
+
+        {"index": 32, "type": "integer", "name": "battle", "value": 0},
+        {"index": 33, "type": "integer", "name": "loss", "value": 0},
+        {"index": 34, "type": "integer", "name": "win", "value": 0},
+        {"index": 35, "type": "integer", "name": "escape", "value": 0},
+
+        {"index": 41, "type": "integer", "name": "dummy"},
+        {"index": 42, "type": "int8array", "name": "dummy"}
+      ]},
+
+      {"index": 110, "type": "array2d", "name": "teleport", "value": [
+        {"index": 1, "type": "integer", "name": "map_id", "value": 0},
+        {"index": 2, "type": "integer", "name": "x", "value": 0},
+        {"index": 3, "type": "integer", "name": "y", "value": 0},
+        {"index": 4, "type": "bool", "name": "onAfterTeleport", "value": false},
+        {"index": 5, "type": "integer", "name": "switch_id", "value": 1}
+      ]},
+
+      {"index": 111, "type": "array1d", "name": "event_data", "value": [
+        {"index": 1, "type": "integer", "name": "dummy"},
+        {"index": 3, "type": "integer", "name": "encountRate"},
+
+        {"index": 5, "type": "integer", "name": "chip_set_id"},
+
+        {"index": 11, "type": "array2d", "name": "info", "value": "event_state" },
+
+        {"index": 21, "type": "int16array", "name": "replace_lower"},
+        {"index": 22, "type": "int16array", "name": "replace_upper"},
+
+        {"index": 31, "type": "bool", "name": "use_panorama"},
+        {"index": 32, "type": "string", "name": "panorama"},
+        {"index": 33, "type": "bool", "name": "horizontalScroll"},
+        {"index": 34, "type": "bool", "name": "verticalScroll"},
+        {"index": 35, "type": "bool", "name": "horizontalScrollAuto"},
+        {"index": 36, "type": "integer", "name": "horizontalScrollSpeed"},
+        {"index": 37, "type": "bool", "name": "verticalScrollAuto"},
+        {"index": 38, "type": "integer", "name": "verticalScrollSpeed"}
+      ]},
+
+      {"index": 112, "type": "array1d", "name": "dummy", "value": [
+      ]},
+
+      {"index": 113, "type": "array1d", "name": "dummy", "value": [
+        {"index": 1, "type": "array2d", "name": "dummy", "value": [
+          {"index": 1, "type": "integer", "name": "eventLength"},
+          {"index": 2, "type": "event", "name": "dummy"},
+
+          {"index": 11, "type": "integer", "name": "dummy"},
+          {"index": 12, "type": "integer", "name": "dummy"},
+          {"index": 13, "type": "event", "name": "dummy"},
+
+          {"index": 21, "type": "integer", "name": "dummy"},
+          {"index": 22, "type": "integer", "name": "dummy"}
+        ]},
+        {"index": 4, "type": "integer", "name": "dummy"}
+      ]},
+
+      {"index": 114, "type": "array2d", "name": "dummy", "value": [
+        {"index": 1, "type": "array1d", "name": "dummy", "value": [
+          {"index": 1, "type": "int8array", "name": "dummy"}
+        ]}
+      ]}
+    ]}
+  ]
+}

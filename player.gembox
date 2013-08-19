@@ -1,0 +1,24 @@
+require 'fileutils'
+
+module ::MRuby
+  module Gem
+    class Specification
+      def objfile_from_src(p)
+        objfile(p.relative_path_from(dir).to_s.pathmap("#{build_dir}/%X"))
+      end
+
+      def create_src_and_include_dir
+        ['src', 'include'].each { |v| FileUtils.mkdir_p "#{dir}/#{v}" }
+      end
+    end
+  end
+end
+
+MRuby::GemBox.new do |conf|
+  dir = ENV["PLAYER_BASE"]
+  conf.gem "#{dir}/lib/exfont"
+  conf.gem "#{dir}/lib/lcf_reader"
+  conf.gem "#{dir}/lib/shinonome"
+  conf.gem "#{dir}/lib/utf8proc"
+  conf.gem "#{dir}"
+end

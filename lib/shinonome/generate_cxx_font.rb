@@ -145,16 +145,16 @@ print "done\n"
 # generating
 print "Generating Gothic..."
 gothic_final = gothic.merge(hankaku).merge(latin)
-code_max = write_all(File.new("./gothic.cxx", "w"), "SHINONOME_GOTHIC", gothic_final)
+code_max = write_all(File.new("./src/gothic.cxx", "w"), "SHINONOME_GOTHIC", gothic_final)
 print "done\n"
 
 print "Generating Mincho..."
-code_max = [write_all(File.new("./mincho.cxx", "w"), "SHINONOME_MINCHO", mincho), code_max].max
+code_max = [write_all(File.new("./src/mincho.cxx", "w"), "SHINONOME_MINCHO", mincho), code_max].max
 print "done\n"
 
 # header
 print "Generating Header..."
-File.new('./shinonome.hxx', 'w').write <<EOS
+File.new('./include/shinonome.hxx', 'w').write <<EOS
 #ifndef _INC_SHINONOME_HXX_
 #define _INC_SHINONOME_HXX_
 

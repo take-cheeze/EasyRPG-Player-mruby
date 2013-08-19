@@ -16,7 +16,6 @@
  */
 
 // Headers
-#include "game_system.h"
 #include "cache.h"
 #include "output.h"
 #include "utils.h"
@@ -124,7 +123,7 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& non_nf
 	if (dst_rect.IsOutOfBounds(dest.width(), dest.height())) return;
 
 	// Load the system file for the shadow and text color
-	BitmapRef const system = Cache().System(Game_System::GetSystemName());
+	BitmapRef const system = Cache().System(""); // TODO
 
 	if (dst_rect.height > text_size.height + 1) {
 		dst_rect.y += ((dst_rect.height - text_size.height + 1) / 2);

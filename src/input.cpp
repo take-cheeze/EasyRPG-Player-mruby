@@ -47,6 +47,7 @@ Input_::Input_()
 void Input_::Update() {
 	wait_input = false; // clear each frame
 
+	DisplayUi->ProcessEvents();
 	BaseUi::KeyStatus& keystates = DisplayUi->GetKeyStates();
 
 	// Check button states

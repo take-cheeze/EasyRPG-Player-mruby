@@ -1,0 +1,33 @@
+{"type": "array2d", "name": "class", "value": [
+  {"index": 1, "type": "string", "name": "name"},
+
+  {"index": 21, "type": "bool", "name": "double_hand", "value": false},
+  {"index": 22, "type": "bool", "name": "fixed_equipment", "value": false},
+  {"index": 23, "type": "bool", "name": "forced_ai_action"},
+  {"index": 24, "type": "bool", "name": "strong_defence"},
+
+  {"index": 31, "type": "int16array", "name": "parameter"},
+
+  {"index": 41, "type": "integer", "name": "exp_base"},
+  {"index": 42, "type": "integer", "name": "exp_inflation"},
+  {"index": 43, "type": "integer", "name": "exp_correction", "value": 0},
+
+  {"index": 51, "type": "int16array", "name": "equipment"},
+
+  {"index": 56, "type": "integer", "name": "unarmed_attack", "value": 1}, // battle anime id
+
+  {"index": 62, "type": "integer", "name": "attack_anime", "value": 0},
+  {"index": 63, "type": "array2d", "name": "skill", "value": [
+    {"index": 1, "type": "integer", "name": "level"},
+    {"index": 2, "type": "integer", "name": "skill_id", "value": 1}
+  ]},
+  {"index": 66, "type": "bool", "name": "useOriginalCommand", "value": false},
+  {"index": 67, "type": "string", "name": "originalCommand"},
+
+  {"index": 71, "type": "integer", "name": "condition_data_num", "value": 0},
+  {"index": 72, "type": "int8array", "name": "condition_data"},
+  {"index": 73, "type": "integer", "name": "attrib_data_num", "value": 0},
+  {"index": 74, "type": "int8array", "name": "attrib_data"},
+
+  {"index": 80, "type": "int32array", "name": "battle_command"}
+]}

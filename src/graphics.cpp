@@ -183,7 +183,7 @@ void Graphics_::Transition(TransitionType type, int duration, bool erase) {
 		}
 
 		for (int i = 1; i <= transition_duration; i++) {
-			Player().Update();
+			Player::update();
 			InternUpdate();
 		}
 	}
@@ -401,6 +401,13 @@ int Graphics_::GetFrameCount() {
 }
 void Graphics_::SetFrameCount(int nframecount) {
 	framecount = nframecount;
+}
+
+int Graphics_::GetFrameRate() const {
+	return framerate;
+}
+void Graphics_::SetFrameRate(int v) {
+	framerate = v;
 }
 
 ZObj* Graphics_::RegisterZObj(int z, Drawable* ID) {

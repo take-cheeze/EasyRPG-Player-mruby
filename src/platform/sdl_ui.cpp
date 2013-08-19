@@ -368,7 +368,7 @@ void SdlUi::ProcessEvents() {
 	while (SDL_PollEvent(&evnt)) {
 		ProcessEvent(evnt);
 
-		if (Player().exit_flag)
+		if (Player::exit_flag())
 			break;
 	}
 }
@@ -455,7 +455,7 @@ void SdlUi::ProcessEvent(SDL_Event &evnt) {
 			return;
 
 		case SDL_QUIT:
-			Player().exit_flag = true;
+			Player::exit_flag(true);
 			return;
 
 		case SDL_KEYDOWN:
@@ -504,7 +504,7 @@ void SdlUi::ProcessActiveEvent(SDL_Event &evnt) {
 				}
 #endif
 
-				Player().Pause();
+				Player::pause();
 
 				bool last = ShowCursor(true);
 
@@ -518,7 +518,7 @@ void SdlUi::ProcessActiveEvent(SDL_Event &evnt) {
 
 				ResetKeys();
 
-				Player().Resume();
+				Player::resume();
 			}
 			return;
 #endif
@@ -537,7 +537,7 @@ void SdlUi::ProcessKeyDownEvent(SDL_Event &evnt) {
 	case SDLK_F4:
 		// Close program on LeftAlt+F4
 		if (evnt.key.keysym.mod & KMOD_LALT) {
-			Player().exit_flag = true;
+			Player::exit_flag(true);
 			return;
 		}
 
@@ -558,7 +558,7 @@ void SdlUi::ProcessKeyDownEvent(SDL_Event &evnt) {
 
 	case SDLK_F12:
 		// Reset the game engine on F12
-		Player().reset_flag = true;
+		Player::reset_flag(true);
 		return;
 
 	case SDLK_RETURN:
@@ -859,7 +859,7 @@ Keys::InputKey SdlJKey2InputKey(int button_index) {
 int FilterUntilFocus(const SDL_Event* evnt) {
 	switch (evnt->type) {
 	case SDL_QUIT:
-		Player().exit_flag = true;
+		Player::exit_flag(true);
 		return 1;
 
 	case SDL_ACTIVEEVENT:
