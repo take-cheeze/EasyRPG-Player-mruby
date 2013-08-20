@@ -59,11 +59,11 @@ class Scene_LogViewer < Scene
       @screenshot.visible = false
       @screenshot_time.visible = false
       self.cursor_index = @cursor_index
-    elsif Input.triggered? Input::DECISION and not line.screenshot.nil? and FileFinder.exists(line.screenshot)
+    elsif Input.triggered? Input::DECISION and not line[:screenshot].nil? and FileFinder.exists(line[:screenshot])
       hide_lines
 
       @screenshot.visible = true
-      @screenshot.bitmap = ImageIO.read_png line.screenshot, false
+      @screenshot.bitmap = ImageIO.read_png line[:screenshot], false
 
       time_str = time_string line
       if screenshot_time.bitmap.nil?
@@ -86,7 +86,7 @@ class Scene_LogViewer < Scene
       repeat_blank = @font_size * 5
 
       s = @lines[@cursor_index]
-      src_rect = s.src_rect.dup
+      src_rect = s.src_rect
       @line_scroll_counter %= (s.bitmap.width + repeat_blank)
       src_rect.x = @line_scroll_counter
       @line_scroll_counter += 1
@@ -105,17 +105,13 @@ class Scene_LogViewer < Scene
 	def create_line(msg)
     line = generate_line msg
     bmp = Bitmap.new @font.size(line).width, @font.pixel_size
-    Font.default_color = Output.type_color msg.type
+    Font.default_color = Output.type_color msg[:type]
     bmp.draw_text 0, 0, line
     bmp
   end
 
 	def generate_line(msg)
-    '%s %s %s' % [Output.type_string(msg.type)[0], time_string(msg), msg.message]
-  end
-
-	def time_string(msg)
-    @use_local_time ? Output.local_time(msg.time, true) : Output.utc_time(msg.time, true)
+    '%s %s %s' % [Output.type_string(msg[:type])[0], msg[:time], msg[:message]]
   end
 
 	def hide_lines; @lines.each { |v| v.visible = false if not v.nil? }; end
@@ -129,9 +125,9 @@ class Scene_LogViewer < Scene
     # set cursor position
     @cursor.y = @font_size * (@cursor_index - @cursor_offset + 1) - 1
 
-	# show and set position of active lines
+    # show and set position of active lines
     for i in 0...[@row_max, @lines.length - @cursor_offset].min
-      buf = buffer_cache_[cursor_offset_ + i]
+      buf = @buffer_cache[@cursor_offset + i]
       if @lines[@cursor_index + i].nil?
         @lines[@cursor_index + i] = Sprite.new
         @lines[@cursor_index + i].bitmap = create_line(buf)

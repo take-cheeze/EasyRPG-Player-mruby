@@ -37,6 +37,7 @@ void register_graphics(mrb_state* M);
 void register_image_io(mrb_state* M);
 void register_input(mrb_state* M);
 void register_keys(mrb_state* M);
+void register_output(mrb_state* M);
 void register_plane(mrb_state* M);
 void register_rect(mrb_state* M);
 void register_sprite(mrb_state* M);
