@@ -42,7 +42,7 @@ struct CacheReferenceTable {
 		char* str; int str_len;								\
 		mrb_get_args(M, "s", &str, &str_len);				\
 		return  CacheReferenceTable::get(M).to_ruby_ref(	\
-			Cache().cxx_name(std::string(str, str_len)));	\
+			Cache(M).cxx_name(std::string(str, str_len)));	\
 	}														\
 
 define_material(backdrop, Backdrop)
@@ -68,12 +68,12 @@ mrb_value tile(mrb_state* M, mrb_value) {
 	char* str; int str_len; mrb_int id;
 	mrb_get_args(M, "si", &str, &str_len, &id);
 	return CacheReferenceTable::get(M).to_ruby_ref(
-		Cache().Tile(std::string(str, str_len), id));
+		Cache(M).Tile(std::string(str, str_len), id));
 }
 
 mrb_value claer(mrb_state* M, mrb_value self) {
 	CacheReferenceTable::get(M).data.clear();
-	Cache().Clear();
+	Cache(M).Clear();
 	return self;
 }
 

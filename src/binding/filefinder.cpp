@@ -13,39 +13,39 @@ typedef FileFinder_::ProjectTree ProjectTree;
 mrb_value find_image(mrb_state* M, mrb_value) {
 	char* dir, name; int dir_len, name_len;
 	mrb_get_args(M, "ss", &dir, &dir_len, &name, &name_len);
-	return to_mrb_str(M, FileFinder().FindImage(std::string(dir, dir_len),
+	return to_mrb_str(M, FileFinder(M).FindImage(std::string(dir, dir_len),
 											 std::string(name, name_len)));
 }
 
-mrb_value update_rtp_paths(mrb_state*, mrb_value const self) {
-	return FileFinder().UpdateRtpPaths(), self;
+mrb_value update_rtp_paths(mrb_state* M, mrb_value const self) {
+	return FileFinder(M).UpdateRtpPaths(), self;
 }
 
 mrb_value find_default(mrb_state* M, mrb_value) {
 	char* dir, name; int dir_len, name_len;
 	size_t const argc = mrb_get_args(M, "s|s", &dir, &dir_len, &name, &name_len);
 	return to_mrb_str(M, argc == 2
-					  ? FileFinder().FindDefault(std::string(dir, dir_len),
+					  ? FileFinder(M).FindDefault(std::string(dir, dir_len),
 												 std::string(name, name_len))
-					  : FileFinder().FindDefault(std::string(dir, dir_len)));
+					  : FileFinder(M).FindDefault(std::string(dir, dir_len)));
 }
 
 mrb_value is_directory(mrb_state* M, mrb_value) {
 	char* name; int name_len;
 	mrb_get_args(M, "s", &name, &name_len);
-	return mrb_bool_value(FileFinder().IsDirectory(std::string(name, name_len)));
+	return mrb_bool_value(FileFinder(M).IsDirectory(std::string(name, name_len)));
 }
 
 mrb_value exists(mrb_state* M, mrb_value) {
 	char* name; int name_len;
 	mrb_get_args(M, "s", &name, &name_len);
-	return mrb_bool_value(FileFinder().Exists(std::string(name, name_len)));
+	return mrb_bool_value(FileFinder(M).Exists(std::string(name, name_len)));
 }
 
 mrb_value make_path(mrb_state* M, mrb_value) {
 	char* dir, name; int dir_len, name_len;
 	mrb_get_args(M, "ss", &dir, &dir_len, &name, &name_len);
-	return to_mrb_str(M, FileFinder().MakePath(std::string(dir, dir_len),
+	return to_mrb_str(M, FileFinder(M).MakePath(std::string(dir, dir_len),
 											   std::string(name, name_len)));
 }
 
@@ -70,17 +70,17 @@ mrb_value is_rpg2k_project(mrb_state* M, mrb_value) {
 	mrb_value v;
 	mrb_get_args(M, "o", &v);
 	return mrb_bool_value(mrb_hash_p(v)
-						  ? FileFinder().IsRPG2kProject(hash_to_map(M, v))
-						  : FileFinder().IsRPG2kProject(get<ProjectTree>(M, v)));
+						  ? FileFinder(M).IsRPG2kProject(hash_to_map(M, v))
+						  : FileFinder(M).IsRPG2kProject(get<ProjectTree>(M, v)));
 }
 
 mrb_value get_project_path(mrb_state* M, mrb_value) {
-	return to_mrb_str(M, FileFinder().project_path);
+	return to_mrb_str(M, FileFinder(M).project_path);
 }
 mrb_value set_project_path(mrb_state* M, mrb_value self) {
 	char* str; int str_len;
 	mrb_get_args(M, "s", &str, &str_len);
-	FileFinder().project_path.assign(str, str_len);
+	FileFinder(M).project_path.assign(str, str_len);
 	return get_project_path(M, self);
 }
 
@@ -124,24 +124,24 @@ void register_project_tree(mrb_state* M) {
 mrb_value fullpath(mrb_state* M, mrb_value) {
 	char* str; int str_len;
 	mrb_get_args(M, "s", &str, &str_len);
-	return to_mrb_str(M, FileFinder().fullpath(std::string(str, str_len)));
+	return to_mrb_str(M, FileFinder(M).fullpath(std::string(str, str_len)));
 }
 
 mrb_value project_tree(mrb_state* M, mrb_value) {
-	return clone(M, FileFinder().GetProjectTree());
+	return clone(M, FileFinder(M).GetProjectTree());
 }
 
 mrb_value create_project_tree(mrb_state* M, mrb_value) {
 	char* str; int str_len;
 	mrb_get_args(M, "s", &str, &str_len);
-	return clone(M, *FileFinder().CreateProjectTree(std::string(str, str_len)));
+	return clone(M, *FileFinder(M).CreateProjectTree(std::string(str, str_len)));
 }
 
 #define define_finder(name, cxx_name)									\
 	mrb_value find_ ## name(mrb_state* M, mrb_value) {					\
 		char* name; int name_len;										\
 		mrb_get_args(M, "s", &name, &name_len);							\
-		return to_mrb_str(M, FileFinder().Find ## cxx_name(std::string(name, name_len))); \
+		return to_mrb_str(M, FileFinder(M).Find ## cxx_name(std::string(name, name_len))); \
 	}																	\
 
 define_finder(sound, Sound)

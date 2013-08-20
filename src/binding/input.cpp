@@ -5,27 +5,27 @@ namespace {
 
 using namespace EasyRPG;
 
-mrb_value update(mrb_state*, mrb_value const self) {
-	return Input().Update(), self;
+mrb_value update(mrb_state* M, mrb_value const self) {
+	return Input(M).Update(), self;
 }
 
 mrb_value triggered(mrb_state* M, mrb_value) {
 	mrb_int v;
 	mrb_get_args(M, "i", &v);
-	return mrb_bool_value(Input().IsTriggered(Input_::Button(v)));
+	return mrb_bool_value(Input(M).IsTriggered(Input_::Button(v)));
 }
 
 mrb_value repeated(mrb_state* M, mrb_value) {
 	mrb_int v;
 	mrb_get_args(M, "i", &v);
-	return mrb_bool_value(Input().IsRepeated(Input_::Button(v)));
+	return mrb_bool_value(Input(M).IsRepeated(Input_::Button(v)));
 }
 
-mrb_value dir4(mrb_state*, mrb_value) {
-	return mrb_fixnum_value(Input().dir4);
+mrb_value dir4(mrb_state* M, mrb_value) {
+	return mrb_fixnum_value(Input(M).dir4);
 }
-mrb_value dir8(mrb_state*, mrb_value) {
-	return mrb_fixnum_value(Input().dir8);
+mrb_value dir8(mrb_state* M, mrb_value) {
+	return mrb_fixnum_value(Input(M).dir8);
 }
 
 }

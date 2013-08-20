@@ -5,12 +5,12 @@ namespace {
 
 using namespace EasyRPG;
 
-mrb_value update(mrb_state*, mrb_value const self) {
-	return Graphics().Update(), self;
+mrb_value update(mrb_state* M, mrb_value const self) {
+	return Graphics(M).Update(), self;
 }
 
-mrb_value freeze(mrb_state*, mrb_value const self) {
-	return Graphics().Freeze(), self;
+mrb_value freeze(mrb_state* M, mrb_value const self) {
+	return Graphics(M).Freeze(), self;
 }
 
 mrb_value transition(mrb_state* M, mrb_value const self) {
@@ -22,29 +22,29 @@ mrb_value transition_2k(mrb_state* M, mrb_value const self) {
 	mrb_int type, dur;
 	mrb_bool erase = false;
 	mrb_get_args(M, "ii|b", &type, &dur, &erase);
-	return Graphics().Transition(Graphics_::TransitionType(type), dur, erase), self;
+	return Graphics(M).Transition(Graphics_::TransitionType(type), dur, erase), self;
 }
 
-mrb_value frame_reset(mrb_state*, mrb_value const self) {
-	return Graphics().FrameReset(), self;
+mrb_value frame_reset(mrb_state* M, mrb_value const self) {
+	return Graphics(M).FrameReset(), self;
 }
 
-mrb_value get_frame_rate(mrb_state*, mrb_value) {
-	return mrb_fixnum_value(Graphics().GetFrameRate());
+mrb_value get_frame_rate(mrb_state* M, mrb_value) {
+	return mrb_fixnum_value(Graphics(M).GetFrameRate());
 }
 mrb_value set_frame_rate(mrb_state* M, mrb_value const self) {
 	mrb_int v;
 	mrb_get_args(M, "i", &v);
-	return Graphics().SetFrameRate(v), self;
+	return Graphics(M).SetFrameRate(v), self;
 }
 
-mrb_value get_frame_count(mrb_state*, mrb_value) {
-	return mrb_fixnum_value(Graphics().GetFrameCount());
+mrb_value get_frame_count(mrb_state* M, mrb_value) {
+	return mrb_fixnum_value(Graphics(M).GetFrameCount());
 }
 mrb_value set_frame_count(mrb_state* M, mrb_value const self) {
 	mrb_int v;
 	mrb_get_args(M, "i", &v);
-	return Graphics().SetFrameCount(v), self;
+	return Graphics(M).SetFrameCount(v), self;
 }
 
 }
