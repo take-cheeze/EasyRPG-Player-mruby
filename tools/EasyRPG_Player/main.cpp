@@ -17,8 +17,10 @@
 
 #ifdef USE_SDL
 #include "platform/sdl_main.cpp"
+#include "platform/sdl_ui.cpp"
 #endif
 
 #ifdef EASYRPG_IS_ANDROID
 #include "platform/android_main.cpp"
+#include "platform/android_ui.cpp"
 #endif

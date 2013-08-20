@@ -16,9 +16,7 @@
  */
 
 #if defined(USE_SDL)
-#  include "platform/sdl_ui.cpp"
 #elif defined(EASYRPG_IS_ANDROID)
-#  include "platform/android_ui.cpp"
 #else
 #  error "no UI implementation available"
 #endif

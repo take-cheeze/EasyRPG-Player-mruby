@@ -23,13 +23,10 @@
 #include "sdl_ui.h"
 #include "filefinder.h"
 #include "output.h"
-#include "bot_ui.h"
-#include "lua_bot.h"
 
 #include <cstdlib>
 #include <fstream>
 #include <SDL.h>
-#include <boost/format.hpp>
 
 #ifdef GEKKO
 #  include <fat.h>
@@ -178,24 +175,6 @@ extern "C" int main(int argc, char* argv[]) {
 
 #if (defined(_WIN32) && defined(NDEBUG) && defined(WINVER) && WINVER >= 0x0600)
 	InitMiniDumpWriter();
-#endif
-
-#if defined(HAVE_LUA) && defined(HAVE_BOOST_LIBRARIES)
-	char const* const luabot_script = getenv("RPG_LUABOT_SCRIPT");
-	if(luabot_script) {
-		if(FileFinder().Exists(luabot_script)) {
-			std::ifstream ifs(luabot_script);
-			assert(ifs);
-
-			std::istreambuf_iterator<char> const eos;
-			std::string const script(std::istreambuf_iterator<char>(ifs), eos);
-
-			DisplayUi = EASYRPG_MAKE_SHARED<BotUi>(EASYRPG_MAKE_SHARED<LuaBot>(script));
-			Output().IgnorePause(true);
-		} else {
-			Output().Debug(boost::format("luabot script not found in \"%s\"") % luabot_script);
-		}
-	}
 #endif
 
 	if(! DisplayUi) {

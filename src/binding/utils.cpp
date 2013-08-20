@@ -101,6 +101,12 @@ mrb_value is_big_endian(mrb_state*, mrb_value) {
 	return mrb_bool_value(Utils::IsBigEndian());
 }
 
+mrb_value fixnum_chr(mrb_state* M, mrb_value const self) {
+	assert(mrb_fixnum_p(self));
+	char const c = mrb_fixnum(self);
+	return mrb_str_new(M, &c, sizeof(c));
+}
+
 }
 
 void EasyRPG::register_utils(mrb_state* M) {
@@ -115,6 +121,11 @@ void EasyRPG::register_utils(mrb_state* M) {
 	RClass* const String = mrb_class_get(M, "String");
 	mrb_define_method(M, String, "to_utf32", &to_utf32, ARGS_NONE());
 	mrb_define_method(M, String, "to_nfc", &to_nfc, ARGS_NONE());
+
+	RClass* const Fixnum = mrb_class_get(M, "Fixnum");
+	if(not mrb_respond_to(M, mrb_obj_value(Fixnum), mrb_intern(M, "chr"))) {
+		mrb_define_method(M, Fixnum, "chr", &fixnum_chr, ARGS_NONE());
+	}
 
 	mrb_define_method(M, mrb_class_get(M, "Array"), "to_utf8", &to_utf8, ARGS_NONE());
 }
