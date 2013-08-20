@@ -23,8 +23,8 @@ module Cmd
   ChangeParameters = 10430
   ChangeSkills = 10440
   ChangeEquipment = 10450
-  ChangeHP = 10460
-  ChangeSP = 10470
+  ChangeHp = 10460
+  ChangeSp = 10470
   ChangeCondition = 10480
   FullHeal = 10490
   SimulatedAttack = 10500
@@ -33,8 +33,8 @@ module Cmd
   ChangeSpriteAssociation = 10630
   ChangeActorFace = 10640
   ChangeVehicleGraphic = 10650
-  ChangeSystemBGM = 10660
-  ChangeSystemSFX = 10670
+  ChangeSystemBgm = 10660
+  ChangeSystemSfx = 10670
   ChangeSystemGraphics = 10680
   ChangeScreenTransitions = 10690
   EnemyEncounter = 10710
@@ -48,8 +48,8 @@ module Cmd
   SetVehicleLocation = 10850
   ChangeEventLocation = 10860
   TradeEventLocations = 10870
-  StoreTerrainID = 10910
-  StoreEventID = 10920
+  StoreTerrainId = 10910
+  StoreEventId = 10920
   EraseScreen = 11010
   ShowScreen = 11020
   TintScreen = 11030
@@ -67,15 +67,15 @@ module Cmd
   ProceedWithMovement = 11340
   HaltAllMovement = 11350
   Wait = 11410
-  PlayBGM = 11510
-  FadeOutBGM = 11520
-  MemorizeBGM = 11530
-  PlayMemorizedBGM = 11540
+  PlayBgm = 11510
+  FadeOutBgm = 11520
+  MemorizeBgm = 11530
+  PlayMemorizedBgm = 11540
   PlaySound = 11550
   PlayMovie = 11560
   KeyInputProc = 11610
   ChangeMapTileset = 11710
-  ChangePBG = 11720
+  ChangePbg = 11720
   ChangeEncounterRate = 11740
   TileSubstitution = 11750
   TeleportTargets = 11810
@@ -98,11 +98,11 @@ module Cmd
   GameOver = 12420
   ReturntoTitleScreen = 12510
 
-  ChangeMonsterHP = 13110
-  ChangeMonsterMP = 13120
+  ChangeMonsterHp = 13110
+  ChangeMonsterMp = 13120
   ChangeMonsterCondition = 13130
   ShowHiddenMonster = 13150
-  ChangeBattleBG = 13210
+  ChangeBattleBg = 13210
   ShowBattleAnimation_B = 13260
   ConditionalBranch_B = 13310
   TerminateBattle = 13410
@@ -128,5 +128,5 @@ module Cmd
   ElseBranch_B = 23310
   EndBranch_B = 23311
 
-  DUMMY = -1
+  Dummy = -1
 end

@@ -181,9 +181,9 @@ class Game_Interpreter
 
   CommandTable = {}
   Cmd.constants.each { |v|
-    CommandTable[Cmd.const_get v] = ('command_' + v.to_s.bytes.reduce('') { |tmp, v|
-                                       tmp += '_' if ?A <= v and v <= ?Z
-                                       tmp += v.chr.downcase
+    CommandTable[Cmd.const_get v] = ('command' + v.to_s.bytes.reduce('') { |tmp, c|
+                                       tmp += '_' if 'A'.bytes[0] <= c and c <= 'Z'.bytes[0]
+                                       tmp += c.chr.downcase
                                      }).to_sym
   }
 
