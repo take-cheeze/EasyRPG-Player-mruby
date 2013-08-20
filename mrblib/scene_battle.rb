@@ -304,7 +304,7 @@ class Scene_Battle < Scene
     item = Data.items[item_id]
     case (item.type)
     when RPG::Item::Type_normal
-			Game_System::SePlay(Main_Data::game_data.system.buzzer_se)
+			Game_System.se_play(Main_Data.game_data.system.buzzer_se)
     when RPG::Item::Type_weapon, RPG::Item::Type_shield, RPG::Item::Type_armor,
       RPG::Item::Type_helmet, RPG::Item::Type_accessory
       if item.use_skill; item_skill(item)

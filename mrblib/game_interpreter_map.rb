@@ -765,7 +765,7 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def command_sprite_transparency(com)
-    Main_Data::game_player.visible = com[0] != 0
+    Main_Data.game_player.visible = com[0] != 0
     true
   end
 
@@ -1064,7 +1064,7 @@ class Game_Interpreter_Map < Game_Interpreter
     when 0
     when 1; actor.unlearn_skill actor.skills[0] until actor.skills.empty?
     when 2
-      klass = Data::classes[class_id]
+      klass = Data.classes[class_id]
       actor.unlearn_skill actor.skills[0] until actor.skills.empty?
       klass.skills.each { |v| if level >= v.level; actor.learn_skill v.skill_id; end }
     end

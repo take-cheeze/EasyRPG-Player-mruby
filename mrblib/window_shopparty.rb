@@ -72,7 +72,7 @@ class Window_ShopParty < Window_Base
         else
           new_item = Data.items[@item_id]
           new_item_id = actor.equipment(new_item.type - RPG::Item::Type_weapon)
-          current_item = new_item_id != 0 ? Data.items[new_item_id] : Data::items[0]
+          current_item = new_item_id != 0 ? Data.items[new_item_id] : Data.items[1]
 
           if not current_item.nil?
             diff_atk = new_item.atk_points1 - current_item.atk_points1

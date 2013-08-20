@@ -116,9 +116,9 @@ class Game_Battler
 
     # TODO: Escape and Teleport Spells need event SetTeleportPlace and
     # SetEscapePlace first. Not sure if any game uses this...
-    #if (Data::skills[skill_id - 1].type == RPG::Skill::Type_teleport)
+    #if (Data.skills[skill_id - 1].type == RPG::Skill::Type_teleport)
     #	return is_there_a_teleport_set
-    #elsif (Data::skills[skill_id - 1].type == RPG::Skill::Type_escape)
+    #elsif (Data.skills[skill_id - 1].type == RPG::Skill::Type_escape)
     #	return is_there_an_escape_set
     #else
     if (skill.type == RPG::Skill::Type_normal)
@@ -133,7 +133,7 @@ class Game_Battler
     elsif (skill.type == RPG::Skill::Type_switch)
       # TODO:
       # if (Game_Temp::IsInBattle())
-      # return Data::skills[skill_id - 1].occasion_battle
+      # return Data.skills[skill_id - 1].occasion_battle
       # else
       return skill.occasion_field
       # end
@@ -147,7 +147,7 @@ class Game_Battler
 	# @param skill_id ID of skill to calculate.
 	# @return needed skill cost.
   def calculate_skill_cost(skill_id)
-    skill = Data::skills[skill_id]
+    skill = Data.skills[skill_id]
     if Player.rpg2k3? && skill.sp_type == RPG::Skill::SpType_percent
       max_sp * skill.sp_percent / 100
     else skill.sp_cost end

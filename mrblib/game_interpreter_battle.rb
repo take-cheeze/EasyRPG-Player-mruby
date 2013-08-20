@@ -35,7 +35,7 @@ class Game_Interpreter_Battle < Game_Interpreter
   def command_call_common_event(com)
     return false if @child_interpreter
 
-    event = Data::commonevents[com[0]]
+    event = Data.commonevents[com[0]]
 
     @child_interpreter = Game_Interpreter_Battle(depth + 1).new
     @child_interpreter.setup event.event_commands, 0, event.index, -2

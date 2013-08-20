@@ -385,7 +385,7 @@ module Game_Battle
       end
     }
 
-		scene.floater target.sprite, Font::ColorDefault, Data::terms.miss, 60 if miss
+		scene.floater target.sprite, Font::ColorDefault, Data.terms.miss, 60 if miss
   end
 
   def enemy_action_valid(action, enemy)

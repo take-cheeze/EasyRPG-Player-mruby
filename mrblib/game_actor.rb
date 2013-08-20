@@ -64,7 +64,7 @@ class Game_Actor < Game_Battler
 	# Sets the skills, HP, SP and experience.
   # If save_data is passed it overwrites the values with it.
 	def load(save_data)
-    Data::actors[data.index].skills.each do |v|
+    Data.actors[data.index].skills.each do |v|
       if (v.level <= level())
         learn_skill(v.skill_id)
       end

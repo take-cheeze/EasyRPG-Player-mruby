@@ -76,7 +76,7 @@ class Window_Item < Window_Selectable
     return if item_id <= 0
 
     enabled = check_enable item_id
-    draw_item_name Data::items[item_id], rect.x, rect.y, enabled
+    draw_item_name Data.items[item_id], rect.x, rect.y, enabled
 
     color = enabled ? Font::ColorDefault : Font::ColorDisabled
     contents.draw_text_2k rect.x + rect.width - 28, rect.y, "x", color

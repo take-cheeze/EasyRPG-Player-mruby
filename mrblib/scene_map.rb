@@ -120,7 +120,7 @@ class Scene_Map < Scene
       Game_Temp.menu_beep = false
     end
 
-    # TODO: Main_Data::game_player->Straighten()
+    # TODO: Main_Data.game_player.straighten
 
     Scene.push Scene_Menu.new
   end

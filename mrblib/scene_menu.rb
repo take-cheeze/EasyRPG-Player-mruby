@@ -66,15 +66,15 @@ class Scene_Menu < Scene
     options = []
     @command_options.each { |v|
       case v
-      when Item; options.push(Data::terms.command_item)
-      when Skill; options.push(Data::terms.command_skill)
-      when Equipment; options.push(Data::terms.menu_equipment)
-      when Save; options.push(Data::terms.menu_save)
-      when Status; options.push(Data::terms.status)
-      when Row; options.push(Data::terms.row)
-      when Order; options.push(Data::terms.order)
-      when Wait; options.push(Game_Temp::battle_wait ? Data::terms.wait_on : Data::terms.wait_off)
-      else; options.push(Data::terms.menu_quit)
+      when Item; options.push(Data.terms.command_item)
+      when Skill; options.push(Data.terms.command_skill)
+      when Equipment; options.push(Data.terms.menu_equipment)
+      when Save; options.push(Data.terms.menu_save)
+      when Status; options.push(Data.terms.status)
+      when Row; options.push(Data.terms.row)
+      when Order; options.push(Data.terms.order)
+      when Wait; options.push(Game_Temp::battle_wait ? Data.terms.wait_on : Data.terms.wait_off)
+      else; options.push(Data.terms.menu_quit)
       end
     }
 
@@ -155,7 +155,7 @@ class Scene_Menu < Scene
       @menustatus_window.active = false
       @menustatus_window.index = nil
     elsif Input.triggered? Input::DECISION
-      Game_System::SePlay(Main_Data::game_data.system.decision_se)
+      Game_System::SePlay(Main_Data.game_data.system.decision_se)
       case @command_options[@command_window.index]
       when Skill; Scene.push Scene_Skill.new(@menustatus_window.index)
       when Equipment; Scene.push Scene_Equip.new(@menustatus_window.index)

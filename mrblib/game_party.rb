@@ -152,10 +152,10 @@ module Game_Party
   def item_usable?(item_id)
     if item_id > 0 && item_id <= Data.items.length
       # TODO: if (Game_Temp::IsInBattle())
-      # if (Data::items[item_id - 1].type == RPG::Item::Type_medicine)
-      # 	return !Data::items[item_id - 1].ocassion_field
-      # elsif (Data::items[item_id - 1].type == RPG::Item::Type_switch)
-      # 	return Data::items[item_id - 1].ocassion_battle
+      # if (Data.items[item_id - 1].type == RPG::Item::Type_medicine)
+      # 	return !Data.items[item_id - 1].ocassion_field
+      # elsif (Data.items[item_id - 1].type == RPG::Item::Type_switch)
+      # 	return Data.items[item_id - 1].ocassion_battle
       # else
       if (not @data.party.empty? &&
           (Data.items[item_id].type == RPG::Item::Type_medicine ||

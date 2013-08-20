@@ -103,7 +103,7 @@ module Battle
 
       @anim_state = state
 
-      ext = Data::battleranimations[rpg_actor.battler_animation].base_data[@anim_state - 1]
+      ext = Data.battleranimations[rpg_actor.battler_animation].base_data[@anim_state - 1]
       return if ext.battler_name == @sprite_file
 
       @sprite_file = ext.battler_name

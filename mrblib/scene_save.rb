@@ -54,6 +54,6 @@ class Scene_Save < Scene_File
     Main_Data.game_data.system.save_slot = index + 1
     Main_Data.game_data.system.save_count += 1
 
-    LSD_Reader.save FileFinder.find_default('Save%02d.sd' % (index + 1)), Main_Data::game_data
+    LSD_Reader.save FileFinder.find_default('Save%02d.sd' % (index + 1)), Main_Data.game_data
   end
 end
