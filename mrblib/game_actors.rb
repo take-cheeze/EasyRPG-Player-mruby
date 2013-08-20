@@ -34,7 +34,7 @@ module Game_Actors
 	# @return the actor object.
 	def actor(id)
     if not actor_exists? id
-      Output.Warning("Actor ID %d is invalid" % id)
+      Output.warning("Actor ID %d is invalid" % id)
       nil
     elsif data[id].nil?
       @data[id] = Game_Actor.new id
