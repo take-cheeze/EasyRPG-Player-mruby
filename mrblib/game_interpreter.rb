@@ -181,9 +181,10 @@ class Game_Interpreter
 
   CommandTable = {}
   Cmd.constants.each { |v|
-    CommandTable[Cmd.const_get v] = ('command_' + v.to_s.gusb!(/^[A-Z]/) { |v|
-                                       v.downcase
-                                     }.gsub!(/[A-Z]/) { |v| '_' + v.downcase }).to_sym
+    CommandTable[Cmd.const_get v] = ('command_' + v.to_s.bytes.reduce('') { |tmp, v|
+                                       tmp += '_' if ?A <= v and v <= ?Z
+                                       tmp += v.chr.downcase
+                                     }).to_sym
   }
 
 	def execute_command
@@ -367,8 +368,6 @@ class Game_Interpreter
     true
   end
 
-	bool CommandChangeFaceGraphic(RPG::EventCommand const& com)
-
   def command_show_choices(com)
     return false if (!Game_Message::texts.empty())
 
@@ -504,7 +503,6 @@ class Game_Interpreter
     Game_Party.gain_gold operate_value(com[0], com[1], com[2])
     true
   end
-	bool CommandChangeGold(RPG::EventCommand const& com)
 
   def command_change_items(com)
     value = operate_value com[0], com[3], com[4]
@@ -613,8 +611,6 @@ class Game_Interpreter
     true
   end
 
-	bool CommandChangeCondition(RPG::EventCommand const& com)
-
 	def command_full_heal(com)
     actors(com[0], com[1]).each { |v|
       actor.hp = actor.max_hp
@@ -710,8 +706,6 @@ class Game_Interpreter
     true
   end
 
-	bool CommandFadeOutBGM(RPG::EventCommand const& com)
-
   def command_play_sound(com)
     Game_System.se_play({ :name => com.string,
                           :volume => com[0],
@@ -719,8 +713,6 @@ class Game_Interpreter
                           :balance => com[2] })
     true
   end
-
-	bool CommandPlaySound(RPG::EventCommand const& com)
 
 	def command_end_event_processing(com)
     @index = @list.length
