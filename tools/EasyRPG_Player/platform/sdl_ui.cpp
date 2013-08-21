@@ -38,7 +38,6 @@
 #include "bitmap.h"
 #include "audio.h"
 #include "sdl_audio.h"
-#include "al_audio.h"
 #include "utils.h"
 #include "matrix.h"
 
