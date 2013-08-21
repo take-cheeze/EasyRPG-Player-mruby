@@ -144,7 +144,11 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 			if (Player::exit_flag()) { break; }
 		} while(not Input().IsAnyPressed());
 
-		if(not exit) {
+		if(exit) {
+			mrb_state* const M = Player::current_vm();
+			assert(M);
+			mrb_raise(M, mrb_class_get(M, "RGSSError"), ss.str().c_str());
+		} else {
 			Input().ResetKeys();
 			Graphics().FrameReset();
 			Graphics().Update();
