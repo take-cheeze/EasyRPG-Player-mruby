@@ -44,9 +44,7 @@ struct ModuleInternal {
 	Output_ output;
 	mrb_state* const M;
 
-	ModuleInternal(mrb_state* vm) : font(Font::Shinonome()), M(vm) {
-		filefinder.UpdateRtpPaths();
-	}
+	ModuleInternal(mrb_state* vm) : font(Font::Shinonome()), M(vm) {}
 
 	~ModuleInternal() {
 		if(current_vm_ == M) { current_vm_ = NULL; }
@@ -63,6 +61,11 @@ mrb_value get_player(mrb_state* M) {
 	return mrb_obj_value(mrb_class_get(M, "Player"));
 }
 
+ModuleInternal& internal(mrb_state* M) {
+	M = get_vm(M);
+	return EasyRPG::get<ModuleInternal>(M, mrb_vm_iv_get(M, mrb_intern(M, "_module_internal")));
+}
+
 }
 
 void Player::make_current(mrb_state* M) {
@@ -72,7 +75,6 @@ mrb_state* Player::current_vm() { return current_vm_; }
 
 mrb_state* Player::create_vm() {
 	mrb_state* const M = mrb_open();
-	make_current(M);
 
 	RClass* const cls = EasyRPG::define_class<ModuleInternal>(M, "_ModuleInternal");
 
@@ -82,6 +84,7 @@ mrb_state* Player::create_vm() {
 	new(ptr) ModuleInternal(M);
 
 	mrb_vm_iv_set(M, mrb_intern(M, "_module_internal"), mrb_obj_value(data));
+	make_current(M);
 
 	return M;
 }
@@ -144,15 +147,8 @@ player_function(run)
 
 #undef player_function
 
-ModuleInternal& internal(mrb_state* M) {
-	assert(current_vm_);
-	return M
-			? internal(current_vm_)
-			: EasyRPG::get<ModuleInternal>(M, mrb_vm_iv_get(M, mrb_intern(M, "_module_internal")));
-}
-
 FontRef Font::Default(mrb_state* M) {
-	return internal(M).font;
+	return Player::current_vm()? internal(M).font : Font::Shinonome();
 }
 
 void Font::SetDefault(FontRef const& f, mrb_state* M) {
