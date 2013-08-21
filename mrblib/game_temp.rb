@@ -87,5 +87,4 @@ module Game_Temp
     @battle_wait = false
     @map_bgm = nil
   end
-  module_function :init
 end

@@ -208,15 +208,6 @@ class Game_Screen
     @snowflakes.clear
   end
 
-	class Snowflake
-    def initialize(x, y, life)
-      @x, @y = x, y
-      @life = life
-    end
-
-    attr_accessor :x, :y, :life
-	end
-
   def init_snow_rain
     return unless @snowflakes.empty?
 
@@ -331,5 +322,14 @@ class Game_Screen
       @animation.update
       @animation = nil if @animation.done?
     end
+  end
+end
+
+class Game_Screen::Snowflake
+  attr_accessor :x, :y, :life
+
+  def initialize(x, y, life)
+    @x, @y = x, y
+    @life = life
   end
 end

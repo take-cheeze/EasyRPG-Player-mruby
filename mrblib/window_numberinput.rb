@@ -59,11 +59,6 @@ class Window_NumberInput < Window_Selectable
     refresh
   end
 
-	# Returns the number of displayed digits.
-	#
-	# @return number of displayed digits.
-	int GetMaxDigits()
-
 	# Sets the maximal displayed digits.
 	#
 	# @param v maximal displayed digits

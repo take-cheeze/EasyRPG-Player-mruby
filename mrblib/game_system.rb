@@ -56,7 +56,7 @@ module Game_System
     end
 	end
 
-  data = Main_Data.game_data.system
+  def data; Main_Data.game_data.system; end
 
 	# Initializes Game System.
   def init
