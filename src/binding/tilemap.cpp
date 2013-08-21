@@ -11,9 +11,8 @@ namespace {
 using namespace EasyRPG;
 
 mrb_value initialize(mrb_state* M, mrb_value const self) {
-	new(&get<Tilemap>(M, self)) Tilemap();
 	mrb_iv_set(M, self, mrb_intern(M, "@chipset"), mrb_nil_value());
-	return self;
+	return new(data_make_struct<Tilemap>(M, self)) Tilemap(), self;
 }
 
 template<class T>

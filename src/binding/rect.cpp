@@ -8,8 +8,7 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_int x, y, w, h;
 	mrb_get_args(M, "iiii", &x, &y, &w, &h);
-	new(&get<Rect>(M, self)) Rect(x, y, w, h);
-	return self;
+	return new(data_make_struct<Rect>(M, self)) Rect(x, y, w, h), self;
 }
 
 mrb_value set(mrb_state* M, mrb_value const self) {

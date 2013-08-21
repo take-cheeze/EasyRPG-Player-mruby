@@ -10,7 +10,7 @@ using namespace EasyRPG;
 
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_iv_set(M, self, mrb_intern(M, "@bitmap"), mrb_nil_value());
-	return get_ptr<Sprite>(M, self).reset(new Sprite()), self;
+	return init_ptr<Sprite>(M, self, new Sprite()), self;
 }
 
 mrb_value viewport(mrb_state*, mrb_value) {

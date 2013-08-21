@@ -12,12 +12,12 @@ mrb_value initialize(mrb_state* M, mrb_value const self) {
 		case 1: {
 			char* str; int str_len;
 			mrb_get_args(M, "s", &str, &str_len);
-			get_ptr<Bitmap>(M, self) = Bitmap::Create(std::string(str, str_len));
+			init_ptr<Bitmap>(M, self, Bitmap::Create(std::string(str, str_len)));
 		} break;
 		case 2: {
 			mrb_int w, h;
 			mrb_get_args(M, "ii", &w, &h);
-			get_ptr<Bitmap>(M, self) = Bitmap::Create(w, h);
+			init_ptr<Bitmap>(M, self, Bitmap::Create(w,h ));
 		} break;
 		default: wrong_argument(M);
 	}

@@ -77,24 +77,14 @@ EASYRPG_SHARED_PTR<T>& get_ptr(mrb_state* M, mrb_value const& v,
 	if(mrb_nil_p(v)) { return nil_ptr; }
 
 	void* const ptr = mrb_data_check_and_get(M, v, &mruby_data_type<T>::data);
+	assert(ptr);
 	return *reinterpret_cast<EASYRPG_SHARED_PTR<T>*>(ptr);
-}
-
-#define Data_Make_Struct(mrb,klass,strct,type,sval,data) do { \
-  sval = mrb_malloc(mrb, sizeof(strct));                     \
-  { static const strct zero = { 0 }; *sval = zero; };\
-  data = Data_Wrap_Struct(mrb,klass,type,sval);\
-} while (0)
-
-template<class T, size_t S = sizeof(T)>
-void* data_make_struct(mrb_state* M, RClass* cls, RData*& data) {
-	void* const ret = mrb_malloc(M, S);
-	data = mrb_data_object_alloc(M, cls, ret, &mruby_data_type<T>::data);
-	return ret;
 }
 
 template<class T>
 struct disposer_newer<T, typename boost::enable_if<is_disposable<T> >::type> {
+	typedef EASYRPG_SHARED_PTR<T> cxx_type;
+
 	typedef EASYRPG_SHARED_PTR<T> ptr_type;
 
 	static void deleter(mrb_state* M, void* ptr) {
@@ -118,52 +108,25 @@ struct disposer_newer<T, typename boost::enable_if<is_disposable<T> >::type> {
 		return mrb_bool_value(bool(get_ptr<T>(M, self)));
 	}
 
-	static mrb_value new_(mrb_state* M, mrb_value const self) {
-		assert(mrb_type(self) == MRB_TT_CLASS);
-		RData* data = NULL;
-		void* const ptr =
-				data_make_struct<T, sizeof(ptr_type)>(M, mrb_class_ptr(self), data);
-		new(ptr) ptr_type();
-
-		mrb_value const ret = mrb_obj_value(data);
-		mrb_value* argv; int argc;
-		mrb_get_args(M, "*", &argv, &argc);
-
-		mrb_funcall_argv(M, ret, mrb_intern(M, "initialize"), argc, argv);
-		return ret;
-	}
-
 	static void register_(mrb_state* M, RClass* cls) {
+		MRB_SET_INSTANCE_TT(cls, MRB_TT_DATA);
 		mrb_define_method(M, cls, "dispose", &dispose, MRB_ARGS_NONE());
 		mrb_define_method(M, cls, "disposed?", &is_disposed, MRB_ARGS_NONE());
-		mrb_define_class_method(M, cls, "new", &new_, MRB_ARGS_ANY());
 	}
 };
 
 template<class T>
 struct disposer_newer<T, typename boost::disable_if<is_disposable<T> >::type> {
+	typedef T cxx_type;
+
 	static void deleter(mrb_state* M, void* ptr) {
 		T* const ref = reinterpret_cast<T*>(ptr);
 		ref->~T();
 		mrb_free(M, ptr);
 	}
 
-	static mrb_value new_(mrb_state* M, mrb_value self) {
-		assert(mrb_type(self) == MRB_TT_CLASS);
-		RData* data = NULL;
-		void* const ptr = data_make_struct<T>(M, mrb_class_ptr(self), data);
-		(void)ptr; // new(ptr) T();
-
-		mrb_value const ret = mrb_obj_value(data);
-		mrb_value* argv; int argc;
-		mrb_get_args(M, "*", &argv, &argc);
-
-		mrb_funcall_argv(M, ret, mrb_intern(M, "initialize"), argc, argv);
-		return ret;
-	}
-
 	static void register_(mrb_state* M, RClass* cls) {
-		mrb_define_class_method(M, cls, "new", &new_, MRB_ARGS_ANY());
+		MRB_SET_INSTANCE_TT(cls, MRB_TT_DATA);
 	}
 };
 
@@ -181,12 +144,14 @@ template<class T>
 T& get(mrb_state* M, mrb_value const& v, typename boost::enable_if<is_disposable<T> >::type* = 0) {
 	check_dispose<T>(M, v);
 	void* const ptr = mrb_data_check_and_get(M, v, &mruby_data_type<T>::data);
+	assert(ptr);
 	return *(*reinterpret_cast<EASYRPG_SHARED_PTR<T>*>(ptr));
 }
 
 template<class T>
 T& get(mrb_state* M, mrb_value const& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
 	void* const ptr = mrb_data_check_and_get(M, v, &mruby_data_type<T>::data);
+	assert(ptr);
 	return *reinterpret_cast<T*>(ptr);
 }
 
@@ -244,6 +209,31 @@ inline RClass* define_module(mrb_state* M, char const* name, method_info const* 
 
 inline void wrong_argument(mrb_state* M) {
 	mrb_raise(M, mrb_class_get(M, "ArgumentError"), "wrong number of arguments");
+}
+
+template<class T>
+void* data_make_struct(mrb_state* M, RClass* cls, RData*& data) {
+	void* const ret = mrb_malloc(M, sizeof(disposer_newer<T>::cxx_type));
+	data = mrb_data_object_alloc(M, cls, ret, &mruby_data_type<T>::data);
+	return ret;
+}
+
+template<class T>
+void* data_make_struct(mrb_state* M, mrb_value const& v) {
+	assert(mrb_type(v) == MRB_TT_DATA);
+	assert(not DATA_PTR(v));
+	void* const ret = mrb_malloc(M, sizeof(disposer_newer<T>::cxx_type));
+	DATA_TYPE(v) = &mruby_data_type<T>::data;
+	return DATA_PTR(v) = ret;
+}
+
+template<class T>
+void init_ptr(mrb_state* M, mrb_value const& v, EASYRPG_SHARED_PTR<T> const& ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+	new(data_make_struct<T>(M, self)) EASYRPG_SHARED_PTR<T>(ptr);
+}
+template<class T>
+void init_ptr(mrb_state* M, mrb_value const& v, T* ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+	new(data_make_struct<T>(M, self)) EASYRPG_SHARED_PTR<T>(ptr);
 }
 
 template<class T>

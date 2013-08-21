@@ -10,12 +10,11 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_float r, g, b, a = 255;
 	mrb_get_args(M, "fff|f", &r, &g, &b, &a);
-	new(&get<Color>(M, self)) Color(r, g, b, a);
 	mrb_iv_set(M, self, mrb_intern(M, "@red"), mrb_float_value(M, r));
 	mrb_iv_set(M, self, mrb_intern(M, "@green"), mrb_float_value(M, g));
 	mrb_iv_set(M, self, mrb_intern(M, "@blue"), mrb_float_value(M, b));
 	mrb_iv_set(M, self, mrb_intern(M, "@alpha"), mrb_float_value(M, a));
-	return self;
+	return new(data_make_struct<Color>(M, self)) Color(r, g, b, a), self;
 }
 
 mrb_value set(mrb_state* M, mrb_value const self) {

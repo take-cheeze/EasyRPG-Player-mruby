@@ -11,11 +11,9 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_value v;
 	mrb_get_args(M, "o", &v);
-	EASYRPG_SHARED_PTR<Window>& ref = get_ptr<Window>(M, self);
-	ref.reset(new Window());
 	mrb_iv_set(M, self, mrb_intern(M, "@windowskin"), mrb_nil_value());
 	mrb_iv_set(M, self, mrb_intern(M, "@contents"), mrb_nil_value());
-	return self;
+	return init_ptr<Window>(M, self, new Window()), self;
 }
 
 mrb_value viewport(mrb_state*, mrb_value) {

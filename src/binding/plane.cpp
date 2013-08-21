@@ -13,7 +13,7 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_value v; // TODO: viewport
 	mrb_get_args(M, "|o", &v);
-	return get_ptr<Plane>(M, self).reset(new Plane()), self;
+	return init_ptr<Plane>(M, self, new Plane()), self;
 }
 
 mrb_value viewport(mrb_state*, mrb_value) {

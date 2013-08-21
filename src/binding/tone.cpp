@@ -10,12 +10,11 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value self) {
 	mrb_float r, g, b, gray = 0;
 	mrb_get_args(M, "fff|f", &r, &g, &b, &gray);
-	new(&get<Tone>(M, self)) Tone(r, g, b, gray);
 	mrb_iv_set(M, self, mrb_intern(M, "@red"), mrb_float_value(M, r));
 	mrb_iv_set(M, self, mrb_intern(M, "@green"), mrb_float_value(M, g));
 	mrb_iv_set(M, self, mrb_intern(M, "@blue"), mrb_float_value(M, b));
 	mrb_iv_set(M, self, mrb_intern(M, "@gray"), mrb_float_value(M, gray));
-	return self;
+	return new(data_make_struct<Tone>(M, self)) Tone(r, g, b, gray), self;
 }
 
 mrb_value set(mrb_state* M, mrb_value self) {
