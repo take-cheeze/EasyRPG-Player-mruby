@@ -364,7 +364,10 @@ void Graphics_::InternUpdate() {
 
 	// draw screen if enough time left
 	unsigned const frame_start_time = DisplayUi->GetTicks();
-	if(frame_start_time < expected_next_frame_end_time) { DrawFrame(); }
+	if(frame_start_time < expected_next_frame_end_time) {
+		DrawFrame();
+		mrb_garbage_collect(Player::current_vm());
+	}
 	unsigned const frame_end_time = DisplayUi->GetTicks();
 
 	// calculate FPS if passed FPS calculation time
