@@ -160,7 +160,7 @@ static void InitMiniDumpWriter()
 
 extern "C" int main(int argc, char* argv[]) {
 	mrb_state* const M = Player::create_vm();
-	Player::parse_args(argc, argv);
+	Player::parse_args(argc, argv, M);
 
 #ifdef GEKKO
 	// Init libfat (Mount SD/USB)
