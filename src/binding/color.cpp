@@ -62,5 +62,5 @@ void EasyRPG::register_color(mrb_state* M) {
 		property_methods(blue),
 		property_methods(alpha),
 		method_info_end };
-	register_methods(M, define_class<Color>(M, "Color"), methods);
+	register_methods(M, define_class_with_copy<Color>(M, "Color"), methods);
 }

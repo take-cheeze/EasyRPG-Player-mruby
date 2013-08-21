@@ -125,7 +125,7 @@ struct disposer_newer<T, typename boost::disable_if<is_disposable<T> >::type> {
 		mrb_free(M, ptr);
 	}
 
-	static void register_(mrb_state* M, RClass* cls) {
+	static void register_(mrb_state*, RClass* cls) {
 		MRB_SET_INSTANCE_TT(cls, MRB_TT_DATA);
 	}
 };
@@ -213,7 +213,7 @@ inline void wrong_argument(mrb_state* M) {
 
 template<class T>
 void* data_make_struct(mrb_state* M, RClass* cls, RData*& data) {
-	void* const ret = mrb_malloc(M, sizeof(disposer_newer<T>::cxx_type));
+	void* const ret = mrb_malloc(M, sizeof(typename disposer_newer<T>::cxx_type));
 	data = mrb_data_object_alloc(M, cls, ret, &mruby_data_type<T>::data);
 	return ret;
 }
@@ -222,18 +222,34 @@ template<class T>
 void* data_make_struct(mrb_state* M, mrb_value const& v) {
 	assert(mrb_type(v) == MRB_TT_DATA);
 	assert(not DATA_PTR(v));
-	void* const ret = mrb_malloc(M, sizeof(disposer_newer<T>::cxx_type));
+	void* const ret = mrb_malloc(M, sizeof(typename disposer_newer<T>::cxx_type));
 	DATA_TYPE(v) = &mruby_data_type<T>::data;
 	return DATA_PTR(v) = ret;
 }
 
 template<class T>
+mrb_value initialize_copy(mrb_state* M, mrb_value const self) {
+	mrb_value src;
+	mrb_get_args(M, "o", &src);
+	return new(data_make_struct<T>(M, self)) T(get<T>(M, src)), self;
+}
+template<class T>
+RClass* define_copy(mrb_state* M, RClass* const cls) {
+	return mrb_define_method(M, cls, "initialize_copy",
+							 &initialize_copy<T>, MRB_ARGS_REQ(1)), cls;
+}
+template<class T>
+RClass* define_class_with_copy(mrb_state* M, char const* name) {
+	return define_copy<T>(M, define_class<T>(M, name));
+}
+
+template<class T>
 void init_ptr(mrb_state* M, mrb_value const& v, EASYRPG_SHARED_PTR<T> const& ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
-	new(data_make_struct<T>(M, self)) EASYRPG_SHARED_PTR<T>(ptr);
+	new(data_make_struct<T>(M, v)) EASYRPG_SHARED_PTR<T>(ptr);
 }
 template<class T>
 void init_ptr(mrb_state* M, mrb_value const& v, T* ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
-	new(data_make_struct<T>(M, self)) EASYRPG_SHARED_PTR<T>(ptr);
+	new(data_make_struct<T>(M, v)) EASYRPG_SHARED_PTR<T>(ptr);
 }
 
 template<class T>

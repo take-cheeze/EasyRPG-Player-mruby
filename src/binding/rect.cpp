@@ -45,5 +45,5 @@ void EasyRPG::register_rect(mrb_state* M) {
 		property_methods(x), property_methods(y),
 		property_methods(width), property_methods(height),
 		method_info_end };
-	register_methods(M, define_class<Rect>(M, "Rect"), methods);
+	register_methods(M, define_class_with_copy<Rect>(M, "Rect"), methods);
 }

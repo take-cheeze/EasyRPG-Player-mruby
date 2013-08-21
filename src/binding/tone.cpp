@@ -62,5 +62,5 @@ void EasyRPG::register_tone(mrb_state* M) {
 		property_methods(blue),
 		property_methods(gray),
 		method_info_end };
-	register_methods(M, define_class<Tone>(M, "Tone"), methods);
+	register_methods(M, define_class_with_copy<Tone>(M, "Tone"), methods);
 }
