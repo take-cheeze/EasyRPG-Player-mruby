@@ -187,5 +187,10 @@ extern "C" int main(int argc, char* argv[]) {
 
 	Player::run(M);
 
+	if(M->exc) {
+		mrb_print_error(M);
+		return EXIT_FAILURE;
+	}
+
 	return EXIT_SUCCESS;
 }
