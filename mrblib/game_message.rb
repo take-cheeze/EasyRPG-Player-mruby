@@ -13,7 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-module Game_Message
+module Game_Message end
+
+class << Game_Message
   MAX_LINE = 4
 
 	def init

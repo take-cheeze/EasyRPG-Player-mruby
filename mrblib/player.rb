@@ -1,4 +1,6 @@
-module Player
+module Player end
+
+class << Player
   EngineRpg2k = 0
   EngineRpg2k3 = 1
 

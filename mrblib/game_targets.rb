@@ -13,7 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-module Game_Targets
+module Game_Targets end
+
+class << Game_Targets
   def data; Main_Data.game_data.targets; end
 
 	def add_teleport_target(map_id, x, y, switch_id)

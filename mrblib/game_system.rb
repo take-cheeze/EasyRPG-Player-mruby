@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-# Game System namespace.
-module Game_System
+module Game_System end
+
+class << Game_System
   BGM_Battle = 0
   BGM_Victory = 1
   BGM_Inn = 2

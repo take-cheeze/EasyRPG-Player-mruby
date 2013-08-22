@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-# Game_Map namespace
-module Game_Map
+module Game_Map; end
+
+class << Game_Map
   attr_reader :interpreter
 
 	# Initialize Game_Map.

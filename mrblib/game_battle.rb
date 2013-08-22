@@ -13,7 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-module Game_Battle
+module Game_Battle end
+
+class << Game_Battle
   attr_reader :scene
   attr_writer(:target_ally, :active_ally, :target_enemy, :active_enemy, :background,
               :item, :skill, :morph)

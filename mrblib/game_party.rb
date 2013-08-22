@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-# Game_Party class.
-module Game_Party
+module Game_Party end
+
+class << Game_Party
 	# Initializes Game_Party.
   def init
     @data = Main_Data.game_data.inventory

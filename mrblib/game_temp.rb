@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-# Game Temp static class.
-module Game_Temp
+module Game_Temp end
+
+class << Game_Temp
   BattleNormal = 0
   BattleInitiative = 1
   BattleSurround = 2

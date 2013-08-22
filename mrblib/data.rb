@@ -15,7 +15,9 @@
 
 def assert(exp); raise "assertion failed" unless exp; end
 
-module Main_Data
+module Main_Data end
+
+class << Main_Data
   attr_accessor :game_screen, :game_player, :game_data
 
 	def cleanup

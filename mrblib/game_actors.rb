@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-# Game_Actors namespace.
-module Game_Actors
+module Game_Actors end
+
+class << Game_Actors
 	# Initializes Game Actors.
 	def load
     @data = Array.new(Data.actors.size + 1)
