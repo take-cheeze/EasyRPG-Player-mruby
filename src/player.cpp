@@ -84,6 +84,11 @@ mrb_state* Player::create_vm() {
 	new(ptr) ModuleInternal(M);
 
 	mrb_vm_iv_set(M, mrb_intern(M, "_module_internal"), mrb_obj_value(data));
+#ifdef NDEBUG
+	mrb_gv_set(M, mrb_intern(M, "$DEBUG"), mrb_false_value());
+#else
+	mrb_gv_set(M, mrb_intern(M, "$DEBUG"), mrb_true_value());
+#endif
 	make_current(M);
 
 	return M;
