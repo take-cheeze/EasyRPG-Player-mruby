@@ -1,9 +1,9 @@
-module Player end
-
-class << Player
+module Player
   EngineRpg2k = 0
   EngineRpg2k3 = 1
+end
 
+class << Player
   @exit_flag = false
   @reset_flag = false
   @debug_flag = false
@@ -11,10 +11,10 @@ class << Player
   @window_flag = false
   @battle_test_flag = false
   @battle_test_troop_id = 0
-  @engine = EngineRpg2k
+  @engine = Player::EngineRpg2k
 
-  def rpg2k?; @engine == EngineRpg2k; end
-  def rpg2k3?; @engine == EngineRpg2k3; end
+  def rpg2k?; @engine == Player::EngineRpg2k; end
+  def rpg2k3?; @engine == Player::EngineRpg2k3; end
 
   def arg_exists(args, name)
     idx = args.index(name)
