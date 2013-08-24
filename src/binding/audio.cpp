@@ -8,7 +8,7 @@ using namespace EasyRPG;
 mrb_value bgm_play(mrb_state* M, mrb_value const self) {
 	char* str; int str_len;
 	mrb_int volume = 100, pitch = 100;
-	mrb_get_args(M, "s|ii", &str, &str_len, volume, pitch);
+	mrb_get_args(M, "s|ii", &str, &str_len, &volume, &pitch);
 	return Audio().BGM_Play(std::string(str, str_len), volume, pitch), self;
 }
 mrb_value bgm_stop(mrb_state*, mrb_value const self) {
@@ -23,7 +23,7 @@ mrb_value bgm_fade(mrb_state* M, mrb_value const self) {
 mrb_value bgs_play(mrb_state* M, mrb_value const self) {
 	char* str; int str_len;
 	mrb_int volume = 100, pitch = 100;
-	mrb_get_args(M, "s|ii", &str, &str_len, volume, pitch);
+	mrb_get_args(M, "s|ii", &str, &str_len, &volume, &pitch);
 	return Audio().BGS_Play(std::string(str, str_len), volume, pitch), self;
 }
 mrb_value bgs_stop(mrb_state*, mrb_value const self) {
@@ -38,7 +38,7 @@ mrb_value bgs_fade(mrb_state* M, mrb_value const self) {
 mrb_value me_play(mrb_state* M, mrb_value const self) {
 	char* str; int str_len;
 	mrb_int volume = 100, pitch = 100;
-	mrb_get_args(M, "s|ii", &str, &str_len, volume, pitch);
+	mrb_get_args(M, "s|ii", &str, &str_len, &volume, &pitch);
 	return Audio().ME_Play(std::string(str, str_len), volume, pitch), self;
 }
 mrb_value me_stop(mrb_state*, mrb_value const self) {
@@ -53,7 +53,7 @@ mrb_value me_fade(mrb_state* M, mrb_value const self) {
 mrb_value se_play(mrb_state* M, mrb_value const self) {
 	char* str; int str_len;
 	mrb_int volume = 100, pitch = 100;
-	mrb_get_args(M, "s|ii", &str, &str_len, volume, pitch);
+	mrb_get_args(M, "s|ii", &str, &str_len, &volume, &pitch);
 	return Audio().SE_Play(std::string(str, str_len), volume, pitch), self;
 }
 mrb_value se_stop(mrb_state*, mrb_value const self) {
