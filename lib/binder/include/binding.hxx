@@ -189,7 +189,7 @@ RClass* define_class(mrb_state* M, char const* name, RClass* outer = NULL, RClas
 		mruby_data_type<T>::data.dfree = &disposer_newer<T>::deleter;
 
 		if(outer != M->object_class) {
-			mruby_data_type<T>::outer = to_cxx_str(M, mrb_class_path(M, outer));
+			mruby_data_type<T>::outer = mrb_class_name(M, outer);
 		}
 	} else {
 		assert(mruby_data_type<T>::data.struct_name == name);
@@ -290,6 +290,11 @@ mrb_value clone(mrb_state* M, T const& v, typename boost::disable_if<is_disposab
 	void* const ptr = data_make_struct<T>(M, mruby_data_type<T>::get_class(M), data);
 	new(ptr) T(v);
 	return mrb_obj_value(data);
+}
+
+template<class T>
+mrb_value clone_opt(mrb_state* M, boost::optional<T> const& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
+	return v? clone(M, *v) : mrb_nil_value();
 }
 
 template<class T>

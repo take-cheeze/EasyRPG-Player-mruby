@@ -145,7 +145,7 @@ mrb_value lcf_file_get(mrb_state* M, mrb_value const self) {
 	if(mrb_fixnum_p(tmp_v)) {
 		mrb_int v;
 		mrb_get_args(M, "i", &v);
-		return clone(M, get<LCF::lcf_file>(M, self).get(v));
+		return clone_opt(M, get<LCF::lcf_file>(M, self).get(v));
 	} else {
 		mrb_sym sym; size_t str_len;
 		mrb_get_args(M, "n", &sym);
@@ -202,7 +202,7 @@ mrb_value array1d_is_valid(mrb_state* M, mrb_value const self) {
 mrb_value array2d_get(mrb_state* M, mrb_value const self) {
 	mrb_int v;
 	mrb_get_args(M, "i", &v);
-	return clone(M, get<LCF::array2d>(M, self)[v]);
+	return clone_opt(M, get<LCF::array2d>(M, self).get(v));
 }
 
 mrb_value map_tree_get(mrb_state* M, mrb_value const self) {
