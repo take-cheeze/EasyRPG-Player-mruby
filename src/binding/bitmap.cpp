@@ -55,16 +55,15 @@ mrb_value stretch_blt(mrb_state* M, mrb_value const self) {
 
 mrb_value fill_rect(mrb_state* M, mrb_value const self) {
 	mrb_value* argv; int argc;
-	mrb_get_args(M, "*", &argv, &argc);
-	switch(argc) {
+	switch(mrb_get_args(M, "*", &argv, &argc)) {
 		case 5: {
 			mrb_int x, y, w, h;
 			mrb_value col;
 			mrb_get_args(M, "iiiio", &x, &y, &w, &h, &col);
-			get<Bitmap>(M, self).fill(Rect(x, y, w, h), get<Color>(M, argv[4]));
+			get<Bitmap>(M, self).fill(Rect(x, y, w, h), get<Color>(M, col));
 		} break;
 		case 2:
-			get<Bitmap>(M, self).fill(get<Rect>(M, argv[0]), get<Color>(M, argv[4]));
+			get<Bitmap>(M, self).fill(get<Rect>(M, argv[0]), get<Color>(M, argv[1]));
 			break;
 		default: wrong_argument(M);
 	}
@@ -95,10 +94,9 @@ mrb_value hue_change(mrb_state* M, mrb_value const self) {
 
 mrb_value draw_text(mrb_state* M, mrb_value const self) {
 	mrb_value* argv; int argc;
-	mrb_get_args(M, "*", &argv, &argc);
 	char* str; int str_len;
 	mrb_int aln = Text::AlignLeft;
-	switch(argc) {
+	switch(mrb_get_args(M, "*", &argv, &argc)) {
 		case 2:
 		case 3:
 			if(is<Rect>(M, argv[0])) {
@@ -122,6 +120,7 @@ mrb_value draw_text(mrb_state* M, mrb_value const self) {
 			get<Bitmap>(M, self).draw_text(Rect(x, y, w, h), str, Text::Alignment(aln));
 			break;
 		}
+		default: wrong_argument(M);
 	}
 	return self;
 }
