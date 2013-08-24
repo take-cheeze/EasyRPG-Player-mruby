@@ -33,6 +33,8 @@ class << Data
   def treemap; @lmt; end
 
   def method_missing(sym)
-    @ldb[sym]
+    ret = @ldb[sym]
+    raise NameError, ("%s not defined" % sym) if ret.nil?
+    ret
   end
 end

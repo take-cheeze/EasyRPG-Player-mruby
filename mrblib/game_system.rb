@@ -57,11 +57,14 @@ class << Game_System
     end
 	end
 
-  def data; $game_data.system; end
+  def data
+    $game_data[:system] ||= {
+      :current_music => {}
+    }
+  end
 
 	# Initializes Game System.
   def init
-    data.setup
   end
 
 	# Plays a Music.
@@ -93,7 +96,7 @@ class << Game_System
 	# Gets system graphic name.
 	#
 	# @return system graphic filename.
-	def system_name; data.graphics_name; end
+	def system_name; data.system || Data.system.system; end
 
 	# Sets the system graphic.
 	#

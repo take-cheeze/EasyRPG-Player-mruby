@@ -37,7 +37,7 @@ class Scene_Title < Scene
       @init = true
     end
 
-    $game_data.setup
+    $game_data = {}
 
     # Create Game System
     Game_System.init
@@ -137,8 +137,8 @@ class Scene_Title < Scene
 	def create_title_graphic
     # Load Title Graphic
     if !@title # No need to recreate Title on Resume
-      title = Sprite.new
-      title.bitmap = Cache.title Data.system.title_name
+      @title = Sprite.new
+      @title.bitmap = Cache.title Data.system.title
     end
   end
 

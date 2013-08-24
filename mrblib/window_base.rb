@@ -22,6 +22,7 @@ class Window_Base < Window
 	# @param w window width.
 	# @param h window height.
   def initialize(x, y, w, h)
+    super
     @windowskin_name = Game_System.system_name
     self.windowskin = Cache.system @windowskin_name
     self.x, self.y = x, y

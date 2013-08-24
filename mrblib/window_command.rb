@@ -14,7 +14,7 @@
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
 # Window Command class.
-class Window_Command< Window_Selectable
+class Window_Command < Window_Selectable
 	# Constructor.
 	#
 	# @param commands commands to display.
@@ -24,13 +24,14 @@ class Window_Command< Window_Selectable
 	#                 items, if no height is passed
 	#                 the height is autocalculated.
 	def initialize(commands, width = nil, max_item = nil)
-    super 0, 0, required_width(commands, width), (max_item.nil? ? commands.length : max_item) * 16 + 16
     @commands = commands
+    super 0, 0, required_width(commands, width), (max_item.nil? ? commands.length : max_item) * 16 + 16
+
+    self.contents = Bitmap.new self.width - 16, @item_max * 16
 
     @index = 0
     @item_max = @commands.length
 
-    self.contents = Bitmap.new w - 16, @item_max * 16
     refresh
   end
 
@@ -59,12 +60,13 @@ class Window_Command< Window_Selectable
   end
 
   def draw_item(idx, color)
-    contents.fill Rect.new(0, 16 * @index, contents.width - 0, 16), Color.new
+    contents.fill_rect Rect.new(0, 16 * @index, contents.width - 0, 16), Color.new(0, 0, 0, 0)
     contents.draw_text_2k 0, 16 * @index + 2, @commands[@index], color
   end
 
 	def required_width(commands, width)
-    return width if width > 0
-    @commands.reduce(width) { |tmp,v| [tmp, contents.text_size(v).width].max } + 16
+    return width unless width.nil?
+    bmp = Bitmap.new 1, 1
+    @commands.reduce(0) { |tmp,v| [tmp, bmp.text_size(v).width].max } + 16
   end
 end
