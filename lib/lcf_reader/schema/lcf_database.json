@@ -382,7 +382,7 @@
         {"index": 12, "type": "integer", "name": "ocean_speed", "value": 0}
       ]},
 
-    {"index": 21, "type": "array1d", "name": "vocabulary", "value": [
+    {"index": 21, "type": "array1d", "name": "terms", "value": [
       {"index": 1, "type": "string", "name": "battle_start"},
       {"index": 2, "type": "string", "name": "first_strike"},
       {"index": 3, "type": "string", "name": "escape_success"},
