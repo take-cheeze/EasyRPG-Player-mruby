@@ -13,18 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-def assert(exp); raise "assertion failed" unless exp; end
-
-class String
-  def %(args)
-    if args.class == Array
-      return sprintf(self, *args)
-    else
-      return sprintf(self, args);
-    end
-  end
-end
-
 module Data end
 
 class << Data
