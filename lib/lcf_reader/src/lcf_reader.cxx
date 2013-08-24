@@ -226,7 +226,9 @@ LCF::array1d& LCF::array1d::operator=(BOOST_RV_REF(array1d) rhs) {
 }
 
 boost::optional<LCF::element> LCF::array1d::get(picojson::string const& k) const {
-	return (*this).get(find_schema(*schema_, picojson::string(k))[sym::index].i());
+	picojson const& sch = find_schema(*schema_, picojson::string(k));
+	if(sch.is<picojson::null>()) { return boost::none; }
+	else { return (*this).get(sch[sym::index].i()); }
 }
 boost::optional<LCF::element> LCF::array1d::get(char const* k) const {
 	return (*this).get(picojson::string(k));
@@ -236,7 +238,8 @@ boost::optional<LCF::element> LCF::array1d::get(uint32_t const k) const {
 	if(i != end()) { return i->second; }
 
 	picojson const& sch = find_schema(*schema_, k);
-	if(has_default(sch)) { return element(sch, istream_ref(), 0); }
+	if(not sch.is<picojson::null>() and has_default(sch))
+	{ return element(sch, istream_ref(), 0); }
 	else { return boost::none; }
 }
 
