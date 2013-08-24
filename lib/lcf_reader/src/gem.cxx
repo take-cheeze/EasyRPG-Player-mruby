@@ -74,7 +74,7 @@ mrb_value to_mrb(mrb_state* mrb, picojson::value const& json) {
 	return
 			json.is<picojson::null>()? mrb_nil_value():
 			json.is<double>()? to_mrb(mrb, json.get<double>()):
-			json.is<bool>()? (json.get<bool>()? mrb_true_value() : mrb_false_value()):
+			json.is<bool>()? mrb_bool_value(json.get<bool>()):
 			json.is<std::string>()? to_mrb(mrb, json.get<std::string>()):
 			json.is<picojson::array>()? to_mrb(mrb, json.get<picojson::array>()):
 			json.is<picojson::object>()? to_mrb(mrb, json.get<picojson::object>()):
