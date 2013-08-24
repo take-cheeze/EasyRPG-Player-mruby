@@ -116,19 +116,6 @@ mrb_value lcf_file_initialize(mrb_state* M, mrb_value const self) {
 	return self;
 }
 
-mrb_value lcf_file_method_missing(mrb_state* M, mrb_value const self) {
-	mrb_value* argv; int argc;
-	if(mrb_get_args(M, "*", &argv, &argc) == 1) {
-		mrb_sym sym; size_t str_len;
-		mrb_get_args(M, "n", &sym);
-		char const* const str = mrb_sym2name_len(M, sym, &str_len);
-		boost::optional<LCF::element> const ret =
-				get<LCF::lcf_file>(M, self).get(picojson_string(str, str_len));
-		if(ret) return to_mrb(M, *ret);
-	}
-	return mrb_funcall_argv(M, self, mrb_intern(M, "method_missing"), argc, argv);
-}
-
 mrb_value lcf_file_root(mrb_state* M, mrb_value const self) {
 	mrb_int v;
 	mrb_get_args(M, "i",&v);
@@ -160,16 +147,15 @@ mrb_value lcf_file_error(mrb_state* M, mrb_value const self) {
 }
 
 mrb_value array1d_method_missing(mrb_state* M, mrb_value const self) {
-	mrb_value* argv; int argc;
-	if(mrb_get_args(M, "*", &argv, &argc) == 1) {
-		mrb_sym sym; size_t str_len;
-		mrb_get_args(M, "n", &sym);
-		char const* const str = mrb_sym2name_len(M, sym, &str_len);
-		boost::optional<LCF::element> const ret =
-				get<LCF::array1d>(M, self).get(picojson_string(str, str_len));
-		if(ret) return to_mrb(M, *ret);
-	}
-	return mrb_funcall_argv(M, self, mrb_intern(M, "method_missing"), argc, argv);
+	mrb_sym sym; size_t str_len;
+	mrb_get_args(M, "n", &sym);
+	char const* const str = mrb_sym2name_len(M, sym, &str_len);
+	boost::optional<LCF::element> const ret =
+			get<LCF::array1d>(M, self).get(picojson_string(str, str_len));
+	if(ret) return to_mrb(M, *ret);
+
+	mrb_name_error(M, sym, "%S not found", mrb_sym2str(M, sym));
+	return self;
 }
 
 mrb_value array1d_get(mrb_state* M, mrb_value const self) {
@@ -242,7 +228,6 @@ extern "C" void mrb_lcf_reader_gem_init(mrb_state* M) {
 
 	static method_info const lcf_file_methods[] = {
 		{ "initialize", &lcf_file_initialize, MRB_ARGS_REQ(1) },
-		{ "method_missing", &lcf_file_method_missing, MRB_ARGS_REQ(1) | MRB_ARGS_REST() },
 		{ "root", &lcf_file_root, MRB_ARGS_REQ(1) },
 		{ "valid?", &lcf_file_valid, MRB_ARGS_NONE() },
 		{ "[]", &lcf_file_get, MRB_ARGS_REQ(1) },
