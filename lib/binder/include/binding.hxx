@@ -181,8 +181,7 @@ inline std::string to_cxx_str(mrb_state* M, mrb_value const& v) {
 template<class T>
 RClass* define_class(mrb_state* M, char const* name, RClass* outer = NULL, RClass* base = NULL) {
 	if(not outer) { outer = M->object_class; }
-
-	if(not base) { base = mrb_class_get(M, "BasicObject"); }
+	if(not base) { base = M->object_class; }
 
 	if(not mruby_data_type<T>::data.struct_name) {
 		mruby_data_type<T>::data.struct_name = name;
