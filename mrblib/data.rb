@@ -15,6 +15,16 @@
 
 def assert(exp); raise "assertion failed" unless exp; end
 
+class String
+  def %(args)
+    if args.class == Array
+      return sprintf(self, *args)
+    else
+      return sprintf(self, args);
+    end
+  end
+end
+
 module Data end
 
 class << Data
