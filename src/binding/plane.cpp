@@ -1,5 +1,5 @@
 #include "bitmap.h"
-#include "binding.h"
+#include "binding.hxx"
 #include "color.h"
 #include "plane.h"
 #include "tone.h"

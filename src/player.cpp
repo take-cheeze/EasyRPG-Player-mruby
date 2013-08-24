@@ -25,7 +25,7 @@
 #include "filefinder.h"
 #include "utils.h"
 #include "font.h"
-#include "binding.h"
+#include "binding.hxx"
 #include "player.h"
 
 #include <mruby/variable.h>

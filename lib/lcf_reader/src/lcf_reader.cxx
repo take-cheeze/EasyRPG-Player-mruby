@@ -35,6 +35,13 @@ using boost::ref;
 namespace sym = LCF::sym;
 }
 
+void LCF::event_command::swap(event_command& e) {
+	std::swap(code, e.code);
+	std::swap(nest, e.nest);
+	str.swap(e.str);
+	args.swap(e.args);
+}
+
 picojson const& LCF::get_schema(picojson::string const& name) {
 	typedef boost::container::flat_map<picojson::string, picojson> cache_type;
 	static cache_type cache_;
@@ -146,6 +153,11 @@ LCF::array2d::array2d(picojson const& sch, istream_ref const& is)
 	size_ = size_t(is->tellg()) - base_;
 }
 
+boost::optional<LCF::array1d const&> LCF::array2d::get(uint32_t const k) const {
+	const_iterator i = find(k);
+	if(i != end()) { return i->second; }
+	else { return boost::none; }
+}
 LCF::array1d const& LCF::array2d::operator[](uint32_t const k) const {
 	const_iterator i = find(k);
 	assert(i != end());
@@ -213,6 +225,21 @@ LCF::array1d& LCF::array1d::operator=(BOOST_RV_REF(array1d) rhs) {
 	return *this;
 }
 
+boost::optional<LCF::element> LCF::array1d::get(picojson::string const& k) const {
+	return (*this).get(find_schema(*schema_, picojson::string(k))[sym::index].i());
+}
+boost::optional<LCF::element> LCF::array1d::get(char const* k) const {
+	return (*this).get(picojson::string(k));
+}
+boost::optional<LCF::element> LCF::array1d::get(uint32_t const k) const {
+	const_iterator const i = find(k);
+	if(i != end()) { return i->second; }
+
+	picojson const& sch = find_schema(*schema_, k);
+	if(has_default(sch)) { return element(sch, istream_ref(), 0); }
+	else { return boost::none; }
+}
+
 LCF::element LCF::array1d::operator[](picojson::string const& k) const {
 	return (*this)[find_schema(*schema_, picojson::string(k))[sym::index].i()];
 }
@@ -235,6 +262,9 @@ int LCF::array1d::index() const {
 }
 bool LCF::array1d::is_a2d() const {
 	return (index_ != 0);
+}
+bool LCF::array1d::is_valid() const {
+	return schema_;
 }
 
 LCF::map_tree::map_tree(std::istream& is) : vector<int32_t>(ber(is)) {
@@ -358,6 +388,7 @@ LCF::array2d LCF::element::a2d() const { return to<array2d>(); }
 int LCF::element::i() const { return to<int>(); }
 bool LCF::element::b() const { return to<bool>(); }
 double LCF::element::d() const { return to<double>(); }
+double LCF::element::f() const { return to<double>(); }
 std::string LCF::element::s() const { return to<std::string>(); }
 LCF::event LCF::element::e() const { return to<event>(); }
 LCF::int8_array LCF::element::i8a() const { return to<int8_array>(); }
@@ -369,6 +400,13 @@ LCF::ber_array LCF::element::ba() const { return to<ber_array>(); }
 LCF::array1d LCF::element::operator[](uint32_t const k) const { return a2d()[k]; }
 LCF::element LCF::element::operator[](picojson::string const& k) const { return a1d()[k]; }
 LCF::element LCF::element::operator[](char const* k) const { return a1d()[picojson::string(k)]; }
+
+boost::optional<LCF::array1d const&> LCF::element::get(uint32_t const k) const
+{ return a2d().get(k); }
+boost::optional<LCF::element> LCF::element::get(picojson::string const& k) const
+{ return a1d().get(k); }
+boost::optional<LCF::element> LCF::element::get(char const* k) const
+{ return a1d().get(picojson::string(k)); }
 
 void LCF::element::check_type(picojson::string const& name) const {
 	assert(schema_->get(sym::type).s() == name);
@@ -713,6 +751,16 @@ LCF::element const& LCF::lcf_file::root(size_t const index) const {
 
 LCF::vector<LCF::change> const& LCF::lcf_file::changes(size_t const index) const {
 	return changes_[index];
+}
+
+boost::optional<LCF::element> LCF::lcf_file::get(picojson::string const& n) const {
+	return root(0).get(n);
+}
+boost::optional<LCF::element> LCF::lcf_file::get(char const* n) const {
+	return root(0).get(picojson::string(n));
+}
+boost::optional<LCF::array1d const&> LCF::lcf_file::get(uint32_t const idx) const {
+	return root(0).get(idx);
 }
 
 LCF::element LCF::lcf_file::operator[](picojson::string const& n) const {

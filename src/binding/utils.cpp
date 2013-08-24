@@ -1,5 +1,5 @@
-#include "binding.h"
 #include "utils.h"
+#include "binding.hxx"
 
 #include <mruby/array.h>
 #include <mruby/hash.h>

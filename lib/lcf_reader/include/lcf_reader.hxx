@@ -8,6 +8,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/container/flat_map.hpp>
 #include <boost/move/move.hpp>
+#include <boost/optional.hpp>
 
 #include "lcf_reader_fwd.hxx"
 #include "picojson.hxx"
@@ -71,6 +72,8 @@ namespace LCF {
 		size_t nest;
 		std::string str;
 		vector<int32_t> args;
+
+		void swap(event_command& rhs);
 	}; // struct event_command
 
 	struct map_tree : public vector<int32_t> {
@@ -96,6 +99,7 @@ namespace LCF {
 		int i() const;
 		bool b() const;
 		double d() const;
+		double f() const;
 		std::string s() const;
 		event e() const;
 		int8_array i8a() const;
@@ -110,6 +114,10 @@ namespace LCF {
 		array1d operator[](uint32_t const k) const;
 		element operator[](picojson_string const& k) const;
 		element operator[](char const* k) const;
+
+		boost::optional<array1d const&> get(uint32_t const k) const;
+		boost::optional<element> get(picojson_string const& k) const;
+		boost::optional<element> get(char const* k) const;
 
 		void to_json(picojson& ret) const;
 		void write(std::ostream& os) const;
@@ -145,6 +153,10 @@ namespace LCF {
 		element operator[](char const* k) const;
 		element operator[](uint32_t const k) const;
 
+		boost::optional<element> get(picojson_string const& k) const;
+		boost::optional<element> get(char const* k) const;
+		boost::optional<element> get(uint32_t const k) const;
+
 		int index() const;
 		bool is_a2d() const;
 		bool is_valid() const;
@@ -169,6 +181,7 @@ namespace LCF {
 		array2d(BOOST_RV_REF(array2d) rv);
 
 		array1d const& operator[](uint32_t const k) const;
+		boost::optional<array1d const&> get(uint32_t const k) const;
 
 		array2d& operator =(BOOST_COPY_ASSIGN_REF(array2d));
 		array2d& operator =(BOOST_RV_REF(array2d));
@@ -194,6 +207,10 @@ namespace LCF {
 		element operator[](picojson_string const& n) const;
 		element operator[](char const* n) const;
 		array1d operator[](uint32_t const idx) const;
+
+		boost::optional<element> get(picojson_string const& n) const;
+		boost::optional<element> get(char const* n) const;
+		boost::optional<array1d const&> get(uint32_t const idx) const;
 
 		element const& root(size_t index) const;
 

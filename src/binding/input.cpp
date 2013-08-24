@@ -1,5 +1,5 @@
-#include "binding.h"
 #include "input.h"
+#include "binding.hxx"
 
 namespace {
 

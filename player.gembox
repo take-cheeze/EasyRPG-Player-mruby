@@ -15,7 +15,8 @@ module ::MRuby
 end
 
 MRuby::GemBox.new do |conf|
-  dir = ENV["PLAYER_BASE"]
+  dir = ENV['PLAYER_BASE']
+  conf.gem "#{dir}/lib/binder"
   conf.gem "#{dir}/lib/exfont"
   conf.gem "#{dir}/lib/lcf_reader"
   conf.gem "#{dir}/lib/shinonome"

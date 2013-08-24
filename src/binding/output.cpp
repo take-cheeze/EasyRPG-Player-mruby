@@ -1,6 +1,6 @@
-#include "binding.h"
 #include "color.h"
 #include "output.h"
+#include "binding.hxx"
 
 #include <mruby/array.h>
 #include <mruby/hash.h>
@@ -12,10 +12,7 @@ using namespace EasyRPG;
 mrb_value take_screenshot(mrb_state* M, mrb_value const self) {
 	char* str; int str_len;
 	switch(mrb_get_args(M, "|s", &str, &str_len)) {
-		case 0: {
-			boost::optional<std::string> const ret = Output(M).TakeScreenshot();
-			return ret? to_mrb_str(M, *ret) : mrb_nil_value();
-		}
+		case 0: return to_mrb_opt(M, Output(M).TakeScreenshot());
 		case 1: return mrb_bool_value(Output(M).TakeScreenshot(std::string(str, str_len)));
 
 		default:
@@ -37,7 +34,7 @@ mrb_value type_color(mrb_state* M, mrb_value) {
 mrb_value type_string(mrb_state* M, mrb_value) {
 	mrb_int v;
 	mrb_get_args(M, "i", &v);
-	return to_mrb_str(M, Output(M).Type2String(Output_::Type(v)));
+	return to_mrb(M, Output(M).Type2String(Output_::Type(v)));
 }
 
 mrb_value buffer(mrb_state* M, mrb_value) {
@@ -46,13 +43,13 @@ mrb_value buffer(mrb_state* M, mrb_value) {
 	for(Output_::buffer_type::const_iterator i = buf.begin(); i != buf.end(); ++i) {
 		mrb_value const h = mrb_hash_new_capa(M, 4);
 		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "time")),
-					 to_mrb_str(M, Output(M).local_time(i->time, true)));
+					 to_mrb(M, Output(M).local_time(i->time, true)));
 		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "type")),
 					 mrb_fixnum_value(i->type));
 		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "message")),
-					 to_mrb_str(M, i->message));
+					 to_mrb(M, i->message));
 		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "screenshot")),
-					 i->screenshot? to_mrb_str(M, *i->screenshot) : mrb_nil_value());
+					 to_mrb_opt(M, i->screenshot));
 		mrb_ary_push(M, ret, h);
 	}
 	return ret;

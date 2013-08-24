@@ -1,6 +1,6 @@
-#include "binding.h"
 #include "bitmap.h"
 #include "tilemap.h"
+#include "binding.hxx"
 
 #include <mruby/array.h>
 #include <mruby/variable.h>
@@ -13,15 +13,6 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_iv_set(M, self, mrb_intern(M, "@chipset"), mrb_nil_value());
 	return new(data_make_struct<Tilemap>(M, self)) Tilemap(), self;
-}
-
-template<class T>
-mrb_value to_mrb_ary(mrb_state* M, std::vector<T> const& v) {
-	mrb_value const ret = mrb_ary_new_capa(M, v.size());
-	for(typename std::vector<T>::const_iterator i = v.begin(); i < v.end(); ++i) {
-		mrb_ary_push(M, ret, mrb_fixnum_value(*i));
-	}
-	return ret;
 }
 
 template<class T>

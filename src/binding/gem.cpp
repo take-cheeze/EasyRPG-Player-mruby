@@ -1,4 +1,4 @@
-#include "binding.h"
+#include "binding.hxx"
 
 extern "C" void mrb_EasyRPG_Player_gem_init(mrb_state* M) {
 	EasyRPG::register_audio(M);

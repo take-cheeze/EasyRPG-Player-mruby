@@ -1,5 +1,5 @@
-#include "binding.h"
 #include "filefinder.h"
+#include "binding.hxx"
 
 #include <mruby/array.h>
 #include <mruby/hash.h>
@@ -13,7 +13,7 @@ typedef FileFinder_::ProjectTree ProjectTree;
 mrb_value find_image(mrb_state* M, mrb_value) {
 	char* dir, name; int dir_len, name_len;
 	mrb_get_args(M, "ss", &dir, &dir_len, &name, &name_len);
-	return to_mrb_str(M, FileFinder(M).FindImage(std::string(dir, dir_len),
+	return to_mrb(M, FileFinder(M).FindImage(std::string(dir, dir_len),
 											 std::string(name, name_len)));
 }
 
@@ -24,7 +24,7 @@ mrb_value update_rtp_paths(mrb_state* M, mrb_value const self) {
 mrb_value find_default(mrb_state* M, mrb_value) {
 	char* dir, name; int dir_len, name_len;
 	size_t const argc = mrb_get_args(M, "s|s", &dir, &dir_len, &name, &name_len);
-	return to_mrb_str(M, argc == 2
+	return to_mrb(M, argc == 2
 					  ? FileFinder(M).FindDefault(std::string(dir, dir_len),
 												 std::string(name, name_len))
 					  : FileFinder(M).FindDefault(std::string(dir, dir_len)));
@@ -45,7 +45,7 @@ mrb_value exists(mrb_state* M, mrb_value) {
 mrb_value make_path(mrb_state* M, mrb_value) {
 	char* dir, name; int dir_len, name_len;
 	mrb_get_args(M, "ss", &dir, &dir_len, &name, &name_len);
-	return to_mrb_str(M, FileFinder(M).MakePath(std::string(dir, dir_len),
+	return to_mrb(M, FileFinder(M).MakePath(std::string(dir, dir_len),
 											   std::string(name, name_len)));
 }
 
@@ -75,7 +75,7 @@ mrb_value is_rpg2k_project(mrb_state* M, mrb_value) {
 }
 
 mrb_value get_project_path(mrb_state* M, mrb_value) {
-	return to_mrb_str(M, FileFinder(M).project_path);
+	return to_mrb(M, FileFinder(M).project_path);
 }
 mrb_value set_project_path(mrb_state* M, mrb_value self) {
 	char* str; int str_len;
@@ -87,13 +87,13 @@ mrb_value set_project_path(mrb_state* M, mrb_value self) {
 mrb_value map_to_hash(mrb_state* M, string_map const& m) {
 	mrb_value const ret = mrb_hash_new_capa(M, m.size());
 	for(string_map::const_iterator i = m.begin(); i != m.end(); ++i) {
-		mrb_hash_set(M, ret, to_mrb_str(M, i->first), to_mrb_str(M, i->second));
+		mrb_hash_set(M, ret, to_mrb(M, i->first), to_mrb(M, i->second));
 	}
 	return ret;
 }
 
 mrb_value project_tree_path(mrb_state* M, mrb_value const self) {
-	return to_mrb_str(M, get<ProjectTree>(M, self).project_path);
+	return to_mrb(M, get<ProjectTree>(M, self).project_path);
 }
 mrb_value project_tree_files(mrb_state* M, mrb_value const self) {
 	return map_to_hash(M, get<ProjectTree>(M, self).files);
@@ -106,7 +106,7 @@ mrb_value project_tree_sub_members(mrb_state* M, mrb_value const self) {
 	sub_members_type const& m = get<ProjectTree>(M, self).sub_members;
 	mrb_value const ret = mrb_hash_new_capa(M, m.size());
 	for(sub_members_type::const_iterator i = m.begin(); i != m.end(); ++i) {
-		mrb_hash_set(M, ret, to_mrb_str(M, i->first), map_to_hash(M, i->second));
+		mrb_hash_set(M, ret, to_mrb(M, i->first), map_to_hash(M, i->second));
 	}
 	return ret;
 }
@@ -124,7 +124,7 @@ void register_project_tree(mrb_state* M) {
 mrb_value fullpath(mrb_state* M, mrb_value) {
 	char* str; int str_len;
 	mrb_get_args(M, "s", &str, &str_len);
-	return to_mrb_str(M, FileFinder(M).fullpath(std::string(str, str_len)));
+	return to_mrb(M, FileFinder(M).fullpath(std::string(str, str_len)));
 }
 
 mrb_value project_tree(mrb_state* M, mrb_value) {
@@ -141,7 +141,7 @@ mrb_value create_project_tree(mrb_state* M, mrb_value) {
 	mrb_value find_ ## name(mrb_state* M, mrb_value) {					\
 		char* name; int name_len;										\
 		mrb_get_args(M, "s", &name, &name_len);							\
-		return to_mrb_str(M, FileFinder(M).Find ## cxx_name(std::string(name, name_len))); \
+		return to_mrb(M, FileFinder(M).Find ## cxx_name(std::string(name, name_len))); \
 	}																	\
 
 define_finder(sound, Sound)

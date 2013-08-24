@@ -1,5 +1,5 @@
 #include "bitmap.h"
-#include "binding.h"
+#include "binding.hxx"
 
 namespace {
 

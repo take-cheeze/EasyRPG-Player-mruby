@@ -1,6 +1,4 @@
-require 'fileutils'
-
-MRuby::Gem::Specification.new('lcf_reader') { |spec|
+MRuby::Gem::Specification.new 'lcf_reader' do |spec|
   spec.license = 'BSD'
   spec.authors = 'take-cheeze'
 
@@ -12,4 +10,6 @@ MRuby::Gem::Specification.new('lcf_reader') { |spec|
   schema_obj = objfile_from_src("#{dir}/src/schema.cxx")
   @objs << schema_obj
   file schema_obj => "#{dir}/src/schema.cxx"
-}
+
+  spec.add_dependency 'binder'
+end

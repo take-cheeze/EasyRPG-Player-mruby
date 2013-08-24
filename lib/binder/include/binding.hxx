@@ -2,6 +2,7 @@
 #define EASYRPG_BINDING_H
 
 #include <mruby.h>
+#include <mruby/array.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
 #include <mruby/string.h>
@@ -12,10 +13,14 @@
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/optional.hpp>
 
 #include <cassert>
 
-#include "memory_management.h"
+#ifndef EASYRPG_SHARED_PTR
+#  include <boost/shared_ptr.hpp>
+#  define EASYRPG_SHARED_PTR boost::shared_ptr
+#endif
 
 extern "C" {
 	void mrb_EasyRPG_Player_gem_init(mrb_state* M);
@@ -161,7 +166,10 @@ bool is(mrb_state* M, mrb_value const& v) {
 }
 
 template<class T>
-RClass* define_class(mrb_state* M, char const* name, RClass* base) {
+RClass* define_class(mrb_state* M, char const* name, RClass* outer = NULL, RClass* base = NULL) {
+	if(not outer) { outer = M->object_class; }
+	if(not base) { base = mrb_class_get(M, "BasicObject"); }
+
 	if(not mruby_data_type<T>::data.struct_name) {
 		mruby_data_type<T>::data.struct_name = name;
 		mruby_data_type<T>::data.dfree = &disposer_newer<T>::deleter;
@@ -170,14 +178,10 @@ RClass* define_class(mrb_state* M, char const* name, RClass* base) {
 		assert(mruby_data_type<T>::data.dfree == &disposer_newer<T>::deleter);
 	}
 
-	RClass* const ret = mrb_define_class(M, name, base);
+	RClass* const ret = mrb_define_class_under(M, outer, name, base);
 	disposer_newer<T>::register_(M, ret);
 
 	return ret;
-}
-template<class T>
-RClass* define_class(mrb_state* M, char const* name) {
-	return define_class<T>(M, name, M->object_class);
 }
 
 struct method_info {
@@ -261,6 +265,14 @@ mrb_value clone(mrb_state* M, T const& v, typename boost::disable_if<is_disposab
 }
 
 template<class T>
+mrb_value swap(mrb_state* M, T& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
+	RData* data = NULL;
+	void* const ptr = data_make_struct<T>(M, mruby_data_type<T>::get_class(M), data);
+	(new(ptr) T())->swap(v);
+	return mrb_obj_value(data);
+}
+
+template<class T>
 mrb_value create(mrb_state* M, EASYRPG_SHARED_PTR<T> const& v, typename boost::enable_if<is_disposable<T> >::type* = 0) {
 	if(not v) { return mrb_nil_value(); }
 
@@ -270,7 +282,19 @@ mrb_value create(mrb_state* M, EASYRPG_SHARED_PTR<T> const& v, typename boost::e
 	return mrb_obj_value(data);
 }
 
-inline mrb_value to_mrb_str(mrb_state* M, std::string const& str) {
+template<class T>
+mrb_value to_mrb_ary(mrb_state* M, T const& v) {
+	mrb_value const ret = mrb_ary_new_capa(M, v.size());
+	for(typename T::const_iterator i = v.begin(); i < v.end(); ++i) {
+		mrb_ary_push(M, ret, mrb_fixnum_value(*i));
+	}
+	return ret;
+}
+
+
+#define to_mrb_opt(M, v) (v? to_mrb(M, *v) : mrb_nil_value())
+
+inline mrb_value to_mrb(mrb_state* M, std::string const& str) {
 	return mrb_str_new(M, str.data(), str.size());
 }
 

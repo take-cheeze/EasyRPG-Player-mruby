@@ -109,12 +109,8 @@ class Scene_Title < Scene
       Output.debug('%s is not an RPG2k project' % Main_Data.project_path)
     end
 
-    if !LDB_Reader.load FileFinder.find_default(DATABASE_NAME)
-      Output.error LcfReader.error
-    end
-    if !LMT_Reader.load FileFinder.find_default(TREEMAP_NAME)
-      Output.error LcfReader.error
-    end
+    Data.load_ldb FileFinder.find_default(DATABASE_NAME)
+    Data.load_lmt FileFinder.find_default(TREEMAP_NAME)
   end
 
 	# Initializes all game classes.

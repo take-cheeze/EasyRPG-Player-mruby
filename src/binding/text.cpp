@@ -1,6 +1,6 @@
-#include "binding.h"
 #include "bitmap.h"
 #include "text.h"
+#include "binding.hxx"
 
 namespace {
 

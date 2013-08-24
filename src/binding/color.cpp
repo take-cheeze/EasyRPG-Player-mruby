@@ -1,5 +1,5 @@
-#include "binding.h"
 #include "color.h"
+#include "binding.hxx"
 
 #include <mruby/variable.h>
 

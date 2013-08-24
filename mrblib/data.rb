@@ -29,3 +29,16 @@ class << Main_Data
     game_player = nil
   end
 end
+
+module Data end
+
+class << Data
+  def clear
+  end
+
+  def load_ldb(name)
+  end
+
+  def load_lmt(name)
+  end
+end

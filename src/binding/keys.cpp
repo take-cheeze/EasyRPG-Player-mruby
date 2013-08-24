@@ -1,5 +1,5 @@
-#include "binding.h"
 #include "input.h"
+#include "binding.hxx"
 
 void EasyRPG::register_keys(mrb_state* M) {
 	RClass* const mod = mrb_class_get(M, "Input");

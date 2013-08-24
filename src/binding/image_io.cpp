@@ -1,7 +1,7 @@
-#include "binding.h"
 #include "bitmap.h"
 #include "image_io.h"
 #include "filefinder.h"
+#include "binding.hxx"
 
 #include <fstream>
 

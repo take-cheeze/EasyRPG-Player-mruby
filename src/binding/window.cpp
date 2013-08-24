@@ -1,6 +1,6 @@
-#include "binding.h"
 #include "bitmap.h"
 #include "window.h"
+#include "binding.hxx"
 
 #include <mruby/variable.h>
 

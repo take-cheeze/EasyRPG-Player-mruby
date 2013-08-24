@@ -1,4 +1,4 @@
-#include "binding.h"
+#include "binding.hxx"
 #include "tone.h"
 
 #include <mruby/variable.h>

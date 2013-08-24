@@ -1,5 +1,5 @@
-#include "binding.h"
 #include "rect.h"
+#include "binding.hxx"
 
 namespace {
 

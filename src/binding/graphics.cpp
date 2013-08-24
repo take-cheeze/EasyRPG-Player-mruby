@@ -1,5 +1,5 @@
-#include "binding.h"
 #include "graphics.h"
+#include "binding.hxx"
 
 namespace {
 

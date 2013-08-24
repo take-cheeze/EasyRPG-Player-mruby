@@ -1,6 +1,6 @@
-#include "binding.h"
 #include "bitmap.h"
 #include "cache.h"
+#include "binding.hxx"
 
 #include <boost/container/flat_map.hpp>
 #include <mruby/variable.h>
