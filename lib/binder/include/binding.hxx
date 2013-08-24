@@ -85,7 +85,7 @@ EASYRPG_SHARED_PTR<T>& get_ptr(mrb_state* M, mrb_value const& v,
 	assert(not nil_ptr);
 	if(mrb_nil_p(v)) { return nil_ptr; }
 
-	void* const ptr = mrb_data_check_and_get(M, v, &mruby_data_type<T>::data);
+	void* const ptr = mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 	assert(ptr);
 	return *reinterpret_cast<EASYRPG_SHARED_PTR<T>*>(ptr);
 }
@@ -152,21 +152,21 @@ void check_dispose(mrb_state* M, mrb_value const& v) {
 template<class T>
 T& get(mrb_state* M, mrb_value const& v, typename boost::enable_if<is_disposable<T> >::type* = 0) {
 	check_dispose<T>(M, v);
-	void* const ptr = mrb_data_check_and_get(M, v, &mruby_data_type<T>::data);
+	void* const ptr = mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 	assert(ptr);
 	return *(*reinterpret_cast<EASYRPG_SHARED_PTR<T>*>(ptr));
 }
 
 template<class T>
 T& get(mrb_state* M, mrb_value const& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
-	void* const ptr = mrb_data_check_and_get(M, v, &mruby_data_type<T>::data);
+	void* const ptr = mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 	assert(ptr);
 	return *reinterpret_cast<T*>(ptr);
 }
 
 template<class T>
 bool is(mrb_state* M, mrb_value const& v) {
-	return mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
+	return mrb_data_check_get_ptr(M, v, &mruby_data_type<T>::data);
 }
 
 inline mrb_value to_mrb(mrb_state* M, std::string const& str) {
