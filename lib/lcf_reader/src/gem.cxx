@@ -8,9 +8,8 @@
 
 namespace EasyRPG {
 
-mrb_value to_mrb(mrb_state* M, LCF::element const& e) {
+mrb_value to_mrb(mrb_state* M, LCF::element const& e, picojson_string const& t) {
 	using namespace LCF::sym;
-	picojson_string const& t = e.type();
 
 	if(t == integer) {
 		return mrb_fixnum_value(e.i());
@@ -36,9 +35,17 @@ mrb_value to_mrb(mrb_state* M, LCF::element const& e) {
 	} else if(t == array1d) { return clone(M, e.a1d());
 	} else if(t == array2d) { return clone(M, e.a2d());
 	} else {
+		picojson const& sch = LCF::get_schema(t);
+		if(not sch.is<picojson::null>()) {
+			return to_mrb(M, e, sch[type].s());
+		}
+
 		assert(false);
 		return mrb_nil_value();
 	}
+}
+mrb_value to_mrb(mrb_state* M, LCF::element const& e) {
+	return to_mrb(M, e, e.type());
 }
 
 mrb_value to_mrb(mrb_state* mrb, picojson::value const& json);
