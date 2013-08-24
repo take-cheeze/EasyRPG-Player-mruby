@@ -3,8 +3,8 @@
   {"index": 12, "type": "integer", "name": "x", "value": 0},
   {"index": 13, "type": "integer", "name": "y", "value": 0},
 
-  {"index": 21, "type": "integer", "name": "defDir"},
-  {"index": 22, "type": "integer", "name": "talkDir"},
+  {"index": 21, "type": "integer", "name": "def_dir"},
+  {"index": 22, "type": "integer", "name": "talk_dir"},
   {"index": 23, "type": "integer", "name": "dummy"},
   {"index": 24, "type": "integer", "name": "dummy"},
 
@@ -24,7 +24,7 @@
     {"index": 22, "type": "bool", "name": "pass", "value": false}
   ]},
   {"index": 43, "type": "integer", "name": "dummy"},
-  {"index": 46, "type": "bool", "name": "isTrans", "value": false},
+  {"index": 46, "type": "bool", "name": "is_trans", "value": false},
 
   {"index": 52, "type": "integer", "name": "counter", "value": 0},
   {"index": 53, "type": "integer", "name": "dummy"},
@@ -34,7 +34,7 @@
   {"index": 72, "type": "integer", "name": "dummy"},
   {"index": 73, "type": "string", "name": "char_set"},
   {"index": 74, "type": "integer", "name": "char_set_pos", "value": 0},
-  {"index": 75, "type": "integer", "name": "char_setPat", "value": 1},
+  {"index": 75, "type": "integer", "name": "char_set_pat", "value": 1},
 
   {"index": 81, "type": "integer", "name": "dummy"},
   {"index": 82, "type": "integer", "name": "dummy"},

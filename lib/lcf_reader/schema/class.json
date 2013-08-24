@@ -21,8 +21,8 @@
     {"index": 1, "type": "integer", "name": "level"},
     {"index": 2, "type": "integer", "name": "skill_id", "value": 1}
   ]},
-  {"index": 66, "type": "bool", "name": "useOriginalCommand", "value": false},
-  {"index": 67, "type": "string", "name": "originalCommand"},
+  {"index": 66, "type": "bool", "name": "use_original_command", "value": false},
+  {"index": 67, "type": "string", "name": "original_command"},
 
   {"index": 71, "type": "integer", "name": "condition_data_num", "value": 0},
   {"index": 72, "type": "int8array", "name": "condition_data"},

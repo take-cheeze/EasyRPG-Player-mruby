@@ -41,14 +41,14 @@
           {"index": 21, "type": "string", "name": "char_set"},
           {"index": 22, "type": "integer", "name": "char_set_pos", "value": 0},
           {"index": 23, "type": "integer", "name": "char_setdir", "value": 2},
-          {"index": 24, "type": "integer", "name": "char_setPat", "value": 1},
+          {"index": 24, "type": "integer", "name": "char_set_pat", "value": 1},
           {"index": 25, "type": "bool", "name": "semi_trans", "value": false},
 
           {"index": 31, "type": "integer", "name": "action", "value": 0},
           {"index": 32, "type": "integer", "name": "freq", "value": 3},
           {"index": 33, "type": "integer", "name": "start_type", "value": 0},
           {"index": 34, "type": "integer", "name": "priority_type", "value": 0},
-          {"index": 35, "type": "bool", "name": "noPile", "value": false},
+          {"index": 35, "type": "bool", "name": "no_pile", "value": false},
           {"index": 36, "type": "integer", "name": "anime_type", "value": 0},
           {"index": 37, "type": "integer", "name": "speed", "value": 3},
 
@@ -60,12 +60,12 @@
             {"index": 22, "type": "bool", "name": "pass", "value": false}
           ]},
 
-          {"index": 51, "type": "integer", "name": "eventLength", "value": 0},
+          {"index": 51, "type": "integer", "name": "event_length", "value": 0},
           {"index": 52, "type": "event", "name": "event"}
         ]}
       ]},
 
-      {"index": 91, "type": "integer", "name": "saveTime"}
+      {"index": 91, "type": "integer", "name": "save_time"}
     ]}
   ]
 }

@@ -3,7 +3,7 @@
   "root": [
     {"type": "array1d", "name": "global", "value": [
       {"index": 100, "type": "array1d", "name": "Preview", "value": [
-        {"index": 1, "type": "float", "name": "timeStamp"},
+        {"index": 1, "type": "float", "name": "time_stamp"},
 
         {"index": 11, "type": "string", "name": "name"},
         {"index": 12, "type": "integer", "name": "level", "value": 1},
@@ -34,9 +34,9 @@
         {"index": 34, "type": "int32array", "name": "variable_data"},
 
         {"index": 41, "type": "integer", "name": "window_type", "value": 0},
-        {"index": 42, "type": "integer", "name": "windowViewPoint", "value": 2},
+        {"index": 42, "type": "integer", "name": "window_view_point", "value": 2},
         {"index": 43, "type": "bool", "name": "do_not_hide_party", "value": true},
-        {"index": 44, "type": "bool", "name": "moveWhenWait", "value": false},
+        {"index": 44, "type": "bool", "name": "move_when_wait", "value": false},
 
         {"index": 51, "type": "string", "name": "face_set"},
         {"index": 52, "type": "integer", "name": "face_set_pos", "value": 0},
@@ -46,7 +46,7 @@
 
         {"index": 71, "type": "music", "name": "dummy"},
         {"index": 72, "type": "music", "name": "battle"},
-        {"index": 73, "type": "music", "name": "battleEnd"},
+        {"index": 73, "type": "music", "name": "battle_end"},
         {"index": 74, "type": "music", "name": "hotel"},
         {"index": 75, "type": "music", "name": "current"},
         {"index": 76, "type": "music", "name": "dummy"},
@@ -54,8 +54,8 @@
         {"index": 78, "type": "music", "name": "memorized"},
         {"index": 79, "type": "music", "name": "boat"},
         {"index": 80, "type": "music", "name": "ship"},
-        {"index": 81, "type": "music", "name": "airShip"},
-        {"index": 82, "type": "music", "name": "gameOver"},
+        {"index": 81, "type": "music", "name": "air_ship"},
+        {"index": 82, "type": "music", "name": "game_over"},
 
         {"index": 91, "type": "sound", "name": "cursor_move"},
         {"index": 92, "type": "sound", "name": "enter"},
@@ -67,7 +67,7 @@
         {"index": 98, "type": "sound", "name": "enemy_damaged"},
         {"index": 99, "type": "sound", "name": "party_damaged"},
         {"index": 100, "type": "sound", "name": "evasion"},
-        {"index": 101, "type": "sound", "name": "enamyDead"},
+        {"index": 101, "type": "sound", "name": "enamy_dead"},
         {"index": 102, "type": "sound", "name": "item_use"},
 
         {"index": 111, "type": "integer", "name": "move_erase"},
@@ -169,7 +169,7 @@
       {"index": 108, "type": "array2d", "name": "character", "value": [
         {"index": 1, "type": "string", "name": "name"},
         {"index": 2, "type": "string", "name": "title"},
-        {"index": 3, "type": "bool", "name": "semiTrans"},
+        {"index": 3, "type": "bool", "name": "semi_trans"},
 
         {"index": 11, "type": "string", "name": "char_set"},
         {"index": 12, "type": "integer", "name": "char_set_pos"},
@@ -196,13 +196,13 @@
         {"index": 71, "type": "integer", "name": "cur_hp_", "value": 0},
         {"index": 72, "type": "integer", "name": "cur_mp_", "value": 0},
 
-        {"index": 81, "type": "integer", "name": "conditionStep_num", "value": 0},
-        {"index": 82, "type": "int16array", "name": "conditionStep"},
+        {"index": 81, "type": "integer", "name": "condition_step_num", "value": 0},
+        {"index": 82, "type": "int16array", "name": "condition_step"},
         {"index": 83, "type": "integer", "name": "condition_num", "value": 0},
         {"index": 84, "type": "int8array", "name": "condition"},
 
         {"index": 90, "type": "integer", "name": "job"},
-        {"index": 91, "type": "bool", "name": "doubleHand"}
+        {"index": 91, "type": "bool", "name": "double_hand"}
       ]},
 
       {"index": 109, "type": "array1d", "name": "status", "value": [
@@ -239,13 +239,13 @@
         {"index": 1, "type": "integer", "name": "map_id", "value": 0},
         {"index": 2, "type": "integer", "name": "x", "value": 0},
         {"index": 3, "type": "integer", "name": "y", "value": 0},
-        {"index": 4, "type": "bool", "name": "onAfterTeleport", "value": false},
+        {"index": 4, "type": "bool", "name": "on_after_teleport", "value": false},
         {"index": 5, "type": "integer", "name": "switch_id", "value": 1}
       ]},
 
       {"index": 111, "type": "array1d", "name": "event_data", "value": [
         {"index": 1, "type": "integer", "name": "dummy"},
-        {"index": 3, "type": "integer", "name": "encountRate"},
+        {"index": 3, "type": "integer", "name": "encount_rate"},
 
         {"index": 5, "type": "integer", "name": "chip_set_id"},
 
@@ -256,12 +256,12 @@
 
         {"index": 31, "type": "bool", "name": "use_panorama"},
         {"index": 32, "type": "string", "name": "panorama"},
-        {"index": 33, "type": "bool", "name": "horizontalScroll"},
-        {"index": 34, "type": "bool", "name": "verticalScroll"},
-        {"index": 35, "type": "bool", "name": "horizontalScrollAuto"},
-        {"index": 36, "type": "integer", "name": "horizontalScrollSpeed"},
-        {"index": 37, "type": "bool", "name": "verticalScrollAuto"},
-        {"index": 38, "type": "integer", "name": "verticalScrollSpeed"}
+        {"index": 33, "type": "bool", "name": "horizontal_scroll"},
+        {"index": 34, "type": "bool", "name": "vertical_scroll"},
+        {"index": 35, "type": "bool", "name": "horizontal_scroll_auto"},
+        {"index": 36, "type": "integer", "name": "horizontal_scroll_speed"},
+        {"index": 37, "type": "bool", "name": "vertical_scroll_auto"},
+        {"index": 38, "type": "integer", "name": "vertical_scroll_speed"}
       ]},
 
       {"index": 112, "type": "array1d", "name": "dummy", "value": [
@@ -269,7 +269,7 @@
 
       {"index": 113, "type": "array1d", "name": "dummy", "value": [
         {"index": 1, "type": "array2d", "name": "dummy", "value": [
-          {"index": 1, "type": "integer", "name": "eventLength"},
+          {"index": 1, "type": "integer", "name": "event_length"},
           {"index": 2, "type": "event", "name": "dummy"},
 
           {"index": 11, "type": "integer", "name": "dummy"},

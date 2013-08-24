@@ -2,7 +2,7 @@
   {"index": 1, "type": "string", "name": "name", "value": ""},
 
   {"index": 11, "type": "integer", "name": "start_type", "value": 5},
-  {"index": 12, "type": "bool", "name": "needSwitch", "value": false},
+  {"index": 12, "type": "bool", "name": "need_switch", "value": false},
   {"index": 13, "type": "integer", "name": "switch_id", "value": 1},
 
   {"index": 21, "type": "integer", "name": "event_length"},
