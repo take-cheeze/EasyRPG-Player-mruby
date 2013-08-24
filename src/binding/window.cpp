@@ -9,8 +9,8 @@ namespace {
 using namespace EasyRPG;
 
 mrb_value initialize(mrb_state* M, mrb_value const self) {
-	mrb_value v;
-	mrb_get_args(M, "o", &v);
+	mrb_value* argv; int argc;
+	mrb_get_args(M, "*", &argv, &argc);
 	mrb_iv_set(M, self, mrb_intern(M, "@windowskin"), mrb_nil_value());
 	mrb_iv_set(M, self, mrb_intern(M, "@contents"), mrb_nil_value());
 	return init_ptr<Window>(M, self, new Window()), self;
