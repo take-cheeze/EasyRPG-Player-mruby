@@ -103,7 +103,7 @@ mrb_value is_big_endian(mrb_state*, mrb_value) {
 
 mrb_value fixnum_chr(mrb_state* M, mrb_value const self) {
 	assert(mrb_fixnum_p(self));
-	char const c = mrb_fixnum(self);
+	char const c = std::max(0, std::min(mrb_fixnum(self), 0xff));
 	return mrb_str_new(M, &c, sizeof(c));
 }
 
