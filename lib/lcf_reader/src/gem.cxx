@@ -33,6 +33,8 @@ mrb_value to_mrb(mrb_state* M, LCF::element const& e) {
 	} else if(t == int32array) { return clone(M, e.i32a());
 	} else if(t == map_tree) { return clone(M, e.mt());
 	} else if(t == ber_array) { return to_mrb_ary(M, e.ba());
+	} else if(t == array1d) { return clone(M, e.a1d());
+	} else if(t == array2d) { return clone(M, e.a2d());
 	} else {
 		assert(false);
 		return mrb_nil_value();
@@ -116,14 +118,14 @@ mrb_value lcf_file_initialize(mrb_state* M, mrb_value const self) {
 
 mrb_value lcf_file_method_missing(mrb_state* M, mrb_value const self) {
 	mrb_value* argv; int argc;
-	char* str; int str_len;
-	mrb_get_args(M, "s|*", &str, &str_len, &argv, &argc);
-	if(argc == 1) {
+	if(mrb_get_args(M, "*", &argv, &argc) == 1) {
+		mrb_sym sym; size_t str_len;
+		mrb_get_args(M, "n", &sym);
+		char const* const str = mrb_sym2name_len(M, sym, &str_len);
 		boost::optional<LCF::element> const ret =
 				get<LCF::lcf_file>(M, self).get(picojson_string(str, str_len));
 		if(ret) return to_mrb(M, *ret);
 	}
-	mrb_get_args(M, "*", &argv, &argc);
 	return mrb_funcall_argv(M, self, mrb_intern(M, "method_missing"), argc, argv);
 }
 
@@ -138,15 +140,16 @@ mrb_value lcf_file_valid(mrb_state* M, mrb_value const self) {
 }
 
 mrb_value lcf_file_get(mrb_state* M, mrb_value const self) {
-	mrb_value* argv; int argc;
-	mrb_get_args(M, "o", &argv, &argc);
-	if(mrb_fixnum_p(argv[0])) {
+	mrb_value tmp_v;
+	mrb_get_args(M, "o", &tmp_v);
+	if(mrb_fixnum_p(tmp_v)) {
 		mrb_int v;
 		mrb_get_args(M, "i", &v);
 		return clone(M, get<LCF::lcf_file>(M, self).get(v));
 	} else {
-		char* str; int str_len;
-		mrb_get_args(M, "s", &str, &str_len);
+		mrb_sym sym; size_t str_len;
+		mrb_get_args(M, "n", &sym);
+		char const* const str = mrb_sym2name_len(M, sym, &str_len);
 		return to_mrb_opt(M, get<LCF::lcf_file>(M, self).get(picojson_string(str, str_len)));
 	}
 }
@@ -158,27 +161,28 @@ mrb_value lcf_file_error(mrb_state* M, mrb_value const self) {
 
 mrb_value array1d_method_missing(mrb_state* M, mrb_value const self) {
 	mrb_value* argv; int argc;
-	char* str; int str_len;
-	mrb_get_args(M, "s|*", &str, &str_len, &argv, &argc);
-	if(argc == 1) {
+	if(mrb_get_args(M, "*", &argv, &argc) == 1) {
+		mrb_sym sym; size_t str_len;
+		mrb_get_args(M, "n", &sym);
+		char const* const str = mrb_sym2name_len(M, sym, &str_len);
 		boost::optional<LCF::element> const ret =
 				get<LCF::array1d>(M, self).get(picojson_string(str, str_len));
 		if(ret) return to_mrb(M, *ret);
 	}
-	mrb_get_args(M, "*", &argv, &argc);
 	return mrb_funcall_argv(M, self, mrb_intern(M, "method_missing"), argc, argv);
 }
 
 mrb_value array1d_get(mrb_state* M, mrb_value const self) {
-	mrb_value* argv; int argc;
-	mrb_get_args(M, "o", &argv, &argc);
-	if(mrb_fixnum_p(argv[0])) {
+	mrb_value tmp_v;
+	mrb_get_args(M, "o", &tmp_v);
+	if(mrb_fixnum_p(tmp_v)) {
 		mrb_int v;
 		mrb_get_args(M, "i", &v);
 		return to_mrb_opt(M, get<LCF::array1d>(M, self).get(v));
 	} else {
-		char* str; int str_len;
-		mrb_get_args(M, "s", &str, &str_len);
+		mrb_sym sym; size_t str_len;
+		mrb_get_args(M, "n", &sym);
+		char const* const str = mrb_sym2name_len(M, sym, &str_len);
 		return to_mrb_opt(M, get<LCF::array1d>(M, self).get(picojson_string(str, str_len)));
 	}
 }
