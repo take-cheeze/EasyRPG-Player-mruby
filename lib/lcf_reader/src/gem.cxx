@@ -1,10 +1,13 @@
 #include <mruby.h>
 #include <mruby/array.h>
 #include <mruby/hash.h>
+#include <mruby/string.h>
 
 #include "binding.hxx"
 #include "lcf_reader.hxx"
 #include "lcf_sym.hxx"
+
+#include <fstream>
 
 namespace EasyRPG {
 
@@ -79,6 +82,43 @@ mrb_value to_mrb(mrb_state* mrb, picojson::value const& json) {
 			json.is<picojson::array>()? to_mrb(mrb, json.get<picojson::array>()):
 			json.is<picojson::object>()? to_mrb(mrb, json.get<picojson::object>()):
 			(mrb_raise(mrb, E_RUNTIME_ERROR, "unknown picojson type"), mrb_nil_value());
+}
+
+void to_cxx(mrb_state* mrb, mrb_value const& v, picojson::value& ret) {
+	switch(mrb_type(v)) {
+		case MRB_TT_FALSE: ret = picojson::value(false); break;
+		case MRB_TT_TRUE: ret = picojson::value(true); break;
+		case MRB_TT_FIXNUM: ret = picojson::value(double(mrb_fixnum(v))); break;
+		case MRB_TT_SYMBOL: ret = picojson::value(mrb_sym2name(mrb, mrb_symbol(v))); break;
+		case MRB_TT_STRING: ret = picojson::value(to_cxx_str(mrb, v)); break;
+		case MRB_TT_FLOAT: ret = picojson::value(double(mrb_float(v))); break;
+		case MRB_TT_ARRAY: {
+			picojson::value(picojson::array_type, bool()).swap(ret);
+			picojson::array& ary = ret.get<picojson::array>();
+			ary.resize(RARRAY_LEN(v));
+			for(size_t i = 0; i < ary.size(); ++i) {
+				to_cxx(mrb, RARRAY_PTR(v)[i], ary[i]);
+			}
+		} break;
+		case MRB_TT_HASH: {
+			picojson::value(picojson::object_type, bool()).swap(ret);
+			picojson::object& obj = ret.get<picojson::object>();
+			mrb_value keys = mrb_hash_keys(mrb, v);
+			for(mrb_int i = 0; i < RARRAY_LEN(keys); ++i) {
+				mrb_value const& k = RARRAY_PTR(keys)[i];
+				to_cxx(mrb, mrb_hash_get(mrb, v, k),
+					   obj[picojson_string(to_cxx_str(mrb, mrb_str_to_str(mrb, k)))]);
+			}
+		} break;
+		default:
+			if(mrb_respond_to(mrb, v, mrb_intern(mrb, "to_picojson"))) {
+				to_cxx(mrb, mrb_funcall(mrb, v, "to_picojson", 0), ret);
+			} else {
+				mrb_raisef(mrb, mrb_class_get(mrb, "TypeError"),
+						   "unsupported data type: %s", mrb_obj_classname(mrb, v));
+				ret = picojson::value();
+			}
+	}
 }
 
 }
@@ -228,10 +268,22 @@ mrb_value event_command_get(mrb_state* M, mrb_value const self) {
 	return mrb_fixnum_value(get<LCF::event_command>(M, self).args[v]);
 }
 
+mrb_value save_lcf(mrb_state* M, mrb_value) {
+	mrb_value v; char* str;
+	mrb_get_args(M, "oz", &v, &str);
+	picojson json;
+	to_cxx(M, v, json);
+	std::ofstream ofs(str, std::ios::out | std::ios::binary);
+	return mrb_bool_value(LCF::save_lcf(json, ofs));
+}
+
 }
 
 extern "C" void mrb_lcf_reader_gem_init(mrb_state* M) {
-	RClass* const mod = mrb_define_module(M, "LCF");
+	static method_info const lcf_methods[] = {
+		{ "save_lcf", &save_lcf, MRB_ARGS_REQ(2) },
+		method_info_end };
+	RClass* const mod = define_module(M, "LCF", lcf_methods);
 
 	static method_info const lcf_file_methods[] = {
 		{ "initialize", &lcf_file_initialize, MRB_ARGS_REQ(1) },
