@@ -63,13 +63,17 @@ struct is_disposable : public boost::mpl::or_<
 
 template<class T> struct mruby_data_type {
 	static mrb_data_type data;
+	static std::string outer;
 
 	static RClass* get_class(mrb_state* M) {
 		assert(data.struct_name);
-		return mrb_class_get(M, data.struct_name);
+		return outer.empty()
+				? mrb_class_get(M, data.struct_name)
+				: mrb_class_get_under(M, mrb_class_get(M, outer.c_str()), data.struct_name);
 	}
 };
 template<class T> mrb_data_type mruby_data_type<T>::data = { NULL, NULL };
+template<class T> std::string mruby_data_type<T>::outer;
 
 template<class T, class Enable = void> struct disposer_newer;
 
@@ -165,17 +169,35 @@ bool is(mrb_state* M, mrb_value const& v) {
 	return mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 }
 
+inline mrb_value to_mrb(mrb_state* M, std::string const& str) {
+	return mrb_str_new(M, str.data(), str.size());
+}
+
+inline std::string to_cxx_str(mrb_state* M, mrb_value const& v) {
+	mrb_value const str = mrb_any_to_s(M, v);
+	return std::string(RSTRING_PTR(str), RSTRING_LEN(str));
+}
+
 template<class T>
 RClass* define_class(mrb_state* M, char const* name, RClass* outer = NULL, RClass* base = NULL) {
 	if(not outer) { outer = M->object_class; }
+
 	if(not base) { base = mrb_class_get(M, "BasicObject"); }
 
 	if(not mruby_data_type<T>::data.struct_name) {
 		mruby_data_type<T>::data.struct_name = name;
 		mruby_data_type<T>::data.dfree = &disposer_newer<T>::deleter;
+
+		if(outer != M->object_class) {
+			mruby_data_type<T>::outer = to_cxx_str(M, mrb_class_path(M, outer));
+		}
 	} else {
 		assert(mruby_data_type<T>::data.struct_name == name);
 		assert(mruby_data_type<T>::data.dfree == &disposer_newer<T>::deleter);
+
+		if(outer != M->object_class) {
+			assert(mruby_data_type<T>::outer == to_cxx_str(M, mrb_class_path(M, outer)));
+		}
 	}
 
 	RClass* const ret = mrb_define_class_under(M, outer, name, base);
@@ -297,17 +319,7 @@ mrb_value to_mrb_ary(mrb_state* M, T const& v) {
 	return ret;
 }
 
-
 #define to_mrb_opt(M, v) (v? to_mrb(M, *v) : mrb_nil_value())
-
-inline mrb_value to_mrb(mrb_state* M, std::string const& str) {
-	return mrb_str_new(M, str.data(), str.size());
-}
-
-inline std::string to_cxx_str(mrb_state* M, mrb_value const& v) {
-	mrb_value const str = mrb_any_to_s(M, v);
-	return std::string(RSTRING_PTR(str), RSTRING_LEN(str));
-}
 
 }
 
