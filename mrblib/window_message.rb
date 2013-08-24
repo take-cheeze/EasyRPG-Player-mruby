@@ -33,7 +33,7 @@ class Window_Message < Window_Selectable
   speed_table = [0, 0, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
                  7, 7, 8, 8, 9, 9, 10, 10, 11]
 
-  def alpha?(v); (?a <= v and v <= ?z) or (?A <= v and v <= ?Z); end
+  def alpha?(v); (?a[0] <= v and v <= ?z[0]) or (?A[0] <= v and v <= ?Z[0]); end
 
 	def initialize(x, y, w, h)
     super x, y, w, h
@@ -304,7 +304,7 @@ class Window_Message < Window_Selectable
         # Special message codes
         @text_index += 1
 
-        case @text[@text_index, 1].to_utf8.downcase.to_utf32[0]
+        case @text[@text_index, 1].to_utf8.downcase.to_utf32[0].chr
         when ?c, ?n, ?s, ?v
           # These commands support indirect access via \v[]
           command_result = parse_command_code
