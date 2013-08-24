@@ -297,20 +297,20 @@ class Scene_Battle < Scene
 	def item
     item_id = @item_window.item_id
     if item_id.nil?
-      Game_System.se_play Main_Data.game_data.system.buzzer_se
+      Game_System.se_play $game_data.system.buzzer_se
       return
     end
 
     item = Data.items[item_id]
     case (item.type)
     when RPG::Item::Type_normal
-			Game_System.se_play(Main_Data.game_data.system.buzzer_se)
+			Game_System.se_play($game_data.system.buzzer_se)
     when RPG::Item::Type_weapon, RPG::Item::Type_shield, RPG::Item::Type_armor,
       RPG::Item::Type_helmet, RPG::Item::Type_accessory
       if item.use_skill; item_skill(item)
 			else
 				# can't be used
-				Game_System.se_play Main_Data.game_data.system.buzzer_se
+				Game_System.se_play $game_data.system.buzzer_se
       end
 		when RPG::Item::Type_medicine
 			if item.entire_party; begin_item
@@ -320,7 +320,7 @@ class Scene_Battle < Scene
 			end
 		when RPG::Item::Type_book, RPG::Item::Type_material
 			# can't be used in battle?
-			Game_System.se_play Main_Data.game_data.system.buzzer_se
+			Game_System.se_play $game_data.system.buzzer_se
 		when RPG::Item::Type_special; item_skill item
 		when RPG::Item::Type_switch
 			Game_Switches[item.switch_id] = true
@@ -334,7 +334,7 @@ class Scene_Battle < Scene
     if s.nil?
       @skill_id = @skill_window.skill_id
       if @skill_id.nil?
-        Game_System.se_play Main_Data.game_data.system.buzzer_se
+        Game_System.se_play $game_data.system.buzzer_se
         return
       end
 
@@ -592,7 +592,7 @@ class Scene_Battle < Scene
 
   def process_input
     if Input.triggered? Input::DECISION
-      Game_System.se_play Main_Data.game_data.system.decision_se
+      Game_System.se_play $game_data.system.decision_se
       case @state
 			when State_Options
 				case @options_window.index
@@ -629,7 +629,7 @@ class Scene_Battle < Scene
     end
 
     if Input.triggered? Input::CANCEL
-      Game_System.se_play Main_Data.game_data.system.cancel_se
+      Game_System.se_play $game_data.system.cancel_se
       case @state
 			when State_Options; Scene.pop
 			when State_Battle, State_AutoBattle; self.state = State_Options

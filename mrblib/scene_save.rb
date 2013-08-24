@@ -49,11 +49,11 @@ class Scene_Save < Scene_File
 			title.hero_name = actor.name
     end
 
-    Main_Data.game_data.title = title
+    $game_data.title = title
 
-    Main_Data.game_data.system.save_slot = index + 1
-    Main_Data.game_data.system.save_count += 1
+    $game_data.system.save_slot = index + 1
+    $game_data.system.save_count += 1
 
-    LSD_Reader.save FileFinder.find_default('Save%02d.sd' % (index + 1)), Main_Data.game_data
+    LSD_Reader.save FileFinder.find_default('Save%02d.sd' % (index + 1)), $game_data
   end
 end

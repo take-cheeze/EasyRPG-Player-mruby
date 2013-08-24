@@ -185,7 +185,7 @@ class Scene_ProjectFinder < Scene
     @current_entry = (@current_entry.nil? ? @root : @current_entry.children)[index]
 
     if @current_entry.project?
-      Main_Data.project_path = @current_entry.fullpath
+      $project_path = @current_entry.fullpath
       Scene.push Scene_Title.new
       to_parent
     elsif @current_entry.children.empty?

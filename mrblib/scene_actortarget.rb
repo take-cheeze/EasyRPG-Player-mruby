@@ -61,7 +61,7 @@ class Scene_ActorTarget < Scene
     @status_window.update
 
     if Input.triggered? Input::CANCEL
-      Game_System.se_play Main_Data.game_data.system.cancel_se
+      Game_System.se_play $game_data.system.cancel_se
       Scene.pop
     end
 

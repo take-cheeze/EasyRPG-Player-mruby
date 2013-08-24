@@ -19,13 +19,13 @@ class Scene_Map < Scene
   def initialize; super 'Map'; end
 
   def dispose
-    Main_Data.game_screen.reset
+    $game_screen.reset
   end
 
   def start
     @spriteset = Spriteset_Map.new
     @message_window = Window_Message 0, 240 - 80, 320, 80
-    Main_Data.game_screen.reset
+    $game_screen.reset
     Graphics.frame_reset
   end
 
@@ -45,8 +45,8 @@ class Scene_Map < Scene
     Game_Party.update_timers
 
     Game_Map.update
-    Main_Data.game_player.update
-    Main_Data.game_screen.update
+    $game_player.update
+    $game_screen.update
     @spriteset.update
     @message_window.update
 
@@ -73,7 +73,7 @@ class Scene_Map < Scene
       Game_Temp.menu_beep = true
     end
 
-    if !Main_Data.game_player.moving?
+    if !$game_player.moving?
       if Game_Temp.menu_calling
         call_menu
         return
@@ -116,11 +116,11 @@ class Scene_Map < Scene
   def call_menu
     Game_Temp.menu_calling = false
     if Game_Temp.menu_beep
-      Game_System.se_play Main_Data.game_data.system.decision_se
+      Game_System.se_play $game_data.system.decision_se
       Game_Temp.menu_beep = false
     end
 
-    # TODO: Main_Data.game_player.straighten
+    # TODO: $game_player.straighten
 
     Scene.push Scene_Menu.new
   end
@@ -130,10 +130,10 @@ class Scene_Map < Scene
   end
 
 	def update_teleport_player
-    return if !Main_Data.game_player.teleporting?
+    return if !$game_player.teleporting?
 
     transition_out
-    Main_Data.game_player.perform_teleport
+    $game_player.perform_teleport
     Game_Map.autoplay
     @spriteset = Spriteset_Map.new
     Game_Map.update

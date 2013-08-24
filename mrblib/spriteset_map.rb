@@ -31,7 +31,7 @@ class Spriteset_Map
     @panorama.z = -1000
 
     Game_Map.events.each { |k,v| @character_sprites.push Sprite_Character.new(v) }
-    @character_sprites.push Sprite_Character.new(Main_Data.game_player)
+    @character_sprites.push Sprite_Character.new($game_player)
 
     update
   end

@@ -50,7 +50,7 @@ class Window_BattleStatus < Window_Base
 
     if @active && @index >= 0
       if Input.repeated? Input::DOWN
-        Game_System.se_play Main_Data.game_data.system.cursor_se
+        Game_System.se_play $game_data.system.cursor_se
         for i in 1...num_actors
           new_index = (@index + i) % num_actors
           if Game_Battle.ally(new_index).ready?
@@ -60,7 +60,7 @@ class Window_BattleStatus < Window_Base
         end
       end
       if Input.repeated? Input::UP
-        Game_System.se_play Main_Data.game_data.system.cursor_se
+        Game_System.se_play $game_data.system.cursor_se
         for i in (num_actors - 1)...0
           new_index = (@index + i) % num_actors
           if Game_Battle.ally(new_index).ready?

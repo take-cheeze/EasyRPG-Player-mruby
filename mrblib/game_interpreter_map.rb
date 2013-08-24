@@ -119,12 +119,12 @@ class Game_Interpreter_Map < Game_Interpreter
 
   def command_change_sprite_association(com)
     Game_Actor.actor(com[0]).set_sprite(com.string, com[1], com[2] != 0)
-    Main_Data.game_player.refresh
+    $game_player.refresh
     true
   end
 
   def Game_Interpreter_Map::CommandMemorizeLocation(com)
-    player = Main_Data.game_player
+    player = $game_player
     Game_Variables[com[0]] = Game_Map.map_id
     Game_Variables[com[1]] = player.x
     Game_Variables[com[2]] = player.y
@@ -132,7 +132,7 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def Game_Interpreter_Map::CommandRecallToLocation(com)
-    player = Main_Data.game_player
+    player = $game_player
     map_id = Game_Variables[com[0]]
     x = Game_Variables[com[1]]
     y = Game_Variables[com[2]]
@@ -142,11 +142,11 @@ class Game_Interpreter_Map < Game_Interpreter
       return true
     end
 
-    if Main_Data.game_player.teleporting? or Game_Message.visible
+    if $game_player.teleporting? or Game_Message.visible
       return false
     end
 
-    Main_Data.game_player.reserve_teleport map_id, x, y
+    $game_player.reserve_teleport map_id, x, y
     @index += 1
 
     false
@@ -229,18 +229,18 @@ class Game_Interpreter_Map < Game_Interpreter
 
   def command_teleport(com)
     # TODO: if in battle return true
-    return false if Main_Data.game_player.teleporting?
+    return false if $game_player.teleporting?
 
     # FIXME: RPG2K3 => facing direction = com[3]
 
-    Main_Data.game_player.reserve_teleport com[0], com[1], com[2]
+    $game_player.reserve_teleport com[0], com[1], com[2]
 
     if Game_Message.visible
       Game_Message.visible = false
       Game_Message.full_clear
     end
 
-    Main_Data.game_player.start_teleport
+    $game_player.start_teleport
     index += 1
     false
   end
@@ -314,7 +314,7 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def command_show_picture(com)
-    picture = Main_Data.game_screen.picture com[0]
+    picture = $game_screen.picture com[0]
     top_trans = com[6]
     speed = com[13]
 
@@ -343,7 +343,7 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def command_move_picture(com)
-    picture = Main_Data.game_screen.picture com[0]
+    picture = $game_screen.picture com[0]
     top_trans = com[6]
     speed = com[13]
 
@@ -368,12 +368,12 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def command_erase_picture(com)
-    Main_Data.game_screen.picture(com[0]).erase
+    $game_screen.picture(com[0]).erase
     true
   end
 
   def command_weather_effects(com)
-    Main_Data.game_screen.weather com[0], com[1]
+    $game_screen.weather com[0], com[1]
     true
   end
 
@@ -674,7 +674,7 @@ class Game_Interpreter_Map < Game_Interpreter
     Game_Temp.battle_troop_id = value_or_variable com[0], com[1]
     case (com[2])
 		when 0
-			player = Main_Data.game_player
+			player = $game_player
 			Game_Temp.battle_terrain_id = Game_Map.terrain_tag player.x, player.y
 			Game_Temp.battle_background = ''
 		when 1
@@ -765,7 +765,7 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def command_sprite_transparency(com)
-    Main_Data.game_player.visible = com[0] != 0
+    $game_player.visible = com[0] != 0
     true
   end
 
@@ -838,7 +838,7 @@ class Game_Interpreter_Map < Game_Interpreter
     res_x = com[3]
     res_y = com[4]
 
-    Main_Data.game_screen.play_movie com.string, pos_x, pos_y, res_x, res_y
+    $game_screen.play_movie com.string, pos_x, pos_y, res_x, res_y
 
     true
   end
@@ -930,7 +930,7 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def command_enter_exit_vehicle(com)
-    Main_Data.game_player.on_off_vehicle
+    $game_player.on_off_vehicle
     true
   end
 
@@ -996,12 +996,12 @@ class Game_Interpreter_Map < Game_Interpreter
   end
 
   def command_show_battle_animation(com)
-    return !Main_Data.game_screen.battle_animation_waiting? if @active
+    return !$game_screen.battle_animation_waiting? if @active
 
     evt_id = com[1]
     evt_id = @event_id if (evt_id == Game_Character::CharThisEvent)
 
-    Main_Data.game_screen.show_battle_animation com[0], evt_id, com[3] > 0
+    $game_screen.show_battle_animation com[0], evt_id, com[3] > 0
 
     com[2] > 0 # wait
   end

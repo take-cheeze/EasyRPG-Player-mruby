@@ -41,7 +41,7 @@ class Scene_Skill < Scene
     @skill_window.update
 
     if Input.triggered? Input::CANCEL
-      Game_System.se_play Main_Data.game_data.system.cancel_se
+      Game_System.se_play $game_data.system.cancel_se
       Scene.pop
     elsif Input.triggered? Input::DECISION
       skill_id = @skill_window.skill_id
@@ -49,7 +49,7 @@ class Scene_Skill < Scene
       actor = Game_Party.actors[@actor_index]
 
       if actor.skill_usable? skill_id
-        Game_System.se_play Main_Data.game_data.system.decision_se
+        Game_System.se_play $game_data.system.decision_se
 
         if Data.skills[skill_id].type == RPG::Skill::Type_switch
           actor.sp = actor.sp - actor.calculate_skill_cost(skill_id)
@@ -65,7 +65,7 @@ class Scene_Skill < Scene
           # TODO: Displays the escape target scene/window
         end
       else
-        Game_System.se_play Main_Data.game_data.system.buzzer_se
+        Game_System.se_play $game_data.system.buzzer_se
       end
     end
   end

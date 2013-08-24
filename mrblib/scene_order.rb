@@ -67,13 +67,13 @@ class Scene_Order < Scene
 
   def update_order
     if Input.triggered? Input::CANCEL
-      Game_System.se_play Main_Data.game_data.system.cancel_se
+      Game_System.se_play $game_data.system.cancel_se
       Scene.pop
     elsif Input.triggered? Input::DECISION
       if not actors.find(@window_left.index + 1).nil?
-        Game_System.se_play Main_Data.game_data.system.cancel_se
+        Game_System.se_play $game_data.system.cancel_se
       else
-        Game_System.se_play Main_Data.game_data.system.decision_se
+        Game_System.se_play $game_data.system.decision_se
         @window_left.set_item_text @window_left.index, ""
         @window_right.set_item_text @actor_counter, Game_Party.actors[@window_left.index].name
 
@@ -105,7 +105,7 @@ class Scene_Order < Scene
   end
 
   def redo
-    Game_System.se_play Main_Data.game_data.system.cancel_se
+    Game_System.se_play $game_data.system.cancel_se
 
     Game_Party.actors.each_with_index { |v,i|
       @window_left.set_item_text i, v.name
@@ -124,7 +124,7 @@ class Scene_Order < Scene
   end
 
   def confirm
-    Game_System.se_play Main_Data.game_data.system.decision_se
+    Game_System.se_play $game_data.system.decision_se
 
     Game_Party.actors.each_with_index { |v,i|
       Game_Party.actors[i] = @actors[i] - 1

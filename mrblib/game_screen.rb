@@ -15,7 +15,7 @@
 
 class Game_Screen
   def initialize
-    @data = Main_Data.game_data.screen
+    @data = $game_data.screen
     reset
   end
 

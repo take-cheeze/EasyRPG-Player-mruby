@@ -151,7 +151,7 @@ class Window_Message < Window_Selectable
     if Game_Message.fixed_position; self.y = Game_Message.position * 80
     else # Move Message Box to prevent player hiding
     end
-		disp = Main_Data.game_player.screen_y
+		disp = $game_player.screen_y
 
 		case (Game_Message::position)
 		when 0 # Up
@@ -538,16 +538,16 @@ class Window_Message < Window_Selectable
 	# Stub. Handles choice selection.
   def input_choice
     if Input.triggered?(Input::CANCEL) and Game_Message.choice_cancel_type > 0
-			Game_System.se_play Main_Data.game_data.system.cancel_se
+			Game_System.se_play $game_data.system.cancel_se
 			Game_Message.choice_result = Game_Message.choice_cancel_type - 1; # Cancel
 			terminate_message
     elsif Input.triggered? Input::DECISION
       if Game_Message.choice_disabled.test index
-        Game_System.se_play Main_Data.game_data.system.buzzer_se
+        Game_System.se_play $game_data.system.buzzer_se
         return
       end
 
-      Game_System.se_play Main_Data.game_data.system.decision_se
+      Game_System.se_play $game_data.system.decision_se
       Game_Message.choice_result = index
       terminate_message
     end
@@ -557,7 +557,7 @@ class Window_Message < Window_Selectable
   def input_number
     return if not Input.triggered? Input::DECISION
 
-		Game_System.se_play Main_Data.game_data.system.decision_se
+		Game_System.se_play $game_data.system.decision_se
 		Game_Variables[Game_Message.num_input_variable_id] = @number_input_window.number
 		Game_Map.need_refresh = true
 		terminate_message

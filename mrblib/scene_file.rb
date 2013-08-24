@@ -80,10 +80,10 @@ class Scene_File < Scene
     }
 
     if Input.triggered? Input::CANCEL
-      Game_System.se_play Main_Data.game_data.system.cancel_se
+      Game_System.se_play $game_data.system.cancel_se
       Scene.pop
     elsif Input.triggered? Input::DECISION
-      Game_System.se_play Main_Data.game_data.system.decision_se
+      Game_System.se_play $game_data.system.decision_se
       action @index
       Scene.pop
     end
@@ -92,14 +92,14 @@ class Scene_File < Scene
     old_index = @index
 
     if Input.repeated? Input::DOWN
-      Game_System.se_play Main_Data.game_data.system.cursor_se
+      Game_System.se_play $game_data.system.cursor_se
       @index += 1
       @index -= 1 if @index >= @file_windows.length
 
       @top_index = [@top_index, @index - 3 + 1].max
     end
     if Input.repeated? Input::UP
-      Game_System.se_play Main_Data.game_data.system.cursor_se
+      Game_System.se_play $game_data.system.cursor_se
       @index -= 1
       @index += 1 if @index < 0
       @top_index = [@top_index, @index].min

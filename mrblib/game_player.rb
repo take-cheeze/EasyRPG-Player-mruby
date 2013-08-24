@@ -56,7 +56,7 @@ class Game_Player < Game_Character
       Game_Map.setup(@new_map_id)
     end
 
-    Main_Data.game_player.opacity = 255
+    $game_player.opacity = 255
 
     move_to @new_x, @new_y
   end

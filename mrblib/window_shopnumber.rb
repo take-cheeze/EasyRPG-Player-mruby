@@ -66,7 +66,7 @@ class Window_ShopNumber < Window_Base
 		end
 
 		if last_number != number
-			Game_System.se_play(Main_Data.game_data.system.cursor_se)
+			Game_System.se_play($game_data.system.cursor_se)
 			refresh
     end
   end

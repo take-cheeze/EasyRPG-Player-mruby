@@ -15,7 +15,7 @@
 
 class Picture
   def initialize(id)
-    @data = Main_Data.game_data.pictures[id]
+    @data = $game_data.pictures[id]
     @sprite = nil
     transition 0
   end

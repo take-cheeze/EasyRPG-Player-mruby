@@ -171,7 +171,7 @@ class Game_Event < Game_Character
     return false if Game_Map.interpreter.running?
 
     start if @trigger == RPG::EventPage::Trigger_collision and
-      Main_Data.game_player.in_position?(x, y) and
+      $game_player.in_position?(x, y) and
       not jumping?
   end
 

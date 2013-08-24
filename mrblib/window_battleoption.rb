@@ -56,12 +56,12 @@ class Window_BattleOption < Window_Base
 
     if @active && @num_commands >= 0 && (not @index.nil?)
       if Input.repeated? Input::DOWN
-        Game_System.se_play Main_Data.game_data.system.cursor_se
+        Game_System.se_play $game_data.system.cursor_se
         @index += 1
       end
 
       if Input.repeated? Input::UP
-        Game_System.se_play Main_Data.game_data.system.cursor_se
+        Game_System.se_play $game_data.system.cursor_se
         index -= 1
       end
 

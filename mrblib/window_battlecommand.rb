@@ -62,7 +62,7 @@ class Window_BattleCommand < Window_Base
       end
 
       if Input.repeated? Input::UP
-        Game_System.se_play Main_Data.game_data.system.cursor_se
+        Game_System.se_play $game_data.system.cursor_se
         index -= 1
       end
 

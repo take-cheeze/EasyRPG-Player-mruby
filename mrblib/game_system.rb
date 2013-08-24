@@ -57,7 +57,7 @@ class << Game_System
     end
 	end
 
-  def data; Main_Data.game_data.system; end
+  def data; $game_data.system; end
 
 	# Initializes Game System.
   def init

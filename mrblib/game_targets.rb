@@ -16,7 +16,7 @@
 module Game_Targets end
 
 class << Game_Targets
-  def data; Main_Data.game_data.targets; end
+  def data; $game_data.targets; end
 
 	def add_teleport_target(map_id, x, y, switch_id)
     target = find_target map_id, true

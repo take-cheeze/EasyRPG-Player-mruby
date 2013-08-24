@@ -84,7 +84,7 @@ class Window_Keyboard < Window_Base
     end
 
     if @play_cursor
-      Game_System.se_play Main_Data.game_data.system.cursor_se
+      Game_System.se_play $game_data.system.cursor_se
       @play_cursor = false
     end
     update_cursor_rect

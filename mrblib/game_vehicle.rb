@@ -110,9 +110,9 @@ class Game_Vehicle < Game_Character
   end
 
 	def sync_with_player
-    @x, @y = Main_Data.game_player.x, Main_Data.game_player.y
-    @real_x, @real_y = Main_Data.game_player.real_x, Main_Data.game_player.real_y
-    @direction = Main_Data.game_player.direction
+    @x, @y = $game_player.x, $game_player.y
+    @real_x, @real_y = $game_player.real_x, $game_player.real_y
+    @direction = $game_player.direction
     update_bush_depth
   end
 

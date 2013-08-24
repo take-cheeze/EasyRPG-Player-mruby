@@ -18,7 +18,7 @@ module Game_Party end
 class << Game_Party
 	# Initializes Game_Party.
   def init
-    @data = Main_Data.game_data.inventory
+    @data = $game_data.inventory
     @data.setup
   end
 
@@ -43,7 +43,7 @@ class << Game_Party
     return if actor_in_party? actor_id
     return if @data.party.length >= 4
     @data.party.psuh actor_id
-    Main_Data.game_player.refresh
+    $game_player.refresh
   end
 
 	# Removes an actor from the party.
@@ -53,7 +53,7 @@ class << Game_Party
     return if not actor_in_party? actor_id
 
     @data.party.delete @data.party.index(actor_id)
-    Main_Data.game_player.refresh
+    $game_player.refresh
   end
 
 	# Gets if an actor is in party.

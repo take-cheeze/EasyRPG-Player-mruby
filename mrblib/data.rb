@@ -15,30 +15,26 @@
 
 def assert(exp); raise "assertion failed" unless exp; end
 
-module Main_Data end
-
-class << Main_Data
-  attr_accessor :game_screen, :game_player, :game_data
-
-	def cleanup
-    Game_Map.quit
-    Game_Actors.dispose
-    Font.dispose
-
-    game_screen = nil
-    game_player = nil
-  end
-end
-
 module Data end
 
 class << Data
   def clear
   end
 
-  def load_ldb(name)
+  def load_ldb(f)
+    @ldb = LCF::LcfFile.new f
   end
 
-  def load_lmt(name)
+  def load_lmt(f)
+    @lmt = LCF::LcfFile.new f
+    def @lmt.start
+      root 2
+    end
+  end
+
+  def treemap; @lmt; end
+
+  def method_missing(sym)
+    @ldb[sym]
   end
 end

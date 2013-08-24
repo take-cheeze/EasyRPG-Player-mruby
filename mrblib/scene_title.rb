@@ -28,17 +28,16 @@ class Scene_Title < Scene
 	def start
     load_database
 
-    if Data.system.ldb_id == 2003
-      Output.debug 'switching to RPG2003 interpreter'
-      Player.engine = Player::EngineRpg2k3
-    end
+    version = Data.system.version
+    Output.debug('switching to RPG%d interpreter' % version)
+    Player.engine = version == 2003 ? Player::EngineRpg2k3 : Player::EngineRpg2k
 
     if not @init
       FileFinder.update_rtp_paths
       @init = true
     end
 
-    Main_Data.game_data.setup
+    $game_data.setup
 
     # Create Game System
     Game_System.init
@@ -90,15 +89,15 @@ class Scene_Title < Scene
 
     if Input.triggered? Input::DECISION
       case @command_window.index
-      when 0 # New Game
-        CommandNewGame()
-      when 1 # Load Game
-        CommandContinue()
-      when 2 # Exit Game
-        CommandShutdown()
+      when 0; command_new_game # New Game
+      when 1; command_continue # Load Game
+      when 2; command_shutdown # Exit Game
       end
     end
   end
+
+  DATABASE_NAME = "RPG_RT.ldb"
+  TREEMAP_NAME = "RPG_RT.lmt"
 
 	# Loads all databases.
 	def load_database
@@ -106,7 +105,7 @@ class Scene_Title < Scene
     Data.clear
 
     if ! FileFinder.rpg2k_project? FileFinder.project_tree
-      Output.debug('%s is not an RPG2k project' % Main_Data.project_path)
+      Output.debug('%s is not an RPG2k project' % $project_path)
     end
 
     Data.load_ldb FileFinder.find_default(DATABASE_NAME)
@@ -116,12 +115,12 @@ class Scene_Title < Scene
 	# Initializes all game classes.
 	def create_game_objects
     Game_Temp.init
-    Main_Data.game_screen = Game_Screen.new
+    $game_screen = Game_Screen.new
     Game_Actors.init
     Game_Party.init
     Game_Message.init
     Game_Map.init
-    Main_Data.game_player = Game_Player.new
+    $game_player = Game_Player.new
   end
 
 	# Checks if there are any savegames for the game.
@@ -186,13 +185,13 @@ class Scene_Title < Scene
     if !check_valid_player_location
       Output.warning "The game has no start location set."
     else
-      Game_System.se_play Main_Data.game_data.system.decision_se
+      Game_System.se_play $game_data.system.decision_se
       Audio.bgm_stop
       Graphics.frame_count = 0
       create_game_objects
       Game_Map.setup Data.treemap.start.party_map_id
-      Main_Data.game_player.move_to Data.treemap.start.party_x, Data.treemap.start.party_y
-      Main_Data.game_player.Refresh()
+      $game_player.move_to Data.treemap.start.party_x, Data.treemap.start.party_y
+      $game_player.Refresh()
       Game_Map.autoplay
       Scene.push Scene_Map.new
     end
@@ -202,9 +201,9 @@ class Scene_Title < Scene
 	# Shows the Load-Screen (Scene_Load).
 	def command_continue
     if @continue_enabled
-      Game_System.se_play Main_Data.game_data.system.decision_se
+      Game_System.se_play $game_data.system.decision_se
     else
-      Game_System.se_play Main_Data.game_data.system.buzzer_se
+      Game_System.se_play $game_data.system.buzzer_se
       return
     end
 
@@ -215,7 +214,7 @@ class Scene_Title < Scene
 	# Option Shutdown.
 	# Does a player shutdown.
 	def command_shutdown
-    Game_System.se_play Main_Data.game_data.system.decision_se
+    Game_System.se_play $game_data.system.decision_se
     Audio.bgs_fade(800)
     Scene.pop
   end

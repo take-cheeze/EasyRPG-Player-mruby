@@ -100,7 +100,7 @@ class Scene_Menu < Scene
 	# Update function if command window is active.
   def update_command
     if Input.triggered? Input::CANCEL
-      Game_System.se_play Main_Data.game_data.system.cancel_se
+      Game_System.se_play $game_data.system.cancel_se
       Scene.pop
     elsif Input.triggered? Input::DECISION
       menu_index = @command_window.index
@@ -108,40 +108,40 @@ class Scene_Menu < Scene
       case @command_options[menu_index]
       when Item
         if Game_Party.actors.empty?
-          Game_System.se_play Main_Data.game_data.system.buzzer_se
+          Game_System.se_play $game_data.system.buzzer_se
         else
-          Game_System.se_play Main_Data.game_data.system.decision_se
+          Game_System.se_play $game_data.system.decision_se
           Scene.push Scene_Item.new
         end
       when Skill, Equipment, Status, Row
         if Game_Party.actors.empty?
-          Game_System.se_play Main_Data.game_data.system.buzzer_se
+          Game_System.se_play $game_data.system.buzzer_se
         else
-          Game_System.se_play Main_Data.game_data.system.decision_se
+          Game_System.se_play $game_data.system.decision_se
           @command_window.active = false
           @menustatus_window.active = true
           @menustatus_window.index = 0
         end
       when Save
         if !Game_System.allow_save?
-          Game_System.se_play Main_Data.game_data.system.buzzer_se
+          Game_System.se_play $game_data.system.buzzer_se
         else
-          Game_System.se_play Main_Data.game_data.system.decision_se
+          Game_System.se_play $game_data.system.decision_se
           Scene.push Scene_Save.new
         end
       when Order
         if Game_Party.actors.length <= 1
-          Game_System.se_play Main_Data.game_data.system.buzzer_se
+          Game_System.se_play $game_data.system.buzzer_se
         else
-          Game_System.se_play Main_Data.game_data.system.decision_se
+          Game_System.se_play $game_data.system.decision_se
           Scene.push Scene_Order.new
         end
       when Wait
-        Game_System.se_play Main_Data.game_data.system.decision_se
+        Game_System.se_play $game_data.system.decision_se
         Game_Temp.battle_wait = !Game_Temp.battle_wait
         @command_window.set_item_text menu_index, Game_Temp.battle_wait ? Data.terms.wait_on : Data.terms.wait_off
       when Quit
-        Game_System.se_play Main_Data.game_data.system.decision_se
+        Game_System.se_play $game_data.system.decision_se
         Scene.push Scene_End.new
       end
     end
@@ -150,12 +150,12 @@ class Scene_Menu < Scene
 	# Update function if status window is active.
   def update_actor_selection
     if Input.triggered? Input::CANCEL
-      Game_System.se_play Main_Data.game_data.system.cancel_se
+      Game_System.se_play $game_data.system.cancel_se
       @command_window.active = true
       @menustatus_window.active = false
       @menustatus_window.index = nil
     elsif Input.triggered? Input::DECISION
-      Game_System::SePlay(Main_Data.game_data.system.decision_se)
+      Game_System::SePlay($game_data.system.decision_se)
       case @command_options[@command_window.index]
       when Skill; Scene.push Scene_Skill.new(@menustatus_window.index)
       when Equipment; Scene.push Scene_Equip.new(@menustatus_window.index)

@@ -90,9 +90,9 @@ class Game_Character
     return false if !Game_Map.passable? x, y, d, this
     return false if (!Game_Map::IsPassable(new_x, new_y, (d + 2) % 4, this))
 
-    return false if Main_Data.game_player.x == new_x and
-      Main_Data.game_player.x == new_y and
-      !Main_Data.game_player.through and
+    return false if $game_player.x == new_x and
+      $game_player.x == new_y and
+      !$game_player.through and
       !character_name.empty?
 
     true
@@ -181,7 +181,7 @@ class Game_Character
 	# Walks to the player.
   def move_type_towards_player
     return if not stopping?
-    sx, sy = @x - Main_Data.game_player.x, @y - Main_Data.game_player.y
+    sx, sy = @x - $game_player.x, @y - $game_player.y
     if sx.abs + sy.abs >= 20; move_random
     else
       case rand % 6
@@ -195,7 +195,7 @@ class Game_Character
 	# Walks to the player.
 	def move_type_away_from_player
     return if not stopping?
-    sx, sy = @x - Main_Data.game_player.x, @y - Main_Data.game_player.y
+    sx, sy = @x - $game_player.x, @y - $game_player.y
     if sx.abs + abs.y >= 20; move_random
     else
       case rand % 6
@@ -580,7 +580,7 @@ class Game_Character
   end
 
   def distance_x_from_player
-    sx = @x - Main_Data.game_player.x
+    sx = @x - $game_player.x
     if Game_Map.loop_horizontal
       sx -= Game_Map.width if sx.abs > Game_Map.width / 2
     end
@@ -588,7 +588,7 @@ class Game_Character
   end
 
   def distance_y_from_player
-    sy = @y - Main_Data.game_player.y
+    sy = @y - $game_player.y
     if Game_Map.loop_horizontal
       sy -= Game_Map.width if sy.abs > Game_Map.width / 2
     end
@@ -653,7 +653,7 @@ class Game_Character
     case(char)
     when CharPlayer
 			# Player/Hero
-      return Main_Data.game_player
+      return $game_player
 		when CharBoat
 			return Game_Map.vehicle(Game_Vehicle::Boat)
 		when CharShip

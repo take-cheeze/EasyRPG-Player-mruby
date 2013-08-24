@@ -81,7 +81,7 @@ class Window_NumberInput < Window_Selectable
     return if not active
 
     if Input.repeated?(Input::DOWN) || Input.repeated?(Input_::UP)
-      Game_System.se_play Main_Data.game_data.system.cursor_se
+      Game_System.se_play $game_data.system.cursor_se
 
       place = 0...(@max_digits - 1 - @index).reduce(1) { |tmp,v| tmp * 10 }
       n = @number / place % 10
@@ -93,12 +93,12 @@ class Window_NumberInput < Window_Selectable
     end
 
     if Input.repeated? Input::RIGHT and max_digits >= 2
-      Game_System.se_play Main_Data.game_data.system.cursor_se
+      Game_System.se_play $game_data.system.cursor_se
       @index = (@index + 1) % @max_digits
     end
 
     if Input.repeated? Input_::LEFT
-      Game_System.se_play(Main_Data.game_data.system.cursor_se)
+      Game_System.se_play($game_data.system.cursor_se)
       @index = (@index + @max_digits - 1) % @max_digits
     end
 

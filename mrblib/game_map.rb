@@ -20,8 +20,8 @@ class << Game_Map
 
 	# Initialize Game_Map.
 	def init
-    @map_info = Main_Data.game_data.map_info
-    @location = Main_Data.game_data.party_location
+    @map_info = $game_data.map_info
+    @location = $game_data.party_location
 
     @display_x = 0
     @display_y = 0
@@ -59,7 +59,7 @@ class << Game_Map
     @events.clear
     @common_events.clear
 
-    Main_Data.game_screen.reset unless Main_Data.game_screen.nil?
+    $game_screen.reset unless $game_screen.nil?
 
     @map = nil
   end
@@ -393,7 +393,7 @@ class << Game_Map
 
 	# Updates encounter steps according to terrain.
   def update_encounter_steps
-    terrain_id = terrain_tag(Main_Data.game_player.x, Main_Data.game_player.y)
+    terrain_id = terrain_tag($game_player.x, $game_player.y)
     @location.encounter_steps += Data.terrains[terrain_id].encounter_rate
   end
 

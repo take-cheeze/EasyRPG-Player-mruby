@@ -118,16 +118,16 @@ class Window_Shop < Window_Base
           else
             index = 1
           end
-          Game_System.se_play Main_Data.game_data.system.cursor_se
+          Game_System.se_play $game_data.system.cursor_se
         end
         if Input.repeated? Input::UP
           if index > 1; index -= 1
           else index = leave_index
           end
-          Game_System.se_play Main_Data.game_data.system.cursor_se
+          Game_System.se_play $game_data.system.cursor_se
         end
         if Input.triggered? Input::DECISION
-          Game_System.se_play Main_Data.game_data.system.decision_se
+          Game_System.se_play $game_data.system.decision_se
           if index == buy_index
             choice = Scene_Shop::Buy
           elsif index == sell_index

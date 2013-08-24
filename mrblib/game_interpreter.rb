@@ -71,7 +71,7 @@ class Game_Interpreter
 
       # If waiting for a move to end
       if @move_route_waiting
-        return if Main_Data.game_player.move_route_forcing
+        return if $game_player.move_route_forcing
         return if not Game_Map.events.find { |v| v.move_route_forcing }.nil?
         @move_route_waiting = false
       end
@@ -107,7 +107,7 @@ class Game_Interpreter
 
       if @list.empty?
         Game_Map.refresh if
-          !Main_Data.game_player.teleporting? and main_flag and Game_Map.need_refresh?
+          !$game_player.teleporting? and main_flag and Game_Map.need_refresh?
 
         return if @list.empty?
       end
@@ -621,7 +621,7 @@ class Game_Interpreter
   end
 
 	def command_tint_screen(com)
-    screen = Main_Data.game_screen
+    screen = $game_screen
     r = com[0]
     g = com[1]
     b = com[2]
@@ -636,7 +636,7 @@ class Game_Interpreter
   end
 
 	def command_flash_screen(com)
-    screen = Main_Data.game_screen
+    screen = $game_screen
     r = com[0]
     g = com[1]
     b = com[2]
@@ -661,7 +661,7 @@ class Game_Interpreter
   end
 
 	def command_shake_screen(com)
-    screen = Main_Data.game_screen
+    screen = $game_screen
     strength = com[0]
     speed = com[1]
     tenths = com[2]
