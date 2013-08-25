@@ -140,6 +140,12 @@ bool Player::is_rpg2k3(mrb_state* M) {
 	return mrb_test(mrb_funcall(M, get_player(M), "rpg2k3?", 0));
 }
 
+std::string Player::system_graphic(mrb_state* M) {
+	M = get_vm(M);
+	return EasyRPG::to_cxx_str(M, mrb_funcall(
+		M, mrb_obj_value(mrb_class_get(M, "Game_System")), "system_name", 0));
+}
+
 #define player_function(name)						\
 	void Player::name(mrb_state* M) {				\
 		M = get_vm(M);								\

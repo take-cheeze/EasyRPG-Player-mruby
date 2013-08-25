@@ -174,7 +174,7 @@ inline mrb_value to_mrb(mrb_state* M, std::string const& str) {
 }
 
 inline std::string to_cxx_str(mrb_state* M, mrb_value const& v) {
-	mrb_value const str = mrb_any_to_s(M, v);
+	mrb_value const str = mrb_str_to_str(M, v);
 	return std::string(RSTRING_PTR(str), RSTRING_LEN(str));
 }
 

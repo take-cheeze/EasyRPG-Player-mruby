@@ -22,6 +22,7 @@
 #include "bitmap.h"
 #include "font.h"
 #include "text.h"
+#include "player.h"
 #include "exfont.hxx"
 
 #include <cctype>
@@ -123,7 +124,7 @@ void Text::Draw(Bitmap& dest, int x, int y, int color, std::string const& non_nf
 	if (dst_rect.IsOutOfBounds(dest.width(), dest.height())) return;
 
 	// Load the system file for the shadow and text color
-	BitmapRef const system = Cache().System(""); // TODO
+	BitmapRef const system = Cache().System(Player::system_graphic());
 
 	if (dst_rect.height > text_size.height + 1) {
 		dst_rect.y += ((dst_rect.height - text_size.height + 1) / 2);

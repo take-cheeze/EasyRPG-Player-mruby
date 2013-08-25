@@ -2,6 +2,7 @@
 #define EASYRPG_PLAYER_H
 
 #include <mruby.h>
+#include <string>
 
 namespace Player {
 
@@ -26,6 +27,8 @@ void run(mrb_state* M = NULL);
 
 bool is_rpg2k(mrb_state* M = NULL);
 bool is_rpg2k3(mrb_state* M = NULL);
+
+std::string system_graphic(mrb_state* M = NULL);
 
 }
 
