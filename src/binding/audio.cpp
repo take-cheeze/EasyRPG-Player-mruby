@@ -60,7 +60,7 @@ mrb_value se_stop(mrb_state*, mrb_value const self) {
 	return Audio().SE_Stop(), self;
 }
 
-mrb_value update(mrb_state* M, mrb_value const self) {
+mrb_value update(mrb_state*, mrb_value const self) {
 	return Audio().Update(), self;
 }
 
