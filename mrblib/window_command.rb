@@ -24,11 +24,11 @@ class Window_Command < Window_Selectable
 	#                 items, if no height is passed
 	#                 the height is autocalculated.
 	def initialize(commands, width = nil, max_item = nil)
-    @commands = commands
     super 0, 0, required_width(commands, width), (max_item.nil? ? commands.length : max_item) * 16 + 16
 
     self.contents = Bitmap.new self.width - 16, @item_max * 16
 
+    @commands = commands
     @index = 0
     @item_max = @commands.length
 
@@ -67,6 +67,6 @@ class Window_Command < Window_Selectable
 	def required_width(commands, width)
     return width unless width.nil?
     bmp = Bitmap.new 1, 1
-    @commands.reduce(0) { |tmp,v| [tmp, bmp.text_size(v).width].max } + 16
+    commands.reduce(0) { |tmp,v| [tmp, bmp.text_size(v).width].max } + 16
   end
 end
