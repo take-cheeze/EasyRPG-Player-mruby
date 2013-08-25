@@ -60,6 +60,10 @@ mrb_value se_stop(mrb_state*, mrb_value const self) {
 	return Audio().SE_Stop(), self;
 }
 
+mrb_value update(mrb_state* M, mrb_value const self) {
+	return Audio().Update(), self;
+}
+
 }
 
 void EasyRPG::register_audio(mrb_state* M) {
@@ -75,6 +79,7 @@ void EasyRPG::register_audio(mrb_state* M) {
 		{ "me_fade", &me_fade, MRB_ARGS_REQ(1) },
 		{ "se_play", &se_play, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(2) },
 		{ "se_stop", &se_stop, MRB_ARGS_NONE() },
+		{ "update", &update, MRB_ARGS_NONE() },
 		method_info_end };
 	define_module(M, "Audio", methods);
 }
