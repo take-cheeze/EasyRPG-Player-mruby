@@ -83,11 +83,11 @@ class Window_Selectable < Window_Base
     end
 
     if @column_max > 1
-      cursor_width = (width / column_max - 16) + 12
-      x = (index % column_max * cursor_width) - 4
+      cursor_width = (width / @column_max - 16) + 12
+      x = (index % @column_max * cursor_width) - 4
     else
-      cursor_width = (width / column_max - 16) + 8
-      x = (index % column_max * (cursor_width + 16)) - 4
+      cursor_width = (width / @column_max - 16) + 8
+      x = (index % @column_max * (cursor_width + 16)) - 4
     end
 
     y = @index / @column_max * 16 - oy
