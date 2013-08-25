@@ -159,7 +159,7 @@ class Game_Interpreter
   def input_button
     n = [ Input::UP, Input::DOWN, Input::LEFT, Input::RIGHT,
           Input::DECISION, Input::CANCEL, Input::SHIFT
-        ].find { |v| Input.triggered? v }
+        ].find { |v| Input.trigger? v }
 
     # If a button was pressed
     if not n.nil?
@@ -688,7 +688,7 @@ class Game_Interpreter
       setup_wait com[0]
       return true
     else
-      return Input.any_triggered?
+      return Input.any_trigger?
     end
   end
 

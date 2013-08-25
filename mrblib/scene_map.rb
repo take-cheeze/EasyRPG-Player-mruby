@@ -65,7 +65,7 @@ class Scene_Map < Scene
     return if Game_Message.visible
 
     # ESC-Menu calling
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       # return if Game_Map.interpreter.running?
       # $game_system.menu_disabled
 

@@ -900,13 +900,13 @@ class Game_Interpreter_Map < Game_Interpreter
 
     if check_numbers
       for i in 0...10
-        result = 10 + i if Input.triggered?(Input::N0 + i)
+        result = 10 + i if Input.trigger?(Input::N0 + i)
       end
     end
 
     if check_arith
       for i in 0...5
-        result = 20 + i if Input.triggered?(Input::PLUS + i)
+        result = 20 + i if Input.trigger?(Input::PLUS + i)
       end
     end
 

@@ -66,10 +66,10 @@ class Scene_Order < Scene
   end
 
   def update_order
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       if not actors.find(@window_left.index + 1).nil?
         Game_System.se_play $game_data.system.cancel_se
       else
@@ -94,8 +94,8 @@ class Scene_Order < Scene
   end
 
   def update_confirm
-    if Input.triggered? Input::CANCEL; redo
-    elsif Input.triggered? Input::DECISION
+    if Input.trigger? Input::CANCEL; redo
+    elsif Input.trigger? Input::DECISION
       if @window_confirm.index == 0
         confirm
         Scene.pop

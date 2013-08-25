@@ -99,10 +99,10 @@ class Scene_Menu < Scene
 
 	# Update function if command window is active.
   def update_command
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       menu_index = @command_window.index
 
       case @command_options[menu_index]
@@ -149,12 +149,12 @@ class Scene_Menu < Scene
 
 	# Update function if status window is active.
   def update_actor_selection
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       @command_window.active = true
       @menustatus_window.active = false
       @menustatus_window.index = nil
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       Game_System::SePlay($game_data.system.decision_se)
       case @command_options[@command_window.index]
       when Skill; Scene.push Scene_Skill.new(@menustatus_window.index)

@@ -56,12 +56,12 @@ class Window_BattleCommand < Window_Base
 
     old_index = @index
     if @active && @commands.length >= 0 && @index >= 0
-      if Input.repeated? Input::DOWN
+      if Input.repeat? Input::DOWN
         Game_System.se_play Main_Datagame_data.system.cursor_se
         index += 1
       end
 
-      if Input.repeated? Input::UP
+      if Input.repeat? Input::UP
         Game_System.se_play $game_data.system.cursor_se
         index -= 1
       end

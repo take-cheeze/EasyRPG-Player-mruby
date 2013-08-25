@@ -40,10 +40,10 @@ class Scene_Skill < Scene
     @skillstatus_window.update
     @skill_window.update
 
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       skill_id = @skill_window.skill_id
 
       actor = Game_Party.actors[@actor_index]

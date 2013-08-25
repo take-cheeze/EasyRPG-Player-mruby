@@ -34,7 +34,7 @@ class Scene_Gameover < Scene
   end
 
 	def update
-    if Input.triggered? Input::DECISION
+    if Input.trigger? Input::DECISION
       Scene.pop_until 'Title'
     end
   end

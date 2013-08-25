@@ -202,7 +202,7 @@ class Game_Player < Game_Character
     return if moving?
     return if last_moving and check_touch_event
 
-    if !Game_Message.visible and Input.triggered? Input::DECISION
+    if !Game_Message.visible and Input.trigger? Input::DECISION
       # TODO: return if get_on_off_vehicle
       return if check_action_event
     end

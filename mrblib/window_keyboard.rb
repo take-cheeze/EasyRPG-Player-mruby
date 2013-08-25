@@ -47,19 +47,19 @@ class Window_Keyboard < Window_Base
     super
 
     if @active
-      if Input.repeated? Input::DOWN
+      if Input.repeat? Input::DOWN
         @play_cursor = true
         @row = (@row + 1) % @row_max
         @col -= 1 if(@col > 0 and selected.nil? and not items[@mode][@row][@col - 1].nil?)
       end
 
-      if Input.repeated? Input::UP
+      if Input.repeat? Input::UP
         @play_cursor = true
         @row = (@row + @row_max - 1) % @row_max
         @col -= 1 if(@col > 0 and selected.nil? and not items[@mode][@row][@col - 1].nil?)
       end
 
-      if Input.repeated? Input::RIGHT
+      if Input.repeat? Input::RIGHT
         @play_cursor = true
         @col += 1
         if (@col >= @col_max)
@@ -68,7 +68,7 @@ class Window_Keyboard < Window_Base
         end
       end
 
-      if Input.repeated? Input::LEFT
+      if Input.repeat? Input::LEFT
         @play_cursor = true
         @col -= 1
         if (@col < 0)

@@ -115,10 +115,10 @@ class Scene_ProjectFinder < Scene
   end
 
   def update
-    if Input.triggered?(Input::DECISION) or Input.triggered?(Input::RIGHT); select_entry
-    elsif Input.repeated?(Input::UP); self.index = current_index - 1
-    elsif Input.repeated?(Input::DOWN); self.index = current_index + 1
-    elsif Input.triggered?(Input::CANCEL) or Input.triggered?(Input::LEFT); to_parent
+    if Input.trigger?(Input::DECISION) or Input.trigger?(Input::RIGHT); select_entry
+    elsif Input.repeat?(Input::UP); self.index = current_index - 1
+    elsif Input.repeat?(Input::DOWN); self.index = current_index + 1
+    elsif Input.trigger?(Input::CANCEL) or Input.trigger?(Input::LEFT); to_parent
     end
   end
 

@@ -29,10 +29,10 @@ class Scene_End < Scene
   def update
     @command_window.update
 
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop # Select End Game
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       Game_System.se_play $game_data.system.decision_se
       case @command_window.index
       when 0 # Yes

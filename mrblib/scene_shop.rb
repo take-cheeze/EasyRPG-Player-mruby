@@ -144,10 +144,10 @@ class Scene_Shop < Scene
   end
 
   def update_command_selection
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       case @shop_window.choice
 			when Buy, Sell; self.mode = @shop_window.choice
 			when Leave; Scene.pop
@@ -159,12 +159,12 @@ class Scene_Shop < Scene
     @status_window.item_id = @buy_window.item_id
     @party_window.item_id = @buy_window.item_id
 
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       if Game_Temp.shop_sells; self.mode = BuySellLeave2
       else; Scene.pop
       end
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       item_id = @buy_window.item_id
 
       # checks the money and number of items possessed before buy
@@ -183,12 +183,12 @@ class Scene_Shop < Scene
   end
 
   def update_sell_selection
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       if Game_Temp.shop_buys; self.mode = BuySellLeave2
       else; Scene.pop
       end
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       item_id = @sell_window.item_id
       @status_window.item_id = item_id
       @party_window.item_id = item_id
@@ -205,13 +205,13 @@ class Scene_Shop < Scene
   end
 
   def update_number_input
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       case @shop_window.choice
       when Buy; self.mode = Buy
       when Sell; self.mode = Sell
       end
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       case shop_window.GetChoice
       when Buy
         Game_Party.lose_gold @number_window.total

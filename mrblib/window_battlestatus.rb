@@ -49,7 +49,7 @@ class Window_BattleStatus < Window_Base
     #	RefreshGauge(i);
 
     if @active && @index >= 0
-      if Input.repeated? Input::DOWN
+      if Input.repeat? Input::DOWN
         Game_System.se_play $game_data.system.cursor_se
         for i in 1...num_actors
           new_index = (@index + i) % num_actors
@@ -59,7 +59,7 @@ class Window_BattleStatus < Window_Base
           end
         end
       end
-      if Input.repeated? Input::UP
+      if Input.repeat? Input::UP
         Game_System.se_play $game_data.system.cursor_se
         for i in (num_actors - 1)...0
           new_index = (@index + i) % num_actors

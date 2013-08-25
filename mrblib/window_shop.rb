@@ -112,7 +112,7 @@ class Window_Shop < Window_Base
     if active
       case mode
       when Scene_Shop::BuySellLeave, Scene_Shop::BuySellLeave2
-        if Input.repeated? Input::DOWN
+        if Input.repeat? Input::DOWN
           if index < leave_index
             index += 1
           else
@@ -120,13 +120,13 @@ class Window_Shop < Window_Base
           end
           Game_System.se_play $game_data.system.cursor_se
         end
-        if Input.repeated? Input::UP
+        if Input.repeat? Input::UP
           if index > 1; index -= 1
           else index = leave_index
           end
           Game_System.se_play $game_data.system.cursor_se
         end
-        if Input.triggered? Input::DECISION
+        if Input.trigger? Input::DECISION
           Game_System.se_play $game_data.system.decision_se
           if index == buy_index
             choice = Scene_Shop::Buy

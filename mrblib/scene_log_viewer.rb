@@ -55,11 +55,11 @@ class Scene_LogViewer < Scene
   def update
     line = @buffer_cache[@cursor_index]
 
-    if @screenshot.visible and Input.triggered? Input::CANCEL
+    if @screenshot.visible and Input.trigger? Input::CANCEL
       @screenshot.visible = false
       @screenshot_time.visible = false
       self.cursor_index = @cursor_index
-    elsif Input.triggered? Input::DECISION and not line[:screenshot].nil? and FileFinder.exists(line[:screenshot])
+    elsif Input.trigger? Input::DECISION and not line[:screenshot].nil? and FileFinder.exists(line[:screenshot])
       hide_lines
 
       @screenshot.visible = true
@@ -76,11 +76,11 @@ class Scene_LogViewer < Scene
       Font.default_color = Color.new 255, 255, 255, 255
       @screenshot_time.bitmap.draw_text 0, 0, time_str
       @screenshot_time.visible = true
-    elsif Input.triggered? Input::CANCEL # exit log viewer
+    elsif Input.trigger? Input::CANCEL # exit log viewer
       Scene.pop
-    elsif Input.repeated? Input::DOWN
+    elsif Input.repeat? Input::DOWN
       self.cursor_index = @cursor_index + 1
-    elsif Input.repeated? Input::UP
+    elsif Input.repeat? Input::UP
       self.cursor_index = @cursor_index - 1
     elsif @enable_line_scroll
       repeat_blank = @font_size * 5

@@ -93,19 +93,19 @@ class Scene_Equip < Scene
 
 	# Updates the equip window.
 	def update_equip_selction
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       Game_System.se_play $game_data.system.decision_se
       @equip_window.active = false
       @item_window.active = true
       @item_window.index = 0
-    elsif Game_Party.actors.length > 1 && Input.triggered?(Input::RIGHT)
+    elsif Game_Party.actors.length > 1 && Input.trigger?(Input::RIGHT)
       Game_System.se_play $game_data.system.cursor_se
       @actor_index = (@actor_index + 1) % Game_Party.actors.length
       Scene.push Scene_Equip.new(@actor_index, @equip_window.index), true
-    elsif Game_Party.actors.length > 1 && Input.triggered?(Input::LEFT)
+    elsif Game_Party.actors.length > 1 && Input.trigger?(Input::LEFT)
       Game_System.se_play $game_data.system.cursor_se
       @actor_index = (@actor_index + Game_Party..actors.length - 1) % Game_Party.actors.length
       Scene.push Scene_Equip.new(@actor_index, @equip_window.index), true
@@ -114,12 +114,12 @@ class Scene_Equip < Scene
 
 	# Updates the item window.
 	def update_item_selection
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       @equip_window.active = true
       @item_window.active = false
       @item_window.index = nil
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       Game_System.se_play $game_data.system.decision_se
 
       Game_Party.actors[@actor_index].change_equipment @equip_window.index, @item_window.item_id

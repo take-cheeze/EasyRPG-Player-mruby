@@ -523,7 +523,7 @@ class Window_Message < Window_Selectable
 	# continutes.
   def wait_for_input
     @active = true; # Enables the Pause arrow
-    if Input.triggered?(Input::DECISION) || Input.triggered?(Input::CANCEL)
+    if Input.trigger?(Input::DECISION) || Input.trigger?(Input::CANCEL)
       @active = false
       @pause = false
 
@@ -537,11 +537,11 @@ class Window_Message < Window_Selectable
 
 	# Stub. Handles choice selection.
   def input_choice
-    if Input.triggered?(Input::CANCEL) and Game_Message.choice_cancel_type > 0
+    if Input.trigger?(Input::CANCEL) and Game_Message.choice_cancel_type > 0
 			Game_System.se_play $game_data.system.cancel_se
 			Game_Message.choice_result = Game_Message.choice_cancel_type - 1; # Cancel
 			terminate_message
-    elsif Input.triggered? Input::DECISION
+    elsif Input.trigger? Input::DECISION
       if Game_Message.choice_disabled.test index
         Game_System.se_play $game_data.system.buzzer_se
         return
@@ -555,7 +555,7 @@ class Window_Message < Window_Selectable
 
 	# Handles number input.
   def input_number
-    return if not Input.triggered? Input::DECISION
+    return if not Input.trigger? Input::DECISION
 
 		Game_System.se_play $game_data.system.decision_se
 		Game_Variables[Game_Message.num_input_variable_id] = @number_input_window.number

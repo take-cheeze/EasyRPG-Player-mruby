@@ -54,13 +54,13 @@ class Window_ShopNumber < Window_Base
 
     if active
         int last_number = number
-      if Input.repeated?(Input::RIGHT) && number < item_max
+      if Input.repeat?(Input::RIGHT) && number < item_max
         number += 1
-      elsif Input.repeated?(Input::LEFT) && number > 1
+      elsif Input.repeat?(Input::LEFT) && number > 1
         number -= 1
-      elsif Input.repeated?(Input::UP) && number < item_max
+      elsif Input.repeat?(Input::UP) && number < item_max
         number = [number + 10, item_max].min
-      elsif Input.repeated?(Input::DOWN) && number > 1
+      elsif Input.repeat?(Input::DOWN) && number > 1
         number = [number - 10, 1].max
       end
 		end

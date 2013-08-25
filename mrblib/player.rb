@@ -74,13 +74,13 @@ class << Player
   end
 
   def update
-    Graphics.fps_on_screen = !Graphics.fps_on_screen if Input.triggered? Input::TOGGLE_FPS
+    Graphics.fps_on_screen = !Graphics.fps_on_screen if Input.trigger? Input::TOGGLE_FPS
 
     # use debug output for log viewer
     # Output.take_screenshot
-    Output.debug "Screenshot request from user." if Input.triggered? Input::TAKE_SCREENSHOT
+    Output.debug "Screenshot request from user." if Input.trigger? Input::TAKE_SCREENSHOT
 
-    if Input.triggered? Input::LOG_VIEWER
+    if Input.trigger? Input::LOG_VIEWER
       Scene.find("Log Viewer").nil? ? Scene.pop : Scene.push(Scene_LogViewer.new)
     end
 

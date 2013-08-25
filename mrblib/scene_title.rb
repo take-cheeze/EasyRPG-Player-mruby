@@ -87,7 +87,7 @@ class Scene_Title < Scene
 
     @command_window.update
 
-    if Input.triggered? Input::DECISION
+    if Input.trigger? Input::DECISION
       case @command_window.index
       when 0; command_new_game # New Game
       when 1; command_continue # Load Game

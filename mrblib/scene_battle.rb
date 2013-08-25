@@ -591,7 +591,7 @@ class Scene_Battle < Scene
   end
 
   def process_input
-    if Input.triggered? Input::DECISION
+    if Input.trigger? Input::DECISION
       Game_System.se_play $game_data.system.decision_se
       case @state
 			when State_Options
@@ -628,7 +628,7 @@ class Scene_Battle < Scene
       end
     end
 
-    if Input.triggered? Input::CANCEL
+    if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       case @state
 			when State_Options; Scene.pop

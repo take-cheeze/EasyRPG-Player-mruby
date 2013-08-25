@@ -49,14 +49,14 @@ class Scene_Status < Scene
     @equip_window.update
 
 
-    if (Input.triggered?(Input::CANCEL))
+    if (Input.trigger?(Input::CANCEL))
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop
-    elsif Game_Party.actors.length > 1 && Input.triggered?(Input::RIGHT)
+    elsif Game_Party.actors.length > 1 && Input.trigger?(Input::RIGHT)
       Game_System.se_play $game_data.system.cursor_se
       @actor_index = (@actor_index + 1) % Game_Party.actors.length
       Scene.push Scene_Status.new(@actor_index), true
-    elsif Game_Party.actors.length > 1 && Input.triggered?(Input::LEFT)
+    elsif Game_Party.actors.length > 1 && Input.trigger?(Input::LEFT)
       Game_System.se_play $game_data.system.cursor_se
       @actor_index = (@actor_index + Game_Party.actors.length - 1) % Game_Party.actors.length
       Scene.push Scene_Status.new(@actor_index), true

@@ -39,13 +39,13 @@ def update
 	@kbd_window.update
 	@name_window.update
 
-	if Input.triggered? Input::CANCEL
+	if Input.trigger? Input::CANCEL
 		if not name_window.get.empty?
 			Game_System.se_play $game_data.system.cancel_se
 			@name_window.erase
 		else; Game_System.se_play $game_data.system.buzzer_se
     end
-	elsif Input.triggered? Input::DECISION
+	elsif Input.trigger? Input::DECISION
 		Game_System.se_play $game_data.system.decision_se
 		s = @kbd_window.selected
 
