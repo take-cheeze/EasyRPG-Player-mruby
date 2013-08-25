@@ -17,10 +17,10 @@
 # Displays the Game Over screen.
 class Scene_Gameover < Scene
 
-	# Constructor.
+  # Constructor.
   def initialize; super "Gameover"; end
 
-	def start
+  def start
     # Load Background Graphic
     @background = Sprite.new
     @background.bitmap = Cache.gameover Data.system.gameover_name
@@ -33,7 +33,7 @@ class Scene_Gameover < Scene
     Game_System.bgm_play Game_System.system_bgm(Game_System::BGM_GameOver)
   end
 
-	def update
+  def update
     if Input.trigger? Input::DECISION
       Scene.pop_until 'Title'
     end

@@ -15,8 +15,8 @@
 
 # Window Save File Class.
 class Window_SaveFile < Window_Base
-	# Constructor.
-	def initialize(ix, iy, iw, ih)
+  # Constructor.
+  def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @index = 0
     @hero_hp = 0
@@ -30,8 +30,8 @@ class Window_SaveFile < Window_Base
     update_cursor_rect
   end
 
-	# Renders the current save on the window.
-	def Refresh()
+  # Renders the current save on the window.
+  def Refresh()
     contents.clear
 
     contents.draw_text_2k 4, 2, '%s%2d' % [Data.terms.file , @index + 1], Font::ColorDefault
@@ -61,12 +61,12 @@ class Window_SaveFile < Window_Base
 
   attr_writer :index, :corrupted
 
-	# Party data displayed in the savegame slot.
-	#
-	# @param actors face_id and face_name of all party members.
-	# @param name name of the First party member.
-	# @param hp HP of the first party member.
-	# @param level level of the First party member.
+  # Party data displayed in the savegame slot.
+  #
+  # @param actors face_id and face_name of all party members.
+  # @param name name of the First party member.
+  # @param hp HP of the first party member.
+  # @param level level of the First party member.
   def set_party(actors, name, hp, level)
     @party = actors
     @hero_name = name
@@ -80,7 +80,7 @@ class Window_SaveFile < Window_Base
   end
 
 
-	def update_cursor_rect
+  def update_cursor_rect
     self.cursor_rect = active ? Rect.new(0, 0, 48, 16) : Rect.new
   end
 end

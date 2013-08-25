@@ -47,7 +47,7 @@ class << Game_System
   Transition_EndBattleShow = 5
   Transition_Count = 6
 
-	class Target
+  class Target
     attr_reader :map_id, :x, :y, :switch_id
 
     def initialize(map_id = nil, x = nil, y = nil, switch_id = nil)
@@ -55,7 +55,7 @@ class << Game_System
       @x, @y = x, y
       @switch_id = switch_id
     end
-	end
+  end
 
   def data
     $game_data[:system] ||= {
@@ -63,13 +63,13 @@ class << Game_System
     }
   end
 
-	# Initializes Game System.
+  # Initializes Game System.
   def init
   end
 
-	# Plays a Music.
-	#
-	# @param bgm music data.
+  # Plays a Music.
+  #
+  # @param bgm music data.
   def bgm_play(bgm)
     if bgm.name != '(OFF)'
       if bgm.name != data.current_music.name
@@ -86,27 +86,27 @@ class << Game_System
     Graphics.frame_reset
   end
 
-	# Plays a Sound.
-	#
-	# @param se sound data.
+  # Plays a Sound.
+  #
+  # @param se sound data.
   def se_play(se)
     Audio.se_play se.name, se.volume, se.tempo if se.name != '(OFF)'
   end
 
-	# Gets system graphic name.
-	#
-	# @return system graphic filename.
-	def system_name; data.system || Data.system.system; end
+  # Gets system graphic name.
+  #
+  # @return system graphic filename.
+  def system_name; data.system || Data.system.system; end
 
-	# Sets the system graphic.
-	#
-	# @param system_name new system name.
+  # Sets the system graphic.
+  #
+  # @param system_name new system name.
   def system_name=(v); data.graphics_name = v; end
 
-	# Gets the system music.
-	#
-	# @param which which "context" to set the music for.
-	# @return the music.
+  # Gets the system music.
+  #
+  # @param which which "context" to set the music for.
+  # @return the music.
   def system_bgm(which)
     case which
     when BGM_Battle; return data.battle_music
@@ -120,10 +120,10 @@ class << Game_System
     nil
   end
 
-	# Sets the system music.
-	#
-	# @param which which "context" to set the music for.
-	# @param bgm the music.
+  # Sets the system music.
+  #
+  # @param which which "context" to set the music for.
+  # @param bgm the music.
   def set_system_bgm(which, bgm)
     case which
     when BGM_Battle; data.battle_music = bgm
@@ -136,53 +136,53 @@ class << Game_System
     end
   end
 
-	# Gets the system sound effects.
-	#
-	# @param which which "context" to set the music for.
-	# @return the sound.
+  # Gets the system sound effects.
+  #
+  # @param which which "context" to set the music for.
+  # @return the sound.
   def system_se(which)
     case which
-    when SFX_Cursor;		return data.cursor_se
-    when SFX_Decision;		return data.decision_se
-    when SFX_Cancel;		return data.cancel_se
-    when SFX_Buzzer;		return data.buzzer_se
-    when SFX_BeginBattle;	return data.battle_se
-    when SFX_Escape;		return data.escape_se
-    when SFX_EnemyAttacks;	return data.enemy_attack_se
-    when SFX_EnemyDamage;	return data.enemy_damaged_se
-    when SFX_AllyDamage;	return data.actor_damaged_se
-    when SFX_Evasion;		return data.dodge_se
-    when SFX_EnemyKill;		return data.enemy_death_se
-    when SFX_UseItem;		return data.item_se
+    when SFX_Cursor;    return data.cursor_se
+    when SFX_Decision;    return data.decision_se
+    when SFX_Cancel;    return data.cancel_se
+    when SFX_Buzzer;    return data.buzzer_se
+    when SFX_BeginBattle;  return data.battle_se
+    when SFX_Escape;    return data.escape_se
+    when SFX_EnemyAttacks;  return data.enemy_attack_se
+    when SFX_EnemyDamage;  return data.enemy_damaged_se
+    when SFX_AllyDamage;  return data.actor_damaged_se
+    when SFX_Evasion;    return data.dodge_se
+    when SFX_EnemyKill;    return data.enemy_death_se
+    when SFX_UseItem;    return data.item_se
     end
   end
 
-	# Sets a system sound effect.
-	#
-	# @param which which "context" to set the effect for.
-	# @param sfx the sound effect.
+  # Sets a system sound effect.
+  #
+  # @param which which "context" to set the effect for.
+  # @param sfx the sound effect.
   def set_system_se(which, sfx)
     case which
-    when SFX_Cursor;		data.cursor_se = sfx
-    when SFX_Decision;		data.decision_se = sfx
-    when SFX_Cancel;		data.cancel_se = sfx
-    when SFX_Buzzer;		data.buzzer_se = sfx
-    when SFX_BeginBattle;	data.battle_se = sfx
-    when SFX_Escape;		data.escape_se = sfx
-    when SFX_EnemyAttacks;	data.enemy_attack_se = sfx
-    when SFX_EnemyDamage;	data.enemy_damaged_se = sfx
-    when SFX_AllyDamage;	data.actor_damaged_se = sfx
-    when SFX_Evasion;		data.dodge_se = sfx
-    when SFX_EnemyKill;		data.enemy_death_se = sfx
-    when SFX_UseItem;		data.item_se = sfx
+    when SFX_Cursor;    data.cursor_se = sfx
+    when SFX_Decision;    data.decision_se = sfx
+    when SFX_Cancel;    data.cancel_se = sfx
+    when SFX_Buzzer;    data.buzzer_se = sfx
+    when SFX_BeginBattle;  data.battle_se = sfx
+    when SFX_Escape;    data.escape_se = sfx
+    when SFX_EnemyAttacks;  data.enemy_attack_se = sfx
+    when SFX_EnemyDamage;  data.enemy_damaged_se = sfx
+    when SFX_AllyDamage;  data.actor_damaged_se = sfx
+    when SFX_Evasion;    data.dodge_se = sfx
+    when SFX_EnemyKill;    data.enemy_death_se = sfx
+    when SFX_UseItem;    data.item_se = sfx
     end
   end
 
-	# Gets the system transitions.
-	#
-	# @param which which "context" to get the transition for.
-	# @return the transition.
-	def transition(which)
+  # Gets the system transitions.
+  #
+  # @param which which "context" to get the transition for.
+  # @return the transition.
+  def transition(which)
     case which
     when Transition_TeleportErase; return data.transition_out
     when Transition_TeleportShow; return data.transition_in
@@ -194,11 +194,11 @@ class << Game_System
     nil
   end
 
-	# Sets the system transitions.
-	#
-	# @param which which "context" to set the transition for.
-	# @param transition the transition.
-	def set_transition(which, transition)
+  # Sets the system transitions.
+  #
+  # @param which which "context" to set the transition for.
+  # @param transition the transition.
+  def set_transition(which, transition)
     case which
     when Transition_TeleportErase; data.transition_out = transition
     when Transition_TeleportShow; data.transition_in = transition
@@ -223,7 +223,7 @@ class << Game_System
 
   def save_count; data.save_count; end
 
-	def current_bgm; data.current_music; end
+  def current_bgm; data.current_music; end
   def memorize_bgm; data.stored_music = data.current_music.dup; end
   def play_memorized_bgm; bgm_play data.stored_music; end
 end

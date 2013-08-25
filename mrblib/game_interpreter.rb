@@ -15,7 +15,7 @@
 
 # Game_Interpreter class
 class Game_Interpreter
-	def initialize(_depth = 0, _main_flag = false)
+  def initialize(_depth = 0, _main_flag = false)
     @depth = depth
     @main_flag = _main_flag
     @active = false
@@ -28,16 +28,16 @@ class Game_Interpreter
   def clear
     @map_id = 0                   # map ID when starting up
     @event_id = 0                 # event ID
-    # Game_Message.message_waiting = false	# waiting for message to end
+    # Game_Message.message_waiting = false  # waiting for message to end
     @move_route_waiting = false   # waiting for move completion
-    @button_input_variable_id = 0	# button input variable ID
+    @button_input_variable_id = 0  # button input variable ID
     @wait_count = 0               # wait count
     @child_interpreter = nil      # child interpreter for common events, etc
     @continuation = nil           # function to execute to resume command
     @button_timer = 0
   end
 
-	def setup(list, id, dbg_x = nil, dbg_y = nil)
+  def setup(list, id, dbg_x = nil, dbg_y = nil)
     clear
 
     @map_id = Game_Map.map_id
@@ -152,7 +152,7 @@ class Game_Interpreter
     end
   end
 
-	def setup_starting_event(ev)
+  def setup_starting_event(ev)
     setup ev.list, 0, ev.index, -2
   end
 
@@ -170,7 +170,7 @@ class Game_Interpreter
     end
   end
 
-	def setup_choices(choices)
+  def setup_choices(choices)
     Game_Message.choice_start = Game_Message.texts.length
     Game_Message.choice_max = choices.length
     Game_Message.choice_disabled = nil
@@ -187,13 +187,13 @@ class Game_Interpreter
                                      }).to_sym
   }
 
-	def execute_command
+  def execute_command
     com = @list[@index]
     case com.code
-		when Cmd::ShowChoiceOption; return skip_to(Cmd::ShowChoiceEnd)
-		when Cmd::ShowChoiceEnd; return true
-		when Cmd::Comment, Cmd::Comment_2; return true
-		else
+    when Cmd::ShowChoiceOption; return skip_to(Cmd::ShowChoiceEnd)
+    when Cmd::ShowChoiceEnd; return true
+    when Cmd::Comment, Cmd::Comment_2; return true
+    else
       return send CommandTable[com.code], com if CommandTable.key? com.code
     end
     true
@@ -206,10 +206,10 @@ class Game_Interpreter
   def max_size; Player.rpg2k3? ? 9999999 : 999999; end
   def min_size; -max_size; end
 
-	# Gets strings for choice selection.
-	# This is just a helper (private) method
-	# to avoid repeating code.
-	def strings
+  # Gets strings for choice selection.
+  # This is just a helper (private) method
+  # to avoid repeating code.
+  def strings
     # Let's find the choices
     index_temp = @index + 1
     current_indent = @list[index_temp].indent
@@ -234,23 +234,23 @@ class Game_Interpreter
   end
 
 
-	# Calculates operated value.
-	#
-	# @param operation operation (increase: 0, decrease: 1).
-	# @param operand_type operand type (0: set, 1: variable).
-	# @param operand operand (number or var ID).
-	def operate_value(operation, operand_type, operand)
+  # Calculates operated value.
+  #
+  # @param operation operation (increase: 0, decrease: 1).
+  # @param operand_type operand type (0: set, 1: variable).
+  # @param operand operand (number or var ID).
+  def operate_value(operation, operand_type, operand)
     value = value_or_variable operand_type, operand
     operation == 1 ? -value : value
   end
 
-	def character(id)
+  def character(id)
     ch = Game_Character.character id, @event_id
     Output.warning "Unkown event with id %d" % @event_id if ch.nil?
     ch
   end
 
-	def skip_to(code, code2 = nil, min_indent = nil, max_indent = nil)
+  def skip_to(code, code2 = nil, min_indent = nil, max_indent = nil)
     code2 = code if code2.nil?
     min_indent = @list[@index].indent if min_indent.nil?
     max_indent = @list[@index].indent if max_inden.nil?
@@ -274,17 +274,17 @@ class Game_Interpreter
     # TODO
   end
 
-	# Sets up a wait (and closes the message box)
+  # Sets up a wait (and closes the message box)
   def setup_wait(duration)
     close_message_window
     # 0.0 waits 1 frame
     @wait_count = duration == 0 ? 1 : duration * DEFAULT_FPS / 10
   end
 
-	# Calculates list of actors.
-	#
-	# @param mode 0: party, 1: specific actor, 2: actor referenced by variable.
-	# @param id actor ID (mode = 1) or variable ID (mode = 2).
+  # Calculates list of actors.
+  #
+  # @param mode 0: party, 1: specific actor, 2: actor referenced by variable.
+  # @param id actor ID (mode = 1) or variable ID (mode = 2).
   def actors(mode, id)
     ret = []
     case mode
@@ -296,7 +296,7 @@ class Game_Interpreter
     ret
   end
 
-	def value_or_variable(mode, val)
+  def value_or_variable(mode, val)
     case mode
     when 0; return val
     when 1; return Game_Variables[val]
@@ -305,13 +305,13 @@ class Game_Interpreter
     end
   end
 
-	# Closes the message window.
+  # Closes the message window.
   def close_message_window
     Game_Message.full_clear if Game_Message.visible
     Game_Message.visible = false
   end
 
-	def command_show_message(com)
+  def command_show_message(com)
     # If there's a text already, return immediately
     return false if not Game_Message.texts.empty?
 
@@ -389,23 +389,23 @@ class Game_Interpreter
     true
   end
 
-	def command_control_variables(com)
+  def command_control_variables(com)
     actor = nil, character = nil
 
     case com[4]
-		when 0; value = com[5] # Constant
-		when 1; value = Game_Variables[com[5]] # Var A ops B
-		when 2
-			# Number of var A ops B
-			value = Game_Variables[Game_Variables[com[5]]]
-		when 3
-			# Random between range
-			a = [com[5], com[6]].max
-			b = [com[5], com[6]].min
-			value = rand() % (a-b+1)+b
-		when 4
-			# Items
-			case (com[6])
+    when 0; value = com[5] # Constant
+    when 1; value = Game_Variables[com[5]] # Var A ops B
+    when 2
+      # Number of var A ops B
+      value = Game_Variables[Game_Variables[com[5]]]
+    when 3
+      # Random between range
+      a = [com[5], com[6]].max
+      b = [com[5], com[6]].min
+      value = rand() % (a-b+1)+b
+    when 4
+      # Items
+      case (com[6])
       when 0; value = Game_Party.item_number(com[5]) # Number of items posessed
       when 1; value = Game_Party.item_number(com[5], true) # How often the item is equipped
       end
@@ -587,7 +587,7 @@ class Game_Interpreter
     true
   end
 
-	def command_change_sp(com)
+  def command_change_sp(com)
     amount = value_or_variable com[3], com[4]
     amount = -amount if com[2] != 0
 
@@ -611,7 +611,7 @@ class Game_Interpreter
     true
   end
 
-	def command_full_heal(com)
+  def command_full_heal(com)
     actors(com[0], com[1]).each { |v|
       actor.hp = actor.max_hp
       actor.sp = actor.max_sp
@@ -620,7 +620,7 @@ class Game_Interpreter
     true
   end
 
-	def command_tint_screen(com)
+  def command_tint_screen(com)
     screen = $game_screen
     r = com[0]
     g = com[1]
@@ -635,7 +635,7 @@ class Game_Interpreter
     true
   end
 
-	def command_flash_screen(com)
+  def command_flash_screen(com)
     screen = $game_screen
     r = com[0]
     g = com[1]
@@ -646,11 +646,11 @@ class Game_Interpreter
 
     if Player.rpg2k3?
       case com[6]
-			when 0
+      when 0
         screen.flash_once r, g, b, s, tenths
-				setup_wait tenths if wait
-			when 1; screen.flash_begin r, g, b, s, tenths
-			when 2; screen.flash_end
+        setup_wait tenths if wait
+      when 1; screen.flash_begin r, g, b, s, tenths
+      when 2; screen.flash_end
       end
     else
       screen.flash_once(r, g, b, s, tenths)
@@ -660,7 +660,7 @@ class Game_Interpreter
     true
   end
 
-	def command_shake_screen(com)
+  def command_shake_screen(com)
     screen = $game_screen
     strength = com[0]
     speed = com[1]
@@ -673,7 +673,7 @@ class Game_Interpreter
     else
       case com[4]
       when 0
-				screen.shake_once strength, speed, tenths
+        screen.shake_once strength, speed, tenths
         setup_wait tenths if wait
       when 1; screen.shake_begin strength, speed
       when 2; screen.shake_end()
@@ -683,7 +683,7 @@ class Game_Interpreter
     true
   end
 
-	def command_wait(com)
+  def command_wait(com)
     if Player.rpg2k? or com[1] == 0
       setup_wait com[0]
       return true
@@ -692,7 +692,7 @@ class Game_Interpreter
     end
   end
 
-	def command_play_bgm(com)
+  def command_play_bgm(com)
     Game_System.play_bgm({ :name => com.string,
                            :fadein => com[0],
                            :volume => com[1],
@@ -714,12 +714,12 @@ class Game_Interpreter
     true
   end
 
-	def command_end_event_processing(com)
+  def command_end_event_processing(com)
     @index = @list.length
     true
   end
 
-	def command_game_over(com)
+  def command_game_over(com)
     close_message_window
     Game_Temp.gameover = true
     set_continuation { |v| default_continuation v }
@@ -742,17 +742,17 @@ class Game_Interpreter
     true
   end
 
-	def command_end
+  def command_end
     close_message_window
     @list.clear
     Game_Map.events[@event_id].unlock if main_flag and @event_id > 0
   end
 
-	def default_continuation(com)
+  def default_continuation(com)
     @index += 1
     true
   end
-	def continuation_choices(com)
+  def continuation_choices(com)
     indent = com.indent
     begin
       return false if not skip_to Cmd::ShowChoiceOption, Cmd::ShowChoiceEnd, indent, indent
@@ -763,7 +763,7 @@ class Game_Interpreter
     end while which < Game_Message.choice_result
     true
   end
-	def continuation_open_shop(com); true; end
-	def continuation_show_inn(com); true; end
-	def continuation_enemy_encounter(com); true; end
+  def continuation_open_shop(com); true; end
+  def continuation_show_inn(com); true; end
+  def continuation_enemy_encounter(com); true; end
 end

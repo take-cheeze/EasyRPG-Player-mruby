@@ -15,7 +15,7 @@
 
 # Scene Map class.
 class Scene_Map < Scene
-	# Constructor.
+  # Constructor.
   def initialize; super 'Map'; end
 
   def dispose
@@ -129,7 +129,7 @@ class Scene_Map < Scene
     # TODO
   end
 
-	def update_teleport_player
+  def update_teleport_player
     return if !$game_player.teleporting?
 
     transition_out

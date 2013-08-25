@@ -17,14 +17,14 @@
 # Displays stats of the hero/item.
 class Window_EquipStatus < Window_Base
 
-	# Constructor.
-	#
-	# @param x window x position.
-	# @param y window y position.
-	# @param w window width.
-	# @param h window height.
-	# @param actor_id actor whose stats are displayed.
-	# @param draw_actorname displays the actor name above the items.
+  # Constructor.
+  #
+  # @param x window x position.
+  # @param y window y position.
+  # @param w window width.
+  # @param h window height.
+  # @param actor_id actor whose stats are displayed.
+  # @param draw_actorname displays the actor name above the items.
   def initialize(ix, iy, iw, ih, actor_id, draw_actorname)
     super ix, iy, iw, ih
     @actor_id = actor_id
@@ -39,7 +39,7 @@ class Window_EquipStatus < Window_Base
     refresh
   end
 
-	# Refreshes screen.
+  # Refreshes screen.
   def refresh
     return if not @dirty
 
@@ -54,21 +54,21 @@ class Window_EquipStatus < Window_Base
     @dirty = false
   end
 
-	# Sets the parameter drawn after the ->.
-	#
-	# @param attack new attack.
-	# @param defence new defense.
-	# @param spirit new spirit.
-	# @param agility new agility.
-	def set_new_parameters(attack, defence, spirit, agility)
+  # Sets the parameter drawn after the ->.
+  #
+  # @param attack new attack.
+  # @param defence new defense.
+  # @param spirit new spirit.
+  # @param agility new agility.
+  def set_new_parameters(attack, defence, spirit, agility)
     @draw_params = true
 
     @dirty = @attack != attack or @defence != defence or @spirit != spirit or @agility != agility
     @attack, @defence, @spirit, @agility = attack, defence, spirit, agility
   end
 
-	# Removes the parameters drawn after the ->.
-	def clear_parameters
+  # Removes the parameters drawn after the ->.
+  def clear_parameters
     return if not @draw_params
 
     @draw_params = false
@@ -76,24 +76,24 @@ class Window_EquipStatus < Window_Base
     refresh
   end
 
-	# Returns the draw color based on the passed values.
-	#
-	# @param old_value old value.
-	# @param new_value new value,
-	# @return 0 if equal, 4 if new > old, 5 if old > new,
-	def new_parameter_color(old_value, new_value)
+  # Returns the draw color based on the passed values.
+  #
+  # @param old_value old value.
+  # @param new_value new value,
+  # @return 0 if equal, 4 if new > old, 5 if old > new,
+  def new_parameter_color(old_value, new_value)
     if old_value == new_value; return 0
     elsif old_value < new_value; return 2
     else; return 3
     end
   end
 
-	# Draws the actor parameters followed by the new ones.
-	#
-	# @param cx x coordinate.
-	# @param cy y coordinate.
-	# @param type parameter type to draw.
-	def drawparameter(cx, cy, type)
+  # Draws the actor parameters followed by the new ones.
+  #
+  # @param cx x coordinate.
+  # @param cy y coordinate.
+  # @param type parameter type to draw.
+  def drawparameter(cx, cy, type)
     case (type)
     when 0
       name = Data.terms.attack

@@ -6,8 +6,8 @@ class Scene_LogViewer < Scene
     @line_scroll_counter = 0
   end
 
-	# generate bitmaps from Output buffer
-	def start
+  # generate bitmaps from Output buffer
+  def start
     @line_repeat = Sprite.new
     @line_repeat.visible = false
 
@@ -102,7 +102,7 @@ class Scene_LogViewer < Scene
     end
   end
 
-	def create_line(msg)
+  def create_line(msg)
     line = generate_line msg
     bmp = Bitmap.new @font.size(line).width, @font.pixel_size
     Font.default_color = Output.type_color msg[:type]
@@ -110,13 +110,13 @@ class Scene_LogViewer < Scene
     bmp
   end
 
-	def generate_line(msg)
+  def generate_line(msg)
     '%s %s %s' % [Output.type_string(msg[:type])[0], msg[:time], msg[:message]]
   end
 
-	def hide_lines; @lines.each { |v| v.visible = false if not v.nil? }; end
+  def hide_lines; @lines.each { |v| v.visible = false if not v.nil? }; end
 
-	def cursor_index=(idx)
+  def cursor_index=(idx)
     @cursor_index = (idx + @lines.length) % lines.length
     @cursor_offset = [0, @cursor_index - @row_max + 1, [@cursor_offset, @cursor_index].min].max
 

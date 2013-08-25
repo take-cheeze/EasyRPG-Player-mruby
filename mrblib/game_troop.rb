@@ -14,13 +14,13 @@
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
 class Game_Troop < Game_Unit
-	def initialize
+  def initialize
     super
     @interpreter = nil
     @enemies = []
   end
 
-	def clear
+  def clear
     @interpreter.clear
     @enemies.clear
 

@@ -133,29 +133,29 @@ class Scene_ProjectFinder < Scene
                                     @font_size * COLUMN_MAX, @font_size * ROW_MAX)
   end
 
-	def children_count
+  def children_count
     @current_entry.nil? ? @root.length : @current_entry.children.length
   end
 
-	def index
+  def index
     @current_entry.nil? ? @root_index : @current_entry.index
   end
   def index=(v)
     @current_entry.nil? ? @root_index = v : @current_entry.index = v
   end
 
-	def offset
+  def offset
     @current_entry.nil? ? @root_offset = v : @current_entry.offset = v
   end
   def offset=(v)
     @current_entry.nil? ? @root_offset = v : @current_entry.offset = v
   end
 
-	def sprite
+  def sprite
     @current_entry.nil? ? @root_sprite : @current_entry.sprite
   end
 
-	def create_bitmap(list)
+  def create_bitmap(list)
     assert !list.empty?
 
     @font_size = Font.shinonome.pixel_size

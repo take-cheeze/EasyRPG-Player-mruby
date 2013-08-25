@@ -15,10 +15,10 @@
 
 # Scene Menu class.
 class Scene_Menu < Scene
-	# Constructor.
-	#
-	# @param menu_index selected index in the menu.
-	def initialize(menu_index = 0)
+  # Constructor.
+  #
+  # @param menu_index selected index in the menu.
+  def initialize(menu_index = 0)
     super 'Menu'
     @menu_index = menu_index
     @command_options = []
@@ -37,7 +37,7 @@ class Scene_Menu < Scene
     @background = create_background
   end
 
-	def continue
+  def continue
     @menustatus_window.refresh if @command_options[@command_window.index] == Order
   end
 
@@ -51,7 +51,7 @@ class Scene_Menu < Scene
     end
   end
 
-	# Creates the window displaying the options.
+  # Creates the window displaying the options.
   def create_command_window
     # Create Options Window
 
@@ -97,7 +97,7 @@ class Scene_Menu < Scene
     }
   end
 
-	# Update function if command window is active.
+  # Update function if command window is active.
   def update_command
     if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
@@ -147,7 +147,7 @@ class Scene_Menu < Scene
     end
   end
 
-	# Update function if status window is active.
+  # Update function if status window is active.
   def update_actor_selection
     if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
@@ -163,7 +163,7 @@ class Scene_Menu < Scene
       when Row
         actor = Game_Party.actors[@menustatus_window.index]
         actor.battle_row.nil? ?
-				actor.battle_row = 1 : actor.battle_row = nil
+        actor.battle_row = 1 : actor.battle_row = nil
         @menustatus_window.refresh
       else; assert(false)
       end
@@ -174,7 +174,7 @@ class Scene_Menu < Scene
     end
   end
 
-	# Options available in a Rpg2k3 menu.
+  # Options available in a Rpg2k3 menu.
   Item = 1
   Skill = 2
   Equipment = 3
@@ -185,7 +185,7 @@ class Scene_Menu < Scene
   Wait = 8
   Quit = 9
 
-	def self.create_background
+  def self.create_background
     ret = Sprite.new
     ret.bitmap = Bitmap.new SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT
     ret.bitmap.stretch_blit(ret.bitmap.rect, Cache.system(Game_System.system_name),

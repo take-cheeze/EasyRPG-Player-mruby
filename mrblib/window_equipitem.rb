@@ -16,17 +16,17 @@
 # Window_EquipItem class.
 # Displays the available equipment of a specific type.
 class Window_EquipItem < Window_Item
-	# Enum containing the different equipment types.
+  # Enum containing the different equipment types.
   weapon = 0
   shield = 1
   armor = 2
   helmet = 3
   other = 4
 
-	# Constructor.
-	#
-	# @param actor_id actor whos equipment is displayed.
-	# @param equip_type type of equipment to show.
+  # Constructor.
+  #
+  # @param actor_id actor whos equipment is displayed.
+  # @param equip_type type of equipment to show.
   def initialize(actor_id, equip_type)
     super 0, 128, 320, 112
 
@@ -37,11 +37,11 @@ class Window_EquipItem < Window_Item
     @equip_type = weapon if @equip_type == shield and Game_Actors.actor(@actor_id).two_swords_style?
   end
 
-	# Checks if the item should be in the list based on
-	# the type.
-	#
-	# @param item_id item to check.
-	def check_include(item_id)
+  # Checks if the item should be in the list based on
+  # the type.
+  #
+  # @param item_id item to check.
+  def check_include(item_id)
     # Add the empty element
     return true if item_id == 0
 
@@ -68,8 +68,8 @@ class Window_EquipItem < Window_Item
     end
   end
 
-	# Chechs if item should be enabled. Always true.
-	#
-	# @param item_id item to check.
-	def check_enable(item_id); true; end
+  # Chechs if item should be enabled. Always true.
+  #
+  # @param item_id item to check.
+  def check_enable(item_id); true; end
 end

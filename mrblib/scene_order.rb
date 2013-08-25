@@ -16,7 +16,7 @@
 # Scene Order class.
 # Allows changing the order of the party actors.
 class Scene_Order < Scene
-	# Constructor.
+  # Constructor.
   def initialize
     super 'Order'
     @actor_counter = 0

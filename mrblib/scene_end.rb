@@ -16,8 +16,8 @@
 # Scene End class.
 # Displays the "Do you really want to exit?" text.
 class Scene_End < Scene
-	# Constructor.
-	def initialize; super 'End'; end
+  # Constructor.
+  def initialize; super 'End'; end
 
   def start
     create_command_window
@@ -46,7 +46,7 @@ class Scene_End < Scene
     end
   end
 
-	# Creates the Window displaying the yes and no option.
+  # Creates the Window displaying the yes and no option.
   def create_command_window
     # Create Options Window
     @command_window = Window_Command.new [Data.terms.yes, Data.terms.no]
@@ -54,9 +54,9 @@ class Scene_End < Scene
     @command_window.y = 72 + 48
   end
 
-	# Creates the Window displaying the confirmation
-	# text.
-	def create_help_window
+  # Creates the Window displaying the confirmation
+  # text.
+  def create_help_window
     text_size = Font.default.size(Data.terms.exit_game_message).width
 
     @help_window = Window_Help.new 160 - (text_size + 16)/ 2, 72, text_size + 16, 32

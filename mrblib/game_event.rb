@@ -17,20 +17,20 @@
 class Game_Event < Game_Character
   attr_reader :event, :trigger, :id, :list
 
-	# Gets if the event has been disabled.
-	#
-	# @return if the event has been disabled (via EraseEvent-EventCommand).
+  # Gets if the event has been disabled.
+  #
+  # @return if the event has been disabled (via EraseEvent-EventCommand).
   def disabled?; @erased; end
 
-	# Sets disabled flag for the event (enables or disables it).
-	#
-	# @param dis_flag enables or disables the event.
+  # Sets disabled flag for the event (enables or disables it).
+  #
+  # @param dis_flag enables or disables the event.
   def disabled=(v); @erased = v; end
 
   def starting?; @starting; end
 
-	# Constructor.
-	def initialize(map_id, event)
+  # Constructor.
+  def initialize(map_id, event)
     @starting = false
     @map_id = id
     @event = event
@@ -43,11 +43,11 @@ class Game_Event < Game_Character
     refresh
   end
 
-	# Clears starting flag.
+  # Clears starting flag.
   def clear_starting; @starting = false; end
 
-	# Does refresh.
-	def refresh
+  # Does refresh.
+  def refresh
     new_page = @erased ? nil : @event.reverse.find { |v| are_conditions_met v }
 
     if new_page != @page
@@ -57,7 +57,7 @@ class Game_Event < Game_Character
     end
   end
 
-	def setup(new_page)
+  def setup(new_page)
     @page = new_page
     if page.nil?
       @tile_id = 0
@@ -110,7 +110,7 @@ class Game_Event < Game_Character
     end
   end
 
-	def are_conditions_met(page)
+  def are_conditions_met(page)
     # First switch (A)
     return false if page.condition.flags.switch_a && !Game_Switches[@page.condition.switch_a_id]
 
@@ -147,11 +147,11 @@ class Game_Event < Game_Character
       !Game_Party::IsActorInParty(page.condition.actor_id)
 
     # Timer
-		return false if page.condition.flags.timer and
+    return false if page.condition.flags.timer and
       Game_Party.read_timer(Game_Party::Timer1) > page.condition.timer_sec * DEFAULT_FPS
 
     # Timer2
-		return false if page.condition.flags.timer2 and
+    return false if page.condition.flags.timer2 and
       Game_Party.read_timer(Game_Party::Timer2) > page.condition.timer2_sec * DEFAULT_FPS
 
     # All conditions met :D

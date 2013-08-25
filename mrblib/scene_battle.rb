@@ -82,8 +82,8 @@ class Scene_Battle < Scene
   State_Victory = 10
   State_Defeat = 11
 
-	class FloatText
-		def initialize(x, y, color, text, duration)
+  class FloatText
+    def initialize(x, y, color, text, duration)
       rect = Font.default.size(text)
       graphic = Bitmap.new rect.width, rect.height
       graphic.draw_text_2k(-rect.x, -rect.y, text, color)
@@ -97,9 +97,9 @@ class Scene_Battle < Scene
     end
 
     attr_accessor :duration, :sprite
-	end
+  end
 
-	def create_cursors
+  def create_cursors
     system2 = Cache.system2 Data.system.system2_name
 
     @ally_cursor = Sprite.new
@@ -136,7 +136,7 @@ class Scene_Battle < Scene
     @floaters.push FloatText.new(ref.x, ref.y, color, v.to_s, duration)
   end
 
-	def show_animation(animation_id, allies, ally, enemy, wait)
+  def show_animation(animation_id, allies, ally, enemy, wait)
     rpg_anim = Data.animations[animation_id]
     if not ally.nil?; x, y = ally.sprite.x, ally.sprite.y
     elsif not enemy.nil?; x, y = enemy.sprite.x, enemy.sprite.y
@@ -150,7 +150,7 @@ class Scene_Battle < Scene
     end
   end
 
-	def update_animations
+  def update_animations
     if not @animation.nil?
       @animation.update
       @animation = nil if @animation.done?
@@ -177,26 +177,26 @@ class Scene_Battle < Scene
     @skill_window.active = false
 
     case @state
-		when State_Options
-			@options_window.active = true
-		when State_Battle
-			@status_window.active = true
-		when State_AutoBattle
-		when State_Command
-			@command_window.active = true
-			@command_window.actor = Game_Battle.active_actor
-		when State_TargetEnemy
-		when State_TargetAlly
-			@status_window.active = true
-		when State_Item
-			@item_window.active = true
-			@item_window.actor = Game_Battle.active_actor
-			@item_window.refresh
-		when State_Skill
-			@skill_window.active = true
-			@skill_window.actor = Game_Battle.active_actor
-			@skill_window.index = 0
-		when State_AllyAction, State_EnemyAction, State_Victory, State_Defeat
+    when State_Options
+      @options_window.active = true
+    when State_Battle
+      @status_window.active = true
+    when State_AutoBattle
+    when State_Command
+      @command_window.active = true
+      @command_window.actor = Game_Battle.active_actor
+    when State_TargetEnemy
+    when State_TargetAlly
+      @status_window.active = true
+    when State_Item
+      @item_window.active = true
+      @item_window.actor = Game_Battle.active_actor
+      @item_window.refresh
+    when State_Skill
+      @skill_window.active = true
+      @skill_window.actor = Game_Battle.active_actor
+      @skill_window.index = 0
+    when State_AllyAction, State_EnemyAction, State_Victory, State_Defeat
     end
 
     @options_window.visible = false
@@ -210,30 +210,30 @@ class Scene_Battle < Scene
     @skill_window.help_window = nil
 
     case @state
-		when State_Options
-			@help_window.visible = true
-			@options_window.visible = true
-			@status_window.visible = true
-			@status_window.x = 76
-		when
+    when State_Options
+      @help_window.visible = true
+      @options_window.visible = true
+      @status_window.visible = true
+      @status_window.x = 76
+    when
       State_Battle,State_AutoBattle, State_Command, State_TargetEnemy,
       State_TargetAlly, State_AllyAction, State_EnemyAction
-			@status_window.visible = true
-			@status_window.x = 0
-			@command_window.visible = true
-		when State_Item
-			@item_window.visible = true
-			@item_window.help_window = @help_window
-			@help_window.visible = true
-		when State_Skill
-			@skill_window.visible = true
-			@skill_window.help_window = help_window
-			help_window.visible = true
-		when State_Victory, State_Defeat
-			@status_window.visible = true
-			@status_window.x = 0
-			@command_window.visible = true
-			@help_window.visible = true
+      @status_window.visible = true
+      @status_window.x = 0
+      @command_window.visible = true
+    when State_Item
+      @item_window.visible = true
+      @item_window.help_window = @help_window
+      @help_window.visible = true
+    when State_Skill
+      @skill_window.visible = true
+      @skill_window.help_window = help_window
+      help_window.visible = true
+    when State_Victory, State_Defeat
+      @status_window.visible = true
+      @status_window.x = 0
+      @command_window.visible = true
+      @help_window.visible = true
     end
   end
 
@@ -246,7 +246,7 @@ class Scene_Battle < Scene
     ally = Game_Battle.active_ally
     anim_state = ally.defending ? Battle::Ally::Defending : Battle::Ally::Idle
     state = ally.actor.significant_state
-		anim_state = state.battler_animation_id == 100 ? 7 : state.battler_animation_id + 1 unless state.nil?
+    anim_state = state.battler_animation_id == 100 ? 7 : state.battler_animation_id + 1 unless state.nil?
     set_anim_state ally, anim_state
   end
 
@@ -261,19 +261,19 @@ class Scene_Battle < Scene
     @pending_command = command.index
 
     case (command.type)
-		when RPG::BattleCommand::Type_attack
-			Game_Battle.target_enemy = 0
-			self.state = State_TargetEnemy
-		when RPG::BattleCommand::Type_skill
-			self.state = State_Skill
-			@skill_window.subset = RPG::Skill::Type_normal
-		when RPG::BattleCommand::Type_subskill
-			self.state = State_Skill
-			@skill_window.subset = @command_window.skill_subset
-		when RPG::BattleCommand::Type_defense; defend
-		when RPG::BattleCommand::Type_item; self.state = State_Item
-		when RPG::BattleCommand::Type_escape; escape
-		when RPG::BattleCommand::Type_special; sepcial
+    when RPG::BattleCommand::Type_attack
+      Game_Battle.target_enemy = 0
+      self.state = State_TargetEnemy
+    when RPG::BattleCommand::Type_skill
+      self.state = State_Skill
+      @skill_window.subset = RPG::Skill::Type_normal
+    when RPG::BattleCommand::Type_subskill
+      self.state = State_Skill
+      @skill_window.subset = @command_window.skill_subset
+    when RPG::BattleCommand::Type_defense; defend
+    when RPG::BattleCommand::Type_item; self.state = State_Item
+    when RPG::BattleCommand::Type_escape; escape
+    when RPG::BattleCommand::Type_special; sepcial
     end
   end
 
@@ -294,7 +294,7 @@ class Scene_Battle < Scene
     Game_Battle.restart
   end
 
-	def item
+  def item
     item_id = @item_window.item_id
     if item_id.nil?
       Game_System.se_play $game_data.system.buzzer_se
@@ -304,31 +304,31 @@ class Scene_Battle < Scene
     item = Data.items[item_id]
     case (item.type)
     when RPG::Item::Type_normal
-			Game_System.se_play($game_data.system.buzzer_se)
+      Game_System.se_play($game_data.system.buzzer_se)
     when RPG::Item::Type_weapon, RPG::Item::Type_shield, RPG::Item::Type_armor,
       RPG::Item::Type_helmet, RPG::Item::Type_accessory
       if item.use_skill; item_skill(item)
-			else
-				# can't be used
-				Game_System.se_play $game_data.system.buzzer_se
+      else
+        # can't be used
+        Game_System.se_play $game_data.system.buzzer_se
       end
-		when RPG::Item::Type_medicine
-			if item.entire_party; begin_item
-			else
-				Game_Battle.target_active_ally
-				self.state = State_TargetAlly
-			end
-		when RPG::Item::Type_book, RPG::Item::Type_material
-			# can't be used in battle?
-			Game_System.se_play $game_data.system.buzzer_se
-		when RPG::Item::Type_special; item_skill item
-		when RPG::Item::Type_switch
-			Game_Switches[item.switch_id] = true
-			Game_Battle.restart
+    when RPG::Item::Type_medicine
+      if item.entire_party; begin_item
+      else
+        Game_Battle.target_active_ally
+        self.state = State_TargetAlly
+      end
+    when RPG::Item::Type_book, RPG::Item::Type_material
+      # can't be used in battle?
+      Game_System.se_play $game_data.system.buzzer_se
+    when RPG::Item::Type_special; item_skill item
+    when RPG::Item::Type_switch
+      Game_Switches[item.switch_id] = true
+      Game_Battle.restart
     end
   end
 
-	def item_skill(item); skill Data.skills[item.skill_id]; end
+  def item_skill(item); skill Data.skills[item.skill_id]; end
 
   def skill(s = nil)
     if s.nil?
@@ -405,7 +405,7 @@ class Scene_Battle < Scene
     self.state = State_AllyAction
   end
 
-	def begin_skill
+  def begin_skill
     ally = Game_Battle.active_ally
     skill = Data.skills[@skill_id]
     anim_state = skill_animation skill, ally
@@ -413,9 +413,9 @@ class Scene_Battle < Scene
     action = nil
 
     case (skill.type)
-		when RPG::Skill::Type_teleport, RPG::Skill::Type_escape, RPG::Skill::Type_switch
-		else
-			case skill.scope
+    when RPG::Skill::Type_teleport, RPG::Skill::Type_escape, RPG::Skill::Type_switch
+    else
+      case skill.scope
       when RPG::Skill::Scope_enemy
         action = Battle::AnimationAction.new Game_Battle.target_enemy.sprite, animation unless animation.nil?
       when RPG::Skill::Scope_enemies
@@ -432,10 +432,10 @@ class Scene_Battle < Scene
           x, y = Game_Battle::allies_centroid
           action = Battle::AnimationAction.new x, y, animation
         end
-			end
+      end
     end
 
-		action = EASYRPG_MAKE_SHARED<Battle::WaitAction>(10) if action.nil?
+    action = EASYRPG_MAKE_SHARED<Battle::WaitAction>(10) if action.nil?
 
     @actions = [
       Battle::SpriteAction.new(ally, anim_state),
@@ -474,12 +474,12 @@ class Scene_Battle < Scene
     @actions.clear
 
     case enemy_action.kind
-		when RPG::EnemyAction::Kind_basic; enemy_action_basic
-		when RPG::EnemyAction::Kind_skill; enemy_action_skill
-		when RPG::EnemyAction::Kind_transformation
-			Game_Battle.morph = @enemy_action.enemy_id
-			actions.push Battle::WaitAction.new(20)
-			actions.push Battle::CommandAction.new { Game_Battle.enemy_transform }
+    when RPG::EnemyAction::Kind_basic; enemy_action_basic
+    when RPG::EnemyAction::Kind_skill; enemy_action_skill
+    when RPG::EnemyAction::Kind_transformation
+      Game_Battle.morph = @enemy_action.enemy_id
+      actions.push Battle::WaitAction.new(20)
+      actions.push Battle::CommandAction.new { Game_Battle.enemy_transform }
     end
 
     actions.push Battle::CommandAction.new(Game_Battle::EnemyActionDone)
@@ -491,13 +491,13 @@ class Scene_Battle < Scene
 
   def enemy_action_basic
     case @enemy_action.basic
-		when RPG::EnemyAction::Basic_attack
-			Game_Battle.target_random_ally
-			ally = Game_Battle.target_ally
-			actions.push Battle::WaitAction.new(20)
-			actions.push Battle::AnimationAction.new(ally.sprite, Data.animations[0])
-			actions.push Battle::CommandAction.new(ally) { |v| Game_Battle.enemy_attack v }
-		when RPG::EnemyAction::Basic_dual_attack
+    when RPG::EnemyAction::Basic_attack
+      Game_Battle.target_random_ally
+      ally = Game_Battle.target_ally
+      actions.push Battle::WaitAction.new(20)
+      actions.push Battle::AnimationAction.new(ally.sprite, Data.animations[0])
+      actions.push Battle::CommandAction.new(ally) { |v| Game_Battle.enemy_attack v }
+    when RPG::EnemyAction::Basic_dual_attack
       (0...2).each { |v|
         Game_Battle.target_random_ally
         ally = Game_Battle.target_ally
@@ -505,24 +505,24 @@ class Scene_Battle < Scene
         actions.push Battle::AnimationAction.new(ally.sprite, Data.animations[0])
         actions.push Battle::CommandAction.new(ally) { |v| Game_Battle.enemy_attack }
       }
-		when RPG::EnemyAction::Basic_defense
-			actions.push Battle::WaitAction.new(20)
-			actions.push Battle::CommandAction.new { Game_Battle.enemy_defend }
-		when RPG::EnemyAction::Basic_observe
-			actions.push Battle::WaitAction.new(20)
-			actions.push Battle::CommandAction.new { Game_Battle.enemy_observe }
-		when RPG::EnemyAction::Basic_charge
-			actions.push Battle::WaitAction.new(20)
-			actions.push Battle::CommandAction.new { Game_Battle.enemy_charge }
-		when RPG::EnemyAction::Basic_autodestruction
-			actions.push Battle::WaitAction.new(20)
-			actions.push Battle::CommandAction.new { Game_Battle.enemy_destruct }
-		when RPG::EnemyAction::Basic_nothing
-			actions.push Battle::WaitAction.new(20)
+    when RPG::EnemyAction::Basic_defense
+      actions.push Battle::WaitAction.new(20)
+      actions.push Battle::CommandAction.new { Game_Battle.enemy_defend }
+    when RPG::EnemyAction::Basic_observe
+      actions.push Battle::WaitAction.new(20)
+      actions.push Battle::CommandAction.new { Game_Battle.enemy_observe }
+    when RPG::EnemyAction::Basic_charge
+      actions.push Battle::WaitAction.new(20)
+      actions.push Battle::CommandAction.new { Game_Battle.enemy_charge }
+    when RPG::EnemyAction::Basic_autodestruction
+      actions.push Battle::WaitAction.new(20)
+      actions.push Battle::CommandAction.new { Game_Battle.enemy_destruct }
+    when RPG::EnemyAction::Basic_nothing
+      actions.push Battle::WaitAction.new(20)
     end
   end
 
-	def enemy_action_skill
+  def enemy_action_skill
     enemy = Game_Battle.active_enemy
     skill = Data.skills[@enemy_action.skill_id]
     animation = skill.animation_id != 0 ? Data.animations[skill.animation_id] : nil
@@ -532,12 +532,12 @@ class Scene_Battle < Scene
     Game_Battle.skill = @enemy_action.skill_id
 
     case skill.type
-		when RPG::Skill::Type_teleport, RPG::Skill::Type_escape
-			action = Battle::MoveAction.new enemy.sprite, enemy.sprite.x, -enemy.sprite.width, 8
-		when RPG::Skill::Type_switch
-		when RPG::Skill::Type_normal
-		else
-			case skill.scope
+    when RPG::Skill::Type_teleport, RPG::Skill::Type_escape
+      action = Battle::MoveAction.new enemy.sprite, enemy.sprite.x, -enemy.sprite.width, 8
+    when RPG::Skill::Type_switch
+    when RPG::Skill::Type_normal
+    else
+      case skill.scope
       when RPG::Skill::Scope_enemy
         Game_Battle.target_random_ally
         action = Battle::AnimationAction.new Game_Battle.target_ally.sprite, animation unless animation.nil?
@@ -556,37 +556,37 @@ class Scene_Battle < Scene
           x, y = Game_Battle.enemies_centroid
           action = Battle::AnimationAction.new x, y, animation
         end
-			end
+      end
     end
 
-		action = Battle::WaitAction.new 30 if action.nil?
+    action = Battle::WaitAction.new 30 if action.nil?
 
     @actions.push action
     @actions.push Battle::CommandAction.new { Game_Battle.enemy_skill }
   end
 
 
-	def process_actions
+  def process_actions
     case @state
-		when State_Battle, State_AutoBattle
-			Game_Battle.update
+    when State_Battle, State_AutoBattle
+      Game_Battle.update
 
-			check_win
-			check_lose
-			check_abort
-			check_flee
+      check_win
+      check_lose
+      check_abort
+      check_flee
 
-			if @help_window.visible && @message_timer > 0
-				@message_timer -= 1
-				@help_window.visible = false if @message_timer <= 0
-			end
+      if @help_window.visible && @message_timer > 0
+        @message_timer -= 1
+        @help_window.visible = false if @message_timer <= 0
+      end
 
       while Game_Battle.next_active_enemy; EnemyAction(); end
     when State_AllyAction, State_EnemyAction
-			unless actions.empty?
-				action = @actions.first
-				@actions.shift if action.act
-			end
+      unless actions.empty?
+        action = @actions.first
+        @actions.shift if action.act
+      end
     end
   end
 
@@ -594,8 +594,8 @@ class Scene_Battle < Scene
     if Input.trigger? Input::DECISION
       Game_System.se_play $game_data.system.decision_se
       case @state
-			when State_Options
-				case @options_window.index
+      when State_Options
+        case @options_window.index
         when 0
           Game_Temp.battle_result = Game_Temp::BattleVictory
           Scene.pop
@@ -614,30 +614,30 @@ class Scene_Battle < Scene
             Scene.pop
           end
           # escape
-				end
-			when State_Battle
-				Game_Battle.active_ally = @status_window.active_character
-				self.state = State_Command if Game_Battle.have_active_ally?
-			when State_AutoBattle # no-op
-			when State_Command; command
-			when State_TargetEnemy, State_TargetAlly; target_done
-			when State_Item; item
-			when State_Skill; skill
-			when State_AllyAction, State_EnemyAction
-			when State_Victory, State_Defeat; Scene.pop
+        end
+      when State_Battle
+        Game_Battle.active_ally = @status_window.active_character
+        self.state = State_Command if Game_Battle.have_active_ally?
+      when State_AutoBattle # no-op
+      when State_Command; command
+      when State_TargetEnemy, State_TargetAlly; target_done
+      when State_Item; item
+      when State_Skill; skill
+      when State_AllyAction, State_EnemyAction
+      when State_Victory, State_Defeat; Scene.pop
       end
     end
 
     if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       case @state
-			when State_Options; Scene.pop
-			when State_Battle, State_AutoBattle; self.state = State_Options
-			when State_Command; self.state = State_Battle
-			when State_TargetEnemy, State_Item, State_Skill; self.state = State_Command
-			when State_TargetAlly; self.state = State_Item
-			when State_AllyAction, State_EnemyAction
-			when State_Victory, State_Defeat; Scene.pop
+      when State_Options; Scene.pop
+      when State_Battle, State_AutoBattle; self.state = State_Options
+      when State_Command; self.state = State_Battle
+      when State_TargetEnemy, State_Item, State_Skill; self.state = State_Command
+      when State_TargetAlly; self.state = State_Item
+      when State_AllyAction, State_EnemyAction
+      when State_Victory, State_Defeat; Scene.pop
       end
     end
 

@@ -16,8 +16,8 @@
 # Scene Logo class.
 # Displays the shiny EasyRPG logo on startup.
 class Scene_Logo < Scene
-	# Constructor.
-	def initialize
+  # Constructor.
+  def initialize
     super "Logo"
     @frame_counter = 0
   end

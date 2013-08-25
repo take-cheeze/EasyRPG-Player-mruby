@@ -15,10 +15,10 @@
 
 # Scene_Item class.
 class Scene_Load < Scene_File
-	# Constructor.
+  # Constructor.
   def initialize; super 'Load', Data.terms.load_game_message; end
 
-	def action(index)
+  def action(index)
     # TODO load game
   end
 end

@@ -286,28 +286,28 @@ class Game_Interpreter_Map < Game_Interpreter
     Game_Temp.transition_erase = false
 
     case com[0]
-		when -1; Game_Temp.transition_type = Graphics::TransitionNone
-		when 0; Game_Temp.transition_type = Graphics::TransitionFadeIn
-		when 1; Game_Temp.transition_type = Graphics::TransitionRandomBlocks
-		when 2; Game_Temp.transition_type = Graphics::TransitionRandomBlocksUp
-		when 3; Game_Temp.transition_type = Graphics::TransitionRandomBlocksDown
-		when 4; Game_Temp.transition_type = Graphics::TransitionBlindOpen
-		when 5; Game_Temp.transition_type = Graphics::TransitionVerticalStripesIn
-		when 6; Game_Temp.transition_type = Graphics::TransitionHorizontalStripesIn
-		when 7; Game_Temp.transition_type = Graphics::TransitionBorderToCenterIn
-		when 8; Game_Temp.transition_type = Graphics::TransitionCenterToBorderIn
-		when 9; Game_Temp.transition_type = Graphics::TransitionScrollUpIn
-		when 10; Game_Temp.transition_type = Graphics::TransitionScrollDownIn
-		when 11; Game_Temp.transition_type = Graphics::TransitionScrollLeftIn
-		when 12; Game_Temp.transition_type = Graphics::TransitionScrollRightIn
-		when 13; Game_Temp.transition_type = Graphics::TransitionVerticalCombine
-		when 14; Game_Temp.transition_type = Graphics::TransitionHorizontalCombine
-		when 15; Game_Temp.transition_type = Graphics::TransitionCrossCombine
-		when 16; Game_Temp.transition_type = Graphics::TransitionZoomOut
-		when 17; Game_Temp.transition_type = Graphics::TransitionMosaicIn
-		when 18; Game_Temp.transition_type = Graphics::TransitionWaveIn
-		when 19; Game_Temp.transition_type = Graphics::TransitionErase
-		else; Game_Temp.transition_type = Graphics::TransitionNone
+    when -1; Game_Temp.transition_type = Graphics::TransitionNone
+    when 0; Game_Temp.transition_type = Graphics::TransitionFadeIn
+    when 1; Game_Temp.transition_type = Graphics::TransitionRandomBlocks
+    when 2; Game_Temp.transition_type = Graphics::TransitionRandomBlocksUp
+    when 3; Game_Temp.transition_type = Graphics::TransitionRandomBlocksDown
+    when 4; Game_Temp.transition_type = Graphics::TransitionBlindOpen
+    when 5; Game_Temp.transition_type = Graphics::TransitionVerticalStripesIn
+    when 6; Game_Temp.transition_type = Graphics::TransitionHorizontalStripesIn
+    when 7; Game_Temp.transition_type = Graphics::TransitionBorderToCenterIn
+    when 8; Game_Temp.transition_type = Graphics::TransitionCenterToBorderIn
+    when 9; Game_Temp.transition_type = Graphics::TransitionScrollUpIn
+    when 10; Game_Temp.transition_type = Graphics::TransitionScrollDownIn
+    when 11; Game_Temp.transition_type = Graphics::TransitionScrollLeftIn
+    when 12; Game_Temp.transition_type = Graphics::TransitionScrollRightIn
+    when 13; Game_Temp.transition_type = Graphics::TransitionVerticalCombine
+    when 14; Game_Temp.transition_type = Graphics::TransitionHorizontalCombine
+    when 15; Game_Temp.transition_type = Graphics::TransitionCrossCombine
+    when 16; Game_Temp.transition_type = Graphics::TransitionZoomOut
+    when 17; Game_Temp.transition_type = Graphics::TransitionMosaicIn
+    when 18; Game_Temp.transition_type = Graphics::TransitionWaveIn
+    when 19; Game_Temp.transition_type = Graphics::TransitionErase
+    else; Game_Temp.transition_type = Graphics::TransitionNone
     end
 
     true
@@ -334,9 +334,9 @@ class Game_Interpreter_Map < Game_Interpreter
     picture.transition 0
 
     case (com[12])
-		when 0; picture.stop_effects
-		when 1; picture.rotate speed
-		when 2; picture.waver speed
+    when 0; picture.stop_effects
+    when 1; picture.rotate speed
+    when 2; picture.waver speed
     end
 
     true
@@ -457,9 +457,9 @@ class Game_Interpreter_Map < Game_Interpreter
     timer_id =  Player.rpg2k3? ? com[5] : 0
 
     case (com[0])
-		when 0; Game_Party.set_timer timer_id, value_or_variable(com[1], com[2])
-		when 1; Game_Party.start_timer timer_id, com[3] != 0, com[4] != 0
-		when 2; Game_Party.stop_timer timer_id
+    when 0; Game_Party.set_timer timer_id, value_or_variable(com[1], com[2])
+    when 1; Game_Party.start_timer timer_id, com[3] != 0, com[4] != 0
+    when 2; Game_Party.stop_timer timer_id
     else; return false
     end
 
@@ -531,15 +531,15 @@ class Game_Interpreter_Map < Game_Interpreter
 
   def command_open_shop(com)
     case (com[0])
-		when 0
-			Game_Temp.shop_buys = true
-			Game_Temp.shop_sells = true
-		when 1
-			Game_Temp.shop_buys = true
-			Game_Temp.shop_sells = false
-		when 2
-			Game_Temp.shop_buys = false
-			Game_Temp.shop_sells = true
+    when 0
+      Game_Temp.shop_buys = true
+      Game_Temp.shop_sells = true
+    when 1
+      Game_Temp.shop_buys = true
+      Game_Temp.shop_sells = false
+    when 2
+      Game_Temp.shop_buys = false
+      Game_Temp.shop_sells = true
     else; return false
     end
 
@@ -575,7 +575,7 @@ class Game_Interpreter_Map < Game_Interpreter
     Game_Message.message_waiting = true
 
     case com[0] # inn type
-		when 0
+    when 0
       Game_Message.texts.push('%s %d %s%s' % [Data.terms.inn_a_greeting_1,
                                               Game_Temp.inn_price, Data.terms.gold,
                                               Data.terms.inn_a_greeting_2])
@@ -590,14 +590,14 @@ class Game_Interpreter_Map < Game_Interpreter
     Game_Message.choice_start = Game_Message.texts.length
 
     case com[0]
-		when 0
-			Game_Message.texts.push Data.terms.inn_a_accept
-			Game_Message.texts.push Data.terms.inn_a_cancel
-		when 1
-			Game_Message.texts.push Data.terms.inn_b_accept
-			Game_Message.texts.push Data.terms.inn_b_cancel
-		else
-			return false
+    when 0
+      Game_Message.texts.push Data.terms.inn_a_accept
+      Game_Message.texts.push Data.terms.inn_a_cancel
+    when 1
+      Game_Message.texts.push Data.terms.inn_b_accept
+      Game_Message.texts.push Data.terms.inn_b_cancel
+    else
+      return false
     end
 
     Game_Message.choice_max = 2
@@ -673,19 +673,19 @@ class Game_Interpreter_Map < Game_Interpreter
   def command_enemy_encounter(com)
     Game_Temp.battle_troop_id = value_or_variable com[0], com[1]
     case (com[2])
-		when 0
-			player = $game_player
-			Game_Temp.battle_terrain_id = Game_Map.terrain_tag player.x, player.y
-			Game_Temp.battle_background = ''
-		when 1
-			Game_Temp.battle_terrain_id = 0
-			Game_Temp.battle_background = com.string
-			Game_Temp.battle_formation = com[7] if Player.rpg2k3?
-		when 2
-			Game_Temp.battle_terrain_id = com[8]
-			Game_Temp.battle_background = ""
-		else
-			return false
+    when 0
+      player = $game_player
+      Game_Temp.battle_terrain_id = Game_Map.terrain_tag player.x, player.y
+      Game_Temp.battle_background = ''
+    when 1
+      Game_Temp.battle_terrain_id = 0
+      Game_Temp.battle_background = com.string
+      Game_Temp.battle_formation = com[7] if Player.rpg2k3?
+    when 2
+      Game_Temp.battle_terrain_id = com[8]
+      Game_Temp.battle_background = ""
+    else
+      return false
     end
     Game_Temp.battle_escape_mode = com[3]; # disallow, end event processing, custom handler
     Game_Temp.battle_defeat_mode = com[4]; # game over, custom handler
@@ -705,35 +705,35 @@ class Game_Interpreter_Map < Game_Interpreter
 
   def continuation_enemy_encounter(com)
     case Game_Temp.battle_result
-		when Game_Temp::BattleVictory
-			unless skip_to(Cmd::VictoryHandler, Cmd::EndBattle)
-				# Was an event battle with no handlers
-				@index += 1
-				return false
-			end
-			@index += 1
-			return true
-		when Game_Temp::BattleEscape
-			case Game_Temp.battle_escape_mode
-      when 0; return true	# disallowed - shouldn't happen
+    when Game_Temp::BattleVictory
+      unless skip_to(Cmd::VictoryHandler, Cmd::EndBattle)
+        # Was an event battle with no handlers
+        @index += 1
+        return false
+      end
+      @index += 1
+      return true
+    when Game_Temp::BattleEscape
+      case Game_Temp.battle_escape_mode
+      when 0; return true  # disallowed - shouldn't happen
       when 1; return command_end_event_processing com
       when 2
         return false unless skip_to Cmd::EscapeHandler, Cmd::EndBattle
         @index += 1
         return true
       else; return false
-			end
-		when Game_Temp::BattleDefeat
-			case Game_Temp.battle_defeat_mode
+      end
+    when Game_Temp::BattleDefeat
+      case Game_Temp.battle_defeat_mode
       when 0; return command_game_over com
       when 1
         return false unless skip_to Cmd::DefeatHandler, Cmd::EndBattle
         @index += 1
         return true
       else; return false
-			end
-		when Game_Temp::BattleAbort
-			return false unless skip_to Cmd::EndBattle
+      end
+    when Game_Temp::BattleAbort
+      return false unless skip_to Cmd::EndBattle
       @index += 1
       return true
     else; return false
@@ -804,18 +804,18 @@ class Game_Interpreter_Map < Game_Interpreter
 
     @child_interpreter = Game_Interpreter_Map.new @depth + 1
     case com[0]
-		when 0 # Common Event
-			evt_id = com[1]
-			@child_interpreter.setup(Data.commonevents[evt_id].event_commands, 0,
+    when 0 # Common Event
+      evt_id = com[1]
+      @child_interpreter.setup(Data.commonevents[evt_id].event_commands, 0,
                                Data.commonevents[evt_id].index, -2)
-			return true
-		when 1 # Map Event
-			evt_id = com[1]
-			event_page = com[2]
-		when 2 # Indirect
-			evt_id = Game_Variables[com[1]]
-			event_page = Game_Variables[com[2]]
-		else; return false
+      return true
+    when 1 # Map Event
+      evt_id = com[1]
+      event_page = com[2]
+    when 2 # Indirect
+      evt_id = Game_Variables[com[1]]
+      event_page = Game_Variables[com[2]]
+    else; return false
     end
 
     event = character evt_id
@@ -1033,13 +1033,13 @@ class Game_Interpreter_Map < Game_Interpreter
     cur_agi = actor.base_agility
 
     case (com[5]) # no change, halve, level 1, current level
-		when 1
-			cur_hp /= 2
-			cur_sp /= 2
-			cur_atk /= 2
-			cur_def /= 2
-			cur_spi /= 2
-			cur_agi /= 2
+    when 1
+      cur_hp /= 2
+      cur_sp /= 2
+      cur_atk /= 2
+      cur_def /= 2
+      cur_spi /= 2
+      cur_agi /= 2
     end
 
     actor.class = class_id
@@ -1087,41 +1087,41 @@ class Game_Interpreter_Map < Game_Interpreter
     result = false
 
     case (com[0])
-		when 0 # Switch
-			result = Game_Switches[com[1]] == (com[2] == 0)
-		when 1 # Variable
-			value1 = Game_Variables[com[1]]
-			value2 = com[2] == 0 ? com[3] : Game_Variables[com[3]]
-			case (com[4])
+    when 0 # Switch
+      result = Game_Switches[com[1]] == (com[2] == 0)
+    when 1 # Variable
+      value1 = Game_Variables[com[1]]
+      value2 = com[2] == 0 ? com[3] : Game_Variables[com[3]]
+      case (com[4])
       when 0; result = (value1 == value2) # Equal to
       when 1; result = (value1 >= value2) # Greater than or equal
       when 2; result = (value1 <= value2) # Less than or equal
       when 3; result = (value1 >  value2) # Greater than
       when 4; result = (value1 <  value2) # Less than
       when 5; result = (value1 != value2) # Different
-			end
-		when 2 # Timer
-			value1 = Game_Party.read_timer Game_Party::Timer1
-			value2 = com[1] * DEFAULT_FPS
-			case com[2]
+      end
+    when 2 # Timer
+      value1 = Game_Party.read_timer Game_Party::Timer1
+      value2 = com[1] * DEFAULT_FPS
+      case com[2]
       when 0; result = (value1 >= value2)
       when 1; result = (value1 <= value2)
-			end
-		when 3 # Gold
+      end
+    when 3 # Gold
       case com[2]
       when 0; result = (Game_Party::GetGold() >= com[1]) # Greater than or equal
       when 1; result = (Game_Party::GetGold() <= com[1]) # Less than or equal
       end
-		when 4 # Item
+    when 4 # Item
       case com[2]
       when 0; result = Game_Party::ItemNumber(com[1]) > 0 # Having
       when 1; result = Game_Party::ItemNumber(com[1]) == 0 # Not having
       end
-		when 5
-			# Hero
-			actor_id = com[1]
-			actor = Game_Actors.actor actor_id
-			case (com[2])
+    when 5
+      # Hero
+      actor_id = com[1]
+      actor = Game_Actors.actor actor_id
+      case (com[2])
       when 0
         # Is actor in party
         result = Game_Party.actor_in_party? actor_id
@@ -1144,24 +1144,24 @@ class Game_Interpreter_Map < Game_Interpreter
       when 6
         # Has state
         result = actor.has_state com[3]
-			end
-		when 6
-			# Orientation of char
-			character = character com[1]
-			result = character.direction == com[2] unless character.nil?
-		when 7
-			# TODO On vehicle
-		when 8
-			# TODO Key decision initiated this event
-		when 9
-			# TODO BGM Playing
-		when 10
-			value1 = Game_Party.read_timer Game_Party::Timer2
-			value2 = com[1] * DEFAULT_FPS
-			case (com[2])
+      end
+    when 6
+      # Orientation of char
+      character = character com[1]
+      result = character.direction == com[2] unless character.nil?
+    when 7
+      # TODO On vehicle
+    when 8
+      # TODO Key decision initiated this event
+    when 9
+      # TODO BGM Playing
+    when 10
+      value1 = Game_Party.read_timer Game_Party::Timer2
+      value2 = com[1] * DEFAULT_FPS
+      case (com[2])
       when 0; result = (value1 >= value2)
       when 1; result = (value1 <= value2)
-			end
+      end
     end
 
     return true if result

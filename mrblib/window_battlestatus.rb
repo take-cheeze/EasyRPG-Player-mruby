@@ -16,7 +16,7 @@
 # Window BattleStatus Class.
 # Displays the party battle status.
 class Window_BattleStatus < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize
     super 0, 172, 244, 68
     self.border_x = 4
@@ -27,7 +27,7 @@ class Window_BattleStatus < Window_Base
     refresh
   end
 
-	# Renders the current status on the window.
+  # Renders the current status on the window.
   def refresh
     contents.clear
     Game_Battle.allies.each_with_index { |v,i|
@@ -40,13 +40,13 @@ class Window_BattleStatus < Window_Base
     }
   end
 
-	# Updates the window state.
+  # Updates the window state.
   def update
     super
 
     num_actors = Game_Battle.allies.length
     #for (int i = 0; i < num_actors; i++)
-    #	RefreshGauge(i);
+    #  RefreshGauge(i);
 
     if @active && @index >= 0
       if Input.repeat? Input::DOWN
@@ -76,21 +76,21 @@ class Window_BattleStatus < Window_Base
     update_cursor_rect
   end
 
-	# Sets the active character.
-	#
-	# @param index character index (0..3).
-	#              Returns -1 if no character is ready. FIXME
+  # Sets the active character.
+  #
+  # @param index character index (0..3).
+  #              Returns -1 if no character is ready. FIXME
   def active_character=(v)
     @index = v
     refresh
   end
 
-	# Gets the active character.
-	#
-	# @return character index (0..3).
+  # Gets the active character.
+  #
+  # @return character index (0..3).
   def active_character; @index; end
 
-	# Selects an active character if one is ready.
+  # Selects an active character if one is ready.
   def choose_active_character
     num_actors = Game_Battle.allies.length
     old_index = @index.nil? ? 0 : @index
@@ -107,17 +107,17 @@ class Window_BattleStatus < Window_Base
     update_cursor_rect if @index != old_index
   end
 
-	# Updates the cursor rectangle.
+  # Updates the cursor rectangle.
   def update_cursor_rect
     if index.nil?; self.cursor_rect = Rect.new
     else self.cursor_rect = Rect.new 0, @index * 15, contents.width, 16
     end
   end
 
-	# Redraws a character's time gauge.
-	#
-	# @param i character index (0..3).
-	def refresh_gauge(i)
+  # Redraws a character's time gauge.
+  #
+  # @param i character index (0..3).
+  def refresh_gauge(i)
     y = i * 15
     contents.fill Rect.new(192, y, 44, 15), Color.new
     actor = Game_Battle.allies[i].game_actor
@@ -125,13 +125,13 @@ class Window_BattleStatus < Window_Base
     draw_actor_sp actor, 202, y, false
   end
 
-	# Draws a character's time gauge.
-	#
-	# @param actor actor.
-	# @param idx character index (0..3).
-	# @param cx x coordinate.
-	# @param cy y coordinate.
-	def draw_gauge(actor, idx, cx, cy)
+  # Draws a character's time gauge.
+  #
+  # @param actor actor.
+  # @param idx character index (0..3).
+  # @param cx x coordinate.
+  # @param cy y coordinate.
+  def draw_gauge(actor, idx, cx, cy)
     system2 = Cache.system2 Data.system.system2_name
 
     ally = Game_Battle.ally idx

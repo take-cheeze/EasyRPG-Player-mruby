@@ -15,7 +15,7 @@
 
 # Window_ActorTarget class.
 class Window_ActorTarget < Window_Selectable
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     self.contents = Bitmap.new iw - 16, ih - 16

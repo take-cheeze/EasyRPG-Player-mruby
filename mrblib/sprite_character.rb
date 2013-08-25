@@ -15,9 +15,9 @@
 
 # Sprite character class.
 class Sprite_Character < Sprite
-	# Constructor.
-	#
-	# @param c game character to display
+  # Constructor.
+  #
+  # @param c game character to display
   def initialize(c)
     @character = c
     @tile_id = 0
@@ -28,7 +28,7 @@ class Sprite_Character < Sprite
     update
   end
 
-	# Updates sprite state.
+  # Updates sprite state.
   def update
     super
 

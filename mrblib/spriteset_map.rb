@@ -36,7 +36,7 @@ class Spriteset_Map
     update
   end
 
-	def update
+  def update
     @tilemap.ox, @tilemap.oy = Game_Map.display_x / 8, Game_Map.display_y / 8
     @tilemap.update
 
@@ -50,26 +50,26 @@ class Spriteset_Map
     @panorama.ox, @panorama.oy = Game_Map.parallax_x, Game_Map.parallax_y
   end
 
-	# Finds the sprite for a specific character.
-	def find_character(c)
+  # Finds the sprite for a specific character.
+  def find_character(c)
     @character_sprites.find { |v| v.character == c }
   end
 
-	# Notifies that the map's chipset has changed.
-	def chipset_updated
+  # Notifies that the map's chipset has changed.
+  def chipset_updated
     @tilemap.chipset = Cache.chipset Game_Map.chipset_name
     @tilemap.passable_down = Game_Map.passages_down
     @tilemap.passable_up = Game_Map.passable_up
   end
 
-	# Substitutes tile in lower layer.
-	def substitute_down(old_id, new_id)
+  # Substitutes tile in lower layer.
+  def substitute_down(old_id, new_id)
     Game_Map.substitute_down old_id, new_id
     @tilemap.substitute_down old_id, new_id
   end
 
-	# Substitutes tile in upper layer.
-	def substitute_up(old_id, new_id)
+  # Substitutes tile in upper layer.
+  def substitute_up(old_id, new_id)
     Game_Map.substitute_up old_id, new_id
     @tilemap.substitute_up old_id, new_id
   end

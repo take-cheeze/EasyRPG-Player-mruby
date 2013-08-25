@@ -18,13 +18,13 @@
 class Window_ShopNumber < Window_Base
   attr_reader :number
 
-	# Constructor.
-	#
-	# @param x window x position.
-	# @param y window y position.
-	# @param w window width.
-	# @param h window height.
-	def initialize(ix, iy, iw, ih)
+  # Constructor.
+  #
+  # @param x window x position.
+  # @param y window y position.
+  # @param w window width.
+  # @param h window height.
+  def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @item_max = 1
     @price = 0
@@ -34,8 +34,8 @@ class Window_ShopNumber < Window_Base
     contents = Bitmap.new iw - 16, ih - 16
   end
 
-	# Updates the Windows contents.
-	def refresh
+  # Updates the Windows contents.
+  def refresh
     contents.clear
 
     y = 34
@@ -48,8 +48,8 @@ class Window_ShopNumber < Window_Base
     draw_currency_value(total, contents.width, y + 32)
   end
 
-	# Updates number value according to user input.
-	def update
+  # Updates number value according to user input.
+  def update
     super
 
     if active
@@ -63,30 +63,30 @@ class Window_ShopNumber < Window_Base
       elsif Input.repeat?(Input::DOWN) && number > 1
         number = [number - 10, 1].max
       end
-		end
+    end
 
-		if last_number != number
-			Game_System.se_play($game_data.system.cursor_se)
-			refresh
+    if last_number != number
+      Game_System.se_play($game_data.system.cursor_se)
+      refresh
     end
   end
 
-	# Sets all data needed for the window.
-	#
-	# @param id item to buy.
-	# @param max item maximum quantity.
-	# @param price Price of the item.
-	# @return the currently input number.
-	def set_data(id, max, price)
+  # Sets all data needed for the window.
+  #
+  # @param id item to buy.
+  # @param max item maximum quantity.
+  # @param price Price of the item.
+  # @return the currently input number.
+  def set_data(id, max, price)
     @item_id = id
     @item_max = max
     @price = price
     @number = 1
   end
 
-	# Returns the total costs.
-	#
-	# @return total costs to buy the item.
+  # Returns the total costs.
+  #
+  # @return total costs to buy the item.
   def total
     Data.items[@item_id].price * @number
   end

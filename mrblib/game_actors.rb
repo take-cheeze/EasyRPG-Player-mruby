@@ -16,24 +16,24 @@
 module Game_Actors end
 
 class << Game_Actors
-	# Initializes Game Actors.
-	def load
+  # Initializes Game Actors.
+  def load
     @data = Array.new(Data.actors.size + 1)
     for i in 1...@data.length
       actor(i).load
     end
   end
 
-	# Disposes Game Actors.
-	def clear
+  # Disposes Game Actors.
+  def clear
     @data = []
   end
 
-	# Gets an actor by its ID.
-	#
-	# @param id the actor ID in the database.
-	# @return the actor object.
-	def actor(id)
+  # Gets an actor by its ID.
+  #
+  # @param id the actor ID in the database.
+  # @return the actor object.
+  def actor(id)
     if not actor_exists? id
       Output.warning("Actor ID %d is invalid" % id)
       nil
@@ -44,11 +44,11 @@ class << Game_Actors
     end
   end
 
-	# Gets if an actor ID is valid.
-	#
-	# @param id the actor ID in the database.
-	# @return whether the actor exists.
-	def actor_exists?(id)
+  # Gets if an actor ID is valid.
+  #
+  # @param id the actor ID in the database.
+  # @return whether the actor exists.
+  def actor_exists?(id)
     id > 0 and id < @data.length
   end
 end

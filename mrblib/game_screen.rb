@@ -22,12 +22,12 @@ class Game_Screen
   snowflake_life = 200
   snowflake_visible = 150
 
-	def picture(id)
+  def picture(id)
     @pictures[id - 1] = Picture.new id if @pictures[id - 1].nil?
     @pictures[id - 1]
   end
 
-	def reset
+  def reset
     @pictures = Array.new 50
 
     @data.tint_current_red = nil
@@ -112,13 +112,13 @@ class Game_Screen
     init_weather if type != Weather_None
   end
 
-	def play_movie(filename, pos_x, pos_y, res_x, res_y)
+  def play_movie(filename, pos_x, pos_y, res_x, res_y)
     @movie_filename = filename
     @movie_pos_x, @movie_pos_y = 0, 0
     @movie_res_x, @movie_res_y = 0, 0
   end
 
-	def show_battle_animation(animation_id, target_id, global)
+  def show_battle_animation(animation_id, target_id, global)
     @data.battleanim_id = animation_id
     @data.battleanim_target = target_id
     @data.battleanim_global = global
@@ -237,7 +237,7 @@ class Game_Screen
             [-1,-1, 0, 0, 1, 1, 0,-1,-1, 0, 1, 0, 1, 1, 0,-1, 0, 0]
            ]
 
-	def draw_snow
+  def draw_snow
     @weather_plane.opacity = 192
     rect = @snow_bitmap.rect
     @snowflakes.each { |v|
@@ -299,23 +299,23 @@ class Game_Screen
     end
 
     case @data.weather
-		when Weather_None
-		when Weather_Rain
-			init_weather
-			init_snow_rain
-			update_snow_rain 4
-			draw_rain
-		when Weather_Snow
-			init_weather
-			init_snow_rain
-			update_snow_rain 2
-			draw_snow
-		when Weather_Fog
-			init_weather
-			draw_fog
-		when Weather_Sandstorm
-			init_weather
-			draw_sandstorm
+    when Weather_None
+    when Weather_Rain
+      init_weather
+      init_snow_rain
+      update_snow_rain 4
+      draw_rain
+    when Weather_Snow
+      init_weather
+      init_snow_rain
+      update_snow_rain 2
+      draw_snow
+    when Weather_Fog
+      init_weather
+      draw_fog
+    when Weather_Sandstorm
+      init_weather
+      draw_sandstorm
     end
 
     if @animation

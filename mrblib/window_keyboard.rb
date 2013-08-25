@@ -16,12 +16,12 @@
 # Window Input Number Class.
 # The number input window.
 class Window_Keyboard < Window_Base
-	# Constructor.
-	#
-	# @param ix window x position.
-	# @param iy window y position.
-	# @param iwidth window width.
-	# @param iheight window height.
+  # Constructor.
+  #
+  # @param ix window x position.
+  # @param iy window y position.
+  # @param iwidth window width.
+  # @param iheight window height.
   def initialize(ix, iy, iw = 320, ih = 80)
     super ix, iy, iw, ih
 
@@ -116,18 +116,18 @@ class Window_Keyboard < Window_Base
     refresh
     update_cursor_rect
   end
-	def selected; items[@mode][@row][@col]; end
+  def selected; items[@mode][@row][@col]; end
 
-	border_x = 8
-	border_y = 4
-	row_max = 9
-	col_max = 10
-	min_width = 2
+  border_x = 8
+  border_y = 4
+  row_max = 9
+  col_max = 10
+  min_width = 2
 
-	TO_SYMBOL = 'Symbol'
-	TO_LETTER = 'Letter'
-	DONE = 'Done'
-	SPACE = 'SPACE'
+  TO_SYMBOL = 'Symbol'
+  TO_LETTER = 'Letter'
+  DONE = 'Done'
+  SPACE = 'SPACE'
 
   TO_KATAKANA = [0x3C, 0x30AB, 0x30CA, 0x3E].to_utf8
   TO_HIRAGANA = [0x3C, 0x304B, 0x306A, 0x3E].to_utf8
@@ -174,41 +174,41 @@ class Window_Keyboard < Window_Base
     for i in 0...num; k[y][x + i] = [base + diff * i].to_utf8; end
   end
 
-	def self.write_kana(k, base)
-		# left half
-		write_range k, 5, 0, 0, base + 0x02, 2 #  a -  o
-		write_range k, 5, 1, 0, base + 0x0B, 2 # ka - ko
-		write_range k, 5, 2, 0, base + 0x15, 2 # sa - so
-		write_range k, 2, 3, 0, base + 0x1F, 2 # ta - ti
-		write_range k, 3, 3, 0 + 2, base + 0x24, 2 # tu - to
-		write_range k, 5, 4, 0, base + 0x2A, 1 # na - no
-		write_range k, 5, 5, 0, base + 0x2F, 3 # ha - ho
-		write_range k, 5, 6, 0, base + 0x3E, 1 # ma - mo
-		write_range k, 3, 7, 0, base + 0x44, 2 # ya - yo
-		k[7][3] = [base + 0x4F].to_utf8 # wa
-		k[7][4] = [base + 0x53].to_utf8 # nn
-		write_range k, 5, 8, 0, base + 0x49, 1 # ra - ro
+  def self.write_kana(k, base)
+    # left half
+    write_range k, 5, 0, 0, base + 0x02, 2 #  a -  o
+    write_range k, 5, 1, 0, base + 0x0B, 2 # ka - ko
+    write_range k, 5, 2, 0, base + 0x15, 2 # sa - so
+    write_range k, 2, 3, 0, base + 0x1F, 2 # ta - ti
+    write_range k, 3, 3, 0 + 2, base + 0x24, 2 # tu - to
+    write_range k, 5, 4, 0, base + 0x2A, 1 # na - no
+    write_range k, 5, 5, 0, base + 0x2F, 3 # ha - ho
+    write_range k, 5, 6, 0, base + 0x3E, 1 # ma - mo
+    write_range k, 3, 7, 0, base + 0x44, 2 # ya - yo
+    k[7][3] = [base + 0x4F].to_utf8 # wa
+    k[7][4] = [base + 0x53].to_utf8 # nn
+    write_range k, 5, 8, 0, base + 0x49, 1 # ra - ro
 
-		# right half
-		write_range k, 5, 0, 5, base + 0x0C, 2 # ga - go
-		write_range k, 5, 1, 5, base + 0x16, 2 # za - zo
-		write_range k, 2, 2, 5, base + 0x20, 2 # da - di
-		write_range k, 3, 2, 5 + 2, base + 0x25, 2 # du - do
-		write_range k, 5, 3, 5, base + 0x30, 3 # ba - bo
-		write_range k, 5, 4, 5, base + 0x31, 3 # pa - po
-		write_range k, 5, 5, 5, base + 0x01, 2 # small a - o
-		# small other
-		k[6][5] = [base + 0x23].to_utf8 # small tu
-		write_range k, 3, 6, 5 + 1, base + 0x43, 2 # small ya - yo
-		k[6][9] = [base + 0x4E].to_utf8 # small wa
-		# Symbol [cho-on, wave dash, dot, equal, star]
+    # right half
+    write_range k, 5, 0, 5, base + 0x0C, 2 # ga - go
+    write_range k, 5, 1, 5, base + 0x16, 2 # za - zo
+    write_range k, 2, 2, 5, base + 0x20, 2 # da - di
+    write_range k, 3, 2, 5 + 2, base + 0x25, 2 # du - do
+    write_range k, 5, 3, 5, base + 0x30, 3 # ba - bo
+    write_range k, 5, 4, 5, base + 0x31, 3 # pa - po
+    write_range k, 5, 5, 5, base + 0x01, 2 # small a - o
+    # small other
+    k[6][5] = [base + 0x23].to_utf8 # small tu
+    write_range k, 3, 6, 5 + 1, base + 0x43, 2 # small ya - yo
+    k[6][9] = [base + 0x4E].to_utf8 # small wa
+    # Symbol [cho-on, wave dash, dot, equal, star]
     [0x30FC, 0x301C, 0x30FB, 0xFF1D, 0x2606].each_with_index { |v,i|
       k[7][5 + i] = [v].to_utf8
     }
-		k[8][5] = [0x30F4].to_utf8 # va
+    k[8][5] = [0x30F4].to_utf8 # va
 
     k[8][8] = DONE_JP
-	end
+  end
 
   write_kana items[Hiragana], 0x304B
   write_kana items[Katakana], 0x30A0

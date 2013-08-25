@@ -16,7 +16,7 @@
 # Window_Help class.
 # Shows skill and item explanations.
 class Window_Help < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @align = Text::AlignLeft
@@ -24,11 +24,11 @@ class Window_Help < Window_Base
     self.contents = Bitmap.new iw - 16, ih - 16
   end
 
-	# Sets the text that will be shown.
-	#
-	# @param text text to show.
-	# @param align text alignment.
-	def set_text(text, align = Text::AlignLeft)
+  # Sets the text that will be shown.
+  #
+  # @param text text to show.
+  # @param align text alignment.
+  def set_text(text, align = Text::AlignLeft)
     return if @text == text and @align = align
 
     contents.clear

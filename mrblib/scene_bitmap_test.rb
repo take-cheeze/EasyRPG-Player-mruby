@@ -1,5 +1,5 @@
 class Scene_BitmapTest < Scene
-	def initialize
+  def initialize
     super 'Bitmap Test'
 
     @rgba = Sprite.new

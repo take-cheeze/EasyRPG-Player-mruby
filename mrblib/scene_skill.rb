@@ -15,8 +15,8 @@
 
 # Scene_Skill class.
 class Scene_Skill < Scene
-	# Constructor.
-	def initialize(actor_index, skill_index = 0)
+  # Constructor.
+  def initialize(actor_index, skill_index = 0)
     super 'Skill'
     @actor_index = actor_index
     @skill_index = skill_index

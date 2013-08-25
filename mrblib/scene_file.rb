@@ -16,10 +16,10 @@
 # Base class used by the save and load scenes.
 class Scene_File < Scene
 
-	# Constructor.
-	#
-	# @param message title message.
-	def initialize(t, message)
+  # Constructor.
+  #
+  # @param message title message.
+  def initialize(t, message)
     super t
     @index = 0
     @top_index = 0
@@ -28,53 +28,53 @@ class Scene_File < Scene
     @file_windows = []
   end
 
-	def start
+  def start
     # Create the windows
     @help_window = Window_Help.new 0, 0, 320, 32
     @help_window.text = message
 
-	for i in 0...15
+  for i in 0...15
     w = Window_SaveFile.new 0, 40 + i * 64, 320, 64
-		w.index = i
+    w.index = i
 
-		# Try to access file
-		file = FileFinder.find_default('Save%02d.lsd' % (i + 1))
-		if not file.nil?
-			# File found
-			savegame = LSD_Reader.load file
+    # Try to access file
+    file = FileFinder.find_default('Save%02d.lsd' % (i + 1))
+    if not file.nil?
+      # File found
+      savegame = LSD_Reader.load file
 
-			if not savegame.nil?
-				# When a face_name is empty the party list ends
+      if not savegame.nil?
+        # When a face_name is empty the party list ends
         party_size =
-					savegame.title.face1_name.empty? ? 0 :
-					savegame.title.face2_name.empty? ? 1 :
-					savegame.title.face3_name.empty? ? 2 :
-					savegame.title.face4_name.empty? ? 3 : 4
+          savegame.title.face1_name.empty? ? 0 :
+          savegame.title.face2_name.empty? ? 1 :
+          savegame.title.face3_name.empty? ? 2 :
+          savegame.title.face4_name.empty? ? 3 : 4
 
-				party = Array.new party_size
+        party = Array.new party_size
 
         party[3] = [savegame.title.face4_id, savegame.title.face4_name] if party_size == 4
         party[2] = [savegame.title.face3_id, savegame.title.face3_name] if party_size == 3
         party[1] = [savegame.title.face2_id, savegame.title.face2_name] if party_size == 2
         party[0] = [savegame.title.face1_id, savegame.title.face1_name] if party_size == 1
 
-				w.set_party(party,
+        w.set_party(party,
                     savegame.title.hero_name,
                     savegame.title.hero_hp,
                     savegame.title.hero_level)
-			else
-				w.corrupted = true
-			end
-		end
+      else
+        w.corrupted = true
+      end
+    end
 
-		w.refresh
-		@file_windows.push w
-	end
-
-	refresh
+    w.refresh
+    @file_windows.push w
   end
 
-	def update
+  refresh
+  end
+
+  def update
     @file_windows.each_with_index { |v,i|
       v.update
     }
@@ -108,7 +108,7 @@ class Scene_File < Scene
     refresh if (@top_index != old_top_index || @index != old_index)
   end
 
-	def refresh
+  def refresh
     @file_windows.each_with_index { |w,i|
       w.y(40 + (i - @top_index) * 64)
       w.active = i == @index

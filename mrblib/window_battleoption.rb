@@ -15,7 +15,7 @@
 
 # Window_BattleOption class.
 class Window_BattleOption < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
 
@@ -34,8 +34,8 @@ class Window_BattleOption < Window_Base
 
   attr_accessor :index
 
-	# Refreshes the window contents.
-	def refresh
+  # Refreshes the window contents.
+  def refresh
     contents.clear
 
     draw_item 0, Font::ColorDefault
@@ -43,15 +43,15 @@ class Window_BattleOption < Window_Base
     draw_item 2, Game_Temp.battle_escape_mode == 0 ? Font::ColorDisabled : Font::ColorDefault
 
     #for (int i = 0; i < (int) commands.size(); i++)
-    #	Font::SystemColor color = (i == 2 && Game_Temp::battle_escape_mode == 0)
-    #		? Font::ColorDisabled
-    #		: Font::ColorDefault
-    #	DrawItem(i, color)
+    #  Font::SystemColor color = (i == 2 && Game_Temp::battle_escape_mode == 0)
+    #    ? Font::ColorDisabled
+    #    : Font::ColorDefault
+    #  DrawItem(i, color)
     #end
   end
 
-	# Updates the window state.
-	def update
+  # Updates the window state.
+  def update
     super
 
     if @active && @num_commands >= 0 && (not @index.nil?)

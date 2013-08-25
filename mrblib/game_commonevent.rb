@@ -15,18 +15,18 @@
 
 # Game_CommonEvent class.
 class Game_CommonEvent
-	# Constructor.
-	#
-	# @param common_event_id database common event ID.
-	# @param battle FIXME.
-	def initialize(id, battle = false)
+  # Constructor.
+  #
+  # @param common_event_id database common event ID.
+  # @param battle FIXME.
+  def initialize(id, battle = false)
     @common_event_id = id
     @battle = battle
     @interpreter = nil
   end
 
-	# Refreshes the common event.
-	def refresh
+  # Refreshes the common event.
+  def refresh
     if (trigger == RPG::EventPage::Trigger_parallel)
       if (switch_flag() ? Game_Switches[switch_id] : true)
         if (@interpreter.nil?)
@@ -41,40 +41,40 @@ class Game_CommonEvent
     end
   end
 
-	# Updates common event interpreter.
-	def update
+  # Updates common event interpreter.
+  def update
     return if @interpreter.nil?
     @interpreter.setup list, 0 if not Game_Map.interpreter.running?
     @interpreter.update
   end
 
-	# Gets common event index.
-	#
-	# @return common event index in list.
+  # Gets common event index.
+  #
+  # @return common event index in list.
   def index; @common_event_id; end
 
-	# Gets common event name.
-	#
-	# @return event name.
+  # Gets common event name.
+  #
+  # @return event name.
   def name; Data.commonevents[@common_event_id].name; end
 
-	# Gets trigger condition.
-	#
-	# @return trigger condition.
+  # Gets trigger condition.
+  #
+  # @return trigger condition.
   def trigger; Data.commonevents[@common_event_id].trigger; end
 
-	# Gets if an event has a switch.
-	#
-	# @return flag if that event has a switch.
-	def switch_flag; Data.commonevents[@common_event_id].switch_flag; end
+  # Gets if an event has a switch.
+  #
+  # @return flag if that event has a switch.
+  def switch_flag; Data.commonevents[@common_event_id].switch_flag; end
 
-	# Gets trigger switch ID.
-	#
-	# @return trigger switch ID.
+  # Gets trigger switch ID.
+  #
+  # @return trigger switch ID.
   def switch_id; Data.commonevents[@common_event_id].switch_id; end
 
-	# Gets event commands list.
-	#
+  # Gets event commands list.
+  #
   # @return event commands list.
   def list; Data.commonevents[@common_event_id].event_commands; end
 end

@@ -16,30 +16,30 @@
 # Window_Skill class.
 class Window_Skill < Window_Selectable
 
-	# Constructor.
-	def initialize(ix, iy, iwidth, iheight)
+  # Constructor.
+  def initialize(ix, iy, iwidth, iheight)
     super ix, iy, iwidth, iheight
     @actor_id = nil
     @column_max = 2
   end
 
-	# Sets the actor whose skills are displayed.
-	#
-	# @param actor_id ID of the actor.
-	def actor=(id)
+  # Sets the actor whose skills are displayed.
+  #
+  # @param actor_id ID of the actor.
+  def actor=(id)
     @actor_id = id
     refresh
   end
 
-	# Gets skill.
-	#
-	# @return current selected skill ID.
-	def skill_id()
+  # Gets skill.
+  #
+  # @return current selected skill ID.
+  def skill_id()
     @index < 0 ? 0 : data[@index]
   end
 
-	# Refreshes the skill list.
-	def refresh
+  # Refreshes the skill list.
+  def refresh
     data = []
 
     skills = Game_Actors.actor(actor_id).skills
@@ -54,10 +54,10 @@ class Window_Skill < Window_Selectable
     for i in 0...data.length; draw_item i; end
   end
 
-	# Draws a skill together with the costs.
-	#
-	# @param index index of skill to draw.
-	def draw_item(index)
+  # Draws a skill together with the costs.
+  #
+  # @param index index of skill to draw.
+  def draw_item(index)
     rect = item_rect(index)
     contents.fill(rect, Color.new)
 
@@ -75,20 +75,20 @@ class Window_Skill < Window_Selectable
     end
   end
 
-	# Updates the help window.
-	def update_help
+  # Updates the help window.
+  def update_help
     @help_window.text = skill_id == 0 ? "" : Data.skills[skill_id].description
   end
 
-	# Checks if the skill should be in the list.
-	#
-	# @param skill_id skill to check.
-	def check_include(id); true; end
+  # Checks if the skill should be in the list.
+  #
+  # @param skill_id skill to check.
+  def check_include(id); true; end
 
-	# Chechs if skill should be enabled.
-	#
-	# @param skill_id skill to check.
-	def check_enable(id)
+  # Chechs if skill should be enabled.
+  #
+  # @param skill_id skill to check.
+  def check_enable(id)
     Game_Actors.actor(@actor_id).skill_usable? id
   end
 end

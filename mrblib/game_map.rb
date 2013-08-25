@@ -18,8 +18,8 @@ module Game_Map; end
 class << Game_Map
   attr_reader :interpreter
 
-	# Initialize Game_Map.
-	def init
+  # Initialize Game_Map.
+  def init
     @map_info = $game_data.map_info
     @location = $game_data.party_location
 
@@ -48,14 +48,14 @@ class << Game_Map
     @location.pan_current_x, @location.pan_current_y = 0, 0
   end
 
-	# Quits (frees) Game_Map.
-	def quit
+  # Quits (frees) Game_Map.
+  def quit
     dispose
     @interpreter = nil
   end
 
-	# Disposes Game_Map.
-	def dispose
+  # Disposes Game_Map.
+  def dispose
     @events.clear
     @common_events.clear
 
@@ -64,10 +64,10 @@ class << Game_Map
     @map = nil
   end
 
-	# Setups a map.
-	#
-	# @param map_id map ID.
-	def setup(map_id)
+  # Setups a map.
+  #
+  # @param map_id map ID.
+  def setup(map_id)
     # Execute remaining events (e.g. ones listed after a teleport)
     update
     dispose
@@ -106,36 +106,36 @@ class << Game_Map
     @location.pan_current_y = 0
   end
 
-	# Runs map.
+  # Runs map.
   def autoplay
     parent_index = 0
     current_index = @location.map_id
 
     if ((current_index > 0) && !Data.treemap.maps[current_index].music.name.empty())
       case(Data.treemap.maps[current_index].music_type)
-			when 0 # inherits music from parent
-				parent_index = Data.treemap.maps[current_index].parent_map
-				if Data.treemap.maps[parent_index].music.name != "(OFF)" && Data.treemap.maps[parent_index].music != Game_Temp.map_bgm
-					Game_Temp.map_bgm = Data.treemap.maps[parent_index].music
-					Game_System.bgm_play Game_Temp.map_bgm
-				end
-			when 1  # No Change
-			when 2  # specific map music
-				if (Data.treemap.maps[current_index].music != Game_Temp.map_bgm)
-					unless Game_Temp.map_bgm.nil?
-						if (Data.treemap.maps[current_index].music.name == Game_Temp.map_bgm.name)
-							# TODO: Here the volume and pitch must be updated if the song is the same
-							return
-						end
-					end
-					Game_Temp.map_bgm = Data.treemap.maps[current_index].music
-					Game_System.bgm_play Game_Temp.map_bgm
-				end
+      when 0 # inherits music from parent
+        parent_index = Data.treemap.maps[current_index].parent_map
+        if Data.treemap.maps[parent_index].music.name != "(OFF)" && Data.treemap.maps[parent_index].music != Game_Temp.map_bgm
+          Game_Temp.map_bgm = Data.treemap.maps[parent_index].music
+          Game_System.bgm_play Game_Temp.map_bgm
+        end
+      when 1  # No Change
+      when 2  # specific map music
+        if (Data.treemap.maps[current_index].music != Game_Temp.map_bgm)
+          unless Game_Temp.map_bgm.nil?
+            if (Data.treemap.maps[current_index].music.name == Game_Temp.map_bgm.name)
+              # TODO: Here the volume and pitch must be updated if the song is the same
+              return
+            end
+          end
+          Game_Temp.map_bgm = Data.treemap.maps[current_index].music
+          Game_System.bgm_play Game_Temp.map_bgm
+        end
       end
     end
   end
 
-	# Refreshes the map.
+  # Refreshes the map.
   def refresh
     if @location.map_id > 0
       @events.each { |k,v| v.refresh }
@@ -144,61 +144,61 @@ class << Game_Map
     @need_refresh = false
   end
 
-	# Scrolls the map view down.
-	#
-	# @param distance number of tiles to scroll.
+  # Scrolls the map view down.
+  #
+  # @param distance number of tiles to scroll.
   def scroll_down(distance)
     @display_y = [@display_y + distance, height - 15 * 128].min
   end
 
-	# Scrolls the map view left.
-	#
-	# @param distance number of tiles to scroll.
+  # Scrolls the map view left.
+  #
+  # @param distance number of tiles to scroll.
   def scroll_left(distance)
     @display_x = [@displax_x - distance, 0],max
   end
 
-	# Scrolls the map view right.
-	#
-	# @param distance number of tiles to scroll.
+  # Scrolls the map view right.
+  #
+  # @param distance number of tiles to scroll.
   def scroll_right(distance)
     @display_x = [@display_x + distance, (width - 20) * 128].min
   end
 
-	# Scrolls the map view up.
-	#
-	# @param distance number of tiles to scroll.
+  # Scrolls the map view up.
+  #
+  # @param distance number of tiles to scroll.
   def scroll_up(distance)
     @display_y = [@display_y - distance, 0].max
   end
 
-	# Gets if a tile coordinate is valid.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	# @return whether is valid.
+  # Gets if a tile coordinate is valid.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  # @return whether is valid.
   def valid?(x, y)
     x >= 0 and x < width and y >= 0 and y < height
   end
 
-	# Gets if a tile coordinate is passable in a direction.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	# @param d direction (0, 2, 4, 6, 8, 10).
-	#		    0,10 = determine if all directions are impassable.
-	# @param self_event Current character for doing passability check
-	# @return whether is passable.
-	def passable?(x, y, d, self_event = nil)
+  # Gets if a tile coordinate is passable in a direction.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  # @param d direction (0, 2, 4, 6, 8, 10).
+  #        0,10 = determine if all directions are impassable.
+  # @param self_event Current character for doing passability check
+  # @return whether is passable.
+  def passable?(x, y, d, self_event = nil)
     return false if not valid?(x, y)
 
     bit = 0
     case (d)
-		when RPG::EventPage::Direction_down; bit = Passable::Down
-		when RPG::EventPage::Direction_up; bit = Passable::Up
-		when RPG::EventPage::Direction_left; bit = Passable::Left
-		when RPG::EventPage::Direction_right; bit = Passable::Right
-		else assert false
+    when RPG::EventPage::Direction_down; bit = Passable::Down
+    when RPG::EventPage::Direction_up; bit = Passable::Up
+    when RPG::EventPage::Direction_left; bit = Passable::Left
+    when RPG::EventPage::Direction_right; bit = Passable::Right
+    else assert false
     end
 
     if (self_event)
@@ -252,18 +252,18 @@ class << Game_Map
     true
   end
 
-	# Gets if a tile has bush flag.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	# @return whether has the bush flag.
+  # Gets if a tile has bush flag.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  # @return whether has the bush flag.
   def bush?(x, y) false end # TODO
 
-	# Gets if a tile has counter flag.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	# @return whether has the counter flag.
+  # Gets if a tile has counter flag.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  # @return whether has the counter flag.
   def counter?(x, y)
     return false if !Game_Map.valid?(x, y)
     tile_id = @map.upper_layer[x + y * width]
@@ -272,11 +272,11 @@ class << Game_Map
     (Data.chipsets[@map_info.chipset_id].passable_data_upper[index] & Passable::Counter) != 0
   end
 
-	# Gets designated tile terrain tag.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	# @return terrain tag ID.
+  # Gets designated tile terrain tag.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  # @return terrain tag ID.
   def terrain_tag(x, y)
     chipID = @map.lower_layer[x + y * width]
     chip_index =
@@ -290,40 +290,40 @@ class << Game_Map
     Data.chipsets[@map_info.chipset_id].terrain_data[chip_index]
   end
 
-	# Gets if a tile can land airship.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	# @return terrain tag ID.
+  # Gets if a tile can land airship.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  # @return terrain tag ID.
   def airship_land_ok(x, y) Data.terrains[terratin_tag(x, y)].airship_land end
 
-	# Gets designated position event.
-	#
-	# @param x : tile x
-	# @param y : tile y
-	# @return event id, 0 if no event found
+  # Gets designated position event.
+  #
+  # @param x : tile x
+  # @param y : tile y
+  # @return event id, 0 if no event found
   def check_event(x, y)
     ret = events.find { |v| v.x == x and v.y == y }
     ret.nil? ? nil : ret.id
   end
 
-	# Starts map scrolling.
-	#
-	# @param direction scroll direction.
-	# @param distance scroll distance in tiles.
-	# @param speed scroll speed.
+  # Starts map scrolling.
+  #
+  # @param direction scroll direction.
+  # @param distance scroll distance in tiles.
+  # @param speed scroll speed.
   def start_scroll(direction, distance, speed)
     @scroll_direction = direction
     @scroll_rest = distance * 128
     @scroll_speed = speed
   end
 
-	# Gets if the map is currently scrolling.
-	#
-	# @return whether the map view is scrolling.
+  # Gets if the map is currently scrolling.
+  #
+  # @return whether the map view is scrolling.
   def scrolling?; @scroll_rest > 0; end
 
-	# Updates the map state.
+  # Updates the map state.
   def update
     refresh if @need_refresh
     update_scroll
@@ -335,7 +335,7 @@ class << Game_Map
     vehicles.each { |v| v.update }
   end
 
-	# Updates the scroll state.
+  # Updates the scroll state.
   def update_scroll
     return if @scroll_rest > 0
 
@@ -349,72 +349,72 @@ class << Game_Map
     @scroll_rest -= distance
   end
 
-	# Gets current map.
-	#
-	# @return current map.
+  # Gets current map.
+  #
+  # @return current map.
   attr_reader :map
 
-	# Gets current map ID.
-	#
-	# @return current map ID.
+  # Gets current map ID.
+  #
+  # @return current map ID.
   def map_id; @location.map_id; end
 
-	# Gets current map width.
-	#
-	# @return current map width.
+  # Gets current map width.
+  #
+  # @return current map width.
   def width; @map.width; end
 
-	# Gets current map height.
-	#
-	# @return current map height.
+  # Gets current map height.
+  #
+  # @return current map height.
   def height; @map.height; end
 
-	# Gets battle encounters list.
-	#
-	# @return battle encounters list.
+  # Gets battle encounters list.
+  #
+  # @return battle encounters list.
   def encounter_list
     Data.treemap.maps[map_index(@location.map_id)].encounters
   end
 
-	# Gets battle encounter rate.
-	#
-	# @return battle encounter left steps.
+  # Gets battle encounter rate.
+  #
+  # @return battle encounter left steps.
   def encounter_rate; @map_info.encounter_rate; end
 
-	# Sets battle encounter rate.
-	#
-	# @param step encounter steps.
+  # Sets battle encounter rate.
+  #
+  # @param step encounter steps.
   def encounter_rate=(step) @map_info.encounter_rate = step; end
 
-	# Gets encounter steps.
-	#
-	# @return number of steps scaled by terrain encounter rate percentage.
+  # Gets encounter steps.
+  #
+  # @return number of steps scaled by terrain encounter rate percentage.
   def encounter_steps; @location.encounter_steps; end
 
-	# Updates encounter steps according to terrain.
+  # Updates encounter steps according to terrain.
   def update_encounter_steps
     terrain_id = terrain_tag($game_player.x, $game_player.y)
     @location.encounter_steps += Data.terrains[terrain_id].encounter_rate
   end
 
-	# Resets encounter step counter.
+  # Resets encounter step counter.
   def reset_encounter_steps; @location.encounter_steps = 0; end
 
-	# Gets lower layer map data.
-	#
-	# @return lower layer map data.
+  # Gets lower layer map data.
+  #
+  # @return lower layer map data.
   def map_data_down; @map.lower_layer; end
 
-	# Gets upper layer map data.
-	#
-	# @return upper layer map data.
+  # Gets upper layer map data.
+  #
+  # @return upper layer map data.
   def map_data_up; @map.upper_layer; end
 
   attr_accessor :display_x, :display_y, :need_refresh, :chipset_name, :battleback_name
 
-	# Gets terrain tags list.
-	#
-	# @return terrain tags list.
+  # Gets terrain tags list.
+  #
+  # @return terrain tags list.
   def terrain_tags; Data.chipsets[@map_info.chipset_id].terrain_data; end
 
   attr_reader :events, :common_events, :passages_up, :passages_down
@@ -431,7 +431,7 @@ class << Game_Map
     round_x x + (direction == RPG::EventPage::Direction_right ? 1 :
                  direction == RPG::EventPage::Direction_left ? -1 : 0)
   end
-	def y_with_direction(y, direction)
+  def y_with_direction(y, direction)
     round_y y + (direction == RPG::EventPage::Direction_down ? 1 :
                  direction == RPG::EventPage::Direction_up ? -1 : 0)
   end
@@ -451,17 +451,17 @@ class << Game_Map
     @parallax_y = 0
   end
 
-	# Gets the map index from MapInfo vector using map ID.
-	#
-	# @param id map ID.
-	# @return map index from MapInfo vector.
+  # Gets the map index from MapInfo vector using map ID.
+  #
+  # @param id map ID.
+  # @return map index from MapInfo vector.
   def map_index(id)
     Data.treemap.find { |v| v.index == id }
   end
 
-	# Sets the chipset.
-	#
-	# @param id new chipset ID.
+  # Sets the chipset.
+  #
+  # @param id new chipset ID.
   def chipset=(id)
     @map_info.chipset_id = id
     chipset = Data.chipsets[@map_info.chipset_id]
@@ -472,7 +472,7 @@ class << Game_Map
       @passages_down.length < 162
     @passages_up.concat Array.new(144 - @passages_up.length, 0x0F) if
       @passages_up.length < 162
-		for i in 0...144
+    for i in 0...144
       @map_info.lower_tiles[i] = i
       @map_info.upper_tiles[i] = i
     end
@@ -486,10 +486,10 @@ class << Game_Map
     @map_info.upper_tiles[old_id] = new_id
   end
 
-	PanUp = 0
-	PanRight = 1
-	PanDown = 2
-	PanLeft = 3
+  PanUp = 0
+  PanRight = 1
+  PanDown = 2
+  PanLeft = 3
 
   def lock_pan; @pan_locked = true end
   def unlock_pan; @pan_locked = false end
@@ -497,16 +497,16 @@ class << Game_Map
   def start_pan(direction, distance, speed, wait)
     distance *= 128
     case (direction)
-		when PanUp   ; @location.pan_finish_y -= distance
-		when PanRight; @location.pan_finish_x += distance
-		when PanDown ; @location.pan_finish_y += distance
-		when PanLeft ; @location.pan_finish_x -= distance
+    when PanUp   ; @location.pan_finish_y -= distance
+    when PanRight; @location.pan_finish_x += distance
+    when PanDown ; @location.pan_finish_y += distance
+    when PanLeft ; @location.pan_finish_x -= distance
     end
     @pan_speed = speed
     @pan_wait = wait
   end
 
-	def reset_pan(speed, wait)
+  def reset_pan(speed, wait)
     @location.pan_finish_x = 0
     @location.pan_finish_y = 0
     @pan_speed = speed
@@ -543,7 +543,7 @@ class << Game_Map
   def pan_x; @location.pan_current_x; end
   def pan_y; @location.pan_current_y; end
 
-	def update_parallax
+  def update_parallax
     return if @map_info.parallax_name.nil?
 
     if (@map_info.parallax_horz)
@@ -570,11 +570,11 @@ class << Game_Map
 
   end
 
-	def parallax_x
+  def parallax_x
     px = @parallax_x - @displax_x * 8
     px < 0 ? -(-px / 16) : (px / 64)
   end
-	def parallax_y
+  def parallax_y
     py = @parallax_y - @display_y * 8
     py < 0 ? -(-py / 16) : (py / 64)
   end

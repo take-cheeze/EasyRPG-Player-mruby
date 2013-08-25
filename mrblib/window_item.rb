@@ -15,38 +15,38 @@
 
 # Window_Item class.
 class Window_Item < Window_Selectable
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @column_max = 2
     @data = []
   end
 
-	# Gets item ID of the selected item.
-	#
-	# @return current selected item ID.
+  # Gets item ID of the selected item.
+  #
+  # @return current selected item ID.
   def item_id
     @index.nil? ? 0 : data[@index]
   end
 
-	# Checks if the item should be in the list.
-	#
-	# @param id item to check.
+  # Checks if the item should be in the list.
+  #
+  # @param id item to check.
   def check_include(id)
     # TODO:
     # if (Game_Temp::InBattle())
-    # 	return item_id == Rpg::Item
+    #   return item_id == Rpg::Item
 
     @data.empty? and id == 0 ? true : id == 0
   end
 
-	# Checks if item should be enabled.
-	#
-	# @param id item to check.
-	def check_enable(id); Game_Party.item_usable? id; end
+  # Checks if item should be enabled.
+  #
+  # @param id item to check.
+  def check_enable(id); Game_Party.item_usable? id; end
 
-	# Refreshes the item list.
-	def refresh
+  # Refreshes the item list.
+  def refresh
     @data.clear
     Game_Party.items.each { |v|
       @data.push v if check_include v
@@ -64,9 +64,9 @@ class Window_Item < Window_Selectable
     for i in 0...@item_max; draw_item i; end
   end
 
-	# Draws an item together with the quantity.
-	#
-	# @param idx index of item to draw.
+  # Draws an item together with the quantity.
+  #
+  # @param idx index of item to draw.
   def draw_item(idx)
     rect = item_rect idx
     contents.fill rect, Color.new
@@ -84,8 +84,8 @@ class Window_Item < Window_Selectable
                        Game_Party.item_number(item_id).to_s, color, Text::AlignRight)
   end
 
-	# Updates the help window.
-	def update_help
+  # Updates the help window.
+  def update_help
     @help_window.text = item_id == 0 ? '' : Data.items[item_id].description
   end
 end

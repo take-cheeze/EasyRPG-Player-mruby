@@ -16,8 +16,8 @@
 # Window ShopParty Class.
 # Displays the party in the shop scene.
 class Window_ShopParty < Window_Base
-	# Constructor.
-	def initialize(ix, iy, iw, ih)
+  # Constructor.
+  def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
 
     contents = Bitmap.new iw - 16, ih - 16
@@ -50,8 +50,8 @@ class Window_ShopParty < Window_Base
     refresh
   end
 
-	# Renders the current party on the window.
-	def refresh
+  # Renders the current party on the window.
+  def refresh
     contents.clear
 
     system = Cache.system Game_System.system_name
@@ -92,13 +92,13 @@ class Window_ShopParty < Window_Base
     }
   end
 
-	# Updates the window state.
-	def update
+  # Updates the window state.
+  def update
     @cycle += 1
     refresh if @cycle % @anim_rate == 0
   end
 
-	# Sets the reference item.
+  # Sets the reference item.
   def item_id=(id)
     if id != @item_id
       @item_id = nitem_idid
@@ -106,6 +106,6 @@ class Window_ShopParty < Window_Base
     end
   end
 
-	# Animation rate.
-	@anim_rate = 12
+  # Animation rate.
+  @anim_rate = 12
 end

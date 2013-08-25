@@ -31,33 +31,33 @@ class Game_Enemy < public Game_Battler
 
   def transform(id); @enemy_id = id; end
 
-	# Gets the maximum HP for the current level.
-	#
-	# @return maximum HP.
+  # Gets the maximum HP for the current level.
+  #
+  # @return maximum HP.
   def base_max_hp; Data.enemies[@enemy_id].max_hp; end
 
-	# Gets the maximum SP for the current level.
-	#
-	# @return maximum SP.
+  # Gets the maximum SP for the current level.
+  #
+  # @return maximum SP.
   def base_max_sp; Data.enemies[@enemy_id].max_sp; end
 
-	# Gets the attack for the current level.
-	#
-	# @return attack.
+  # Gets the attack for the current level.
+  #
+  # @return attack.
   def base_attack; Data.enemies[@enemy_id].attack; end
 
-	# Gets the defense for the current level.
-	#
-	# @return defense.
+  # Gets the defense for the current level.
+  #
+  # @return defense.
   def base_defence; Data.enemies[@enemy_id].defence; end
 
-	# Gets the spirit for the current level.
-	#
-	# @return spirit.
+  # Gets the spirit for the current level.
+  #
+  # @return spirit.
   def base_spirit; Data.enemies[@enemy_id].spirit; end
 
-	# Gets the agility for the current level.
-	#
-	# @return agility.
+  # Gets the agility for the current level.
+  #
+  # @return agility.
   def base_agility; Data.enemies[@enemy_id].agility; end
 end

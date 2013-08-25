@@ -15,12 +15,12 @@
 
 # Window Base class.
 class Window_Base < Window
-	# Constructor.
-	#
-	# @param x window x position.
-	# @param y window y position.
-	# @param w window width.
-	# @param h window height.
+  # Constructor.
+  #
+  # @param x window x position.
+  # @param y window y position.
+  # @param w window width.
+  # @param h window height.
   def initialize(ix, iy, iw, ih)
     super
     @windowskin_name = Game_System.system_name
@@ -30,7 +30,7 @@ class Window_Base < Window
     self.z = 100
   end
 
-	# Updates the window.
+  # Updates the window.
   def update
     super
     return if Game_System.system_name == @windowskin_name

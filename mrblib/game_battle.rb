@@ -159,16 +159,16 @@ class << Game_Battle
     return if sp > enemy.game_enemy.sp # not enough SP
 
     case skill.type
-		when RPG::Skill::Type_teleport
-			# FIXME: can monsters teleport?
-			Game_Battle::EnemyEscape()
-		when RPG::Skill::Type_escape
-			Game_Battle::EnemyEscape()
-		when RPG::Skill::Type_switch
-			return if not skill.occasion_battle
-			Game_Switches[skill.switch_id] = true
+    when RPG::Skill::Type_teleport
+      # FIXME: can monsters teleport?
+      Game_Battle::EnemyEscape()
+    when RPG::Skill::Type_escape
+      Game_Battle::EnemyEscape()
+    when RPG::Skill::Type_switch
+      return if not skill.occasion_battle
+      Game_Switches[skill.switch_id] = true
     else
-			case skill.scope
+      case skill.scope
       when RPG::Skill::Scope_enemy
         UseSkillAlly(enemy, skill, Game_Battle::GetTargetAlly())
         return
@@ -218,7 +218,7 @@ class << Game_Battle
     @turn_fragments += 1
 
     (@allies + @enemies).each { |v|
-			# FIXME: this should account for agility, paralysis, etc
+      # FIXME: this should account for agility, paralysis, etc
       v.gauge += v.speed if v.gauge < Battle::Battler::gauge_full
     }
   end
@@ -279,8 +279,8 @@ class << Game_Battle
     when 1 # single use
       Game_Party.lose_item item.index, 1
     else
-			# multiple use
-			# FIXME: we need a Game_Item type to hold the usage count
+      # multiple use
+      # FIXME: we need a Game_Item type to hold the usage count
     end
   end
 
@@ -289,15 +289,15 @@ class << Game_Battle
     return if sp > ally.actor.sp
 
     case skill.type
-		when RPG::Skill::Type_teleport
-			# FIXME: teleport skill
-		when RPG::Skill::Type_escape
-			escape
-		when RPG::Skill::Type_switch
-			return if not skill.occasion_battle
-			Game_Switches[skill.switch_id] = true
-		else
-			case skill.scope
+    when RPG::Skill::Type_teleport
+      # FIXME: teleport skill
+    when RPG::Skill::Type_escape
+      escape
+    when RPG::Skill::Type_switch
+      return if not skill.occasion_battle
+      Game_Switches[skill.switch_id] = true
+    else
+      case skill.scope
       when RPG::Skill::Scope_enemy
         UseSkillEnemy(ally, skill, Game_Battle::GetTargetEnemy())
         return
@@ -321,15 +321,15 @@ class << Game_Battle
     miss = true
 
     if skill.power > 0 and rand % 100 < skill.hit
-			miss = false
+      miss = false
 
-			# FIXME: is this still affected by stats for allies?
-			effect = skill.power
-			if skill.variance > 0
-				var_perc = skill.variance * 5
-				change = effect * (rand % (var_perc * 2) - var_perc) / 100
-				effect += change
-			end
+      # FIXME: is this still affected by stats for allies?
+      effect = skill.power
+      if skill.variance > 0
+        var_perc = skill.variance * 5
+        change = effect * (rand % (var_perc * 2) - var_perc) / 100
+        effect += change
+      end
       effect = [0, effect].max
 
       actor.hp = actor.hp + effect if skill.affect_hp
@@ -357,17 +357,17 @@ class << Game_Battle
     miss = true
 
     if skill.power > 0 and rand() % 100 < skill.hit
-			miss = false
+      miss = false
 
-			# FIXME: This is what the help file says, but it doesn't look right
-			effect = skill.power +
+      # FIXME: This is what the help file says, but it doesn't look right
+      effect = skill.power +
         user.attack * skill.pdef_f / 20 +
         actor.defence * skill.mdef_f / 40
-			if skill.variance > 0
-				var_perc = skill.variance * 5
-				change = effect * (rand % (var_perc * 2) - var_perc) / 100
-				effect += change
-			end
+      if skill.variance > 0
+        var_perc = skill.variance * 5
+        change = effect * (rand % (var_perc * 2) - var_perc) / 100
+        effect += change
+      end
       effect = [0, effect].max
 
       target.hp = actor.hp - effect if skill.affect_hp
@@ -387,7 +387,7 @@ class << Game_Battle
       end
     }
 
-		scene.floater target.sprite, Font::ColorDefault, Data.terms.miss, 60 if miss
+    scene.floater target.sprite, Font::ColorDefault, Data.terms.miss, 60 if miss
   end
 
   def enemy_action_valid(action, enemy)
@@ -477,10 +477,10 @@ class << Game_Battle
     item.state_set.each_with_index { |v,i| actor.remove_state i + 1 if v }
   end
 
-	gauge_full = Battle::Battler::gauge_full
-	turn_length = 333 # frames
+  gauge_full = Battle::Battler::gauge_full
+  turn_length = 333 # frames
 
-	def init(s)
+  def init(s)
     @scene = s
 
     @troop = Data.troops[Game_Temp.battle_troop_id ]
@@ -517,7 +517,7 @@ class << Game_Battle
     @interpreter = Game_Interpreter_Battle.new
   end
 
-	def quit
+  def quit
     # Remove conditions which end after battle
     @allies.each { |v| v.actor.remove_states }
 

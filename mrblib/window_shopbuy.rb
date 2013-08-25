@@ -16,20 +16,20 @@
 # Window Shop Buy Class
 # The shop item list window.
 class Window_ShopBuy < Window_Selectable
-	# Constructor.
-	def initialize(x, y, w = 320, h = 80)
+  # Constructor.
+  def initialize(x, y, w = 320, h = 80)
     super ix, iy, iw, ih
     @index = 0
   end
 
-	# Gets item ID of the selected item.
-	#
-	# @return current selected item ID.
+  # Gets item ID of the selected item.
+  #
+  # @return current selected item ID.
   def item_id
     index < 0 ? 0 : data[index]
   end
 
-	# Refreshes the item list.
+  # Refreshes the item list.
   def refresh
     @data = Game_Temp.shop_goods
     @item_max = data.length
@@ -40,10 +40,10 @@ class Window_ShopBuy < Window_Selectable
     for i in 0...data.length; draw_item i; end
   end
 
-	# Draws an item together with the price.
-	#
-	# @param index index of item to draw.
-	def draw_item(index)
+  # Draws an item together with the price.
+  #
+  # @param index index of item to draw.
+  def draw_item(index)
     id = data[index]
     enabled = Data.items[id].price <= Game_Party.gold
     rect = item_rect(index)
@@ -53,17 +53,17 @@ class Window_ShopBuy < Window_Selectable
     contents.draw_text_2k rect.width + 4, rect.y, Data.items[id].price.to_s, enabled ? Font::ColorDefault : Font::ColorDisabled, Text::AlignRight
   end
 
-	# Updates the help window.
-	def update_help
+  # Updates the help window.
+  def update_help
     help_window.text = item_id == 0 ? ""  : Data.items[item_id].description
   end
 
-	# Checks if the item should be enabled.
-	#
-	# @param item_id item id to check.
-	# @return true if it is enabled.
-	def check_enable(id)
-		id > 0 and
+  # Checks if the item should be enabled.
+  #
+  # @param item_id item id to check.
+  # @return true if it is enabled.
+  def check_enable(id)
+    id > 0 and
       Data.items[id].price <= Game_Party.gold and
       Game_Party.item_number(id) < 99
   end

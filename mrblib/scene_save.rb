@@ -15,10 +15,10 @@
 
 # Scene_Item class.
 class Scene_Save < Scene_File
-	# Constructor.
+  # Constructor.
   def initialize; super "Save", Data.terms.save_game_message; end
 
-	def action(index)
+  def action(index)
     # TODO: Maybe find a better place to setup the save file?
     title = {}
 
@@ -26,27 +26,27 @@ class Scene_Save < Scene_File
 
     if size >= 4
       actor = Game_Party.actors[3]
-			title.face4_id = actor.face_index
-			title.face4_name = actor.face_name
+      title.face4_id = actor.face_index
+      title.face4_name = actor.face_name
     end
    if size >= 3
       actor = Game_Party.actors[2]
-			title.face3_id = actor.face_index
-			title.face3_name = actor.face_name
+      title.face3_id = actor.face_index
+      title.face3_name = actor.face_name
     end
    if size >= 2
       actor = Game_Party.actors[1]
-			title.face2_id = actor.face_index
-			title.face2_name = actor.face_name
+      title.face2_id = actor.face_index
+      title.face2_name = actor.face_name
     end
    if size >= 1
       actor = Game_Party.actors[0]
-			title.face1_id = actor.face_index
-			title.face1_name = actor.face_name
+      title.face1_id = actor.face_index
+      title.face1_name = actor.face_name
 
-			title.hero_hp = actor.hp
-			title.hero_level = actor.level
-			title.hero_name = actor.name
+      title.hero_hp = actor.hp
+      title.hero_level = actor.level
+      title.hero_name = actor.name
     end
 
     $game_data.title = title

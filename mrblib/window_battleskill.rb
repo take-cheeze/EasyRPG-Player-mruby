@@ -15,26 +15,26 @@
 
 # Window_BattleSkill class.
 class Window_BattleSkill < Window_Skill
-	# Sets the actor whose skills are displayed.
-	#
-	# @param id ID of the actor.
+  # Sets the actor whose skills are displayed.
+  #
+  # @param id ID of the actor.
   def subst=(id)
     @subst = id
     refresh
   end
 
-	# Checks if the skill should be in the list.
-	#
-	# @param skill_id skill to check.
-	def check_include(skill_id)
+  # Checks if the skill should be in the list.
+  #
+  # @param skill_id skill to check.
+  def check_include(skill_id)
     type = Data.skills[skill_id]
     @subst == RPG::Skill::Type_normal ? type < 4 : @subst == type
   end
 
-	# Chechs if skill should be enabled.
-	#
-	# @param skill_id skill to check.
-	def check_enable(skill_id)
+  # Chechs if skill should be enabled.
+  #
+  # @param skill_id skill to check.
+  def check_enable(skill_id)
     skill = Data.skills[skill_id]
     skill.type == RPG::Skill::Type_switch ? skill.occasion_battle : true
   end

@@ -16,22 +16,22 @@
 # Window_SkillStatus class.
 class Window_SkillStatus < Window_Base
 
-	# Constructor.
-	def initialize(ix, iy, iwidth, iheight)
+  # Constructor.
+  def initialize(ix, iy, iwidth, iheight)
     super(ix, iy, iwidth, iheight)
     @actor_id = nil
     contents = Bitmap.new(width - 16, height - 16)
   end
 
-	# Sets the actor whose stats are displayed.
-	# @param actor_id ID of the actor.
-	def actor=(v)
+  # Sets the actor whose stats are displayed.
+  # @param actor_id ID of the actor.
+  def actor=(v)
     @actor_id = v
     refresh
   end
 
-	# Renders the stats of the actor.
-	def refresh
+  # Renders the stats of the actor.
+  def refresh
     contents.fill Rect.new(0, 0, contents.width, 16), Color.new()
 
     actor = Game_Actors.actor(@actor_id)

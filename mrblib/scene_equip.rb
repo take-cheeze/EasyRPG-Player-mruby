@@ -17,11 +17,11 @@
 # Displays the equipment of a hero.
 class Scene_Equip < Scene
 
-	# Constructor.
-	#
-	# @param actor_index actor in the party.
-	# @param equip_index selected equipment.
-	def initialize(actor_index = 0, equip_index = 0)
+  # Constructor.
+  #
+  # @param actor_index actor in the party.
+  # @param equip_index selected equipment.
+  def initialize(actor_index = 0, equip_index = 0)
     super 'Equip'
     @actor_index, @equip_index = actor_index. equip_index
     @item_windows = []
@@ -60,7 +60,7 @@ class Scene_Equip < Scene
     end
   end
 
-	# Updates the item windows.
+  # Updates the item windows.
   def update_item_windows
     @item_windows.each_with_index { |v, i|
       v.visible = @equip_window.index == i
@@ -69,11 +69,11 @@ class Scene_Equip < Scene
     @item_window = @item_windows[@equip_window.index]
   end
 
-	# Updates the equip window.
+  # Updates the equip window.
   def update_equip_window; @equip_window.update; end
 
-	# Updates the status window.
-	def update_status_window
+  # Updates the status window.
+  def update_status_window
     if @equip_window.active
       @equipstatus_window.clear_parameters
     elsif @item_window.active
@@ -91,8 +91,8 @@ class Scene_Equip < Scene
     @equipstatus_window.update
   end
 
-	# Updates the equip window.
-	def update_equip_selction
+  # Updates the equip window.
+  def update_equip_selction
     if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       Scene.pop
@@ -112,8 +112,8 @@ class Scene_Equip < Scene
     end
   end
 
-	# Updates the item window.
-	def update_item_selection
+  # Updates the item window.
+  def update_item_selection
     if Input.trigger? Input::CANCEL
       Game_System.se_play $game_data.system.cancel_se
       @equip_window.active = true

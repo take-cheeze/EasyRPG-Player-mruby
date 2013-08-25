@@ -15,26 +15,26 @@
 
 # Window Name Class.
 class Window_Name < Window_Base
-	# Constructor.
-	def initialize(ix, iy, iw, ih)
+  # Constructor.
+  def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     self.contents = Bitmap.new iw - 16, ih - 16
     @name = ''
     refresh
   end
 
-	# Renders the current name on the window.
-	def refresh
+  # Renders the current name on the window.
+  def refresh
     contents.clear
     contents.draw_text_2k 2, 2, @name, Font::ColorDefault
   end
 
-	def set(text)
+  def set(text)
     @name = text
     refresh
   end
 
-	def append(text)
+  def append(text)
     if contents.text_size(name + text).width <= (12 * 6)
       @name += text
       refresh
@@ -45,7 +45,7 @@ class Window_Name < Window_Base
 
   def get; @name; end
 
-	def update
+  def update
     self.cursor_rect = Rect.new contents.text_size(@name).width + 2, 0, 16, 16
   end
 

@@ -15,15 +15,15 @@
 
 # Scene_Item class.
 class Scene_Item < Scene
-	# Constructor.
-	#
-	# @param item_index index to select.
+  # Constructor.
+  #
+  # @param item_index index to select.
   def initialize(item_index)
     super 'Item'
     @item_index = item_index
   end
 
-	def start
+  def start
     @help_window = Window_Help 0, 0, 320, 32
     @item_window = Window_Item 0, 32, 320, 240 - 32
     @item_window.help_window = @help_window
@@ -31,7 +31,7 @@ class Scene_Item < Scene
     @item_window.index = @item_index
   end
 
-	def update
+  def update
     @help_window.update
     @item_window.update
 

@@ -18,7 +18,7 @@ module Game_Targets end
 class << Game_Targets
   def data; $game_data.targets; end
 
-	def add_teleport_target(map_id, x, y, switch_id)
+  def add_teleport_target(map_id, x, y, switch_id)
     target = find_target map_id, true
     target.map_id = map_id
     target.map_x = x
@@ -27,9 +27,9 @@ class << Game_Targets
     target.switch_id = switch_id unless switch_id.nil?
   end
 
-	def remove_teleport_target(map_id); data.delete map_id; end
+  def remove_teleport_target(map_id); data.delete map_id; end
 
-	def set_escape_target(map_id = nil, x = nil, y = nil, switch_id = nil)
+  def set_escape_target(map_id = nil, x = nil, y = nil, switch_id = nil)
     target = find_target 0, true
     target.map_id = map_id
     target.map_x = x
@@ -38,7 +38,7 @@ class << Game_Targets
     target.switch_id = switch_id unless switch_id.nil?
   end
 
-	def teleport_target(map_id); find_target map_id, false; end
+  def teleport_target(map_id); find_target map_id, false; end
   def escape_target; find_target 0, false; end
 
   def find_target(id, create)

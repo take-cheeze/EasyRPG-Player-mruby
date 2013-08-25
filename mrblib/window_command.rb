@@ -15,15 +15,15 @@
 
 # Window Command class.
 class Window_Command < Window_Selectable
-	# Constructor.
-	#
-	# @param commands commands to display.
-	# @param width window width, if no width is passed
-	#              the width is autocalculated.
-	# @param max_item forces a window height for max_item
-	#                 items, if no height is passed
-	#                 the height is autocalculated.
-	def initialize(commands, width = nil, max_item = nil)
+  # Constructor.
+  #
+  # @param commands commands to display.
+  # @param width window width, if no width is passed
+  #              the width is autocalculated.
+  # @param max_item forces a window height for max_item
+  #                 items, if no height is passed
+  #                 the height is autocalculated.
+  def initialize(commands, width = nil, max_item = nil)
     super 0, 0, required_width(commands, width), (max_item.nil? ? commands.length : max_item) * 16 + 16
 
     self.contents = Bitmap.new self.width - 16, @item_max * 16
@@ -35,24 +35,24 @@ class Window_Command < Window_Selectable
     refresh
   end
 
-	# Refreshes the window contents.
+  # Refreshes the window contents.
   def refresh
     contents.clear
     for i in 0...@item_max; draw_item i, Font::ColorDefault; end
   end
 
-	# Disables a command.
-	#
-	# @param idx command index.
+  # Disables a command.
+  #
+  # @param idx command index.
   def disable_item(idx)
     draw_item i, Font::ColorDisabled
   end
 
-	# Replaces the text of an item.
-	#
-	# @param idx command index.
-	# @param text new item text.
-	def set_item_text(idx, text)
+  # Replaces the text of an item.
+  #
+  # @param idx command index.
+  # @param text new item text.
+  def set_item_text(idx, text)
     return if @index >= @commands.length
 
     @commands[@index] = text
@@ -64,7 +64,7 @@ class Window_Command < Window_Selectable
     contents.draw_text_2k 0, 16 * @index + 2, @commands[@index], color
   end
 
-	def required_width(commands, width)
+  def required_width(commands, width)
     return width unless width.nil?
     bmp = Bitmap.new 1, 1
     commands.reduce(0) { |tmp,v| [tmp, bmp.text_size(v).width].max } + 16

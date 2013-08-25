@@ -35,7 +35,7 @@ class Window_Message < Window_Selectable
 
   def alpha?(v); (?a[0] <= v and v <= ?z[0]) or (?A[0] <= v and v <= ?Z[0]); end
 
-	def initialize(ix, iy, iw, ih)
+  def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @contents_x, @contents_y = 0, 0
     @line_count = 0
@@ -73,8 +73,8 @@ class Window_Message < Window_Selectable
   RightFaceMargin = 16,
   TopMargin = 6
 
-	# Starts message processing by reading all
-	# non-displayed from Game_Message.
+  # Starts message processing by reading all
+  # non-displayed from Game_Message.
   def start_message_processing
     contents.clear
     @text = []
@@ -87,8 +87,8 @@ class Window_Message < Window_Selectable
     insert_new_page
   end
 
-	# Ends the message processing.
-	def finish_message_processing
+  # Ends the message processing.
+  def finish_message_processing
     if Game_Message.choice_max > 0; start_choice_processsing
     elsif Game_Message.num_input_variable_id > 0; start_number_input_processsing
     elsif @kill_message
@@ -102,14 +102,14 @@ class Window_Message < Window_Selectable
     @text_end = text.length
   end
 
-	# Does the initial steps to start a choice selection.
+  # Does the initial steps to start a choice selection.
   def start_choice_processsing
     @active =  true
     @index = 0
   end
 
-	# Does the initial steps to start a number input.
-	def start_number_input_processsing
+  # Does the initial steps to start a number input.
+  def start_number_input_processsing
     @number_input_window.max_digits = Game_Message.num_input_digits_max
     if (!Game_Message.face_name.empty? && Game_Message.face_left_position)
       @number_input_window.x = LeftMargin + FaceSize + RightFaceMargin
@@ -121,9 +121,9 @@ class Window_Message < Window_Selectable
     @number_input_window.update
   end
 
-	# Clears the Messagebox and places the write pointer
-	# in the top left corner.
-	def insert_new_page
+  # Clears the Messagebox and places the write pointer
+  # in the top left corner.
+  def insert_new_page
     if !Game_Message.face_name.empty? && Game_Message.face_left_position
       @contents_x = LeftMargin + FaceSize + RightFaceMargin
     else; @contents_x = 0
@@ -144,26 +144,26 @@ class Window_Message < Window_Selectable
     end
   end
 
-	# Inserts a line break.
+  # Inserts a line break.
   def insert_new_line
     contents.claer
 
     if Game_Message.fixed_position; self.y = Game_Message.position * 80
     else # Move Message Box to prevent player hiding
     end
-		disp = $game_player.screen_y
+    disp = $game_player.screen_y
 
-		case (Game_Message::position)
-		when 0 # Up
-			y = disp > (16 * 7) ? 0 : 2 * 80
-		when 1 # Center
-			if disp <= 16 * 7; y = 2 * 80
-			elsif disp >= 16 * 10; y = 0
-			else; y = 80
-			end
-		when 2 # Down
-			y = disp >= (16 * 10) ? 0 : 2 * 80
-		end
+    case (Game_Message::position)
+    when 0 # Up
+      y = disp > (16 * 7) ? 0 : 2 * 80
+    when 1 # Center
+      if disp <= 16 * 7; y = 2 * 80
+      elsif disp >= 16 * 10; y = 0
+      else; y = 80
+      end
+    when 2 # Down
+      y = disp >= (16 * 10) ? 0 : 2 * 80
+    end
 
     @opacity = Game_Message.background ? 255 : 0
 
@@ -190,8 +190,8 @@ class Window_Message < Window_Selectable
       Game_Message.num_input_start == 0 && Game_Message.num_input_variable_id > 0
   end
 
-	# Closes the Messagebox and clears the waiting-flag
-	# (allows the interpreter to continue).
+  # Closes the Messagebox and clears the waiting-flag
+  # (allows the interpreter to continue).
   def terminate_message
     @active = false
     @pause = false
@@ -208,20 +208,20 @@ class Window_Message < Window_Selectable
     Game_Message.semi_clear
   end
 
-	# Checks if the next message page can be displayed.
-	#
-	# @return If the text output can start.
+  # Checks if the next message page can be displayed.
+  #
+  # @return If the text output can start.
   def next_message_possible?
     return true if Game_Message.num_input_variable_id > 0
     return false if Gmae::texts.empty?
     true
   end
 
-	# Stub.
+  # Stub.
   def reset_window
   end
 
-	def update
+  def update
     super
     @number_input_window.update
 
@@ -250,9 +250,9 @@ class Window_Message < Window_Selectable
     end
   end
 
-	# Continues outputting more text. Also handles the
-	# CommandCode parsing.
-	def update_message
+  # Continues outputting more text. Also handles the
+  # CommandCode parsing.
+  def update_message
     # Message Box Show Message rendering loop
 
     # Contains at what frame the sleep is over
@@ -366,15 +366,15 @@ class Window_Message < Window_Selectable
     @loop_count = 0
   end
 
-	# Parses the parameter part of a \-message-command.
-	# It starts parsing after the [ and stops after
-	# encountering ], a non-number or a line break.
-	#
-	# @param is_valid contains if a number was read
-	# @param call_depth how many ] to skip, used for
-	#                   chained commands.
-	# @return the read number.
-	def parse_parameter(is_valid, call_depth = 1)
+  # Parses the parameter part of a \-message-command.
+  # It starts parsing after the [ and stops after
+  # encountering ], a non-number or a line break.
+  #
+  # @param is_valid contains if a number was read
+  # @param call_depth how many ] to skip, used for
+  #                   chained commands.
+  # @return the read number.
+  def parse_parameter(is_valid, call_depth = 1)
     text_index += 1
 
     if @text_index == @text_end || @text[@text_index] != ?[
@@ -404,14 +404,14 @@ class Window_Message < Window_Selectable
         # End of number
         # Search for ] or line break
         while @text_index != @text_end
-					if @text[@text_index] == ?\n
-						text_index -= 1
-						break
-					elsif @text[@text_index] == ?]
-						call_depth -= 1
+          if @text[@text_index] == ?\n
+            text_index -= 1
+            break
+          elsif @text[@text_index] == ?]
+            call_depth -= 1
             break if call_depth == 0
-					end
-					@text_index += 1
+          end
+          @text_index += 1
         end
         break
       end
@@ -427,17 +427,17 @@ class Window_Message < Window_Selectable
     return ss.to_i, true
   end
 
-	# Parses a message command code (\ followed by a char).
-	# This should only be used for codes that accept
-	# parameters!
-	# The text_index must be on the char following \ when
-	# calling.
-	#
-	# @param call_depth directly passed to ParseParameter
-	#                   and automatically increased by 1
-	#                   in every recursion.
-	# @return the final text output of the code.
-	def parse_command_code(call_depth = 1)
+  # Parses a message command code (\ followed by a char).
+  # This should only be used for codes that accept
+  # parameters!
+  # The text_index must be on the char following \ when
+  # calling.
+  #
+  # @param call_depth directly passed to ParseParameter
+  #                   and automatically increased by 1
+  #                   in every recursion.
+  # @return the final text output of the code.
+  def parse_command_code(call_depth = 1)
     int parameter
     bool is_valid
     # sub_code is used by chained arguments like \v[\v[1]]
@@ -501,7 +501,7 @@ class Window_Message < Window_Selectable
     ''
   end
 
-	# Stub. For choice.
+  # Stub. For choice.
   def update_cursor_rect
     if (@index >= 0)
       x_pos = 2
@@ -519,8 +519,8 @@ class Window_Message < Window_Selectable
     end
   end
 
-	# Waits for a key press before the text output
-	# continutes.
+  # Waits for a key press before the text output
+  # continutes.
   def wait_for_input
     @active = true; # Enables the Pause arrow
     if Input.trigger?(Input::DECISION) || Input.trigger?(Input::CANCEL)
@@ -535,12 +535,12 @@ class Window_Message < Window_Selectable
     end
   end
 
-	# Stub. Handles choice selection.
+  # Stub. Handles choice selection.
   def input_choice
     if Input.trigger?(Input::CANCEL) and Game_Message.choice_cancel_type > 0
-			Game_System.se_play $game_data.system.cancel_se
-			Game_Message.choice_result = Game_Message.choice_cancel_type - 1; # Cancel
-			terminate_message
+      Game_System.se_play $game_data.system.cancel_se
+      Game_Message.choice_result = Game_Message.choice_cancel_type - 1; # Cancel
+      terminate_message
     elsif Input.trigger? Input::DECISION
       if Game_Message.choice_disabled.test index
         Game_System.se_play $game_data.system.buzzer_se
@@ -553,14 +553,14 @@ class Window_Message < Window_Selectable
     end
   end
 
-	# Handles number input.
+  # Handles number input.
   def input_number
     return if not Input.trigger? Input::DECISION
 
-		Game_System.se_play $game_data.system.decision_se
-		Game_Variables[Game_Message.num_input_variable_id] = @number_input_window.number
-		Game_Map.need_refresh = true
-		terminate_message
-		@number_input_window.number = 0
+    Game_System.se_play $game_data.system.decision_se
+    Game_Variables[Game_Message.num_input_variable_id] = @number_input_window.number
+    Game_Map.need_refresh = true
+    terminate_message
+    @number_input_window.number = 0
   end
 end

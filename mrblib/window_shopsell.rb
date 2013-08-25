@@ -16,10 +16,10 @@
 # Window ShopSell class.
 # Displays all items of the party and allows to sell them.
 class Window_ShopSell < Window_Item
-	# Chechs if item should be enabled.
-	#
-	# @param item_id item to check.
-	def check_enable(item_id)
+  # Chechs if item should be enabled.
+  #
+  # @param item_id item to check.
+  def check_enable(item_id)
     Data.items[item_id].price > 0
   end
 end

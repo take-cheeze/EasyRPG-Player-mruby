@@ -15,14 +15,14 @@
 
 # Window Gold Class.
 class Window_Gold < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize
     super ix, iy, iw, ih
     self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 
-	# Renders the current gold amount on the window.
+  # Renders the current gold amount on the window.
   def refresh
     contents.clear
     draw_currency_value Game_Party.gold, contents.width, 2

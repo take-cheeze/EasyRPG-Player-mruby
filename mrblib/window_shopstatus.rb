@@ -16,7 +16,7 @@
 # Window ShopStatus Class.
 # Displays possessed and equipped items.
 class Window_ShopStatus < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @item_id = 0
@@ -26,8 +26,8 @@ class Window_ShopStatus < Window_Base
     refresh
   end
 
-	# Renders the current total on the window.
-	def refresh
+  # Renders the current total on the window.
+  def refresh
     contents.clear
 
     if item_id != 0
@@ -39,10 +39,10 @@ class Window_ShopStatus < Window_Base
     end
   end
 
-	# Sets the item to display.
-	#
-	# @param item_id ID of item to use.
-	def item_id=(new_item_id)
+  # Sets the item to display.
+  #
+  # @param item_id ID of item to use.
+  def item_id=(new_item_id)
     if new_item_id != @item_id
       @item_id = new_item_id
       refresh()

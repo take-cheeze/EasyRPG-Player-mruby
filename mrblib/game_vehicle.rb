@@ -15,7 +15,7 @@
 
 # Game_Vehicle class.
 class Game_Vehicle < Game_Character
-	MAX_ALTITUDE = 32 # the airship flies at
+  MAX_ALTITUDE = 32 # the airship flies at
 
   Boat = 0
   Ship = 1
@@ -32,27 +32,27 @@ class Game_Vehicle < Game_Character
 
   def load_system_settings
     case @type
-		when Boat
+    when Boat
       pcharacter_name = Data.system.boat_name
-			@character_index = Data.system.boat_index
-			@bgm = Data.system.boat_music
-			@map_id = Data.treemap.start.boat_map_id
-			@x = Data.treemap.start.boat_x
-			@y = Data.treemap.start.boat_y
-		when Ship
+      @character_index = Data.system.boat_index
+      @bgm = Data.system.boat_music
+      @map_id = Data.treemap.start.boat_map_id
+      @x = Data.treemap.start.boat_x
+      @y = Data.treemap.start.boat_y
+    when Ship
       @character_name = Data.system.ship_name
-			@character_index = Data.system.ship_index
-			@bgm = Data.system.ship_music
-			@map_id = Data.treemap.start.ship_map_id
-			@x = Data.treemap.start.ship_x
-			@y = Data.treemap.start.ship_y
-		when Airship
+      @character_index = Data.system.ship_index
+      @bgm = Data.system.ship_music
+      @map_id = Data.treemap.start.ship_map_id
+      @x = Data.treemap.start.ship_x
+      @y = Data.treemap.start.ship_y
+    when Airship
       @character_name = Data.system.airship_name
-			@character_index = Data.system.airship_index
-			@bgm = Data.system.airship_music
-			@map_id = Data.treemap.start.airship_map_id
-			@x = Data.treemap.start.airship_x
-			@y = Data.treemap.start.airship_y
+      @character_index = Data.system.airship_index
+      @bgm = Data.system.airship_music
+      @map_id = Data.treemap.start.airship_map_id
+      @x = Data.treemap.start.airship_x
+      @y = Data.treemap.start.airship_y
     end
   end
 
@@ -65,15 +65,15 @@ class Game_Vehicle < Game_Character
     end
 
     case @type
-		when Boat
-			@priority_type = RPG::EventPage::Layers_same
-			@move_speed = RPG::EventPage::MoveSpeed_normal
-		when Ship
-			@priority_type = RPG::EventPage::Layers_same
-			@move_speed = RPG::EventPage::MoveSpeed_double
-		when Airship
-			@priority_type = @driving ? RPG::EventPage::Layers_above : RPG::EventPage::Layers_below
-			@move_speed = RPG::EventPage::MoveSpeed_fourfold
+    when Boat
+      @priority_type = RPG::EventPage::Layers_same
+      @move_speed = RPG::EventPage::MoveSpeed_normal
+    when Ship
+      @priority_type = RPG::EventPage::Layers_same
+      @move_speed = RPG::EventPage::MoveSpeed_double
+    when Airship
+      @priority_type = @driving ? RPG::EventPage::Layers_above : RPG::EventPage::Layers_below
+      @move_speed = RPG::EventPage::MoveSpeed_fourfold
     end
     @walk_animation = driving
   end
@@ -109,7 +109,7 @@ class Game_Vehicle < Game_Character
     moving?
   end
 
-	def sync_with_player
+  def sync_with_player
     @x, @y = $game_player.x, $game_player.y
     @real_x, @real_y = $game_player.real_x, $game_player.real_y
     @direction = $game_player.direction
@@ -128,5 +128,5 @@ class Game_Vehicle < Game_Character
     end
   end
 
-	def check_event_trigger_touch(x, y); false; end
+  def check_event_trigger_touch(x, y); false; end
 end

@@ -17,7 +17,7 @@
 # Manages buying and selling of items.
 class Scene_Shop < Scene
 
-	# Constructor.
+  # Constructor.
   def initialize; super "Shop"; end
 
   def start
@@ -67,56 +67,56 @@ class Scene_Shop < Scene
   Sold = 7
   Leave = 8
 
-	def mode=(m)
+  def mode=(m)
     @mode = m
     @help_window.text = ''
 
     # Central panel
     case mode
-		when BuySellLeave, BuySellLeave2
+    when BuySellLeave, BuySellLeave2
       @empty_window.visible = true
-			enable @sell_window, false
-		when Sell
+      enable @sell_window, false
+    when Sell
       @empty_window.visible = false
-			enable @sell_window, true
-		when Buy, BuyHowMany, SellHowMany, Bought, Sold
+      enable @sell_window, true
+    when Buy, BuyHowMany, SellHowMany, Bought, Sold
       @empty_window.visible = false
-			enable @sell_window, false
+      enable @sell_window, false
     end
 
     # Right-hand panels
     case mode
-		when BuySellLeave, BuySellLeave2, Sell
+    when BuySellLeave, BuySellLeave2, Sell
       @party_window.visible = false
-			@status_window.visible = false
-			@gold_window.visible = false
-		when Buy, BuyHowMany, SellHowMany, Bought, Sold
+      @status_window.visible = false
+      @gold_window.visible = false
+    when Buy, BuyHowMany, SellHowMany, Bought, Sold
       @party_window.visible = true
-			@status_window.visible = true
-			@gold_window.visible = true
+      @status_window.visible = true
+      @gold_window.visible = true
     end
 
     # Left-hand panels
     case mode
-		when BuySellLeave, BuySellLeave2, Sell
+    when BuySellLeave, BuySellLeave2, Sell
       enable @buy_window, false
-			enable @number_window, false
-			@empty_window2.visible = false
-		when Buy
+      enable @number_window, false
+      @empty_window2.visible = false
+    when Buy
       @buy_window.refresh
-			enable @buy_window, true
-			enable @number_window, false
-			@empty_window2.visible = false
-		when BuyHowMany, SellHowMany
+      enable @buy_window, true
+      enable @number_window, false
+      @empty_window2.visible = false
+    when BuyHowMany, SellHowMany
       @number_window.refresh
-			enable @buy_window, false
-			enable @number_window, true
-		when Bought, Sold
       enable @buy_window, false
-			enable @number_window, false
-			@empty_window2.visible = true
+      enable @number_window, true
+    when Bought, Sold
+      enable @buy_window, false
+      enable @number_window, false
+      @empty_window2.visible = true
 
-			@timer = DEFAULT_FPS
+      @timer = DEFAULT_FPS
     end
 
     @shop_window.mode = mode
@@ -130,16 +130,16 @@ class Scene_Shop < Scene
     @party_window.update
 
     case mode
-		when BuySellLeave, BuySellLeave2; update_command_selection
-		when Buy; update_buy_selection
-		when Sell; update_sell_selection
-		when BuyHowMany, SellHowMany; update_number_input
-		when Bought
-			timer -= 1
-			self.mode = Buy if (timer == 0)
-		when Sold
-			timer -= 1
-			self.mode = Sell if (timer == 0)
+    when BuySellLeave, BuySellLeave2; update_command_selection
+    when Buy; update_buy_selection
+    when Sell; update_sell_selection
+    when BuyHowMany, SellHowMany; update_number_input
+    when Bought
+      timer -= 1
+      self.mode = Buy if (timer == 0)
+    when Sold
+      timer -= 1
+      self.mode = Sell if (timer == 0)
     end
   end
 
@@ -149,8 +149,8 @@ class Scene_Shop < Scene
       Scene.pop
     elsif Input.trigger? Input::DECISION
       case @shop_window.choice
-			when Buy, Sell; self.mode = @shop_window.choice
-			when Leave; Scene.pop
+      when Buy, Sell; self.mode = @shop_window.choice
+      when Leave; Scene.pop
       end
     end
   end

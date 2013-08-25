@@ -15,8 +15,8 @@
 
 # Game_Character class.
 class Game_Character
-	# Constructor.
-	def initialize
+  # Constructor.
+  def initialize
     @x, @y = 0, 0
     @tile_id = 0
     @character_index = 0
@@ -58,28 +58,28 @@ class Game_Character
               :pattern, :direction, :real_x, :real_y, :character_name, :character_index,
               :x, :y, :tile_id)
 
-	# Gets if character is moving.
-	#
-	# @return whether the character is moving.
+  # Gets if character is moving.
+  #
+  # @return whether the character is moving.
   def moving?; @real_x != @x * 128 or @real_y != @y * 128; end
 
-	# Checks if the character is jumping.
-	#
-	# @return whether the character is jumping.
+  # Checks if the character is jumping.
+  #
+  # @return whether the character is jumping.
   def jumping?; @jump_count > 0; end
 
-	# Checks if the character is stopping.
-	#
-	# @return whether the character is stopping.
-	def stopping?; not (moving? or jumping?); end
+  # Checks if the character is stopping.
+  #
+  # @return whether the character is stopping.
+  def stopping?; not (moving? or jumping?); end
 
-	# Gets if character the character can walk in a tile
-	# with a specific direction.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	# @param d character direction.
-	# @return whether the character can walk through.
+  # Gets if character the character can walk in a tile
+  # with a specific direction.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  # @param d character direction.
+  # @return whether the character can walk through.
   def passable?(x, y, d)
     new_x = x + (d == RPG::EventPage::Direction_right ? 1 : d == RPG::EventPage::Direction_left ? -1 : 0)
     new_y = y + (d == RPG::EventPage::Direction_down ? 1 : d == RPG::EventPage::Direction_up ? -1 : 0)
@@ -98,11 +98,11 @@ class Game_Character
     true
   end
 
-	# Moves the character to a new tile.
-	#
-	# @param x tile x.
-	# @param y tile y.
-	def move_to(x, y)
+  # Moves the character to a new tile.
+  #
+  # @param x tile x.
+  # @param y tile y.
+  def move_to(x, y)
     @x = x % Game_Map.width
     @y = y % Game_Map.height
     @real_x = x * 128
@@ -110,11 +110,11 @@ class Game_Character
     prelock_direction = -1
   end
 
-	# Updates character state and actions.
+  # Updates character state and actions.
   def update
     # if jumping?; update_jump; end
     if moving?; update_move
-		else update_stop
+    else update_stop
     end
 
     if @anime_count > 18 - @move_speed * 2
@@ -152,7 +152,7 @@ class Game_Character
     end
   end
 
-	# Moves on a random route.
+  # Moves on a random route.
   def move_type_random
     return if not stopping?
     case rand % 6
@@ -162,23 +162,23 @@ class Game_Character
     end
   end
 
-	# Moves left to right and switches direction if the
-	# move failed.
-	def move_type_cycle_left_right
+  # Moves left to right and switches direction if the
+  # move failed.
+  def move_type_cycle_left_right
     return if not stopping?
     @cycle_stat ? move_left : move_right
     @cycle_stat = @move_failed ? !@cycle_stat : @cycle_stat
   end
 
-	# Moves up and down and switches direction if the
-	# move failed.
-	def move_type_cycle_up_down
+  # Moves up and down and switches direction if the
+  # move failed.
+  def move_type_cycle_up_down
     return if not stopping?
     @cycle_stat ? move_up : move_down
     @cycle_stat = @move_failed ? !@cycle_stat : @cycle_stat
   end
 
-	# Walks to the player.
+  # Walks to the player.
   def move_type_towards_player
     return if not stopping?
     sx, sy = @x - $game_player.x, @y - $game_player.y
@@ -192,8 +192,8 @@ class Game_Character
     end
   end
 
-	# Walks to the player.
-	def move_type_away_from_player
+  # Walks to the player.
+  def move_type_away_from_player
     return if not stopping?
     sx, sy = @x - $game_player.x, @y - $game_player.y
     if sx.abs + abs.y >= 20; move_random
@@ -206,91 +206,91 @@ class Game_Character
     end
   end
 
-	# Walks around on a custom move route.
+  # Walks around on a custom move route.
   def move_type_custom
     return if not stopping?
     @move_failed = false
 
-		if @move_route_index >= @move_route.move_commands.length
-			# End of Move list
-			if move_route.repeat
-				move_route_index = 0
-			elsif move_route_forcing
+    if @move_route_index >= @move_route.move_commands.length
+      # End of Move list
+      if move_route.repeat
+        move_route_index = 0
+      elsif move_route_forcing
         @move_route_forcing = false
-				@move_route_owner.end_move_route(move_route) if not @move_route_owner.nil?
-				@move_route = original_move_route
-				@move_route_index = original_move_route_index
-				@original_move_route = nil
+        @move_route_owner.end_move_route(move_route) if not @move_route_owner.nil?
+        @move_route = original_move_route
+        @move_route_index = original_move_route_index
+        @original_move_route = nil
       end
-		else
+    else
       move_command = @move_route.move_commands[@move_route_index]
 
       case move_command.command_id
       when RPG::MoveCommand::Code::move_up; move_up
       when RPG::MoveCommand::Code::move_right; move_right
-			when RPG::MoveCommand::Code::move_down; move_down
-			when RPG::MoveCommand::Code::move_left; move_left
-			when RPG::MoveCommand::Code::move_upright; move_up_right
-			when RPG::MoveCommand::Code::move_downright; move_down_right
-			when RPG::MoveCommand::Code::move_downleft; move_down_left
-			when RPG::MoveCommand::Code::move_upleft; move_up_left
-			when RPG::MoveCommand::Code::move_random; move_random
-			when RPG::MoveCommand::Code::move_towards_hero; move_towards_player
-			when RPG::MoveCommand::Code::move_away_from_hero; move_away_from_player
-			when RPG::MoveCommand::Code::move_forward; move_forward
-			when RPG::MoveCommand::Code::face_up; turn_up
-			when RPG::MoveCommand::Code::face_right; turn_right
-			when RPG::MoveCommand::Code::face_down; turn_down
-			when RPG::MoveCommand::Code::face_left; turn_left
-			when RPG::MoveCommand::Code::turn_90_degree_right; turn_90degrees_right
-			when RPG::MoveCommand::Code::turn_90_degree_left; turn_90degrees_left
-			when RPG::MoveCommand::Code::turn_180_degree; turn_1800degrees
-			when RPG::MoveCommand::Code::turn_90_degree_random; turn_90degrees_left_or_right
-			when RPG::MoveCommand::Code::face_random_direction; face_random_direction
-			when RPG::MoveCommand::Code::face_hero; face_towards_hero
-			when RPG::MoveCommand::Code::face_away_from_hero; face_away_from_hero
-			when RPG::MoveCommand::Code::wait; wait
-			when RPG::MoveCommand::Code::begin_jump; begin_jump
-			when RPG::MoveCommand::Code::end_jump; end_jump
-			when RPG::MoveCommand::Code::lock_facing; lock
-			when RPG::MoveCommand::Code::unlock_facing; unlock
-			when RPG::MoveCommand::Code::increase_movement_speed
-				@move_speed = [move_speed + 1, 6].min
-			when RPG::MoveCommand::Code::decrease_movement_speed
-				@move_speed = [move_speed - 1, 1].max
-			when RPG::MoveCommand::Code::increase_movement_frequence
-				@move_frequency = [move_frequency - 1, 1].min
-			when RPG::MoveCommand::Code::decrease_movement_frequence
-				@move_frequency = [move_frequency - 1, 1].max
-			when RPG::MoveCommand::Code::switch_on # Parameter A: Switch to turn on
-				Game_Switches[move_command.parameter_a] = true
-				Game_Map.needs_refresh = true
-			when RPG::MoveCommand::Code::switch_off # Parameter A: Switch to turn off
-				Game_Switches[move_command.parameter_a] = false
-				Game_Map.needs_refresh = true
-			when RPG::MoveCommand::Code::change_graphic # String: File, Parameter A: index
-				@character_name = move_command.parameter_string
-				@character_index = move_command.parameter_a
-			when RPG::MoveCommand::Code::play_sound_effect # String: File, Parameters: Volume, Tempo, Balance
-				if (move_command.parameter_string != "(OFF)")
-					Audio.se_play(move_command.parameter_string,
+      when RPG::MoveCommand::Code::move_down; move_down
+      when RPG::MoveCommand::Code::move_left; move_left
+      when RPG::MoveCommand::Code::move_upright; move_up_right
+      when RPG::MoveCommand::Code::move_downright; move_down_right
+      when RPG::MoveCommand::Code::move_downleft; move_down_left
+      when RPG::MoveCommand::Code::move_upleft; move_up_left
+      when RPG::MoveCommand::Code::move_random; move_random
+      when RPG::MoveCommand::Code::move_towards_hero; move_towards_player
+      when RPG::MoveCommand::Code::move_away_from_hero; move_away_from_player
+      when RPG::MoveCommand::Code::move_forward; move_forward
+      when RPG::MoveCommand::Code::face_up; turn_up
+      when RPG::MoveCommand::Code::face_right; turn_right
+      when RPG::MoveCommand::Code::face_down; turn_down
+      when RPG::MoveCommand::Code::face_left; turn_left
+      when RPG::MoveCommand::Code::turn_90_degree_right; turn_90degrees_right
+      when RPG::MoveCommand::Code::turn_90_degree_left; turn_90degrees_left
+      when RPG::MoveCommand::Code::turn_180_degree; turn_1800degrees
+      when RPG::MoveCommand::Code::turn_90_degree_random; turn_90degrees_left_or_right
+      when RPG::MoveCommand::Code::face_random_direction; face_random_direction
+      when RPG::MoveCommand::Code::face_hero; face_towards_hero
+      when RPG::MoveCommand::Code::face_away_from_hero; face_away_from_hero
+      when RPG::MoveCommand::Code::wait; wait
+      when RPG::MoveCommand::Code::begin_jump; begin_jump
+      when RPG::MoveCommand::Code::end_jump; end_jump
+      when RPG::MoveCommand::Code::lock_facing; lock
+      when RPG::MoveCommand::Code::unlock_facing; unlock
+      when RPG::MoveCommand::Code::increase_movement_speed
+        @move_speed = [move_speed + 1, 6].min
+      when RPG::MoveCommand::Code::decrease_movement_speed
+        @move_speed = [move_speed - 1, 1].max
+      when RPG::MoveCommand::Code::increase_movement_frequence
+        @move_frequency = [move_frequency - 1, 1].min
+      when RPG::MoveCommand::Code::decrease_movement_frequence
+        @move_frequency = [move_frequency - 1, 1].max
+      when RPG::MoveCommand::Code::switch_on # Parameter A: Switch to turn on
+        Game_Switches[move_command.parameter_a] = true
+        Game_Map.needs_refresh = true
+      when RPG::MoveCommand::Code::switch_off # Parameter A: Switch to turn off
+        Game_Switches[move_command.parameter_a] = false
+        Game_Map.needs_refresh = true
+      when RPG::MoveCommand::Code::change_graphic # String: File, Parameter A: index
+        @character_name = move_command.parameter_string
+        @character_index = move_command.parameter_a
+      when RPG::MoveCommand::Code::play_sound_effect # String: File, Parameters: Volume, Tempo, Balance
+        if (move_command.parameter_string != "(OFF)")
+          Audio.se_play(move_command.parameter_string,
                         move_command.parameter_a, move_command.parameter_b)
-				end
+        end
       when RPG::MoveCommand::Code::walk_everywhere_on; @through = true
       when RPG::MoveCommand::Code::walk_everywhere_off; @through = false
-			when RPG::MoveCommand::Code::stop_animation; @walk_animation = false
-			when RPG::MoveCommand::Code::start_animation; @walk_animation = true
-			when RPG::MoveCommand::Code::increase_transp
-				self.opacity = [40, opacity - 45].max
-			when RPG::MoveCommand::Code::decrease_transp
-				self.opacity = opacity + 45
-			end
+      when RPG::MoveCommand::Code::stop_animation; @walk_animation = false
+      when RPG::MoveCommand::Code::start_animation; @walk_animation = true
+      when RPG::MoveCommand::Code::increase_transp
+        self.opacity = [40, opacity - 45].max
+      when RPG::MoveCommand::Code::decrease_transp
+        self.opacity = opacity + 45
+      end
 
-			move_route_index += 1 if @move_route.skippable || !@move_failed
-		end
+      move_route_index += 1 if @move_route.skippable || !@move_failed
+    end
   end
 
-	# Moves the character down.
+  # Moves the character down.
   def move_down
     turn_down if @turn_enabled
     @move_failed = !passable?(x, y, RPG::EventPage::Direction_down)
@@ -299,7 +299,7 @@ class Game_Character
     end
   end
 
-	# Moves the character left.
+  # Moves the character left.
   def move_left
     turn_left if @turn_enabled
     @move_failed = !passable?(x, y, RPG::EventPage::Direction_left)
@@ -308,7 +308,7 @@ class Game_Character
     end
   end
 
-	# Moves the character right.
+  # Moves the character right.
   def move_right
     turn_right if @turn_enabled
     @move_failed = !passable?(x, y, RPG::EventPage::Direction_right)
@@ -317,7 +317,7 @@ class Game_Character
     end
   end
 
-	# Moves the character up.
+  # Moves the character up.
   def move_up
     turn_up if @turn_enabled
     @move_failed = !passable?(x, y, RPG::EventPage::Direction_up)
@@ -326,8 +326,8 @@ class Game_Character
     end
   end
 
-	# Moves the character forward.
-	def move_forward
+  # Moves the character forward.
+  def move_forward
     case @direction
     when RPG::EventPage::Direction_down; move_down
     when RPG::EventPage::Direction_up; move_up
@@ -336,23 +336,23 @@ class Game_Character
     end
   end
 
-	# Moves the character diagonal (downleft), moves down if blocked.
-	def move_down_left # TODO
+  # Moves the character diagonal (downleft), moves down if blocked.
+  def move_down_left # TODO
   end
 
-	# Moves the character diagonal (downright), moves down if blocked.
-	def move_down_right # TODO
+  # Moves the character diagonal (downright), moves down if blocked.
+  def move_down_right # TODO
   end
 
-	# Moves the character diagonal (upleft), moves up if blocked.
-	def move_up_left # TODO
+  # Moves the character diagonal (upleft), moves up if blocked.
+  def move_up_left # TODO
   end
 
-	# Moves the character diagonal (downright), moves up if blocked.
+  # Moves the character diagonal (downright), moves up if blocked.
   def move_up_right # TODO
   end
 
-	# Does a random movement.
+  # Does a random movement.
   def move_random
     case rand % 4
     when 0; move_down
@@ -362,7 +362,7 @@ class Game_Character
     end
   end
 
-	# Does a move to the player hero.
+  # Does a move to the player hero.
   def move_towards_player
     sx, sy = distance_x_from_player, distance_y_from_player
 
@@ -377,7 +377,7 @@ class Game_Character
     end
   end
 
-	# Does a move away from the player hero.
+  # Does a move away from the player hero.
   def move_away_from_player
     sx, sy = distance_x_from_player, distance_y_from_player
     if sx != 0 || sy != 0
@@ -391,35 +391,35 @@ class Game_Character
     end
   end
 
-	# Turns the character down.
+  # Turns the character down.
   def turn_down
     return if direction_fix
     @direction = RPG::EventPage::Direction_down
     @stop_count = 0
   end
 
-	# Turns the character left.
+  # Turns the character left.
   def turn_left
     return if direction_fix
     @direction = RPG::EventPage::Direction_left
     @stop_count = 0
   end
 
-	# Turns the character right.
+  # Turns the character right.
   def turn_right
     return if direction_fix
     @direction = RPG::EventPage::Direction_right
     @stop_count = 0
   end
 
-	# Turns the character up.
+  # Turns the character up.
   def turn_up
     return if direction_fix
     @direction = RPG::EventPage::Direction_up
     @stop_count = 0
   end
 
-	# Turns the character 90 Degree to the left.
+  # Turns the character 90 Degree to the left.
   def turn_90degrees_left
     case @direction
     when RPG::EventPage::Direction_down; turn_left
@@ -429,7 +429,7 @@ class Game_Character
     end
   end
 
-	# Turns the character 90 Degree to the right.
+  # Turns the character 90 Degree to the right.
   def turn_90degrees_right
     case @direction
     when RPG::EventPage::Direction_down; turn_right
@@ -439,7 +439,7 @@ class Game_Character
     end
   end
 
-	# Turns the character by 180 degree
+  # Turns the character by 180 degree
   def turn_1800degrees
     case @direction
     when RPG::EventPage::Direction_down; turn_up
@@ -449,37 +449,37 @@ class Game_Character
     end
   end
 
-	# Turns the character 90 Degree to the left or right
-	# by using a random number.
+  # Turns the character 90 Degree to the left or right
+  # by using a random number.
   def turn_90degrees_left_or_right
     rand % 2 ? turn_90degrees_left : turn_90degrees_right
   end
 
-	# Character looks in a random direction
+  # Character looks in a random direction
   def face_random_direction # TODO
   end
 
-	# Character looks towards the hero.
+  # Character looks towards the hero.
   def face_towards_hero # TODO
   end
 
-	# Character looks away from the the hero.
+  # Character looks away from the the hero.
   def face_away_from_hero # TODO
   end
 
-	# Character waits.
-	def wait # TODO
+  # Character waits.
+  def wait # TODO
   end
 
-	# Jump action begins. Does nothing when EndJump-Command is missing.
+  # Jump action begins. Does nothing when EndJump-Command is missing.
   def begin_jump # TODO
   end
 
-	# Jump action ends.
-	def end_jump # TODO
+  # Jump action ends.
+  def end_jump # TODO
   end
 
-	# Locks character facing direction.
+  # Locks character facing direction.
   def lock
     if not @locked
       @prelock_direction = @direction
@@ -488,7 +488,7 @@ class Game_Character
     end
   end
 
-	# Unlocks character facing direction.
+  # Unlocks character facing direction.
   def unlock
     if @locked
       @locked = false
@@ -503,11 +503,11 @@ class Game_Character
     end
   end
 
-	# Forces a new, temporary, move route.
-	#
-	# @param new_route new move route.
-	# @param frequency frequency.
-	# @param owner the interpreter which set the route.
+  # Forces a new, temporary, move route.
+  #
+  # @param new_route new move route.
+  # @param frequency frequency.
+  # @param owner the interpreter which set the route.
   def force_move_route(new_route, freq, owner)
     if @original_move_route.nil?
       @original_move_route = move_route
@@ -524,10 +524,10 @@ class Game_Character
     @move_type_custom
   end
 
-	# Cancels a previous forced move route.
-	#
-	# @param route previous move route.
-	# @param owner the interpreter which set the route.
+  # Cancels a previous forced move route.
+  #
+  # @param route previous move route.
+  # @param owner the interpreter which set the route.
   def cancel_move_route(route, owner)
     return if (!@move_route_forcing ||
                @move_route_owner != owner ||
@@ -540,32 +540,32 @@ class Game_Character
     @original_move_route = nil
   end
 
-	# Tells the character to not report back to the owner.
-	# (Usually because the owner got deleted).
-	#
-	# @param owner the owner of the move route
-	#              if the owner is not the real owner
-	#              this function does nothing.
+  # Tells the character to not report back to the owner.
+  # (Usually because the owner got deleted).
+  #
+  # @param owner the owner of the move route
+  #              if the owner is not the real owner
+  #              this function does nothing.
   def detach_move_route_owner(owner)
     @move_route_owner = nil if owner == @move_route_owner
   end
 
-	# Gets screen x coordinate in pixels.
-	#
-	# @return screen x coordinate in pixels.
+  # Gets screen x coordinate in pixels.
+  #
+  # @return screen x coordinate in pixels.
   def screen_x; (@real_x - Game_Map.display_x + 3) / 8 + 8; end
 
-	# Gets screen y coordinate in pixels.
-	#
-	# @return screen y coordinate in pixels.
+  # Gets screen y coordinate in pixels.
+  #
+  # @return screen y coordinate in pixels.
   def screen_y
     (@real_y - Game_Map.display_y + 3) / 8 + 8
   end
 
-	# Gets screen z coordinate in pixels.
-	#
-	# @return screen z coordinate in pixels.
-	def screen_z(height = nil)
+  # Gets screen z coordinate in pixels.
+  #
+  # @return screen z coordinate in pixels.
+  def screen_z(height = nil)
     return 999 if @priority_type == RPG::EventPage::Layers_above
     (@real_y - Game_Map.display_y + 3) / 8 + 16
   end
@@ -597,32 +597,32 @@ class Game_Character
 
   def in_position?(x, y); @x == x and @y == y; end
 
-	# Sets opacity of the character.
-	#
-	# @param opacity New opacity (0 = Invisible, 255 = opaque)
-	def opacity=(v); @opacity = [0, [v, 255].min].max; end
+  # Sets opacity of the character.
+  #
+  # @param opacity New opacity (0 = Invisible, 255 = opaque)
+  def opacity=(v); @opacity = [0, [v, 255].min].max; end
 
-	# Used to pass Flash settings to the character sprite.
-	# After extracting IsFlashPending returns false.
-	#
-	# @param color Flash color is written here
-	# @param duration Flash duration is written here
+  # Used to pass Flash settings to the character sprite.
+  # After extracting IsFlashPending returns false.
+  #
+  # @param color Flash color is written here
+  # @param duration Flash duration is written here
   def flash_paramaters
     @flash_pending = false
     return @flash_color, @flash_duration
   end
 
-	# Sets the Flash effect settings.
-	# After calling this IsFlashPending returns true.
-	#
-	# @param color Flash color
-	# @param duration Flash duration
-	def set_flash(color, duration)
+  # Sets the Flash effect settings.
+  # After calling this IsFlashPending returns true.
+  #
+  # @param color Flash color
+  # @param duration Flash duration
+  def set_flash(color, duration)
     @flash_pending = true
     @flash_duration = duration
     @flash_color = color
 
-		# 0.0 flash
+    # 0.0 flash
     duration = DEFAULT_FPS if duration == 0
   end
 
@@ -638,40 +638,40 @@ class Game_Character
     @anime_count += 1.5 if @walk_animation
   end
 
-	def set_graphic(name, index)
+  def set_graphic(name, index)
     @character_name = name
     @character_index = index
   end
 
-  CharPlayer		= 10001
-  CharBoat		= 10002
-  CharShip		= 10003
-  CharAirship		= 10004
-  CharThisEvent	= 10005
+  CharPlayer    = 10001
+  CharBoat    = 10002
+  CharShip    = 10003
+  CharAirship    = 10004
+  CharThisEvent  = 10005
 
   def self.character(char, event)
     case(char)
     when CharPlayer
-			# Player/Hero
+      # Player/Hero
       return $game_player
-		when CharBoat
-			return Game_Map.vehicle(Game_Vehicle::Boat)
-		when CharShip
-			return Game_Map.vehicle(Game_Vehicle::Ship)
-		when CharAirship
-			return Game_Map.vehicle(Game_Vehicle::Airship)
-		when CharThisEvent
-			# This event
-			return Game_Map::events.empty? ? nil : Game_Map.events[event]
+    when CharBoat
+      return Game_Map.vehicle(Game_Vehicle::Boat)
+    when CharShip
+      return Game_Map.vehicle(Game_Vehicle::Ship)
+    when CharAirship
+      return Game_Map.vehicle(Game_Vehicle::Airship)
+    when CharThisEvent
+      # This event
+      return Game_Map::events.empty? ? nil : Game_Map.events[event]
     else
-			# Other events
-			return Game_Map.events.empty? ? nil : Game_Map.events[char]
+      # Other events
+      return Game_Map.events.empty? ? nil : Game_Map.events[char]
     end
   end
 
   def update_self_movement
     return if not (stop_count > 30 * (5 - move_frequency))
-		case move_type
+    case move_type
     when RPG::EventPage::MoveType_random; move_type_random
     when RPG::EventPage::MoveType_vertical; move_type_cycle_up_down
     when RPG::EventPage::MoveType_horizontal; move_type_cycle_left_right

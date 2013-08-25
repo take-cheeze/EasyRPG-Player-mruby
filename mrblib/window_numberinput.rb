@@ -16,13 +16,13 @@
 # Window Input Number Class.
 # The number input window.
 class Window_NumberInput < Window_Selectable
-	# Constructor.
-	#
-	# @param ix window x position.
-	# @param iy window y position.
-	# @param iwidth window width.
-	# @param iheight window height.
-	def initialize(x, y, w = 320, h = 80)
+  # Constructor.
+  #
+  # @param ix window x position.
+  # @param iy window y position.
+  # @param iwidth window width.
+  # @param iheight window height.
+  def initialize(x, y, w = 320, h = 80)
     super ix, iy, iw, ih
     @max_digits = 6
     @number = 0
@@ -38,8 +38,8 @@ class Window_NumberInput < Window_Selectable
     update_cursor_rect
   end
 
-	# Updates the Window's contents.
-	def refresh
+  # Updates the Window's contents.
+  def refresh
     contents.clear
     str = "%0#{@max_digits}" % @number
     for i in 0...@max_digits
@@ -49,33 +49,33 @@ class Window_NumberInput < Window_Selectable
 
   attr_reader :number, :max_digits
 
-	# Sets a new number value.
-	#
-	# @param val the new number value.
-	def number=(val)
+  # Sets a new number value.
+  #
+  # @param val the new number value.
+  def number=(val)
     max = 0...@max_digits.reduce(1) { |tmp,v| tmp * 10 } - 1
     @number = [0, [val, max].min].max
     @index = 0
     refresh
   end
 
-	# Sets the maximal displayed digits.
-	#
-	# @param v maximal displayed digits
-	#                    must be a value from 1-6.
-	def max_digits=(v)
+  # Sets the maximal displayed digits.
+  #
+  # @param v maximal displayed digits
+  #                    must be a value from 1-6.
+  def max_digits=(v)
     @max_digits = [1, [v, 6].min].max
     @index = 0
     refresh
   end
 
-	# Updates the position of the cursor rectangle.
-	def update_cursor_rect
+  # Updates the position of the cursor rectangle.
+  def update_cursor_rect
     @cursor_rect = Rect.new @index * (@cursor_width - 2) + 8, 0, @cursor_width, 16
   end
 
-	# Updates number value according to user input.
-	def update
+  # Updates number value according to user input.
+  def update
     super
 
     return if not active

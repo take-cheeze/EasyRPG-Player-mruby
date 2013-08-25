@@ -20,9 +20,9 @@ class Picture
     transition 0
   end
 
-	waver_speed = 10
+  waver_speed = 10
 
-	def show(name)
+  def show(name)
     @data.name = name
     @data.time_left = 0
 
@@ -42,7 +42,7 @@ class Picture
     @sprite = nil
   end
 
-	def use_transparent(flag) @data.transparency = flag end
+  def use_transparent(flag) @data.transparency = flag end
   def scrolls(flag) @data.picture_scrolls = flag end
   def move(x, y) @data.finish_x, @data.finish_y = x, y end
   def color(r, g, b, s)
@@ -64,7 +64,7 @@ class Picture
     @data.effect_mode = NoEffect
   end
 
-	def transition(tenths)
+  def transition(tenths)
     @data.time_left = tenths * DEFAULT_FPS / 10
     if tenths == 0
       @data.current_x = @data.finish_x
@@ -83,7 +83,7 @@ class Picture
 
   def interpolate(x0, x1) (x0 * (d - 1) + x1) / @data.time_left end
 
-	def update
+  def update
     return if @data.name.empty?
 
     # update effect
@@ -107,7 +107,7 @@ class Picture
     update_sprite
   end
 
-	def update_sprite
+  def update_sprite
     return if @sprite.nil?
     return if @data.name.empty?
 

@@ -16,7 +16,7 @@
 # Scene ActorTarget class.
 # Manages using of Items and Spells.
 class Scene_ActorTarget < Scene
-	# Constructor.
+  # Constructor.
   def initialize(id, index, skill = nil)
     super "ActorTarget"
     @id = id
@@ -68,11 +68,11 @@ class Scene_ActorTarget < Scene
     @use_item ? update_item : update_skill
   end
 
-	# Update function used when an item will be used.
+  # Update function used when an item will be used.
   def update_item
   end
 
-	# Update function used when a skill will be used.
-	def update_skill
+  # Update function used when a skill will be used.
+  def update_skill
   end
 end

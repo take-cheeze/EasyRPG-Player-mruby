@@ -17,7 +17,7 @@
 # Displays the left hand information window in the status
 # scene.
 class Window_ActorInfo < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih, actor_id)
     super ix, iy, iw, ih
     @actor_id = actor_id
@@ -25,13 +25,13 @@ class Window_ActorInfo < Window_Base
     refresh
   end
 
-	# Renders the stats on the window.
-	def refresh
+  # Renders the stats on the window.
+  def refresh
     contents.clear
     draw_info
   end
 
-	# Draws the actor face and information
+  # Draws the actor face and information
   def draw_info
     # Draw Row formation.
     battle_row = Game_Actors.actor(@actor_id).battle_row == 1 ? "Back" : "Front"

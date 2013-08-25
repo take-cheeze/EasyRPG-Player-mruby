@@ -16,29 +16,29 @@
 module Game_Party end
 
 class << Game_Party
-	# Initializes Game_Party.
+  # Initializes Game_Party.
   def init
     @data = $game_data.inventory
     @data.setup
   end
 
-	# Setups initial party.
-	# void SetupStartingMembers()
+  # Setups initial party.
+  # void SetupStartingMembers()
 
-	# Setups battle test party.
-	# void SetupBattleTestMembers()
+  # Setups battle test party.
+  # void SetupBattleTestMembers()
 
-	# Refreshes party members.
-	# void Refresh()
+  # Refreshes party members.
+  # void Refresh()
 
-	# Gets maximum level.
-	#
-	# @return max party level.
-	# int MaxLevel()
+  # Gets maximum level.
+  #
+  # @return max party level.
+  # int MaxLevel()
 
-	# Adds an actor to the party.
-	#
-	# @param actor_id database actor ID.
+  # Adds an actor to the party.
+  #
+  # @param actor_id database actor ID.
   def add_actor(actor_id)
     return if actor_in_party? actor_id
     return if @data.party.length >= 4
@@ -46,9 +46,9 @@ class << Game_Party
     $game_player.refresh
   end
 
-	# Removes an actor from the party.
-	#
-	# @param actor_id database actor ID.
+  # Removes an actor from the party.
+  #
+  # @param actor_id database actor ID.
   def remove_actor(actor_id)
     return if not actor_in_party? actor_id
 
@@ -56,43 +56,43 @@ class << Game_Party
     $game_player.refresh
   end
 
-	# Gets if an actor is in party.
-	#
-	# @param actor_id database actor ID.
-	# @return whether the actor is in party.
+  # Gets if an actor is in party.
+  #
+  # @param actor_id database actor ID.
+  # @return whether the actor is in party.
   def actor_in_party?(actor_id) not @data.find(actor_id).nil? end
 
-	# Gains gold.
-	#
-	# @param value gained gold.
+  # Gains gold.
+  #
+  # @param value gained gold.
   def gain_gold(value)
     @data.gold += value
     @data.gold = [0, [@data.gold, 999999].min].max
   end
 
-	# Loses gold.
-	#
-	# @param value lost gold.
+  # Loses gold.
+  #
+  # @param value lost gold.
   def lose_gold(value)
     @data.gold -= value
     @data.gold = [0, [@data.gold, 999999].min].max
   end
 
-	# Increases steps in 1.
-	# void IncreaseSteps()
+  # Increases steps in 1.
+  # void IncreaseSteps()
 
-	# Returns all items of the party.
-	#
-	# @param item_list vector to fill.
+  # Returns all items of the party.
+  #
+  # @param item_list vector to fill.
   def items; @data.item_ids.dup;  end
 
-	# Gets number of possessed or equipped items.
-	#
-	# @param item_id database item ID.
-	# @param get_equipped if true this returns the number
-	#                     of equipped items.
-	# @return number of items.
-	def item_number(item_id, get_equipped = false)
+  # Gets number of possessed or equipped items.
+  #
+  # @param item_id database item ID.
+  # @param get_equipped if true this returns the number
+  #                     of equipped items.
+  # @return number of items.
+  def item_number(item_id, get_equipped = false)
     if (get_equipped && item_id != 0)
       number = 0
       @data.party.each { |v|
@@ -111,10 +111,10 @@ class << Game_Party
     0
   end
 
-	# Gains an amount of items.
-	#
-	# @param item_id database item ID.
-	# @param amount gained quantity.
+  # Gains an amount of items.
+  #
+  # @param item_id database item ID.
+  # @param amount gained quantity.
   def gain_item(item_id, amount)
     if item_id < 1 || item_id > Data.items.length
       Output.warning('can\'t add item to party (%04d is not a valid item ID)' % item_id)
@@ -140,23 +140,23 @@ class << Game_Party
     end
   end
 
-	# Loses an amount of items.
-	#
-	# @param item_id database item ID.
-	# @param amount lost quantity.
-	def lose_item(item_id, amount) gain_item item_id, -amount end
+  # Loses an amount of items.
+  #
+  # @param item_id database item ID.
+  # @param amount lost quantity.
+  def lose_item(item_id, amount) gain_item item_id, -amount end
 
-	# Gets if item can be used.
-	#
-	# @param item_id database item ID.
-	# @return whether the item can be used.
+  # Gets if item can be used.
+  #
+  # @param item_id database item ID.
+  # @return whether the item can be used.
   def item_usable?(item_id)
     if item_id > 0 && item_id <= Data.items.length
       # TODO: if (Game_Temp::IsInBattle())
       # if (Data.items[item_id - 1].type == RPG::Item::Type_medicine)
-      # 	return !Data.items[item_id - 1].ocassion_field
+      #   return !Data.items[item_id - 1].ocassion_field
       # elsif (Data.items[item_id - 1].type == RPG::Item::Type_switch)
-      # 	return Data.items[item_id - 1].ocassion_battle
+      #   return Data.items[item_id - 1].ocassion_battle
       # else
       if (not @data.party.empty? &&
           (Data.items[item_id].type == RPG::Item::Type_medicine ||
@@ -171,67 +171,67 @@ class << Game_Party
     false
   end
 
-	# Clears all actors in party actions.
-	# void ClearActions()
+  # Clears all actors in party actions.
+  # void ClearActions()
 
-	# Determines if a command can be input.
-	#
-	# @return whether a command can be input.
-	# bool IsInputable()
+  # Determines if a command can be input.
+  #
+  # @return whether a command can be input.
+  # bool IsInputable()
 
-	# Determines if everyone is dead.
-	#
-	# @return whether all are dead.
-	# bool AreAllDdead()
+  # Determines if everyone is dead.
+  #
+  # @return whether all are dead.
+  # bool AreAllDdead()
 
-	# Checks slip damage.
-	# void CheckMapSlipDamage()
+  # Checks slip damage.
+  # void CheckMapSlipDamage()
 
-	# Random selection of target actor.
-	#
-	# @//param hp0 : only targets actors with 0 HP.
-	# @//return target actor.
-	# Game_Actor* RandomTargetActor(bool hp0 = false)
+  # Random selection of target actor.
+  #
+  # @//param hp0 : only targets actors with 0 HP.
+  # @//return target actor.
+  # Game_Actor* RandomTargetActor(bool hp0 = false)
 
-	# Smooth selection of target actor.
-	#
-	# @//param actor_index : actor index in party.
-	# @//return target actor.
-	# Game_Actor* SmoothTargetActor(int actor_index)
+  # Smooth selection of target actor.
+  #
+  # @//param actor_index : actor index in party.
+  # @//return target actor.
+  # Game_Actor* SmoothTargetActor(int actor_index)
 
-	# Gets gold possessed.
-	#
-	# @return gold possessed.
-	def gold; @data.gold; end
+  # Gets gold possessed.
+  #
+  # @return gold possessed.
+  def gold; @data.gold; end
 
-	# Gets steps walked.
-	#
-	# @return steps walked.
+  # Gets steps walked.
+  #
+  # @return steps walked.
   def steps; @data.steps; end
 
-	# Gets actors in party list.
-	#
-	# @return actors in party list.
+  # Gets actors in party list.
+  #
+  # @return actors in party list.
   def actors; @data.party.map { |v| Game_Actors.actor v }; end
 
-	# Gets number of battles.
-	#
-	# @return number of battles.
+  # Gets number of battles.
+  #
+  # @return number of battles.
   def battle_count; @data.battles; end
 
-	# Gets number of battles wins.
-	#
-	# @return number of battles wins.
+  # Gets number of battles wins.
+  #
+  # @return number of battles wins.
   def win_count; @data.victories; end
 
-	# Gets number of battles defeats.
-	#
-	# @return number of battles defeats.
+  # Gets number of battles defeats.
+  #
+  # @return number of battles defeats.
   def defeat_count; @data.defeats; end
 
-	# Gets number of battles escapes.
-	#
-	# @return number of battles escapes.
+  # Gets number of battles escapes.
+  #
+  # @return number of battles escapes.
   def run_count; @data.escapes end
 
   Timer1 = 0
@@ -281,7 +281,7 @@ class << Game_Party
     end
   end
 
-	def read_timer(which)
+  def read_timer(which)
     case which
     when Timer1; return @data.timer1_secs
     when Timer2; return @data.timer2_secs

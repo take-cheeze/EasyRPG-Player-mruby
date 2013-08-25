@@ -16,13 +16,13 @@
 # Window_Equip class.
 # Displays currently equipped items.
 class Window_Equip < Window_Selectable
-	# Constructor.
-	#
-	# @param x window x position.
-	# @param y window y position.
-	# @param w window width.
-	# @param h window height.
-	# @param actor_id actor whose inventory is displayed.
+  # Constructor.
+  #
+  # @param x window x position.
+  # @param y window y position.
+  # @param w window width.
+  # @param h window height.
+  # @param actor_id actor whose inventory is displayed.
   def initialize(ix, iy, iw, ih, actor_id)
     super ix, iy, iw, ih
     @actor_id = actor_id
@@ -32,7 +32,7 @@ class Window_Equip < Window_Selectable
     refresh
   end
 
-	# Refreshes.
+  # Refreshes.
   def refresh
     contents.clear
 
@@ -50,11 +50,11 @@ class Window_Equip < Window_Selectable
     end
   end
 
-	# Returns the item ID of the selected item.
-	#
-	# @return item ID.
+  # Returns the item ID of the selected item.
+  #
+  # @return item ID.
   def item_id; @index < 0 ? 0 : @data[@index]; end
 
-	# Updates the help text.
+  # Updates the help text.
   def update_help; @help_window.text = item_id == 0 ? '' : Data.items[item_id].description; end
 end

@@ -16,9 +16,9 @@
 # Scene Status class.
 # Displays status information about a party member.
 class Scene_Status < Scene
-	# Constructor.
-	#
-	# @param actor_index party index of the actor.
+  # Constructor.
+  #
+  # @param actor_index party index of the actor.
   def initialize(actor_index)
     super "Status"
     @actor_index = actor_index

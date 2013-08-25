@@ -17,7 +17,7 @@
 # Displays the right hand information window in the status
 # scene (HP, MP, EXP).
 class Window_ActorStatus < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih, actor_id)
     super ix, iy, iw, ih
     @actor_id = actor_id
@@ -25,14 +25,14 @@ class Window_ActorStatus < Window_Base
     refresh
   end
 
-	# Renders the stats on the window.
-	def refresh
+  # Renders the stats on the window.
+  def refresh
     contents.clear
     draw_status
   end
 
-	# Draws the actor status
-	def draw_status
+  # Draws the actor status
+  def draw_status
     actor = Game_Actors.actor @actor_id
 
     # Draw Hp
@@ -48,8 +48,8 @@ class Window_ActorStatus < Window_Base
     draw_min_max(100,33, -1, -1)
   end
 
-	# Draws min and max separated by a "/" in cx, cy
-	def draw_min_max(cx, cy, min, max)
+  # Draws min and max separated by a "/" in cx, cy
+  def draw_min_max(cx, cy, min, max)
     if max >= 0; v = min.to_s
     else; v = Game_Actors.actor(@actor_id).exp_string
     end

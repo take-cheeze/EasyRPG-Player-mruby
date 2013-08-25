@@ -15,8 +15,8 @@
 
 # Scene Title class.
 class Scene_Title < Scene
-	# Constructor.
-	def initialize
+  # Constructor.
+  def initialize
     super 'Title'
 
     @command_window = nil
@@ -25,7 +25,7 @@ class Scene_Title < Scene
     @init = false
   end
 
-	def start
+  def start
     load_database
 
     version = Data.system.version
@@ -50,7 +50,7 @@ class Scene_Title < Scene
     create_command_window
   end
 
-	def continue
+  def continue
     # Clear the cache when the game returns to title screen
     # e.g. by pressing F12
     Cache.clear
@@ -58,28 +58,28 @@ class Scene_Title < Scene
     start
   end
 
-	def transition_in
+  def transition_in
     if !Player.battle_test_flag
       Graphics.transition_2k Graphics::TransitionErase, 1, true
       Graphics.transition_2k Graphics::TransitionFadeIn, 32
     end
   end
 
-	def transition_out
+  def transition_out
     if !Player.battle_test_flag
       Graphics.transition_2k Graphics::TransitionFadeOut, 12, true
     end
   end
 
-	def suspend
+  def suspend
     @command_window.visible = false
   end
 
-	def resume
+  def resume
     @command_window.visible = true
   end
 
-	def update
+  def update
     if Player.battle_test_flag
       prepare_battle_test
       return
@@ -99,9 +99,9 @@ class Scene_Title < Scene
   DATABASE_NAME = "RPG_RT.ldb"
   TREEMAP_NAME = "RPG_RT.lmt"
 
-	# Loads all databases.
-	def load_database
-	# Load Database
+  # Loads all databases.
+  def load_database
+  # Load Database
     Data.clear
 
     if ! FileFinder.rpg2k_project? FileFinder.project_tree
@@ -112,8 +112,8 @@ class Scene_Title < Scene
     Data.load_lmt FileFinder.find_default(TREEMAP_NAME)
   end
 
-	# Initializes all game classes.
-	def create_game_objects
+  # Initializes all game classes.
+  def create_game_objects
     Game_Temp.init
     $game_screen = Game_Screen.new
     Game_Actors.init
@@ -123,9 +123,9 @@ class Scene_Title < Scene
     $game_player = Game_Player.new
   end
 
-	# Checks if there are any savegames for the game.
-	#
-	# @return true if there are any, false otherwise.
+  # Checks if there are any savegames for the game.
+  #
+  # @return true if there are any, false otherwise.
   def check_continue
     for i in 1..15
       return true if not FileFinder.find_default('Save%02d.lsd' % i).nil?
@@ -133,8 +133,8 @@ class Scene_Title < Scene
     false
   end
 
-	# Creates the background graphic of the scene.
-	def create_title_graphic
+  # Creates the background graphic of the scene.
+  def create_title_graphic
     # Load Title Graphic
     if !@title # No need to recreate Title on Resume
       @title = Sprite.new
@@ -142,8 +142,8 @@ class Scene_Title < Scene
     end
   end
 
-	# Creates the Window displaying the options.
-	def create_command_window
+  # Creates the Window displaying the options.
+  def create_command_window
     # Create Options Window
     options = [Data.terms.new_game, Data.terms.load_game, Data.terms.exit_game]
     @command_window = Window_Command.new options
@@ -161,16 +161,16 @@ class Scene_Title < Scene
     @command_window.visible = false
   end
 
-	# Plays the title music.
-	def play_title_music; Game_System.bgm_play Data.system.title_music; end
+  # Plays the title music.
+  def play_title_music; Game_System.bgm_play Data.system.title_music; end
 
-	# Checks if there is a player start location.
-	#
-	# @return true if there is one, false otherwise.
-	def check_valid_player_location; Data.treemap.start.party_map_id != 0; end
+  # Checks if there is a player start location.
+  #
+  # @return true if there is one, false otherwise.
+  def check_valid_player_location; Data.treemap.start.party_map_id != 0; end
 
-	# Initializes a battle test session.
-	def prepare_battle_test
+  # Initializes a battle test session.
+  def prepare_battle_test
     create_game_objects
     # Game_Party.setup_battle_test_members
     # Game_Troop.can_escape = true
@@ -179,9 +179,9 @@ class Scene_Title < Scene
     Scene.push Scene_Battle, true
   end
 
-	# Option New Game.
-	# Starts a new game.
-	def command_new_game
+  # Option New Game.
+  # Starts a new game.
+  def command_new_game
     if !check_valid_player_location
       Output.warning "The game has no start location set."
     else
@@ -197,9 +197,9 @@ class Scene_Title < Scene
     end
   end
 
-	# Option Continue.
-	# Shows the Load-Screen (Scene_Load).
-	def command_continue
+  # Option Continue.
+  # Shows the Load-Screen (Scene_Load).
+  def command_continue
     if @continue_enabled
       Game_System.se_play $game_data.system.decision_se
     else
@@ -211,9 +211,9 @@ class Scene_Title < Scene
     Scene.push Scene_Load.new
   end
 
-	# Option Shutdown.
-	# Does a player shutdown.
-	def command_shutdown
+  # Option Shutdown.
+  # Does a player shutdown.
+  def command_shutdown
     Game_System.se_play $game_data.system.decision_se
     Audio.bgs_fade(800)
     Scene.pop

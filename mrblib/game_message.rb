@@ -18,7 +18,7 @@ module Game_Message end
 class << Game_Message
   MAX_LINE = 4
 
-	def init
+  def init
     @background = true
     @position = 2
     @text = []
@@ -26,7 +26,7 @@ class << Game_Message
     full_clear
   end
 
-	# Used by Window_Message to reset some flags.
+  # Used by Window_Message to reset some flags.
   def semi_clear
     @texts.clear
     @choice_disabled = Array.new 8, false
@@ -38,7 +38,7 @@ class << Game_Message
     @num_input_digits_max = 0
   end
 
-	# Used by the Game_Interpreter to completly reset all flags.
+  # Used by the Game_Interpreter to completly reset all flags.
   def full_clear
     semi_clear
 
@@ -50,7 +50,7 @@ class << Game_Message
     # @dont_halt = false
   end
 
-	def busy; not @texts.empty? end
+  def busy; not @texts.empty? end
 
   attr_reader(:texts, :face_name, :face_index, :face_flipped,
               :face_left_position, :background, :choice_max,
@@ -58,19 +58,19 @@ class << Game_Message
               :num_input_digits_max, :position, :fixed_position,
               :dont_halt, :message_waiting, :visible, :choice_result)
 
-	# Number of lines before the start
-	# of selection options.
-	# +-----------------------------------+
-	# |	Hi, hero, What's your name?		|
-	# |- Alex								|
-	# |- Brian							|
-	# |- Carol							|
-	# +-----------------------------------+
-	# In this case, choice_start would be 1.
-	# Same with num_input_start.
+  # Number of lines before the start
+  # of selection options.
+  # +-----------------------------------+
+  # |  Hi, hero, What's your name?    |
+  # |- Alex                |
+  # |- Brian              |
+  # |- Carol              |
+  # +-----------------------------------+
+  # In this case, choice_start would be 1.
+  # Same with num_input_start.
   attr_accessor :choice_start, :num_input_start
 
-	# Disabled choices:
-	# choice_disabled is true if choice is disabled (zero-based).
+  # Disabled choices:
+  # choice_disabled is true if choice is disabled (zero-based).
   attr_reader :choice_disabled
 end

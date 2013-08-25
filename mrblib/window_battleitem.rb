@@ -16,7 +16,7 @@
 # Window BattleItem class.
 # Displays all items of the party for use in battle.
 class Window_BattleItem < Window_Item
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @actor_id = 0
@@ -24,10 +24,10 @@ class Window_BattleItem < Window_Item
 
   attr_writer :index
 
-	# Checks if item should be enabled.
-	#
-	# @param item_id item to check.
-	def check_enable(item_id)
+  # Checks if item should be enabled.
+  #
+  # @param item_id item to check.
+  def check_enable(item_id)
     item = Data.items[item_id]
 
     case item.type
@@ -35,15 +35,15 @@ class Window_BattleItem < Window_Item
     when RPG::Item::Type_weapon, RPG::Item::Type_shield, RPG::Item::Type_armor, RPG::Item::Type_helmet, RPG::Item::Type_accessory
       return item.use_skill && can_use_item?(item) && can_use_skill?(item.skill_id)
     when RPG::Item::Type_medicine
-			return can_use_item?(item) && !item.occasion_field1 && (!item.ko_only || Game_Battle.have_corpse)
-		when RPG::Item::Type_book, RPG::Item::Type_material; return false
-		when RPG::Item::Type_special; return can_use_item?(item) && can_use_skill?(item.skill_id)
-		when RPG::Item::Type_switch; return item.occasion_battle
+      return can_use_item?(item) && !item.occasion_field1 && (!item.ko_only || Game_Battle.have_corpse)
+    when RPG::Item::Type_book, RPG::Item::Type_material; return false
+    when RPG::Item::Type_special; return can_use_item?(item) && can_use_skill?(item.skill_id)
+    when RPG::Item::Type_switch; return item.occasion_battle
     else; return false
     end
   end
 
-	def can_use_item?(item)
+  def can_use_item?(item)
     return false if @actor_id <= 0
     return true if actor_id >= item.actor_set.length || item.actor_set[@actor_id]
     return false if Player.rpg2k?
@@ -53,7 +53,7 @@ class Window_BattleItem < Window_Item
     false
   end
 
-	def can_use_skill?(skill_id)
+  def can_use_skill?(skill_id)
     skill = Data.skills[skill_id]
     skill.type != RPG::Skill::Type_switch or skill.occasion_battle
   end

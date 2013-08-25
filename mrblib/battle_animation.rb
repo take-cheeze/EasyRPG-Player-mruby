@@ -15,7 +15,7 @@
 
 
 class BattleAnimation < Sprite
-	def initialize(x, y, animation)
+  def initialize(x, y, animation)
     self.x, self.y = x, y
     @animation = animation
     @frame = 0

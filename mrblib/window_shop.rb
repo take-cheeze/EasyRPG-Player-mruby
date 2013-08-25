@@ -15,49 +15,49 @@
 
 # Window Shop Class.
 class Window_Shop < Window_Base
-	# Constructor.
-	def initialize(ix, iy, iw, ih)
+  # Constructor.
+  def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
 
     contents = Bitmap.new iw - 16, ih - 16
 
     case(Game_Temp.shop_type)
-		when 0
-			@greeting = Data.terms.shop_greeting1
-			@regreeting = Data.terms.shop_regreeting1
-			@buy_msg = Data.terms.shop_buy1
-			@sell_msg = Data.terms.shop_sell1
-			@leave_msg = Data.terms.shop_leave1
-			@buy_select = Data.terms.shop_buy_select1
-			@buy_number = Data.terms.shop_buy_number1
-			@purchased = Data.terms.shop_purchased1
-			@sell_select = Data.terms.shop_sell_select1
-			@sell_number = Data.terms.shop_sell_number1
-			@sold_msg = Data.terms.shop_sold1
-		when 1
-			@greeting = Data.terms.shop_greeting2
-			@regreeting = Data.terms.shop_regreeting2
-			@buy_msg = Data.terms.shop_buy2
-			@sell_msg = Data.terms.shop_sell2
-			@leave_msg = Data.terms.shop_leave2
-			@buy_select = Data.terms.shop_buy_select2
-			@buy_number = Data.terms.shop_buy_number2
-			@purchased = Data.terms.shop_purchased2
-			@sell_select = Data.terms.shop_sell_select2
-			@sell_number = Data.terms.shop_sell_number2
-			@sold_msg = Data.terms.shop_sold2
-		when 2
-			@greeting = Data.terms.shop_greeting3
-			@regreeting = Data.terms.shop_regreeting3
-			@buy_msg = Data.terms.shop_buy3
-			@sell_msg = Data.terms.shop_sell3
-			@leave_msg = Data.terms.shop_leave3
-			@buy_select = Data.terms.shop_buy_select3
-			@buy_number = Data.terms.shop_buy_number3
-			@purchased = Data.terms.shop_purchased3
-			@sell_select = Data.terms.shop_sell_select3
-			@sell_number = Data.terms.shop_sell_number3
-			@sold_msg = Data.terms.shop_sold3
+    when 0
+      @greeting = Data.terms.shop_greeting1
+      @regreeting = Data.terms.shop_regreeting1
+      @buy_msg = Data.terms.shop_buy1
+      @sell_msg = Data.terms.shop_sell1
+      @leave_msg = Data.terms.shop_leave1
+      @buy_select = Data.terms.shop_buy_select1
+      @buy_number = Data.terms.shop_buy_number1
+      @purchased = Data.terms.shop_purchased1
+      @sell_select = Data.terms.shop_sell_select1
+      @sell_number = Data.terms.shop_sell_number1
+      @sold_msg = Data.terms.shop_sold1
+    when 1
+      @greeting = Data.terms.shop_greeting2
+      @regreeting = Data.terms.shop_regreeting2
+      @buy_msg = Data.terms.shop_buy2
+      @sell_msg = Data.terms.shop_sell2
+      @leave_msg = Data.terms.shop_leave2
+      @buy_select = Data.terms.shop_buy_select2
+      @buy_number = Data.terms.shop_buy_number2
+      @purchased = Data.terms.shop_purchased2
+      @sell_select = Data.terms.shop_sell_select2
+      @sell_number = Data.terms.shop_sell_number2
+      @sold_msg = Data.terms.shop_sold2
+    when 2
+      @greeting = Data.terms.shop_greeting3
+      @regreeting = Data.terms.shop_regreeting3
+      @buy_msg = Data.terms.shop_buy3
+      @sell_msg = Data.terms.shop_sell3
+      @leave_msg = Data.terms.shop_leave3
+      @buy_select = Data.terms.shop_buy_select3
+      @buy_number = Data.terms.shop_buy_number3
+      @purchased = Data.terms.shop_purchased3
+      @sell_select = Data.terms.shop_sell_select3
+      @sell_number = Data.terms.shop_sell_number3
+      @sold_msg = Data.terms.shop_sold3
     end
 
     @mode = Scene_Shop::BuySellLeave
@@ -66,47 +66,47 @@ class Window_Shop < Window_Base
     refresh()
   end
 
-	# Renders the current shop on the window.
-	def refresh
+  # Renders the current shop on the window.
+  def refresh
     contents.clear
 
     case @mode
-		when Scene_Shop::BuySellLeave, Scene_Shop::BuySellLeave2
+    when Scene_Shop::BuySellLeave, Scene_Shop::BuySellLeave2
       idx = 0
 
-			contents.draw_text_2k(2, 4,
+      contents.draw_text_2k(2, 4,
                          @mode == Scene_Shop::BuySellLeave2 ? regreeting : greeting,
                          Font::ColorDefault)
-			idx += 1
+      idx += 1
 
       contents.draw_text_2k 12, 4 + idx * 16, buy_msg, Font::ColorDefault
-			buy_index = idx
+      buy_index = idx
       idx += 1
 
       contents.draw_text_2k 12, 4 + idx * 16, sell_msg, Font::ColorDefault
-			sell_index = idx
+      sell_index = idx
       idx += 1
 
       contents.draw_text_2k 12, 4 + idx * 16, leave_msg, Font::ColorDefault
-			leave_index = idx
+      leave_index = idx
       idx += 1
-		when Scene_Shop::Buy
-			contents.draw_text_2k 2, 2, buy_select, Font::ColorDefault
-		when Scene_Shop::BuyHowMany
-			contents.draw_text_2k 2, 2, buy_number, Font::ColorDefault
-		when Scene_Shop::Bought
-			contents.draw_text_2k 2, 2, purchased, Font::ColorDefault
-		when Scene_Shop::Sell
-			contents.draw_text_2k 2, 2, sell_select, Font::ColorDefault
-		when Scene_Shop::SellHowMany
-			contents.draw_text_2k 2, 2, sell_number, Font::ColorDefault
-		when Scene_Shop::Sold
-			contents.draw_text_2k 2, 2, sold_msg, Font::ColorDefault
+    when Scene_Shop::Buy
+      contents.draw_text_2k 2, 2, buy_select, Font::ColorDefault
+    when Scene_Shop::BuyHowMany
+      contents.draw_text_2k 2, 2, buy_number, Font::ColorDefault
+    when Scene_Shop::Bought
+      contents.draw_text_2k 2, 2, purchased, Font::ColorDefault
+    when Scene_Shop::Sell
+      contents.draw_text_2k 2, 2, sell_select, Font::ColorDefault
+    when Scene_Shop::SellHowMany
+      contents.draw_text_2k 2, 2, sell_number, Font::ColorDefault
+    when Scene_Shop::Sold
+      contents.draw_text_2k 2, 2, sold_msg, Font::ColorDefault
     end
   end
 
-	# Updates the window.
-	def update
+  # Updates the window.
+  def update
     super
 
     if active
@@ -149,7 +149,7 @@ class Window_Shop < Window_Base
 
   attr_accessor :choice
 
-	def update_cursor_rect
+  def update_cursor_rect
     case mode
     when Scene_Shop::BuySellLeave, Scene_Shop::BuySellLeave2
       rect = Rect.new 4, index * 16 + 2, contents.width - 8, 16

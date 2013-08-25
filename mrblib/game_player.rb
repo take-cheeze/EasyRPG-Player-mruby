@@ -61,7 +61,7 @@ class Game_Player < Game_Character
     move_to @new_x, @new_y
   end
 
-	def center(x, y)
+  def center(x, y)
     @center_x = (Graphics.screen_buffer.width / 2 - 16) * 8
     @center_y = (Graphics.screen_buffer.height / 2 - 8) * 8
 
@@ -82,10 +82,10 @@ class Game_Player < Game_Character
     if moving? && !Game_Map.interpreter.running?
       # move_route_forcing || Game_Temp::message_window_showing
       case Input.dir4
-			when 2; move_down
-			when 4; move_left
-			when 6; move_right
-			when 8; move_up
+      when 2; move_down
+      when 4; move_left
+      when 6; move_right
+      when 8; move_up
       end
     end
 
@@ -97,7 +97,7 @@ class Game_Player < Game_Character
     update_non_moving last_moving
   end
 
-	def refresh
+  def refresh
     if Game_Party.actors.empty?
       @character_name = ''
       return
@@ -107,7 +107,7 @@ class Game_Player < Game_Character
     @character_name, @character_index = actor.character_name, actor.character_index
   end
 
-	def check_event_trigger_touch(x, y)
+  def check_event_trigger_touch(x, y)
     return false if Game_Map.interpreter.running?
 
     result = false
@@ -253,13 +253,13 @@ class Game_Player < Game_Character
     @through = true if type == Game_Vehicle::Airship
     # TODO:
     # else
-    # 	ForceMoveForward()
+    #   ForceMoveForward()
     pwalking_bgm = Game_System.current_bgmm
     Game_Map.vehicle(type).get_on
     true
   end
 
-	def get_off_vehicle
+  def get_off_vehicle
     if in_airship?
       return false if not airship_land_ok(x, y)
     else

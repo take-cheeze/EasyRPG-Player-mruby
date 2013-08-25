@@ -15,7 +15,7 @@
 
 # Window_BattleCommand class.
 class Window_BattleCommand < Window_Base
-	# Constructor.
+  # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
 
@@ -33,8 +33,8 @@ class Window_BattleCommand < Window_Base
 
   attr_accessor :index
 
-	# Refreshes the window contents.
-	def refresh
+  # Refreshes the window contents.
+  def refresh
     return if (not contents)
 
     contents.clear
@@ -50,7 +50,7 @@ class Window_BattleCommand < Window_Base
     end
   end
 
-	# Updates the window state.
+  # Updates the window state.
   def update
     super
 
@@ -79,11 +79,11 @@ class Window_BattleCommand < Window_Base
     update_cursor_rect
   end
 
-	# Enables or disables a command.
-	#
-	# @param index command index.
-	# @param enabled whether the command is enabled.
-	def set_enabled(index, enabled)
+  # Enables or disables a command.
+  #
+  # @param index command index.
+  # @param enabled whether the command is enabled.
+  def set_enabled(index, enabled)
     @disabled[index] = enabled
     refresh
   end
@@ -108,7 +108,7 @@ class Window_BattleCommand < Window_Base
     refresh
   end
 
-	def active=(v)
+  def active=(v)
     @index = v ? 0 : -1
     @top_row = 0
     super active
@@ -147,7 +147,7 @@ class Window_BattleCommand < Window_Base
     idx
   end
 
-	def draw_item(index, color)
+  def draw_item(index, color)
     y = 16 * (@index - @top_row)
     return if y < 0 or y + 16 > contents.height
     contents.fill Rect.new(0, y, contents.width, 16), Color.new

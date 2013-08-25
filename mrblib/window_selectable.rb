@@ -15,7 +15,7 @@
 
 # Window Selectable class.
 class Window_Selectable < Window_Base
-	def initialize(ix, iy, iw, ih)
+  def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @item_max = 1
     @column_max = 1
@@ -23,9 +23,9 @@ class Window_Selectable < Window_Base
     @help_window = nil
   end
 
-	# Creates the contents based on how many items
-	# are currently in the window.
-	def create_contents
+  # Creates the contents based on how many items
+  # are currently in the window.
+  def create_contents
     self.contents = Bitmap.new width - 16, [h - 15, row_max * 16].max
   end
 
@@ -44,10 +44,10 @@ class Window_Selectable < Window_Base
   def page_row_max; (height - 16) / 16; end
   def page_item_max; page_row_max * @column_max; end
 
-	# Returns the Item Rect used for item drawing.
-	#
-	# @param index index of item.
-	# @return Rect where the item is drawn.
+  # Returns the Item Rect used for item drawing.
+  #
+  # @param index index of item.
+  # @return Rect where the item is drawn.
   def item_rect(idx)
     ret = Rect.new
     ret.width = contents.width / @column_max - 4
@@ -58,16 +58,16 @@ class Window_Selectable < Window_Base
     ret
   end
 
-	# Assigns a help window that displays a description
-	# about the selected item.
-	#
-	# @param v the help window.
+  # Assigns a help window that displays a description
+  # about the selected item.
+  #
+  # @param v the help window.
   def help_window=(v)
     @help_window = v
     update_help if active and not help_window.nil?
   end
 
-	def update_cursor_rect
+  def update_cursor_rect
     if @index.nil?
       self.cursor_rect = Rect.new
       return
@@ -93,7 +93,7 @@ class Window_Selectable < Window_Base
     self.cursor_rect = result
   end
 
-	def update
+  def update
     if (active && @item_max > 0 && @index >= 0)
       if (Input.repeat?(Input::DOWN))
         if ((@column_max == 1 && Input.trigger?(Input::DOWN)) || @index < @item_max - @column_max)
@@ -126,5 +126,5 @@ class Window_Selectable < Window_Base
     update_cursor_rect()
   end
 
-	def update_help; end
+  def update_help; end
 end
