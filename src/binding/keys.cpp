@@ -25,5 +25,10 @@ void EasyRPG::register_keys(mrb_state* M) {
 	define_key(F7);
 	define_key(F8);
 	define_key(F9);
+	define_key(DEBUG_MENU);
+	define_key(DEBUG_THROUGH);
+	define_key(TOGGLE_FPS);
+	define_key(TAKE_SCREENSHOT);
+	define_key(LOG_VIEWER);
 #undef define_key
 }
