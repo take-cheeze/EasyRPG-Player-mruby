@@ -33,6 +33,10 @@ mrb_value repeated(mrb_state* M, mrb_value const self) {
 	return mrb_bool_value(Input(M).IsRepeated(Input_::Button(from_sym(M, self))));
 }
 
+mrb_value pressed(mrb_state* M, mrb_value const self) {
+	return mrb_bool_value(Input(M).IsPressed(Input_::Button(from_sym(M, self))));
+}
+
 mrb_value dir4(mrb_state* M, mrb_value) {
 	return mrb_fixnum_value(Input(M).dir4);
 }
@@ -45,6 +49,7 @@ mrb_value dir8(mrb_state* M, mrb_value) {
 void EasyRPG::register_input(mrb_state* M) {
 	static method_info const methods[] = {
 		{ "update", &update, MRB_ARGS_NONE() },
+		{ "press?", &pressed, MRB_ARGS_REQ(1) },
 		{ "trigger?", &triggered, MRB_ARGS_REQ(1) },
 		{ "repeat?", &repeated, MRB_ARGS_REQ(1) },
 		{ "dir4", &dir4, MRB_ARGS_NONE() },
