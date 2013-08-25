@@ -22,8 +22,8 @@ class Window_Keyboard < Window_Base
 	# @param iy window y position.
 	# @param iwidth window width.
 	# @param iheight window height.
-  def initialize(x, y, w = 320, h = 80)
-    super x, y, w, h
+  def initialize(ix, iy, iw = 320, ih = 80)
+    super ix, iy, iw, ih
 
     @mode = Letter
     @play_cursor = false
@@ -31,7 +31,7 @@ class Window_Keyboard < Window_Base
     @row_spacing = 16
     @col_spacing = (contents.width - 2 * border_x) / col_max
 
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
     self.z = 9999
 
     refresh

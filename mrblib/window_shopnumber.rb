@@ -24,14 +24,14 @@ class Window_ShopNumber < Window_Base
 	# @param y window y position.
 	# @param w window width.
 	# @param h window height.
-	def initialize(x, y, w, h)
-    super x, y, w, h
+	def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @item_max = 1
     @price = 0
     @number = 1
     @item_id = 0
 
-    contents = Bitmap.new w - 16, h - 16
+    contents = Bitmap.new iw - 16, ih - 16
   end
 
 	# Updates the Windows contents.

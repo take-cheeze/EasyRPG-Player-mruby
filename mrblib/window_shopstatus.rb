@@ -17,11 +17,11 @@
 # Displays possessed and equipped items.
 class Window_ShopStatus < Window_Base
 	# Constructor.
-  def initialize(x, y, w, h)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @item_id = 0
 
-    contents = Bitmap.new w - 16, h - 16
+    contents = Bitmap.new iw - 16, ih - 16
 
     refresh
   end

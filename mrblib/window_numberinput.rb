@@ -23,11 +23,11 @@ class Window_NumberInput < Window_Selectable
 	# @param iwidth window width.
 	# @param iheight window height.
 	def initialize(x, y, w = 320, h = 80)
-    super x, y, w, h
+    super ix, iy, iw, ih
     @max_digits = 6
     @number = 0
 
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
     @cursor_width = 14
     self.z = 10001
     @opacity = 0

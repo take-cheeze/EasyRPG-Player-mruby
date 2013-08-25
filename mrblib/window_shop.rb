@@ -16,10 +16,10 @@
 # Window Shop Class.
 class Window_Shop < Window_Base
 	# Constructor.
-	def initialize(x, y, w, h)
-    super x, y, w, h
+	def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
 
-    contents = Bitmap.new w - 16, h - 16
+    contents = Bitmap.new iw - 16, ih - 16
 
     case(Game_Temp.shop_type)
 		when 0

@@ -16,10 +16,10 @@
 # Window_BattleCommand class.
 class Window_BattleCommand < Window_Base
 	# Constructor.
-  def initialize(x, y, w, h)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
 
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
     self.actor = 0
 
     @disabled = Array.new @commands.length

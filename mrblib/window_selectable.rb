@@ -15,8 +15,8 @@
 
 # Window Selectable class.
 class Window_Selectable < Window_Base
-	def initialize(x, y, w, h)
-    super x, y, w, h
+	def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @item_max = 1
     @column_max = 1
     @index = nil
@@ -68,30 +68,29 @@ class Window_Selectable < Window_Base
   end
 
 	def update_cursor_rect
-    cursor_width = 0
-    x = 0
     if @index.nil?
-      self.cursor_rect rect
+      self.cursor_rect = Rect.new
       return
     end
 
+    result = Rect.new 0, @index / @column_max * 16 - oy, 0, 16
     row = @index / @column_max
+
     if row < top_row
-      slef.top_row = row
+      self.top_row = row
     elsif row > top_row + (page_row_max - 1)
       self.top_row = row - (page_row_max - 1)
     end
 
     if @column_max > 1
-      cursor_width = (width / @column_max - 16) + 12
-      x = (index % @column_max * cursor_width) - 4
+      result.width = (width / @column_max - 16) + 12
+      result.x = (index % @column_max * result.width) - 4
     else
-      cursor_width = (width / @column_max - 16) + 8
-      x = (index % @column_max * (cursor_width + 16)) - 4
+      result.width = (width / @column_max - 16) + 8
+      result.x = (index % @column_max * (result.width + 16)) - 4
     end
 
-    y = @index / @column_max * 16 - oy
-    self.cursor_rect = Rect.new x, y, cursor_width, 16
+    self.cursor_rect = result
   end
 
 	def update

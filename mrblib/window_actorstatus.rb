@@ -18,10 +18,10 @@
 # scene (HP, MP, EXP).
 class Window_ActorStatus < Window_Base
 	# Constructor.
-  def initialize(x, y, w, h, actor_id)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih, actor_id)
+    super ix, iy, iw, ih
     @actor_id = actor_id
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 

@@ -17,11 +17,11 @@
 # Shows skill and item explanations.
 class Window_Help < Window_Base
 	# Constructor.
-  def initialize(x, y, w, h)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @align = Text::AlignLeft
     @text = ''
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
   end
 
 	# Sets the text that will be shown.

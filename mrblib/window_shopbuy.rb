@@ -18,7 +18,7 @@
 class Window_ShopBuy < Window_Selectable
 	# Constructor.
 	def initialize(x, y, w = 320, h = 80)
-    super x, y, w, h
+    super ix, iy, iw, ih
     @index = 0
   end
 

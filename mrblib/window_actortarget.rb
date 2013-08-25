@@ -16,9 +16,9 @@
 # Window_ActorTarget class.
 class Window_ActorTarget < Window_Selectable
 	# Constructor.
-  def initialize(x, y, w, h)
-    super x, y, w, h
-    self.contents = Bitmap.new w - 16, h - 16
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
+    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 
@@ -27,16 +27,16 @@ class Window_ActorTarget < Window_Selectable
 
     # DisplayUi.backcolor = Cache().system_info.bg_color
 
-    y = 0
-    Game_Party.actors.each_with_index { |v,i|
-      draw_actor_face v, 0, i * 48 + y
-      draw_actor_name v, 48 + 8, i * 48 + 2 + y
-      draw_actor_level v, 48 + 8, i * 48 + 2 + 16 + y
-      draw_actor_state v, 48 + 8, i * 48 + 2 + 16 + 16 + y
-      draw_actor_hp v, 48 + 8 + 58, i * 48 + 2 + 16 + y
-      draw_actor_sp v, 48 + 8 + 58, i * 48 + 2 + 16 + 16 + y
+    y_base = 0
+    Game_Party_base.actors.each_with_index { |v,i|
+      draw_actor_face v, 0, i * 48 + y_base
+      draw_actor_name v, 48 + 8, i * 48 + 2 + y_base
+      draw_actor_level v, 48 + 8, i * 48 + 2 + 16 + y_base
+      draw_actor_state v, 48 + 8, i * 48 + 2 + 16 + 16 + y_base
+      draw_actor_hp v, 48 + 8 + 58, i * 48 + 2 + 16 + y_base
+      draw_actor_sp v, 48 + 8 + 58, i * 48 + 2 + 16 + 16 + y_base
 
-      y += 10
+      y_base += 10
     }
   end
 

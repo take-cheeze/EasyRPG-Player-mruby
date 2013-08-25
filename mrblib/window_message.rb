@@ -35,8 +35,8 @@ class Window_Message < Window_Selectable
 
   def alpha?(v); (?a[0] <= v and v <= ?z[0]) or (?A[0] <= v and v <= ?Z[0]); end
 
-	def initialize(x, y, w, h)
-    super x, y, w, h
+	def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @contents_x, @contents_y = 0, 0
     @line_count = 0
     @text = []
@@ -47,7 +47,7 @@ class Window_Message < Window_Selectable
     @number_input_window = Window_NumberInput.new 0, 0
     @gold_window = Window_Gold.new 232, 0, 88, 32
 
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
     @visible = false
     self.z = 10000
 

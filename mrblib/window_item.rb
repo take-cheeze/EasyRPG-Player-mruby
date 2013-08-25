@@ -16,8 +16,8 @@
 # Window_Item class.
 class Window_Item < Window_Selectable
 	# Constructor.
-  def initialize(x, y, w, h)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @column_max = 2
     @data = []
   end

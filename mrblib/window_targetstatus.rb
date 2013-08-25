@@ -18,8 +18,8 @@
 # If needed it can also display the costs of a skill.
 class Window_TargetStatus < Window_Base
 	# Constructor.
-	def initialize(x, y, w, h)
-    super x, y, w, h
+	def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @use_item = false
     self.contents = Bitmap.new iwidth - 16, iheight - 16
   end

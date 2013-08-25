@@ -16,8 +16,8 @@
 # Window Save File Class.
 class Window_SaveFile < Window_Base
 	# Constructor.
-	def initialize(x, y, w, h)
-    super x, y, w, h
+	def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @index = 0
     @hero_hp = 0
     @hero_level = 0

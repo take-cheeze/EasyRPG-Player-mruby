@@ -17,8 +17,8 @@
 class Window_Gold < Window_Base
 	# Constructor.
   def initialize
-    super x, y, w, h
-    self.contents = Bitmap.new w - 16, h - 16
+    super ix, iy, iw, ih
+    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 

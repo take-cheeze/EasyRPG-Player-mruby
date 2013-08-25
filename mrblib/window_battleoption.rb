@@ -16,10 +16,10 @@
 # Window_BattleOption class.
 class Window_BattleOption < Window_Base
 	# Constructor.
-  def initialize(x, y, w, h)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
 
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
 
     # @commands = [Data.terms.battle_fight, Data.terms.battle_auto, Data.terms.battle_escape]
     @commands = ["Victory", "Defeat", "Escape"]

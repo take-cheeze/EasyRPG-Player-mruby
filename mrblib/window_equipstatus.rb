@@ -25,8 +25,8 @@ class Window_EquipStatus < Window_Base
 	# @param h window height.
 	# @param actor_id actor whose stats are displayed.
 	# @param draw_actorname displays the actor name above the items.
-  def initialize(x, y, w, h, actor_id, draw_actorname)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih, actor_id, draw_actorname)
+    super ix, iy, iw, ih
     @actor_id = actor_id
     @draw_params = false
     @draw_actorname = draw_actorname
@@ -35,7 +35,7 @@ class Window_EquipStatus < Window_Base
 
     @attack, @defence, @spirit, @agility = 0, 0, 0, 0
 
-    self.contents = Bitmap.new w - 16, h - 16
+    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 

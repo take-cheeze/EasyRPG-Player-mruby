@@ -17,8 +17,8 @@
 # Displays all items of the party for use in battle.
 class Window_BattleItem < Window_Item
 	# Constructor.
-  def initialize(x, y, w, h)
-    super x, y, w, h
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
     @actor_id = 0
   end
 
