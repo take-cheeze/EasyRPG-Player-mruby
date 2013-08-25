@@ -1,24 +1,36 @@
 #include "input.h"
 #include "binding.hxx"
 
+#include <mruby/variable.h>
+
 namespace {
 
 using namespace EasyRPG;
+
+mrb_int from_sym(mrb_state* M, mrb_value const self) {
+	mrb_value v;
+	mrb_get_args(M, "o", &v);
+	if(mrb_symbol_p(v)) {
+		mrb_value const ret = mrb_cv_get(M, self, mrb_symbol(v));
+		assert(mrb_fixnum_p(ret));
+		return mrb_fixnum(ret);
+	} else {
+		mrb_int ret;
+		mrb_get_args(M, "i", &ret);
+		return ret;
+	}
+}
 
 mrb_value update(mrb_state* M, mrb_value const self) {
 	return Input(M).Update(), self;
 }
 
-mrb_value triggered(mrb_state* M, mrb_value) {
-	mrb_int v;
-	mrb_get_args(M, "i", &v);
-	return mrb_bool_value(Input(M).IsTriggered(Input_::Button(v)));
+mrb_value triggered(mrb_state* M, mrb_value const self) {
+	return mrb_bool_value(Input(M).IsTriggered(Input_::Button(from_sym(M, self))));
 }
 
-mrb_value repeated(mrb_state* M, mrb_value) {
-	mrb_int v;
-	mrb_get_args(M, "i", &v);
-	return mrb_bool_value(Input(M).IsRepeated(Input_::Button(v)));
+mrb_value repeated(mrb_state* M, mrb_value const self) {
+	return mrb_bool_value(Input(M).IsRepeated(Input_::Button(from_sym(M, self))));
 }
 
 mrb_value dir4(mrb_state* M, mrb_value) {
