@@ -66,6 +66,17 @@ mrb_value set_visible(mrb_state* M, mrb_value const self) {
 	return get<Window>(M, self).visible = v, mrb_bool_value(v);
 }
 
+mrb_value set_open_animation(mrb_state* M, mrb_value const self) {
+	mrb_int v;
+	mrb_get_args(M, "i", &v);
+	return get<Window>(M, self).SetOpenAnimation(v), mrb_fixnum_value(v);
+}
+mrb_value set_close_animation(mrb_state* M, mrb_value const self) {
+	mrb_int v;
+	mrb_get_args(M, "i", &v);
+	return get<Window>(M, self).SetCloseAnimation(v), mrb_fixnum_value(v);
+}
+
 #define define_bool_property(name, cxx_name)							\
 	mrb_value get_ ## name(mrb_state* M, mrb_value const self) {		\
 		return mrb_bool_value(get<Window>(M, self).Get ## cxx_name());	\
@@ -114,6 +125,8 @@ void EasyRPG::register_window(mrb_state* M) {
 		{ "initialize", &initialize, MRB_ARGS_OPT(1) },
 		{ "viewport", &viewport, MRB_ARGS_NONE() },
 		{ "update", &update, MRB_ARGS_NONE() },
+		{ "open_animation=", &set_open_animation, MRB_ARGS_REQ(1) },
+		{ "close_animation=", &set_close_animation, MRB_ARGS_REQ(1) },
 		property_methods(windowskin), property_methods(stretch),
 		property_methods(contents),
 		property_methods(cursor_rect), property_methods(active),
