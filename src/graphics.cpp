@@ -207,6 +207,8 @@ void Graphics_::UpdateTransition() {
 
 	int percentage = transition_frame * 100 / transition_duration;
 
+	assert(screen1 and screen2);
+
 	switch (transition_type) {
 	case TransitionFadeIn:
 		screen1->BlitScreen(0, 0);
