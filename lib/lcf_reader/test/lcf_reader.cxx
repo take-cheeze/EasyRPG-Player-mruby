@@ -42,6 +42,7 @@ void open_lmt(mrb_state* M) {
 	easyrpg_verify(tmp == to_json(LCF::lcf_file(ios)));
 }
 
+/*
 void open_ldb(mrb_state* M) {
 	LCF::lcf_file ldb(ldb_path);
 
@@ -54,15 +55,9 @@ void open_ldb(mrb_state* M) {
 	easyrpg_verify(result);
 	ios->seekg(0);
 
-	/*
-	std::ofstream tmp_out("tmp.txt");
-	tmp_out << tmp;
-	std::ofstream tmp_out2("tmp2.txt");
-	tmp_out2 << to_json(LCF::lcf_file(ios));
-	*/
-
 	easyrpg_verify(tmp == to_json(LCF::lcf_file(ios)));
 }
+*/
 
 void change_name(mrb_state* M) {
 	LCF::lcf_file ldb(ldb_path);
@@ -114,6 +109,6 @@ void test_ber(mrb_state* M) {
 extern "C" void mrb_lcf_reader_gem_test(mrb_state* M) {
 	test_ber(M);
 	open_lmt(M);
-	open_ldb(M);
+	// open_ldb(M);
 	change_name(M);
 }
