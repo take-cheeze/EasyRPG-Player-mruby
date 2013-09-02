@@ -74,9 +74,7 @@ void Player::make_current(mrb_state* M) {
 }
 mrb_state* Player::current_vm() { return current_vm_; }
 
-mrb_state* Player::create_vm() {
-	mrb_state* const M = mrb_open();
-
+void Player::register_player(mrb_state* M) {
 	RClass* const cls = EasyRPG::define_class<ModuleInternal>(M, "_ModuleInternal");
 
 	RData* data = NULL;
@@ -91,6 +89,11 @@ mrb_state* Player::create_vm() {
 	mrb_gv_set(M, mrb_intern(M, "$DEBUG"), mrb_true_value());
 #endif
 	make_current(M);
+}
+
+mrb_state* Player::create_vm() {
+	mrb_state* const M = mrb_open();
+	register_player(M);
 
 	return M;
 }

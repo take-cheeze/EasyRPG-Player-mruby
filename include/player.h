@@ -8,6 +8,9 @@ namespace Player {
 
 mrb_state* create_vm();
 mrb_state* current_vm();
+
+void register_player(mrb_state* M);
+
 void make_current(mrb_state* M);
 void parse_args(int argc, char* argv[], mrb_state* M = NULL);
 void parse_args(mrb_value const& args, mrb_state* M = NULL);
