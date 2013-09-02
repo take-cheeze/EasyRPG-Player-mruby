@@ -325,6 +325,18 @@ mrb_value to_mrb_ary(mrb_state* M, T const& v) {
 
 #define to_mrb_opt(M, v) (v? to_mrb(M, *v) : mrb_nil_value())
 
+#define easyrpg_assert(exp)												\
+	do {																\
+		if(!(exp)) {													\
+			mrb_raisef(													\
+				M, mrb_class_get(M, "RuntimeError"),					\
+				"assertion failed in %S:%S with expression " #exp,		\
+				mrb_str_new_cstr(M, __FILE__), mrb_fixnum_value(__LINE__)); \
+		}																\
+	} while(false)														\
+
+#define easyrpg_verify easyrpg_assert
+
 }
 
 #endif

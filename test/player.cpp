@@ -6,20 +6,9 @@
 #include "font.h"
 #include "rect.h"
 
-#include <mruby.h>
-#include <mruby/string.h>
+#include "binding.hxx"
 
 namespace {
-
-#define easyrpg_assert(exp)												\
-	do {																\
-		if(exp) {														\
-			mrb_raisef(													\
-				M, mrb_class_get(M, "RuntimeError"),					\
-				"assertion failed in %S:%S with expression " #exp,		\
-				mrb_str_new_cstr(M, __FILE__), mrb_fixnum_value(__LINE__)); \
-		}																\
-	} while(false)														\
 
 void LowerCase(mrb_state* M) {
 	easyrpg_assert(Utils::LowerCase("EasyRPG") == "easyrpg");
@@ -51,7 +40,7 @@ void CheckSize(mrb_state* M) {
 
 void CheckIsRPG2kProject(mrb_state* M) {
 	EASYRPG_SHARED_PTR<FileFinder_::ProjectTree> const
-			tree = FileFinder(M).CreateProjectTree(".");
+			tree = FileFinder(M).CreateProjectTree(getenv("RPG_TEST_GAME_PATH"));
 	easyrpg_assert(FileFinder(M).IsRPG2kProject(*tree));
 }
 
@@ -65,8 +54,10 @@ void CheckEnglishFilename(mrb_state* M) {
 
 }
 
-extern "C" void mrb_EasyRPG_Player_get_test(mrb_state* M) {
+extern "C" void mrb_EasyRPG_Player_gem_test(mrb_state* M) {
 	Player::register_player(M);
+
+	FileFinder(M).UpdateRtpPaths();
 
 	LowerCase(M);
 	GetExt(M);
