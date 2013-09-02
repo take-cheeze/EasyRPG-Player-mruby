@@ -101,8 +101,9 @@ picojson const& LCF::actual_schema(picojson const& sch, picojson::string const& 
 }
 
 picojson const& LCF::find_schema(picojson const& sch, uint32_t const k) {
-	for(auto const& i : sch[sym::value].a()) {
-		if(i[sym::index].i() == int(k)) { return i; }
+	picojson::array const& ary = sch[sym::value].a();
+	for(picojson::array::const_iterator i = ary.begin(); i != ary.end(); ++i) {
+		if((*i)[sym::index].i() == int(k)) { return *i; }
 	}
 
 	static picojson const null_;
@@ -110,8 +111,9 @@ picojson const& LCF::find_schema(picojson const& sch, uint32_t const k) {
 }
 
 picojson const& LCF::find_schema(picojson const& sch, picojson::string const& k) {
-	for(auto const& i : sch[sym::value].a()) {
-		if(i[sym::name].s() == k) { return i; }
+	picojson::array const& ary = sch[sym::value].a();
+	for(picojson::array::const_iterator i = ary.begin(); i != ary.end(); ++i) {
+		if((*i)[sym::name].s() == k) { return *i; }
 	}
 
 	static picojson const null_;
@@ -122,17 +124,6 @@ LCF::array2d::array2d() : base_(0), size_(0), schema_(NULL) {}
 LCF::array2d::array2d(array2d const& r)
 		: detail::array2d_base(r), stream_(r.stream_)
 		, base_(r.base_), size_(r.size_), schema_(r.schema_) {}
-
-LCF::array2d::array2d(BOOST_RV_REF(array2d) rhs)
-		: detail::array2d_base(boost::move(static_cast<detail::array2d_base&>(rhs)))
-		, base_(0), size_(0), schema_(NULL)
-{
-	using std::swap;
-	swap(stream_, rhs.stream_);
-	swap(schema_, rhs.schema_);
-	swap(base_, rhs.base_);
-	swap(size_, rhs.size_);
-}
 
 LCF::array2d::array2d(picojson const& sch, istream_ref const& is)
 		: stream_(is), base_(is->tellg()), size_(0), schema_(&sch)
@@ -164,11 +155,7 @@ LCF::array1d const& LCF::array2d::operator[](uint32_t const k) const {
 	return i->second;
 }
 
-LCF::array2d& LCF::array2d::operator=(BOOST_COPY_ASSIGN_REF(array2d) rhs) {
-	if(this != &rhs) { array2d(rhs).swap(*this); }
-	return *this;
-}
-LCF::array2d& LCF::array2d::operator=(BOOST_RV_REF(array2d) rhs) {
+LCF::array2d& LCF::array2d::operator=(array2d const& rhs) {
 	if(this != &rhs) { array2d(rhs).swap(*this); }
 	return *this;
 }
@@ -178,18 +165,6 @@ LCF::array1d::array1d(array1d const& r)
 		: detail::array1d_base(r), stream_(r.stream_)
 		, base_(r.base_), size_(r.size_)
 		, schema_(r.schema_), index_(r.index_) {}
-
-LCF::array1d::array1d(BOOST_RV_REF(array1d) rhs)
-		: detail::array1d_base(boost::move(static_cast<detail::array1d_base&>(rhs)))
-		, base_(0), size_(0), schema_(NULL), index_(0)
-{
-	using std::swap;
-	swap(stream_, rhs.stream_);
-	swap(schema_, rhs.schema_);
-	swap(base_, rhs.base_);
-	swap(size_, rhs.size_);
-	swap(index_, rhs.index_);
-}
 
 LCF::array1d::array1d(picojson const& sch, istream_ref const& is)
 		: stream_(is)
@@ -216,11 +191,7 @@ LCF::array1d::array1d(picojson const& sch, istream_ref const& is)
 	size_ = size_t(is->tellg()) - base_;
 }
 
-LCF::array1d& LCF::array1d::operator=(BOOST_COPY_ASSIGN_REF(array1d) rhs) {
-	if(this != &rhs) { array1d(rhs).swap(*this); }
-	return *this;
-}
-LCF::array1d& LCF::array1d::operator=(BOOST_RV_REF(array1d) rhs) {
+LCF::array1d& LCF::array1d::operator=(array1d const& rhs) {
 	if(this != &rhs) { array1d(rhs).swap(*this); }
 	return *this;
 }
@@ -271,7 +242,7 @@ bool LCF::array1d::is_valid() const {
 }
 
 LCF::map_tree::map_tree(std::istream& is) : vector<int32_t>(ber(is)) {
-	for(auto& i : *this) { i = ber(is); }
+	for(vector<int32_t>::iterator i = begin(); i != end(); ++i) { *i = ber(is); }
 	active_node = ber(is);
 }
 
@@ -283,61 +254,63 @@ LCF::ber_array::ber_array(std::istream& is, size_t const len) {
 LCF::element::element(picojson const& sch, istream_ref const& is, size_t const s)
 		: schema_(&sch), stream_(is), base_(is? size_t(is->tellg()) : 0), size_(s) {}
 
+namespace LCF {
+
 template<>
-LCF::map_tree LCF::element::to_impl<LCF::map_tree>() const {
+map_tree element::to_impl<map_tree>() const {
 	return map_tree(*stream_);
 }
 
 template<>
-LCF::ber_array LCF::element::to_impl<LCF::ber_array>() const {
+ber_array element::to_impl<ber_array>() const {
 	return ber_array(*stream_, size_);
 }
 
 template<>
-LCF::array1d LCF::element::to_impl<LCF::array1d>() const {
+array1d element::to_impl<array1d>() const {
 	return array1d(actual_schema(*schema_, sym::array1d), stream_);
 }
 template<>
-LCF::array2d LCF::element::to_impl<LCF::array2d>() const {
+array2d element::to_impl<array2d>() const {
 	return array2d(actual_schema(*schema_, sym::array2d), stream_);
 }
 
 template<>
-LCF::int8_array LCF::element::to_impl<LCF::int8_array>() const {
+int8_array element::to_impl<int8_array>() const {
 	return int8_array(stream_, size_);
 }
 template<>
-LCF::int16_array LCF::element::to_impl<LCF::int16_array>() const {
+int16_array element::to_impl<int16_array>() const {
 	return int16_array(stream_, size_);
 }
 template<>
-LCF::int32_array LCF::element::to_impl<LCF::int32_array>() const {
+int32_array element::to_impl<int32_array>() const {
 	return int32_array(stream_, size_);
 }
 
 template<>
-int LCF::element::to_impl<int>() const {
+int element::to_impl<int>() const {
 	check_type(sym::integer);
 	return exists()? int32_t(ber(*stream_))
 			: (*schema_)[sym::value].i();
 }
 
 template<>
-bool LCF::element::to_impl<bool>() const {
+bool element::to_impl<bool>() const {
 	check_type(sym::bool_);
 	return exists()? bool(ber(*stream_))
 			: (*schema_)[sym::value].b();
 }
 
 template<>
-std::string LCF::element::to_impl<std::string>() const {
+std::string element::to_impl<std::string>() const {
 	check_type(sym::string);
 	return exists()? read_string(*stream_, size_)
 			: schema_->get(sym::value).s();
 }
 
 template<>
-double LCF::element::to_impl<double>() const {
+double element::to_impl<double>() const {
 	check_type(sym::float_);
 	if(!exists()) { return schema_->get(sym::value).d(); }
 
@@ -358,7 +331,7 @@ double LCF::element::to_impl<double>() const {
 }
 
 template<>
-LCF::event LCF::element::to_impl<LCF::event>() const {
+event element::to_impl<event>() const {
 	check_type(sym::event);
 
 	event ret;
@@ -375,6 +348,8 @@ LCF::event LCF::element::to_impl<LCF::event>() const {
 		}
 	}
 	return ret;
+}
+
 }
 
 template<class T>
@@ -464,11 +439,6 @@ void LCF::lcf_file::swap(lcf_file& x) {
 	swap(signature_, x.signature_);
 	swap(error_, x.error_);
 	swap(elem_, x.elem_);
-}
-
-LCF::lcf_file& LCF::lcf_file::operator=(BOOST_RV_REF(lcf_file) rv) {
-	if(this != &rv) { lcf_file(boost::move(rv)).swap(*this); }
-	return *this;
 }
 
 void LCF::lcf_file::init() {
@@ -583,11 +553,11 @@ picojson& create_parent(picojson& e, key_iterator i, key_iterator const& end) {
 
 typedef LCF::vector<optional<LCF::change const&> > change_list;
 void apply_changes(picojson& ret, change_list const& ch_list, LCF::key_list const& k) {
-	for(auto const& i : ch_list) {
-		if(i->key.size() >= k.size()) {
-			create_parent(ret, i->key.begin() + k.size(), i->key.end()) = i->value;
+	for(change_list::const_iterator i = ch_list.begin(); i != ch_list.end(); ++i) {
+		if((*i)->key.size() >= k.size()) {
+			create_parent(ret, (*i)->key.begin() + k.size(), (*i)->key.end()) = (*i)->value;
 		} else {
-			ret = find(i->value, k.begin() + i->key.size(), k.end());
+			ret = find((*i)->value, k.begin() + (*i)->key.size(), k.end());
 		}
 	}
 }
@@ -622,8 +592,8 @@ void save_element(std::ostream& os, LCF::element const& e,
 			LCF::array1d const ary = e.a1d();
 
 			bool use_json = false;
-			for(auto const& i : ch_list) {
-				if(i->key.size() == k.size() + 1) { use_json = true; break; }
+			for(change_list::const_iterator i = ch_list.begin(); i != ch_list.end(); ++i) {
+				if((*i)->key.size() == k.size() + 1) { use_json = true; break; }
 			}
 
 			if(use_json) {
@@ -633,14 +603,14 @@ void save_element(std::ostream& os, LCF::element const& e,
 				LCF::save_array1d(jsn, e.schema(), os);
 				ch.remove_if(bind(remove_function, boost::cref(ch_list), _1));
 			} else {
-				for(auto const& i : ary) {
-					k.push_back(i.second.schema()[sym::name].s());
+				for(LCF::array1d::const_iterator i = ary.begin(); i != ary.end(); ++i) {
+					k.push_back(i->second.schema()[sym::name].s());
 
 					std::ostringstream tmp(write_flag);
-					save_element(tmp, i.second, k, ch);
+					save_element(tmp, i->second, k, ch);
 					std::string const res = tmp.str();
 
-					LCF::ber(os, i.first);
+					LCF::ber(os, i->first);
 					LCF::ber(os, res.size());
 					os.write(res.data(), res.size());
 
@@ -652,8 +622,8 @@ void save_element(std::ostream& os, LCF::element const& e,
 			LCF::array2d const ary = e.a2d();
 
 			bool use_json = false;
-			for(auto const& i : ch_list) {
-				int const d = i->key.size() - k.size();
+			for(change_list::const_iterator i = ch_list.begin(); i != ch_list.end(); ++i) {
+				int const d = (*i)->key.size() - k.size();
 				assert(d > 0);
 				if(d <= 2) { use_json = true; break; }
 			}
@@ -667,18 +637,18 @@ void save_element(std::ostream& os, LCF::element const& e,
 			} else {
 				LCF::ber(os, ary.size());
 
-				for(auto const& i : ary) {
-					k.push_back(i.first);
-					LCF::ber(os, i.first);
-					k.push_back(i.first);
-					for(auto const& j : i.second) {
-						k.push_back(j.second.schema()[sym::name].s());
+				for(LCF::array2d::const_iterator i = ary.begin(); i != ary.end(); ++i) {
+					k.push_back(i->first);
+					LCF::ber(os, i->first);
+					k.push_back(i->first);
+					for(LCF::array1d::const_iterator j = i->second.begin(); j != i->second.end(); ++j) {
+						k.push_back(j->second.schema()[sym::name].s());
 
 						std::ostringstream tmp(write_flag);
-						save_element(tmp, j.second, k, ch);
+						save_element(tmp, j->second, k, ch);
 						std::string const res = tmp.str();
 
-						LCF::ber(os, j.first);
+						LCF::ber(os, j->first);
 						LCF::ber(os, res.size());
 						os.write(res.data(), res.size());
 

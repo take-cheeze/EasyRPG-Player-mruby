@@ -7,7 +7,6 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/container/flat_map.hpp>
-#include <boost/move/move.hpp>
 #include <boost/optional.hpp>
 
 #include "lcf_reader_fwd.hxx"
@@ -136,18 +135,12 @@ namespace LCF {
 	}; // struct element
 
 	struct array1d : public detail::array1d_base {
-	private:
-		BOOST_COPYABLE_AND_MOVABLE(array1d)
-
-	public:
 		array1d();
 		array1d(picojson const& sch, istream_ref const& is);
 		array1d(picojson const& sch, istream_ref const& is, int index);
 		array1d(array1d const& rhs);
-		array1d(BOOST_RV_REF(array1d) rv);
 
-		array1d& operator =(BOOST_COPY_ASSIGN_REF(array1d));
-		array1d& operator =(BOOST_RV_REF(array1d));
+		array1d& operator =(array1d const&);
 
 		element operator[](picojson_string const& k) const;
 		element operator[](char const* k) const;
@@ -171,20 +164,14 @@ namespace LCF {
 	}; // class array1d
 
 	struct array2d : public detail::array2d_base {
-	private:
-		BOOST_COPYABLE_AND_MOVABLE(array2d)
-
-	public:
 		array2d();
 		array2d(picojson const& sch, istream_ref const& is);
 		array2d(array2d const& rhs);
-		array2d(BOOST_RV_REF(array2d) rv);
 
 		array1d const& operator[](uint32_t const k) const;
 		boost::optional<array1d const&> get(uint32_t const k) const;
 
-		array2d& operator =(BOOST_COPY_ASSIGN_REF(array2d));
-		array2d& operator =(BOOST_RV_REF(array2d));
+		array2d& operator =(array2d const&);
 
 		void to_json(picojson& ret) const;
 
@@ -213,8 +200,6 @@ namespace LCF {
 		boost::optional<array1d const&> get(uint32_t const idx) const;
 
 		element const& root(size_t index) const;
-
-		lcf_file& operator=(BOOST_RV_REF(lcf_file) rhs);
 
 		void to_json(picojson& ret) const;
 

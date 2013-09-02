@@ -22,21 +22,21 @@ using boost::optional;
 size_t calculate_array1d_size(picojson const& data, picojson const& schema) {
 	size_t ret = 0;
 
-	for(auto const& i : data.o()) {
+	for(picojson::object::const_iterator i = data.o().begin(); i != data.o().end(); ++i) {
 		// skip "_rest"
-		if(i.first == sym::_rest) { continue; }
+		if(i->first == sym::_rest) { continue; }
 
-		picojson const& sch = LCF::find_schema(schema, i.first);
+		picojson const& sch = LCF::find_schema(schema, i->first);
 
 		if(sch.is<picojson::null>()) {
-			ret += i.second.a().size();
+			ret += i->second.a().size();
 			continue;
 		}
 
 		// skip default value
-		if(sch.contains(sym::value) and sch[sym::value] == i.second) { continue; }
+		if(sch.contains(sym::value) and sch[sym::value] == i->second) { continue; }
 
-		size_t const s = LCF::calculate_size(i.second, sch);
+		size_t const s = LCF::calculate_size(i->second, sch);
 		ret += ber_size(sch[sym::index].i()) + ber_size(s) + s;
 	}
 	ret += ber_size(0);
@@ -49,15 +49,15 @@ size_t calculate_array2d_size(picojson const& data, picojson const& schema) {
 	size_t ret = 0;
 	size_t elem_num = data.o().size();
 
-	for(auto const& i : data.o()) {
-		int const idx = lexical_cast<int>(i.first.get());
-		ret += ber_size(idx) + calculate_array1d_size(i.second, schema);
+	for(picojson::object::const_iterator i = data.o().begin(); i != data.o().end(); ++i) {
+		int const idx = lexical_cast<int>(i->first.get());
+		ret += ber_size(idx) + calculate_array1d_size(i->second, schema);
 
-		if(not i.second.contains(sym::_rest)) { continue; }
+		if(not i->second.contains(sym::_rest)) { continue; }
 
-		picojson::array const& rest = i.second[sym::_rest].a();
+		picojson::array const& rest = i->second[sym::_rest].a();
 
-		elem_num += i.second[sym::_rest].a().size();
+		elem_num += i->second[sym::_rest].a().size();
 		LCF::vector<size_t> tmp(rest.size());
 		boost::transform(rest, tmp.begin(),
 						 bind(&calculate_array1d_size, _1, boost::cref(schema)));
@@ -73,8 +73,8 @@ size_t calculate_array2d_size(picojson const& data, picojson const& schema) {
 
 template<class T>
 void save_array(picojson::array const& ary, std::ostream& os) {
-	for(auto const& i : ary) {
-		T const val = i.i();
+	for(picojson::array::const_iterator i = ary.begin(); i != ary.end(); ++i) {
+		T const val = i->i();
 		for(size_t elem_idx = 0; elem_idx < sizeof(T); ++elem_idx) {
 			os.put((val >> (8 * elem_idx)) & 0xffU);
 		}
@@ -88,7 +88,8 @@ void save_event_command(picojson const& data, std::ostream& os) {
 
 	picojson::array const& args = data[sym::args].a();
 	ber(os, args.size());
-	for(auto const& i : args) { ber(os, i.i()); }
+	for(picojson::array::const_iterator i = args.begin(); i != args.end(); ++i)
+	{ ber(os, i->i()); }
 }
 
 typedef optional<picojson const&> picojson_opt;
@@ -99,25 +100,25 @@ void LCF::save_array1d(picojson const& data, picojson const& schema, std::ostrea
 	typedef boost::container::flat_map<uint32_t, std::pair<picojson_opt, picojson_opt> > sorted_type;
 	sorted_type sorted;
 	sorted.reserve(data.o().size());
-	for(auto const& i: data.o()) {
+	for(picojson::object::const_iterator i = data.o().begin(); i != data.o().end(); ++i) {
 		// skip _rest
-		if(i.first.get() == sym::_rest) { continue; }
+		if(i->first.get() == sym::_rest) { continue; }
 
-		picojson const& s = find_schema(schema, i.first);
+		picojson const& s = find_schema(schema, i->first);
 
 		uint32_t const idx = s.is<picojson::null>()
-							 ? lexical_cast<int>(i.first.get()) : s[sym::index].i();
+							 ? lexical_cast<int>(i->first.get()) : s[sym::index].i();
 		sorted.insert(sorted_type::value_type(
-			idx, std::make_pair<picojson_opt, picojson_opt>(s, i.second)));
+			idx, std::make_pair<picojson_opt, picojson_opt>(s, i->second)));
 	}
 
-	for(auto const& i : sorted) {
-		picojson const& s = *(i.second.first);
-		picojson const& val = *(i.second.second);
+	for(sorted_type::const_iterator i = sorted.begin(); i != sorted.end(); ++i) {
+		picojson const& s = *(i->second.first);
+		picojson const& val = *(i->second.second);
 
 		// unknown chunk
 		if(s.is<picojson::null>()) {
-			ber(os, i.first);
+			ber(os, i->first);
 
 			picojson::array const& ary = val.a();
 			ber(os, ary.size());
@@ -133,7 +134,7 @@ void LCF::save_array1d(picojson const& data, picojson const& schema, std::ostrea
 		// skip default value
 		if(s.contains(sym::value) and s[sym::value] == val) { continue; }
 
-		ber(os, i.first);
+		ber(os, i->first);
 
 		size_t const size = LCF::calculate_size(val, s);
 		ber(os, size);
@@ -150,21 +151,22 @@ void LCF::save_array2d(picojson const& data, picojson const& schema, std::ostrea
 	typedef boost::container::flat_multimap<uint32_t, picojson_opt> sorted_type;
 	sorted_type sorted;
 	sorted.reserve(data.o().size());
-	for(auto const& i : data.o()) {
-		uint32_t const idx = lexical_cast<int>(i.first.get());
-		sorted.insert(sorted_type::value_type(idx, i.second));
+	for(picojson::object::const_iterator i = data.o().begin(); i != data.o().end(); ++i) {
+		uint32_t const idx = lexical_cast<int>(i->first.get());
+		sorted.insert(sorted_type::value_type(idx, i->second));
 
 		// _rest
-		if(not i.second.contains(sym::_rest)) { continue; }
-		for(auto const& r : i.second[sym::_rest].a()) {
-			sorted.insert(sorted_type::value_type(idx, r));
+		if(not i->second.contains(sym::_rest)) { continue; }
+		picojson::array const& ary = i->second[sym::_rest].a();
+		for(picojson::array::const_iterator r = ary.begin(); r != ary.end(); ++r) {
+			sorted.insert(sorted_type::value_type(idx, *r));
 		}
 	}
 
 	ber(os, sorted.size());
-	for(auto const& i : sorted) {
-		ber(os, i.first);
-		save_array1d(*i.second, schema, os);
+	for(sorted_type::const_iterator i = sorted.begin(); i != sorted.end(); ++i) {
+		ber(os, i->first);
+		save_array1d(*i->second, schema, os);
 	}
 }
 
@@ -175,7 +177,8 @@ void LCF::save_element(picojson const& data, picojson const& schema, std::ostrea
 		picojson::array const& ary = data["nodes"].a();
 
 		ber(os, ary.size());
-		for(auto const& i : ary) { ber(os, i.i()); }
+		for(picojson::array::const_iterator i = ary.begin(); i != ary.end(); ++i)
+		{ ber(os, i->i()); }
 
 		ber(os, data["active_node"].i());
 	} else if(type == sym::integer) { ber(os, data.i()); }
@@ -210,7 +213,8 @@ void LCF::save_element(picojson const& data, picojson const& schema, std::ostrea
 	else if(type == sym::int32array) { save_array<int32_t>(data.a(), os); }
 	else if(type == sym::ber_array) {
 		picojson::array const& ary = data.a();
-		for(auto const& i : ary) { ber(os, i.i()); }
+		for(picojson::array::const_iterator i = ary.begin(); i != ary.end(); ++i)
+		{ ber(os, i->i()); }
 	} else {
 		picojson const& actual_type = get_schema(type);
 		assert(not actual_type.is<picojson::null>());
@@ -230,7 +234,8 @@ size_t LCF::calculate_size(picojson const& data, picojson const& schema) {
 	if(type == sym::map_tree) {
 		picojson::array const& ary = data["nodes"].a();
 		ret += ber_size(ary.size());
-		for(auto const& i : ary) { ret += ber_size(i.i()); }
+		for(picojson::array::const_iterator i = ary.begin(); i != ary.end(); ++i)
+		{ ret += ber_size(i->i()); }
 		ret += ber_size(data["active_node"].i());
 	}
 	else if(type == sym::integer) { return ber_size(data.i()); }
@@ -244,20 +249,22 @@ size_t LCF::calculate_size(picojson const& data, picojson const& schema) {
 		return calculate_array2d_size(data, actual_schema(schema, sym::array2d));
 	}
 	else if(type == sym::event) {
-		for(auto const& i : data.a()) {
-			ret += ber_size(i[sym::code].i()) + ber_size(i[sym::nest].i());
-			size_t const str_size = writing_string_size(i[sym::string].s().get());
+		for(picojson::array::const_iterator i = data.a().begin(); i != data.a().end(); ++i) {
+			ret += ber_size((*i)[sym::code].i()) + ber_size((*i)[sym::nest].i());
+			size_t const str_size = writing_string_size((*i)[sym::string].s().get());
 			ret += ber_size(str_size) + str_size;
-			picojson::array const& args = i[sym::args].a();
+			picojson::array const& args = (*i)[sym::args].a();
 			ret += ber_size(args.size());
-			for(auto const& a : args) { ret += ber_size(a.i()); }
+			for(picojson::array::const_iterator a = args.begin(); a != args.end(); ++a)
+			{ ret += ber_size(a->i()); }
 		}
 	}
 	else if(type == sym::int8array) { return 1 * data.a().size(); }
 	else if(type == sym::int16array) { return 2 * data.a().size(); }
 	else if(type == sym::int32array) { return 4 * data.a().size(); }
 	else if(type == sym::ber_array) {
-		for(auto const& i : data.a()) { ret += ber_size(i.i()); }
+		for(picojson::array::const_iterator i = data.a().begin(); i != data.a().end(); ++i)
+		{ ret += ber_size(i->i()); }
 	}
 	else {
 		picojson const& actual_schema = get_schema(type);
@@ -303,16 +310,16 @@ void LCF::array2d::to_json(picojson& ret) const {
 	picojson(picojson::object_type, bool()).swap(ret);
 
 	ret.o().reserve(size());
-	for(auto const& i : *this) {
-		picojson& target = ret[i.first];
-		if(target.is<picojson::null>()) { i.second.to_json(target); }
+	for(array2d::const_iterator i = begin(); i != end(); ++i) {
+		picojson& target = ret[i->first];
+		if(target.is<picojson::null>()) { i->second.to_json(target); }
 		else {
 			picojson& rest = target[sym::_rest];
 			if(rest.is<picojson::null>()) {
 				picojson(picojson::array_type, bool()).swap(target[sym::_rest]);
 			}
 			rest.a().push_back(picojson());
-			i.second.to_json(rest.a().back());
+			i->second.to_json(rest.a().back());
 		}
 	}
 }
@@ -325,25 +332,26 @@ void LCF::array1d::to_json(picojson& ret) const {
 	picojson::object& obj = ret.o();
 	obj.reserve(size());
 
-	for(auto const& i : *this) {
-		picojson const& sch = find_schema(*schema_, i.first);
+	for(array1d::const_iterator i = begin(); i != end(); ++i) {
+		picojson const& sch = find_schema(*schema_, i->first);
 		picojson::string const key =
 				sch.is<picojson::null>()
-				? picojson::string(lexical_cast<std::string>(i.first))
+				? picojson::string(lexical_cast<std::string>(i->first))
 				: sch[sym::name].s();
 
 		// skip special element
 		if(key.get()[0] == '_') { continue; }
 
-		i.second.to_json(obj.insert(std::make_pair(key, picojson())).first->second);
+		i->second.to_json(obj.insert(std::make_pair(key, picojson())).first->second);
 	}
 
-	for(auto const& i : (*schema_)[sym::value].a()) {
-		if(not has_default(i)) { continue; }
+	picojson::array const& ary = (*schema_)[sym::value].a();
+	for(picojson::array::const_iterator i = ary.begin(); i != ary.end(); ++i) {
+		if(not has_default(*i)) { continue; }
 
-		picojson::string const n = i[sym::name].s();
+		picojson::string const n = (*i)[sym::name].s();
 		picojson::object::const_iterator const it = obj.find(n);
-		if(it == obj.end()) { element(i, istream_ref(), 0).to_json(obj[n]); }
+		if(it == obj.end()) { element((*i), istream_ref(), 0).to_json(obj[n]); }
 	}
 }
 
@@ -374,17 +382,17 @@ void LCF::element::to_json(picojson& ret) const {
 		event const ev = e();
 		ret.a().reserve(ev.size());
 
-		for(auto const& i : ev) {
+		for(event::const_iterator i = ev.begin(); i != ev.end(); ++i) {
 			picojson e(picojson::object_type, bool());
 
-			e[sym::code] = int(i.code);
-			e[sym::nest] = int(i.nest);
-			e[sym::string] = i.str;
+			e[sym::code] = int(i->code);
+			e[sym::nest] = int(i->nest);
+			e[sym::string] = i->str;
 
 			picojson args(picojson::array_type, bool());
-			args.a().reserve(i.args.size());
-			for(auto const&  arg : i.args) {
-				args.a().push_back(picojson(int(arg)));
+			args.a().reserve(i->args.size());
+			for(vector<int32_t>::const_iterator arg = i->args.begin(); arg != i->args.end(); ++arg) {
+				args.a().push_back(picojson(int(*arg)));
 			}
 			args.swap(e[sym::args]);
 
@@ -426,7 +434,8 @@ void LCF::element::to_json(picojson& ret) const {
 		map_tree const t = mt();
 
 		nodes.a().reserve(t.size());
-		for(auto const& i : t) { nodes.a().push_back(picojson(i)); }
+		for(map_tree::const_iterator i = t.begin(); i != t.end(); ++i)
+		{ nodes.a().push_back(picojson(*i)); }
 
 		ret["nodes"].swap(nodes);
 		ret["active_node"] = t.active_node;
@@ -467,9 +476,9 @@ void LCF::lcf_file::to_json(picojson& ret) const {
 
 	// root objects
 	picojson ary = picojson(picojson::array_type, bool());
-	for(auto const& i : elem_) {
+	for(vector<element>::const_iterator i = elem_.begin(); i != elem_.end(); ++i) {
 		ary.a().push_back(picojson());
-		i.to_json(ary.a().back());
+		i->to_json(ary.a().back());
 	}
 	ret[sym::root].swap(ary);
 }
