@@ -72,7 +72,7 @@ class Scene
     if @@instances.empty?
       push create_null_scene
     else
-      @@instance = @instances.back
+      @@instance = @@instances.last
     end
 
     @@push_pop_operation = ScenePopped

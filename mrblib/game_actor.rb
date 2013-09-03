@@ -277,7 +277,7 @@ class Game_Actor < Game_Battler
     end
 
     if level_up
-      Game_Message.texts.back += "\f"
+      Game_Message.texts.last += "\f"
       Game_Message.message_waiting = true
 
       # Experience adjustment:

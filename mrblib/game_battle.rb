@@ -490,14 +490,14 @@ class << Game_Battle
     @allies = []
     Game_Party.actors.each_with_index do |v,i|
       @allies.push Battle::Ally.new(v, i)
-      @allies.back.create_sprite
-      @allies.back.gauge = gauge
+      @allies.last.create_sprite
+      @allies.last.gauge = gauge
     end
 
     @enemies = []
     @troop.members.each_with_index do |v,i|
       @enemies.push Battle::Ally.new(v, i)
-      @enemies.back.create_sprite
+      @enemies.last.create_sprite
     end
 
     @background_name = Game_Temp.battle_background
