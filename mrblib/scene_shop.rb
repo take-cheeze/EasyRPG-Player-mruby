@@ -145,7 +145,7 @@ class Scene_Shop < Scene
 
   def update_command_selection
     if Input.trigger? Input::CANCEL
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       Scene.pop
     elsif Input.trigger? Input::DECISION
       case @shop_window.choice
@@ -160,7 +160,7 @@ class Scene_Shop < Scene
     @party_window.item_id = @buy_window.item_id
 
     if Input.trigger? Input::CANCEL
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       if Game_Temp.shop_sells; self.mode = BuySellLeave2
       else; Scene.pop
       end
@@ -169,7 +169,7 @@ class Scene_Shop < Scene
 
       # checks the money and number of items possessed before buy
       if @buy_window.check_enable item_id
-        Game_System.se_play $game_data.system.decision_se
+        Game_System.se_play Game_System::SFX_Decision
 
         item = Data.items[item_id]
         max = item.price == 0 ? 99 : Game_Party.gold / item.price
@@ -177,14 +177,14 @@ class Scene_Shop < Scene
 
         self.mode = BuyHowMany
       else
-        Game_System.se_play $game_data.system.buzzer_se
+        Game_System.se_play Game_System::SFX_Buzzer
       end
     end
   end
 
   def update_sell_selection
     if Input.trigger? Input::CANCEL
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       if Game_Temp.shop_buys; self.mode = BuySellLeave2
       else; Scene.pop
       end
@@ -195,18 +195,18 @@ class Scene_Shop < Scene
 
       if item_id > 0 && Data.items[item_id].price > 0
         item = Data.items[item_id]
-        Game_System.se_play $game_data.system.decision_se
+        Game_System.se_play Game_System::SFX_Decision
         @number_window.set_data item_id, Game_Party.item_number(item_id), item.price
         self.mode = SellHowMany
       else
-        Game_System.se_play $game_data.system.buzzer_se
+        Game_System.se_play Game_System::SFX_Buzzer
       end
     end
   end
 
   def update_number_input
     if Input.trigger? Input::CANCEL
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       case @shop_window.choice
       when Buy; self.mode = Buy
       when Sell; self.mode = Sell
@@ -229,7 +229,7 @@ class Scene_Shop < Scene
         @status_window.refresh
         self.mode = Sold
       end
-      Game_System.se_play $game_data.system.decision_se
+      Game_System.se_play Game_System::SFX_Decision
 
       Game_Temp.shop_transaction = true
     end

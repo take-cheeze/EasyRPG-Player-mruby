@@ -158,7 +158,7 @@ class Scene_Title < Scene
 
     # Set the number of frames for the opening animation to last
     @command_window.open_animation = 32
-    @command_window.visible = false
+    @command_window.visible = true
   end
 
   # Plays the title music.
@@ -185,7 +185,7 @@ class Scene_Title < Scene
     if !check_valid_player_location
       Output.warning "The game has no start location set."
     else
-      Game_System.se_play $game_data.system.decision_se
+      Game_System.se_play Game_System::SFX_Decision
       Audio.bgm_stop
       Graphics.frame_count = 0
       create_game_objects
@@ -201,9 +201,9 @@ class Scene_Title < Scene
   # Shows the Load-Screen (Scene_Load).
   def command_continue
     if @continue_enabled
-      Game_System.se_play $game_data.system.decision_se
+      Game_System.se_play Game_System::SFX_Decision
     else
-      Game_System.se_play $game_data.system.buzzer_se
+      Game_System.se_play Game_System::SFX_Buzzer
       return
     end
 
@@ -214,7 +214,7 @@ class Scene_Title < Scene
   # Option Shutdown.
   # Does a player shutdown.
   def command_shutdown
-    Game_System.se_play $game_data.system.decision_se
+    Game_System.se_play Game_System::SFX_Decision
     Audio.bgs_fade(800)
     Scene.pop
   end

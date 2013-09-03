@@ -13,9 +13,17 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-module Game_System end
+module Game_System
+  class Target
+    attr_reader :map_id, :x, :y, :switch_id
 
-class << Game_System
+    def initialize(map_id = nil, x = nil, y = nil, switch_id = nil)
+      @map_id = map_id
+      @x, @y = x, y
+      @switch_id = switch_id
+    end
+  end
+
   BGM_Battle = 0
   BGM_Victory = 1
   BGM_Inn = 2
@@ -46,17 +54,9 @@ class << Game_System
   Transition_EndBattleErase = 4
   Transition_EndBattleShow = 5
   Transition_Count = 6
+end
 
-  class Target
-    attr_reader :map_id, :x, :y, :switch_id
-
-    def initialize(map_id = nil, x = nil, y = nil, switch_id = nil)
-      @map_id = map_id
-      @x, @y = x, y
-      @switch_id = switch_id
-    end
-  end
-
+class << Game_System
   def data
     $game_data[:system] ||= {
       :current_music => {}
@@ -90,7 +90,11 @@ class << Game_System
   #
   # @param se sound data.
   def se_play(se)
-    Audio.se_play se.name, se.volume, se.tempo if se.name != '(OFF)'
+    if se.class == Fixnum
+      se_play system_se(se)
+    else
+      Audio.se_play se.name, se.volume, se.tempo if se.name != '(OFF)'
+    end
   end
 
   # Gets system graphic name.
@@ -136,25 +140,19 @@ class << Game_System
     end
   end
 
+  SYSTEM_SE_TABLE = [
+    :cursor_se, :decision_se, :cancel_se, :buzzer_se,
+    :battle_se, :escape_se, :enemy_attack_se, :enemy_damaged_se,
+    :actor_damaged_se, :dodge_se, :enemy_death_se, :item_se]
+
   # Gets the system sound effects.
   #
   # @param which which "context" to set the music for.
   # @return the sound.
   def system_se(which)
-    case which
-    when SFX_Cursor;    return data.cursor_se
-    when SFX_Decision;    return data.decision_se
-    when SFX_Cancel;    return data.cancel_se
-    when SFX_Buzzer;    return data.buzzer_se
-    when SFX_BeginBattle;  return data.battle_se
-    when SFX_Escape;    return data.escape_se
-    when SFX_EnemyAttacks;  return data.enemy_attack_se
-    when SFX_EnemyDamage;  return data.enemy_damaged_se
-    when SFX_AllyDamage;  return data.actor_damaged_se
-    when SFX_Evasion;    return data.dodge_se
-    when SFX_EnemyKill;    return data.enemy_death_se
-    when SFX_UseItem;    return data.item_se
-    end
+    sym = SYSTEM_SE_TABLE[which]
+    raise "invalid system se type" if sym.nil?
+    data[sym] || Data.system[sym]
   end
 
   # Sets a system sound effect.
@@ -162,20 +160,9 @@ class << Game_System
   # @param which which "context" to set the effect for.
   # @param sfx the sound effect.
   def set_system_se(which, sfx)
-    case which
-    when SFX_Cursor;    data.cursor_se = sfx
-    when SFX_Decision;    data.decision_se = sfx
-    when SFX_Cancel;    data.cancel_se = sfx
-    when SFX_Buzzer;    data.buzzer_se = sfx
-    when SFX_BeginBattle;  data.battle_se = sfx
-    when SFX_Escape;    data.escape_se = sfx
-    when SFX_EnemyAttacks;  data.enemy_attack_se = sfx
-    when SFX_EnemyDamage;  data.enemy_damaged_se = sfx
-    when SFX_AllyDamage;  data.actor_damaged_se = sfx
-    when SFX_Evasion;    data.dodge_se = sfx
-    when SFX_EnemyKill;    data.enemy_death_se = sfx
-    when SFX_UseItem;    data.item_se = sfx
-    end
+    sym = SYSTEM_SE_TABLE[which]
+    raise "invalid system se type" if sym.nil?
+    data[sym] = sfx
   end
 
   # Gets the system transitions.

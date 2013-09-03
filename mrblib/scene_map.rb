@@ -116,7 +116,7 @@ class Scene_Map < Scene
   def call_menu
     Game_Temp.menu_calling = false
     if Game_Temp.menu_beep
-      Game_System.se_play $game_data.system.decision_se
+      Game_System.se_play Game_System::SFX_Decision
       Game_Temp.menu_beep = false
     end
 

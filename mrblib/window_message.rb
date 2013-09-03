@@ -538,16 +538,16 @@ class Window_Message < Window_Selectable
   # Stub. Handles choice selection.
   def input_choice
     if Input.trigger?(Input::CANCEL) and Game_Message.choice_cancel_type > 0
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       Game_Message.choice_result = Game_Message.choice_cancel_type - 1; # Cancel
       terminate_message
     elsif Input.trigger? Input::DECISION
       if Game_Message.choice_disabled.test index
-        Game_System.se_play $game_data.system.buzzer_se
+        Game_System.se_play Game_System::SFX_Buzzer
         return
       end
 
-      Game_System.se_play $game_data.system.decision_se
+      Game_System.se_play Game_System::SFX_Decision
       Game_Message.choice_result = index
       terminate_message
     end
@@ -557,7 +557,7 @@ class Window_Message < Window_Selectable
   def input_number
     return if not Input.trigger? Input::DECISION
 
-    Game_System.se_play $game_data.system.decision_se
+    Game_System.se_play Game_System::SFX_Decision
     Game_Variables[Game_Message.num_input_variable_id] = @number_input_window.number
     Game_Map.need_refresh = true
     terminate_message

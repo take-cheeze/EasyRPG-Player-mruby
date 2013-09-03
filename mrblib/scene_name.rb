@@ -41,12 +41,12 @@ def update
 
   if Input.trigger? Input::CANCEL
     if not name_window.get.empty?
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       @name_window.erase
-    else; Game_System.se_play $game_data.system.buzzer_se
+    else; Game_System.se_play Game_System::SFX_Buzzer
     end
   elsif Input.trigger? Input::DECISION
-    Game_System.se_play $game_data.system.decision_se
+    Game_System.se_play Game_System::SFX_Decision
     s = @kbd_window.selected
 
     assert !s.nil?

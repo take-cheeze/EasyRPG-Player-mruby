@@ -30,10 +30,10 @@ class Scene_End < Scene
     @command_window.update
 
     if Input.trigger? Input::CANCEL
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       Scene.pop # Select End Game
     elsif Input.trigger? Input::DECISION
-      Game_System.se_play $game_data.system.decision_se
+      Game_System.se_play Game_System::SFX_Decision
       case @command_window.index
       when 0 # Yes
         Audio.bgm_fade 800

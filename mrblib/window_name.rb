@@ -39,7 +39,7 @@ class Window_Name < Window_Base
       @name += text
       refresh
     else
-      Game_System.se_play $game_data.system.buzzer_se
+      Game_System.se_play Game_System::SFX_Buzzer
     end
   end
 

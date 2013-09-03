@@ -97,25 +97,25 @@ class Window_Selectable < Window_Base
     if (active && @item_max > 0 && @index >= 0)
       if (Input.repeat?(Input::DOWN))
         if ((@column_max == 1 && Input.trigger?(Input::DOWN)) || @index < @item_max - @column_max)
-          Game_System.se_play($game_data.system.cursor_se)
+          Game_System.se_play Game_System::SFX_Cursor
           @index = (@index + @column_max) % @item_max
         end
       end
       if (Input.repeat?(Input::UP))
         if ((@column_max == 1 && Input.trigger?(Input::UP)) || @index >= @column_max)
-          Game_System.se_play($game_data.system.cursor_se)
+          Game_System.se_play Game_System::SFX_Cursor
           @index = (@index - @column_max + @item_max) % @item_max
         end
       end
       if (Input.repeat?(Input::RIGHT))
         if (@column_max >= 2 && @index < @item_max - 1)
-          Game_System.se_play($game_data.system.cursor_se)
+          Game_System.se_play Game_System::SFX_Cursor
           @index += 1
         end
       end
       if (Input.repeat?(Input::LEFT))
         if (@column_max >= 2 && @index > 0)
-          Game_System.se_play($game_data.system.cursor_se)
+          Game_System.se_play Game_System::SFX_Cursor
           @index -= 1
         end
       end

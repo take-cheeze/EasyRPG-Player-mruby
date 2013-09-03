@@ -36,13 +36,13 @@ class Scene_Item < Scene
     @item_window.update
 
     if Input.trigger? Input::CANCEL
-      Game_System.se_play $game_data.system.cancel_se
+      Game_System.se_play Game_System::SFX_Cancel
       Scene.pop
     elsif Input.trigger? Input::DECISION
       item_id = @item_window.item_id
 
       if Game_Party.item_usable? item_id
-        Game_System.se_play $game_data.system.decision_se
+        Game_System.se_play Game_System::SFX_Decision
 
         if Data.items[item_id].type == RPG::Item::Type_switch
           Game_Switches[Data.items[item_id].switch_id] = true
@@ -53,7 +53,7 @@ class Scene_Item < Scene
           @item_index = @item_window.index
         end
       else
-        Game_System.se_play $game_data.system.buzzer_se
+        Game_System.se_play Game_System::SFX_Buzzer
       end
     end
   end
