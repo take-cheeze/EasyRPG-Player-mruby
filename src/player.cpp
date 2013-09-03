@@ -30,6 +30,7 @@
 
 #include <mruby/variable.h>
 #include <mruby/array.h>
+#include <mruby/compile.h>
 
 namespace {
 
@@ -158,9 +159,13 @@ std::string Player::system_graphic(mrb_state* M) {
 player_function(pause)
 player_function(resume)
 player_function(update)
-player_function(run)
 
 #undef player_function
+
+void Player::run(mrb_state* M) {
+	M = get_vm(M);
+	mrb_load_string(M, "Player.run");
+}
 
 FontRef Font::Default(mrb_state* M) {
 	return Player::current_vm()? internal(M).font : Font::Shinonome();
