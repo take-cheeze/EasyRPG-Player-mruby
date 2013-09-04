@@ -59,14 +59,14 @@ class Scene_Title < Scene
   end
 
   def transition_in
-    if !Player.battle_test_flag
+    unless Player.battle_test_flag
       Graphics.transition_2k Graphics::TransitionErase, 1, true
       Graphics.transition_2k Graphics::TransitionFadeIn, 32
     end
   end
 
   def transition_out
-    if !Player.battle_test_flag
+    unless Player.battle_test_flag
       Graphics.transition_2k Graphics::TransitionFadeOut, 12, true
     end
   end
