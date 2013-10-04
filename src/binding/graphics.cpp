@@ -47,6 +47,10 @@ mrb_value set_frame_count(mrb_state* M, mrb_value const self) {
 	return Graphics(M).SetFrameCount(v), self;
 }
 
+mrb_value graphics_pop(mrb_state* M, mrb_value const self) {
+	return Graphics(M).Pop(), self;
+}
+
 }
 
 void EasyRPG::register_graphics(mrb_state* M) {
@@ -56,6 +60,7 @@ void EasyRPG::register_graphics(mrb_state* M) {
 		{ "transition", &transition, MRB_ARGS_OPT(3) },
 		{ "transition_2k", &transition_2k, MRB_ARGS_REQ(2) | MRB_ARGS_OPT(1) },
 		{ "frame_reset", &frame_reset, MRB_ARGS_NONE() },
+		{ "pop", &graphics_pop, MRB_ARGS_NONE() },
 		property_methods(frame_rate),
 		property_methods(frame_count),
 		method_info_end };
