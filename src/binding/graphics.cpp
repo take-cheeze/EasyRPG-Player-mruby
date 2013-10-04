@@ -59,5 +59,48 @@ void EasyRPG::register_graphics(mrb_state* M) {
 		property_methods(frame_rate),
 		property_methods(frame_count),
 		method_info_end };
-	define_module(M, "Graphics", methods);
+	RClass* const mod = define_module(M, "Graphics", methods);
+
+#define define_transition_enum(name) \
+	mrb_define_const(M, mod, "Transition" #name, mrb_fixnum_value(Graphics_::Transition ## name))
+
+	define_transition_enum(FadeIn);
+	define_transition_enum(FadeOut);
+	define_transition_enum(RandomBlocks);
+	define_transition_enum(RandomBlocksUp);
+	define_transition_enum(RandomBlocksDown);
+	define_transition_enum(BlindOpen);
+	define_transition_enum(BlindClose);
+	define_transition_enum(VerticalStripesIn);
+	define_transition_enum(VerticalStripesOut);
+	define_transition_enum(HorizontalStripesIn);
+	define_transition_enum(HorizontalStripesOut);
+	define_transition_enum(BorderToCenterIn);
+	define_transition_enum(BorderToCenterOut);
+	define_transition_enum(CenterToBorderIn);
+	define_transition_enum(CenterToBorderOut);
+	define_transition_enum(ScrollUpIn);
+	define_transition_enum(ScrollDownIn);
+	define_transition_enum(ScrollLeftIn);
+	define_transition_enum(ScrollRightIn);
+	define_transition_enum(ScrollUpOut);
+	define_transition_enum(ScrollDownOut);
+	define_transition_enum(ScrollLeftOut);
+	define_transition_enum(ScrollRightOut);
+	define_transition_enum(VerticalCombine);
+	define_transition_enum(VerticalDivision);
+	define_transition_enum(HorizontalCombine);
+	define_transition_enum(HorizontalDivision);
+	define_transition_enum(CrossCombine);
+	define_transition_enum(CrossDivision);
+	define_transition_enum(ZoomIn);
+	define_transition_enum(ZoomOut);
+	define_transition_enum(MosaicIn);
+	define_transition_enum(MosaicOut);
+	define_transition_enum(WaveIn);
+	define_transition_enum(WaveOut);
+	define_transition_enum(Erase);
+	define_transition_enum(None);
+
+#undef define_transition_enum
 }
