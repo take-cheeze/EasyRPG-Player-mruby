@@ -59,7 +59,7 @@ class << Player
     until Scene.instance.nil?
       Scene.instance.main_function
       for i in 0...Scene.old_instances.length; Graphics.pop; end
-      @old_instances.clear
+      Scene.old_instances.clear
     end
   end
 
