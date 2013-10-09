@@ -37,7 +37,7 @@ class Scene_Item < Scene
 
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
-      Scene.pop
+      Player.pop
     elsif Input.trigger? Input::DECISION
       item_id = @item_window.item_id
 
@@ -46,10 +46,10 @@ class Scene_Item < Scene
 
         if Data.items[item_id].type == RPG::Item::Type_switch
           Game_Switches[Data.items[item_id].switch_id] = true
-          Scene.pop_until 'Map'
+          Player.pop_until 'Map'
           Game_Map.need_refresh = true
         else
-          Scene.push Scene_ActorTarget.new(item_id, @item_window.index)
+          Player.push Scene_ActorTarget.new(item_id, @item_window.index)
           @item_index = @item_window.index
         end
       else

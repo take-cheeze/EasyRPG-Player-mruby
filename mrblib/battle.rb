@@ -167,7 +167,7 @@ module Battle
     end
 
     def act
-      Scene.find("Battle").set_anim_stat @ally, @anim_state
+      Player.find("Battle").set_anim_stat @ally, @anim_state
       true
     end
   end

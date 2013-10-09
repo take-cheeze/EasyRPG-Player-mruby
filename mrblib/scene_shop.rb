@@ -146,11 +146,11 @@ class Scene_Shop < Scene
   def update_command_selection
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
-      Scene.pop
+      Player.pop
     elsif Input.trigger? Input::DECISION
       case @shop_window.choice
       when Buy, Sell; self.mode = @shop_window.choice
-      when Leave; Scene.pop
+      when Leave; Player.pop
       end
     end
   end
@@ -162,7 +162,7 @@ class Scene_Shop < Scene
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
       if Game_Temp.shop_sells; self.mode = BuySellLeave2
-      else; Scene.pop
+      else; Player.pop
       end
     elsif Input.trigger? Input::DECISION
       item_id = @buy_window.item_id
@@ -186,7 +186,7 @@ class Scene_Shop < Scene
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
       if Game_Temp.shop_buys; self.mode = BuySellLeave2
-      else; Scene.pop
+      else; Player.pop
       end
     elsif Input.trigger? Input::DECISION
       item_id = @sell_window.item_id

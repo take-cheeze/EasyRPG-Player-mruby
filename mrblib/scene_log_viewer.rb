@@ -77,7 +77,7 @@ class Scene_LogViewer < Scene
       @screenshot_time.bitmap.draw_text 0, 0, time_str
       @screenshot_time.visible = true
     elsif Input.trigger? Input::CANCEL # exit log viewer
-      Scene.pop
+      Player.pop
     elsif Input.repeat? Input::DOWN
       self.cursor_index = @cursor_index + 1
     elsif Input.repeat? Input::UP

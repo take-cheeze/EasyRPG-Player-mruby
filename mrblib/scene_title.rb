@@ -175,7 +175,7 @@ class Scene_Title < Scene
     # Game_Troop.can_escape = true
     Game_System.bgm_play Data.system.battle_music
 
-    Scene.push Scene_Battle, true
+    Player.push Scene_Battle, true
   end
 
   # Option New Game.
@@ -194,7 +194,7 @@ class Scene_Title < Scene
       $game_player.move_to start_pos.party_x, start_pos.party_y
       $game_player.refresh
       Game_Map.autoplay
-      Scene.push Scene_Map.new
+      Player.push Scene_Map.new
     end
   end
 
@@ -209,7 +209,7 @@ class Scene_Title < Scene
     end
 
     # Change scene
-    Scene.push Scene_Load.new
+    Player.push Scene_Load.new
   end
 
   # Option Shutdown.
@@ -217,6 +217,6 @@ class Scene_Title < Scene
   def command_shutdown
     Game_System.se_play Game_System::SFX_Decision
     Audio.bgs_fade(800)
-    Scene.pop
+    Player.pop
   end
 end

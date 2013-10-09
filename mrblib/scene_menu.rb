@@ -110,7 +110,7 @@ class Scene_Menu < Scene
   def update_command
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
-      Scene.pop
+      Player.pop
     elsif Input.trigger? Input::DECISION
       @menu_index = @command_window.index
 
@@ -120,7 +120,7 @@ class Scene_Menu < Scene
           Game_System.se_play Game_System::SFX_Buzzer
         else
           Game_System.se_play Game_System::SFX_Decision
-          Scene.push Scene_Item.new
+          Player.push Scene_Item.new
         end
       when Skill, Equipment, Status, Row
         if Game_Party.actors.empty?
@@ -136,14 +136,14 @@ class Scene_Menu < Scene
           Game_System.se_play Game_System::SFX_Buzzer
         else
           Game_System.se_play Game_System::SFX_Decision
-          Scene.push Scene_Save.new
+          Player.push Scene_Save.new
         end
       when Order
         if Game_Party.actors.length <= 1
           Game_System.se_play Game_System::SFX_Buzzer
         else
           Game_System.se_play Game_System::SFX_Decision
-          Scene.push Scene_Order.new
+          Player.push Scene_Order.new
         end
       when Wait
         Game_System.se_play Game_System::SFX_Decision
@@ -151,7 +151,7 @@ class Scene_Menu < Scene
         @command_window.set_item_text @menu_index, Game_Temp.battle_wait ? Data.term.wait_on : Data.term.wait_off
       when Quit
         Game_System.se_play Game_System::SFX_Decision
-        Scene.push Scene_End.new
+        Player.push Scene_End.new
       end
     end
   end
@@ -166,9 +166,9 @@ class Scene_Menu < Scene
     elsif Input.trigger? Input::DECISION
       Game_System::SePlay(Game_System::SFX_Decision)
       case @command_options[@command_window.index]
-      when Skill; Scene.push Scene_Skill.new(@menustatus_window.index)
-      when Equipment; Scene.push Scene_Equip.new(@menustatus_window.index)
-      when Status; Scene.push Scene_Status.new(@menustatus_window.index)
+      when Skill; Player.push Scene_Skill.new(@menustatus_window.index)
+      when Equipment; Player.push Scene_Equip.new(@menustatus_window.index)
+      when Status; Player.push Scene_Status.new(@menustatus_window.index)
       when Row
         actor = Game_Party.actors[@menustatus_window.index]
         actor.battle_row.nil? ?

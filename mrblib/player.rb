@@ -9,10 +9,18 @@ module Player
   @window_flag = false
   @battle_test_flag = false
   @battle_test_troop_id = 0
-  @engine = EngineRpg2k
+  @engine = Player::EngineRpg2k
+
+  @old_instances = []
+  @instances = []
+  @push_pop_operation = 0 # SceneNop
 end
 
 class << Player
+  SceneNop = 0
+  ScenePushed = 1
+  ScenePopped = 2
+
   def rpg2k?; @engine == Player::EngineRpg2k; end
   def rpg2k3?; @engine == Player::EngineRpg2k3; end
 
@@ -20,6 +28,29 @@ class << Player
     idx = args.index(name)
     args.delete_at idx unless idx.nil?
     not idx.nil?
+  end
+
+  def push(new_scene, pop_stack_top = false)
+    @old_instances.push @instances.pop if pop_stack_top
+    @instances.push new_scene
+    @push_pop_operation = ScenePushed
+  end
+
+  def pop
+    @old_instances.push @instances.pop
+    @push_pop_operation = ScenePopped
+  end
+
+  def pop_until(type)
+    pop_count = @instances.rindex { |v| v.type == type }
+    pop_count = pop_count.nil? ? 0 : pop_count + 1
+    @old_instances.concat @instances.pop(pop_count).reverse!
+    @push_pop_operation = ScenePopped
+  end
+
+  def find(type)
+    idx = @instances.rindex { |v| v.type == type }
+    idx.nil? ? nil : @instances[idx]
   end
 
   def parse_args(args)
@@ -43,11 +74,13 @@ class << Player
     end
   end
 
+  def instance; @instances.last; end
+
   def run
     if FileFinder.rpg2k_project? FileFinder.project_tree
-      Scene.push debug_flag ? Scene_Title.new : Scene_Logo.new
+      Player.push debug_flag ? Scene_Title.new : Scene_Logo.new
     else
-      Scene.push Scene_ProjectFinder.new
+      Player.push Scene_ProjectFinder.new
     end
 
     @reset_flag = false
@@ -55,16 +88,43 @@ class << Player
     # Reset frames before starting
     Graphics.frame_reset
 
-    until Scene.instances.empty?
-      Scene.instance.main_function
-      for i in 0...Scene.old_instances.length; Graphics.pop; end
-      Scene.old_instances.clear
+    until @instances.empty?
+      inst = self.instance
+      case @push_pop_operation
+      when ScenePushed
+        inst.start
+        inst.transition_in
+      when ScenePopped; continue
+      when SceneNop
+      else raise 'invalid operation %d' % @push_pop_operation
+      end
+
+      @push_pop_operation = SceneNop
+      while @push_pop_operation == SceneNop
+        Player.update
+        Graphics.update
+        Audio.update
+        Input.update
+        inst.update
+      end
+
+      Graphics.update
+      inst.suspend
+      inst.transition_out
+
+      case @push_pop_operation
+      when ScenePushed; Graphics.push
+      when ScenePopped
+      when SceneNop
+      else raise 'invalid operation %d' % @push_pop_operation
+      end
+
+      for i in 0...@old_instances.length; Graphics.pop; end
+      @old_instances.clear
     end
   end
 
-  def pause
-    Audio.bgm_pause
-  end
+  def pause; Audio.bgm_pause; end
 
   def resume
     Input.reset_keys
@@ -80,21 +140,22 @@ class << Player
     Output.debug "Screenshot request from user." if Input.trigger? Input::TAKE_SCREENSHOT
 
     if Input.trigger? Input::LOG_VIEWER
-      Scene.find("Log Viewer").nil? ? Scene.pop : Scene.push(Scene_LogViewer.new)
+      Player.find("Log Viewer").nil? ? Player.pop : Player.push(Scene_LogViewer.new)
     end
 
     Output.update
 
     if exit_flag
-      Scene.pop_until nil
+      @instances.clear
     elsif reset_flag
       @reset_flag = false
-      Scene.pop_until 'Title'
+      Player.pop_until 'Title'
     end
   end
 
   attr_reader(:debug_flag, :hide_title_flag, :window_flag,
-              :battle_test_flag, :battle_test_troop_id)
+              :battle_test_flag, :battle_test_troop_id,
+              :instances, :old_instances)
 
   attr_accessor :reset_flag, :exit_flag, :engine
 end

@@ -38,7 +38,7 @@ class Scene_Logo < Scene
 
   def update
     @frame_counter += 1
-    Scene.push Scene_Title.new, true if
+    Player.push Scene_Title.new, true if
       @frame_counter == 90 or Input.trigger?(Input::DECISION) or
       Input.trigger?(Input::CANCEL)
   end

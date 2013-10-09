@@ -792,7 +792,7 @@ class Game_Interpreter_Map < Game_Interpreter
   def command_change_map_tileset(com)
     Game_Map.chipset = com[0]
 
-    scene = Scene.find("Map")
+    scene = Player.find("Map")
     return true if scene.nil?
     scene.spriteset.chipset_updated
 
@@ -948,7 +948,7 @@ class Game_Interpreter_Map < Game_Interpreter
     old_id = com[1]
     new_id = com[2]
 
-    scene = Scene.find 'Map'
+    scene = Player.find 'Map'
     return true if scene.nil?
 
     if upper; scene.spriteset.substitute_up old_id, new_id

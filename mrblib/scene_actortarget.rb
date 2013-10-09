@@ -62,7 +62,7 @@ class Scene_ActorTarget < Scene
 
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
-      Scene.pop
+      Player.pop
     end
 
     @use_item ? update_item : update_skill

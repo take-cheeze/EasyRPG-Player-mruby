@@ -60,7 +60,7 @@ def update
           @name_window.refresh
         else
           @actor.name = @name_window.get
-          Scene.pop
+          Player.pop
         end
       end
     elsif s == Window_Keyboard::TO_SYMBOL

@@ -42,7 +42,7 @@ class Scene_Skill < Scene
 
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
-      Scene.pop
+      Player.pop
     elsif Input.trigger? Input::DECISION
       skill_id = @skill_window.skill_id
 
@@ -54,10 +54,10 @@ class Scene_Skill < Scene
         if Data.skills[skill_id].type == RPG::Skill::Type_switch
           actor.sp = actor.sp - actor.calculate_skill_cost(skill_id)
           Game_Switches[Data.skills[skill_id].switch_id] = true
-          Scene.pop_until "Map"
+          Player.pop_until "Map"
           Game_Map.needs_refresh = true
         elsif Data.skills[skill_id].type == RPG::Skill::Type_normal
-          Scene.push Scene_ActorTarget.new(skill_id, @actor_index, @skill_window.index)
+          Player.push Scene_ActorTarget.new(skill_id, @actor_index, @skill_window.index)
           skill_index = @skill_window.index
         elsif Data.skills[skill_id].type == RPG::Skill::Type_teleport
           # TODO: Displays the teleport target scene/window

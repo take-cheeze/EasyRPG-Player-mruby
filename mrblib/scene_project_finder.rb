@@ -186,7 +186,7 @@ class Scene_ProjectFinder < Scene
 
     if @current_entry.project?
       $project_path = @current_entry.fullpath
-      Scene.push Scene_Title.new
+      Player.push Scene_Title.new
       to_parent
     elsif @current_entry.children.empty?
       to_parent # return to parent

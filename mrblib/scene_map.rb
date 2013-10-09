@@ -52,12 +52,12 @@ class Scene_Map < Scene
 
     if Game_Temp.gameover
       Game_Temp.gameover = false
-      Scene.push Scene_Gameover.new
+      Player.push Scene_Gameover.new
     end
 
     if Game_Temp.to_title
       Game_Temp.to_title = false
-      Scene.pop_until 'Title'
+      Player.pop_until 'Title'
     end
 
     return if Game_Message.visible
@@ -79,25 +79,25 @@ class Scene_Map < Scene
 
       if Game_Temp.name_calling
         Game_Temp.name_calling = false
-        Scene.push Scene_Name.new
+        Player.push Scene_Name.new
         return
       end
 
       if Game_Temp.shop_calling
         Game_Temp.shop_calling = false
-        Scene.push Scene_Shop.new
+        Player.push Scene_Shop.new
         return
       end
 
       if Game_Temp.save_calling
         Game_Temp.save_calling = false
-        Scene.push Scene_Save.new
+        Player.push Scene_Save.new
         return
       end
 
       if Game_Temp.battle_calling
         Game_Temp.battle_calling = false
-        Scene.push Scene_Battle.new
+        Player.push Scene_Battle.new
         return
       end
 
@@ -120,7 +120,7 @@ class Scene_Map < Scene
 
     # TODO: $game_player.straighten
 
-    Scene.push Scene_Menu.new
+    Player.push Scene_Menu.new
   end
 
   def call_debug

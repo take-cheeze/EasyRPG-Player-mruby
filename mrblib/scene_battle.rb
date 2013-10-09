@@ -278,7 +278,7 @@ class Scene_Battle < Scene
   end
 
   def escape
-    if Game_Battle.espace; Scene.pop
+    if Game_Battle.espace; Player.pop
     else; Game_Battle.restart
     end
   end
@@ -598,20 +598,20 @@ class Scene_Battle < Scene
         case @options_window.index
         when 0
           Game_Temp.battle_result = Game_Temp::BattleVictory
-          Scene.pop
+          Player.pop
           # @auto_battle = false
           # self.state = State_Battle
         when 1
           if Game_Temp.battle_defeat_mode != 0
             Game_Temp.battle_result = Game_Temp::BattleDefeat
-            Scene.pop
+            Player.pop
           end
           # @auto_battle = true
           # self.state = State_Battle
         when 2
           if Game_Temp.battle_escape_mode != 0
             Game_Temp.battle_result = Game_Temp::BattleEscape
-            Scene.pop
+            Player.pop
           end
           # escape
         end
@@ -624,20 +624,20 @@ class Scene_Battle < Scene
       when State_Item; item
       when State_Skill; skill
       when State_AllyAction, State_EnemyAction
-      when State_Victory, State_Defeat; Scene.pop
+      when State_Victory, State_Defeat; Player.pop
       end
     end
 
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
       case @state
-      when State_Options; Scene.pop
+      when State_Options; Player.pop
       when State_Battle, State_AutoBattle; self.state = State_Options
       when State_Command; self.state = State_Battle
       when State_TargetEnemy, State_Item, State_Skill; self.state = State_Command
       when State_TargetAlly; self.state = State_Item
       when State_AllyAction, State_EnemyAction
-      when State_Victory, State_Defeat; Scene.pop
+      when State_Victory, State_Defeat; Player.pop
       end
     end
 
@@ -744,14 +744,14 @@ class Scene_Battle < Scene
   def check_abort
     return if not Game_Battle.terminate
     Game_Temp.battle_result = Game_Temp::BattleAbort
-    Scene.pop
+    Player.pop
   end
 
   def check_flee
     return if not Game_Battle.allies_flee
     Game_Battle.allies_flee = false
     Game_Temp.battle_result = Game_Temp::BattleEscape
-    Scene.pop
+    Player.pop
   end
 
   def update

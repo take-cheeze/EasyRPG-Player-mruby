@@ -68,7 +68,7 @@ class Scene_Order < Scene
   def update_order
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
-      Scene.pop
+      Player.pop
     elsif Input.trigger? Input::DECISION
       if not actors.find(@window_left.index + 1).nil?
         Game_System.se_play Game_System::SFX_Cancel
@@ -98,7 +98,7 @@ class Scene_Order < Scene
     elsif Input.trigger? Input::DECISION
       if @window_confirm.index == 0
         confirm
-        Scene.pop
+        Player.pop
       else; redo
       end
     end

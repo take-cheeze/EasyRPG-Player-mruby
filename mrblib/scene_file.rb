@@ -81,11 +81,11 @@ class Scene_File < Scene
 
     if Input.trigger? Input::CANCEL
       Game_System.se_play Game_System::SFX_Cancel
-      Scene.pop
+      Player.pop
     elsif Input.trigger? Input::DECISION
       Game_System.se_play Game_System::SFX_Decision
       action @index
-      Scene.pop
+      Player.pop
     end
 
     old_top_index = @top_index
