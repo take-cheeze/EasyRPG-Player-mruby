@@ -229,9 +229,9 @@ class Game_Character
 
     if @move_route_index >= @move_route_data.length
       # End of Move list
-      if move_route.repeat
-        move_route_index = 0
-      elsif move_route_forcing
+      if @move_route.repeat
+        @move_route_index = 0
+      elsif @move_route_forcing
         @move_route_forcing = false
         @move_route_owner.end_move_route(move_route) unless @move_route_owner.nil?
         self.move_route = original_move_route
