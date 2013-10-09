@@ -15,9 +15,10 @@
 
 class Game_Screen
   def initialize
-    @data = $game_data.screen
     reset
   end
+
+  def data; $game_data.screen ||= {}; end
 
   snowflake_life = 200
   snowflake_visible = 150
@@ -30,35 +31,35 @@ class Game_Screen
   def reset
     @pictures = Array.new 50
 
-    @data.tint_current_red = nil
-    @data.tint_current_green = nil
-    @data.tint_current_blue = nil
-    @data.tint_current_sat = nil
+    data.tint_current_red = nil
+    data.tint_current_green = nil
+    data.tint_current_blue = nil
+    data.tint_current_sat = nil
 
-    @data.tint_finish_red = nil
-    @data.tint_finish_green = nil
-    @data.tint_finish_blue = nil
-    @data.tint_finish_sat = nil
+    data.tint_finish_red = nil
+    data.tint_finish_green = nil
+    data.tint_finish_blue = nil
+    data.tint_finish_sat = nil
 
-    @data.tint_time_left = nil
+    data.tint_time_left = 0
 
-    @data.flash_red = nil
-    @data.flash_green = nil
-    @data.flash_blue = nil
+    data.flash_red = nil
+    data.flash_green = nil
+    data.flash_blue = nil
 
     @flash_sat = 0
-    @data.flash_time_left = nil
+    data.flash_time_left = 0
     @flash_period = 0
 
-    @data.shake_strength = nil
-    @data.shake_speed = nil
-    @data.shake_time_left = nil
-    @data.shake_position = 0
-    @data.shake_continuous = false
+    data.shake_strength = nil
+    data.shake_speed = nil
+    data.shake_time_left = 0
+    data.shake_position = 0
+    data.shake_continuous = false
     @shake_direction = 0
 
-    @data.weather = 0
-    @data.weather_strength = 0
+    data.weather = 0
+    data.weather_strength = 0
 
     @movie_filename = ''
     @movie_pos_x, @movie_pos_y = 0, 0
@@ -69,45 +70,45 @@ class Game_Screen
   end
 
   def tint_screen(r, g, b, s, tenths)
-    @data.tint_finish_red = r
-    @data.tint_finish_green = g
-    @data.tint_finish_blue = b
-    @data.tint_finish_sat = s
+    data.tint_finish_red = r
+    data.tint_finish_green = g
+    data.tint_finish_blue = b
+    data.tint_finish_sat = s
 
-    @data.tint_time_left = tenths * DEFAULT_FPS / 10
+    data.tint_time_left = tenths * DEFAULT_FPS / 10
 
-    if @data.tint_time_left == 0
-      @data.tint_current_red = @data.tint_finish_red
-      @data.tint_current_green = @data.tint_finish_green
-      @data.tint_current_blue = @data.tint_finish_blue
-      @data.tint_current_sat = @data.tint_finish_sat
+    if data.tint_time_left == 0
+      data.tint_current_red = data.tint_finish_red
+      data.tint_current_green = data.tint_finish_green
+      data.tint_current_blue = data.tint_finish_blue
+      data.tint_current_sat = data.tint_finish_sat
     end
   end
 
   def shake_once(power, speed, tenths)
-    @data.shake_strength = power
-    @data.shake_speed = speed
-    @data.shake_time_left = tenths * DEFAULT_FPS / 10
-    @data.shake_position = 0
-    @data.shake_continuous = false
+    data.shake_strength = power
+    data.shake_speed = speed
+    data.shake_time_left = tenths * DEFAULT_FPS / 10
+    data.shake_position = 0
+    data.shake_continuous = false
   end
 
   def shake_begin(power, speed)
-    @data.shake_strength = power
-    @data.shake_speed = speed
-    @data.shake_time_left = 0
-    @data.shake_position = 0
-    @data.shake_continuous = true
+    data.shake_strength = power
+    data.shake_speed = speed
+    data.shake_time_left = 0
+    data.shake_position = 0
+    data.shake_continuous = true
   end
 
   def shake_end
-    @data.shake_time_left = 0
-    @data.shake_continuous = false
+    data.shake_time_left = 0
+    data.shake_continuous = false
   end
 
   def weather(type, strength)
-    @data.weather = type
-    @data.weather_strength = strength
+    data.weather = type
+    data.weather_strength = strength
     stop_weather
     init_weather if type != Weather_None
   end
@@ -119,9 +120,9 @@ class Game_Screen
   end
 
   def show_battle_animation(animation_id, target_id, global)
-    @data.battleanim_id = animation_id
-    @data.battleanim_target = target_id
-    @data.battleanim_global = global
+    data.battleanim_id = animation_id
+    data.battleanim_target = target_id
+    data.battleanim_global = global
 
     target = Game_Character.character target_id, target_id
 
@@ -132,29 +133,29 @@ class Game_Screen
   def battle_animation_waiting?; not @animation.nil? end
 
   def flash_once(r, g, b, a, s, tenths)
-    @data.flash_red = r
-    @data.flash_green = g
-    @data.flash_blue = b
+    data.flash_red = r
+    data.flash_green = g
+    data.flash_blue = b
     @flash_sat = s
-    @data.flash_current_level = s
+    data.flash_current_level = s
 
-    @data.flash_time_left = tenths * DEFAULT_FPS / 10
+    data.flash_time_left = tenths * DEFAULT_FPS / 10
     @flash_period = 0
   end
 
   def flash_begin(r, g, b, a, s, tenths)
-    @data.flash_red = r
-    @data.flash_green = g
-    @data.flash_blue = b
+    data.flash_red = r
+    data.flash_green = g
+    data.flash_blue = b
     @flash_sat = s
-    @data.flash_current_level = s
+    data.flash_current_level = s
 
-    @data.flash_time_left = tenths * DEFAULT_FPS / 10
-    @flash_period = @data.flash_time_left
+    data.flash_time_left = tenths * DEFAULT_FPS / 10
+    @flash_period = data.flash_time_left
   end
 
   def flash_end
-    @data.flash_time_left = 0
+    data.flash_time_left = 0
     flash_period = 0
   end
 
@@ -211,7 +212,7 @@ class Game_Screen
   def init_snow_rain
     return unless @snowflakes.empty?
 
-    for i in 0...(100 * (@data.weather_strength + 1))
+    for i in 0...(100 * (data.weather_strength + 1))
       @snowflakes.push Snowflake.new(rand * 440.0 / RAND_MAX, rand, rand)
     end
   end
@@ -253,12 +254,12 @@ class Game_Screen
 
   def draw_fog
     @weather_surface.fill @weather_surface.react, Color.new(128, 128, 128, 255)
-    @weather_plane.opacity = effect_opacities[@data.weather_strength]
+    @weather_plane.opacity = effect_opacities[data.weather_strength]
   end
 
   def draw_sandstorm
     @weather_surface.fill @weather_surface.rect, Color.new(192, 160, 128, 255)
-    @weather_plane.opacity = effect_opacities[@data.weather_strength]
+    @weather_plane.opacity = effect_opacities[data.weather_strength]
   end
 
   def interpolate(d, x0, x1) (x0 * (d - 1) + x1) / d end
@@ -290,15 +291,13 @@ class Game_Screen
       data.shake_time_left -= 1 if (data.shake_time_left > 0)
     end
 
-    @pictures.each { |v|
-      v.update unless v.nil?
-    }
+    @pictures.each { |v| v && v.update }
 
-    unless movie_filename.empty?
+    unless @movie_filename.empty?
       # update movie
     end
 
-    case @data.weather
+    case data.weather
     when Weather_None
     when Weather_Rain
       init_weather

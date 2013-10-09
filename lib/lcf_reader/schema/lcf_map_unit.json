@@ -2,7 +2,7 @@
   "signature": "LcfMapUnit",
   "root": [
     {"type": "array1d", "name": "global", "value": [
-      {"index": 1, "type": "integer", "name": "chip_set_id", "value": 1},
+      {"index": 1, "type": "integer", "name": "chipset_id", "value": 1},
       {"index": 2, "type": "integer", "name": "width", "value": 20},
       {"index": 3, "type": "integer", "name": "height", "value": 15},
 
@@ -24,29 +24,29 @@
         {"index": 1, "type": "string", "name": "name"},
         {"index": 2, "type": "integer", "name": "x", "value": 0},
         {"index": 3, "type": "integer", "name": "y", "value": 0},
-        {"index": 5, "type": "array2d", "name": "Page", "value": [
-          {"index": 2, "type": "array1d", "name": "Term", "value": [
-            {"index": 1, "type": "integer", "name": "flag", "value": 0},
+        {"index": 5, "type": "array2d", "name": "page", "value": [
+          {"index": 2, "type": "array1d", "name": "term", "value": [
+            {"index": 1, "type": "integer", "name": "flags", "value": 0},
             {"index": 2, "type": "integer", "name": "switch_id1", "value": 1},
             {"index": 3, "type": "integer", "name": "switch_id2", "value": 1},
             {"index": 4, "type": "integer", "name": "variable_id", "value": 1},
-            {"index": 5, "type": "integer", "name": "value", "value": 0},
+            {"index": 5, "type": "integer", "name": "variable_value", "value": 0},
             {"index": 6, "type": "integer", "name": "item_id", "value": 1},
             {"index": 7, "type": "integer", "name": "char_id", "value": 1},
             {"index": 8, "type": "integer", "name": "timer_left_1", "value": 0},
             {"index": 9, "type": "integer", "name": "timer_left_2", "value": 0},
-            {"index": 10, "type": "integer", "name": "compare_type", "value": 0}
+            {"index": 10, "type": "integer", "name": "compare_operator", "value": 0}
           ]},
 
-          {"index": 21, "type": "string", "name": "char_set"},
-          {"index": 22, "type": "integer", "name": "char_set_pos", "value": 0},
-          {"index": 23, "type": "integer", "name": "char_setdir", "value": 2},
-          {"index": 24, "type": "integer", "name": "char_set_pat", "value": 1},
+          {"index": 21, "type": "string", "name": "charset"},
+          {"index": 22, "type": "integer", "name": "charset_pos", "value": 0},
+          {"index": 23, "type": "integer", "name": "charset_dir", "value": 2},
+          {"index": 24, "type": "integer", "name": "charset_pat", "value": 1},
           {"index": 25, "type": "bool", "name": "semi_trans", "value": false},
 
           {"index": 31, "type": "integer", "name": "action", "value": 0},
-          {"index": 32, "type": "integer", "name": "freq", "value": 3},
-          {"index": 33, "type": "integer", "name": "start_type", "value": 0},
+          {"index": 32, "type": "integer", "name": "frequency", "value": 3},
+          {"index": 33, "type": "integer", "name": "trigger", "value": 0},
           {"index": 34, "type": "integer", "name": "priority_type", "value": 0},
           {"index": 35, "type": "bool", "name": "no_pile", "value": false},
           {"index": 36, "type": "integer", "name": "anime_type", "value": 0},
@@ -57,7 +57,7 @@
             {"index": 12, "type": "ber_array", "name": "data"},
 
             {"index": 21, "type": "bool", "name": "repeat", "value": true},
-            {"index": 22, "type": "bool", "name": "pass", "value": false}
+            {"index": 22, "type": "bool", "name": "skippable", "value": false}
           ]},
 
           {"index": 51, "type": "integer", "name": "event_length", "value": 0},

@@ -34,7 +34,7 @@ class Window_SaveFile < Window_Base
   def Refresh()
     contents.clear
 
-    contents.draw_text_2k 4, 2, '%s%2d' % [Data.terms.file , @index + 1], Font::ColorDefault
+    contents.draw_text_2k 4, 2, '%s%2d' % [Data.term.file , @index + 1], Font::ColorDefault
 
     if @corrupted
       contents.draw_text_2k 4, 16 + 2, "Savegame corrupted", Font::ColorKnockout
@@ -44,14 +44,14 @@ class Window_SaveFile < Window_Base
     return if party.empty?
 
     contents.draw_text_2k 8, 16 + 2, @hero_name, Font::ColorDefault
-    contents.draw_text_2k 8, 32 + 2, Data.terms.lvl_short, 1
+    contents.draw_text_2k 8, 32 + 2, Data.term.lvl_short, 1
 
-    lx = contents.font.size(Data.terms.lvl_short).width
+    lx = contents.font.size(Data.term.lvl_short).width
     contents.draw_text_2k 8 + lx, 32 + 2, '%2d' % @hero_level, Font::ColorDefault
 
-    contents.draw_text_2k(42, 32 + 2, Data.terms.hp_short, 1)
+    contents.draw_text_2k(42, 32 + 2, Data.term.hp_short, 1)
 
-    hx = contents.font.size(Data.terms.hp_short).width
+    hx = contents.font.size(Data.term.hp_short).width
     contents.draw_text_2k 42 + hx, 32 + 2, '%3d' % @hero_hp, Font::ColorDefault
 
     for i in 0...[4, @party.length].min

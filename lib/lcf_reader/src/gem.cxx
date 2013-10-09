@@ -146,11 +146,20 @@ struct array_methods {
 	static mrb_value length(mrb_state* M, mrb_value const self) {
 		return mrb_fixnum_value(EasyRPG::get<array_type>(M, self).size());
 	}
+	static mrb_value to_ary(mrb_state* M, mrb_value const self) {
+		array_type const& src = EasyRPG::get<array_type>(M, self);
+		mrb_value const ret = mrb_ary_new_capa(M, src.size());
+		for(size_t i = 0; i < src.size(); ++i) {
+			mrb_ary_push(M, ret, mrb_fixnum_value(src[i]));
+		}
+		return ret;
+	}
 
 	static void register_(mrb_state* M, RClass* mod, char const* name) {
 		method_info const methods[] = {
 			{ "[]", &get, MRB_ARGS_REQ(1) },
 			{ "length", &length, MRB_ARGS_NONE() },
+			{ "to_ary", &to_ary, MRB_ARGS_NONE() },
 			method_info_end };
 		register_methods(M, define_class<array_type>(M, name, mod), methods);
 	}
@@ -238,6 +247,15 @@ mrb_value array2d_get(mrb_state* M, mrb_value const self) {
 	return clone_opt(M, get<LCF::array2d>(M, self).get(v));
 }
 
+mrb_value array2d_keys(mrb_state* M, mrb_value const self) {
+	LCF::array2d const& ary2d = get<LCF::array2d>(M, self);
+	mrb_value const ret = mrb_ary_new_capa(M, ary2d.size());
+	for(LCF::array2d::const_iterator i = ary2d.begin(); i != ary2d.end(); ++i) {
+		mrb_ary_push(M, ret, mrb_fixnum_value(i->first));
+	}
+	return ret;
+}
+
 mrb_value map_tree_get(mrb_state* M, mrb_value const self) {
 	mrb_int v;
 	mrb_get_args(M, "i", &v);
@@ -307,6 +325,7 @@ extern "C" void mrb_lcf_reader_gem_init(mrb_state* M) {
 
 	static method_info const array2d_methods[] = {
 		{ "[]", &array2d_get, MRB_ARGS_REQ(1) },
+		{ "keys", &array2d_keys, MRB_ARGS_NONE() },
 		{ "to_json", &to_json_func<LCF::array2d>, MRB_ARGS_NONE() },
 		method_info_end };
 	register_methods(M, define_class<LCF::array2d>(M, "Array2d", mod), array2d_methods);

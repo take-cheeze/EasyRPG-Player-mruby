@@ -729,7 +729,7 @@ class Scene_Battle < Scene
     Game_Battle.allies.each { |v| v.anim_state = Battle::Ally::Victory }
     Game_Temp.battle_result = Game_Temp::BattleVictory
     self.state = State_Victory
-    message Data.terms.victory || 'Victory'
+    message Data.term.victory || 'Victory'
   end
 
   def check_lose
@@ -738,7 +738,7 @@ class Scene_Battle < Scene
 
     Game_Temp.battle_result = Game_Temp::BattleDefeat
     self.state = State_Defeat
-    message Data.terms.defeat || 'Defeat'
+    message Data.term.defeat || 'Defeat'
   end
 
   def check_abort

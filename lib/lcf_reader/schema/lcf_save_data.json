@@ -28,10 +28,10 @@
         {"index": 22, "type": "integer", "name": "wallpaper"},
         {"index": 23, "type": "integer", "name": "font"},
 
-        {"index": 31, "type": "integer", "name": "switch_data_num", "value": 0},
-        {"index": 32, "type": "int8array", "name": "switch_data"},
-        {"index": 33, "type": "integer", "name": "variable_data_num", "value": 0},
-        {"index": 34, "type": "int32array", "name": "variable_data"},
+        {"index": 31, "type": "integer", "name": "switch_count", "value": 0},
+        {"index": 32, "type": "int8array", "name": "switch"},
+        {"index": 33, "type": "integer", "name": "variable_count", "value": 0},
+        {"index": 34, "type": "int32array", "name": "variable"},
 
         {"index": 41, "type": "integer", "name": "window_type", "value": 0},
         {"index": 42, "type": "integer", "name": "window_view_point", "value": 2},
@@ -166,7 +166,7 @@
       {"index": 105, "type": "event_state", "name": "boat"},
       {"index": 106, "type": "event_state", "name": "ship"},
       {"index": 107, "type": "event_state", "name": "Airship"},
-      {"index": 108, "type": "array2d", "name": "character", "value": [
+      {"index": 108, "type": "array2d", "name": "actor", "value": [
         {"index": 1, "type": "string", "name": "name"},
         {"index": 2, "type": "string", "name": "title"},
         {"index": 3, "type": "bool", "name": "semi_trans"},
@@ -180,21 +180,21 @@
 
         {"index": 31, "type": "integer", "name": "level"},
         {"index": 32, "type": "integer", "name": "exp"},
-        {"index": 33, "type": "integer", "name": "hp_"},
-        {"index": 34, "type": "integer", "name": "mp_"},
+        {"index": 33, "type": "integer", "name": "hp_max"},
+        {"index": 34, "type": "integer", "name": "mp_max"},
 
         {"index": 41, "type": "integer", "name": "attack", "value": 0},
         {"index": 42, "type": "integer", "name": "gaurd", "value": 0},
         {"index": 43, "type": "integer", "name": "mind", "value": 0},
         {"index": 44, "type": "integer", "name": "speed", "value": 0},
 
-        {"index": 51, "type": "integer", "name": "skill_data_num", "value": 0},
-        {"index": 52, "type": "int16array", "name": "skill_data"},
+        {"index": 51, "type": "integer", "name": "skill_len", "value": 0},
+        {"index": 52, "type": "int16array", "name": "skill"},
 
         {"index": 61, "type": "int16array", "name": "equipment"},
 
-        {"index": 71, "type": "integer", "name": "cur_hp_", "value": 0},
-        {"index": 72, "type": "integer", "name": "cur_mp_", "value": 0},
+        {"index": 71, "type": "integer", "name": "cur_hp", "value": 0},
+        {"index": 72, "type": "integer", "name": "cur_mp", "value": 0},
 
         {"index": 81, "type": "integer", "name": "condition_step_num", "value": 0},
         {"index": 82, "type": "int16array", "name": "condition_step"},
@@ -251,8 +251,8 @@
 
         {"index": 11, "type": "array2d", "name": "info", "value": "event_state" },
 
-        {"index": 21, "type": "int16array", "name": "replace_lower"},
-        {"index": 22, "type": "int16array", "name": "replace_upper"},
+        {"index": 21, "type": "int16array", "name": "lower"},
+        {"index": 22, "type": "int16array", "name": "upper"},
 
         {"index": 31, "type": "bool", "name": "use_panorama"},
         {"index": 32, "type": "string", "name": "panorama"},

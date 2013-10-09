@@ -141,10 +141,10 @@ class Window_BattleStatus < Window_Base
     gauge_y = 32 + speed * 16
 
     contents.blit(cx + 0, cy, system2, Rect.new(0, gauge_y, 16, 16), 255)
-    contents.stretch_blit(Rect.new(cx + 16, cy, 25, 16), system2,
+    contents.stretch_blt(Rect.new(cx + 16, cy, 25, 16), system2,
                           Rect.new(16, gauge_y, 16, 16), 255)
     contents.blit(cx + 16 + 25, cy, system2, Rect.new(32, gauge_y, 16, 16), 255)
-    contents.stretch_blit(Rect.new(cx + 16, cy, gauge_w, 16), system2,
+    contents.stretch_blt(Rect.new(cx + 16, cy, gauge_w, 16), system2,
                           Rect.new(full ? 64 : 48, gauge_y, 16, 16), 255)
   end
 end

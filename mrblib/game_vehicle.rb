@@ -22,6 +22,8 @@ class Game_Vehicle < Game_Character
   Airship = 2
 
   def initialize(type)
+    super()
+
     @type = type
     @altitude = 0
     @driving = false
@@ -31,29 +33,14 @@ class Game_Vehicle < Game_Character
   end
 
   def load_system_settings
-    case @type
-    when Boat
-      pcharacter_name = Data.system.boat_name
-      @character_index = Data.system.boat_index
-      @bgm = Data.system.boat_music
-      @map_id = Data.treemap.start.boat_map_id
-      @x = Data.treemap.start.boat_x
-      @y = Data.treemap.start.boat_y
-    when Ship
-      @character_name = Data.system.ship_name
-      @character_index = Data.system.ship_index
-      @bgm = Data.system.ship_music
-      @map_id = Data.treemap.start.ship_map_id
-      @x = Data.treemap.start.ship_x
-      @y = Data.treemap.start.ship_y
-    when Airship
-      @character_name = Data.system.airship_name
-      @character_index = Data.system.airship_index
-      @bgm = Data.system.airship_music
-      @map_id = Data.treemap.start.airship_map_id
-      @x = Data.treemap.start.airship_x
-      @y = Data.treemap.start.airship_y
-    end
+    @character_name = Data.system[11 + @type]
+    @character_index = Data.system[14 + @type]
+    @bgm = Data.system[35 + @type]
+
+    lmt = Data.treemap.root(2)
+    @map_id = lmt[10 * @type + 11]
+    @x = lmt[10 * @type + 12]
+    @y = lmt[10 * @type + 13]
   end
 
   def refresh
@@ -75,7 +62,7 @@ class Game_Vehicle < Game_Character
       @priority_type = @driving ? RPG::EventPage::Layers_above : RPG::EventPage::Layers_below
       @move_speed = RPG::EventPage::MoveSpeed_fourfold
     end
-    @walk_animation = driving
+    @walk_animation = @driving
   end
 
   def set_position(map, x, y)

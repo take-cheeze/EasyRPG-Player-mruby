@@ -36,15 +36,15 @@ class Window_ActorStatus < Window_Base
     actor = Game_Actors.actor @actor_id
 
     # Draw Hp
-    contents.draw_text_2k 1, 3, Data.terms.hp_short, 1
+    contents.draw_text_2k 1, 3, Data.term.hp_short, 1
     draw_min_max 100,3,actor.hp, actor.max_hp
 
     # Draw Sp
-    contents.draw_text_2k 1, 18, Data.terms.sp_short, 1
+    contents.draw_text_2k 1, 18, Data.term.sp_short, 1
     draw_min_max 100,18,actor.sp, actor.max_sp
 
     # Draw Exp
-    contents.draw_text_2k 1, 33, Data.terms.exp_short, 1
+    contents.draw_text_2k 1, 33, Data.term.exp_short, 1
     draw_min_max(100,33, -1, -1)
   end
 

@@ -18,15 +18,15 @@ module Game_Actors end
 class << Game_Actors
   # Initializes Game Actors.
   def load
-    @data = Array.new(Data.actors.size + 1)
-    for i in 1...@data.length
-      actor(i).load
-    end
+    $game_data.actor ||= []
+    Data.actor.each { |k,v| actor k }
   end
+
+  def data; $game_data.actor; end
 
   # Disposes Game Actors.
   def clear
-    @data = []
+    data.clear
   end
 
   # Gets an actor by its ID.
@@ -37,10 +37,8 @@ class << Game_Actors
     if not actor_exists? id
       Output.warning("Actor ID %d is invalid" % id)
       nil
-    elsif data[id].nil?
-      @data[id] = Game_Actor.new id
     else
-      @data[id]
+      data[id] ||= Game_Actor.new id
     end
   end
 
@@ -49,6 +47,6 @@ class << Game_Actors
   # @param id the actor ID in the database.
   # @return whether the actor exists.
   def actor_exists?(id)
-    id > 0 and id < @data.length
+    not Data.actor[id].nil?
   end
 end

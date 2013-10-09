@@ -26,11 +26,11 @@ class Window_Command < Window_Selectable
   def initialize(commands, width = nil, max_item = nil)
     super 0, 0, required_width(commands, width), (max_item.nil? ? commands.length : max_item) * 16 + 16
 
-    self.contents = Bitmap.new self.width - 16, @item_max * 16
-
     @commands = commands
     @index = 0
     @item_max = @commands.length
+
+    self.contents = Bitmap.new self.width - 16, @item_max * 16
 
     refresh
   end
@@ -45,7 +45,7 @@ class Window_Command < Window_Selectable
   #
   # @param idx command index.
   def disable_item(idx)
-    draw_item i, Font::ColorDisabled
+    draw_item idx, Font::ColorDisabled
   end
 
   # Replaces the text of an item.
@@ -60,8 +60,8 @@ class Window_Command < Window_Selectable
   end
 
   def draw_item(idx, color)
-    contents.fill_rect Rect.new(0, 16 * @index, contents.width - 0, 16), Color.new(0, 0, 0, 0)
-    contents.draw_text_2k 0, 16 * @index + 2, @commands[@index], color
+    contents.fill_rect Rect.new(0, 16 * idx, contents.width - 0, 16), Color.new(0, 0, 0, 0)
+    contents.draw_text_2k 0, 16 * idx + 2, @commands[idx], color
   end
 
   def required_width(commands, width)

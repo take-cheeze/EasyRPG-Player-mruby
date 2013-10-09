@@ -576,26 +576,26 @@ class Game_Interpreter_Map < Game_Interpreter
 
     case com[0] # inn type
     when 0
-      Game_Message.texts.push('%s %d %s%s' % [Data.terms.inn_a_greeting_1,
-                                              Game_Temp.inn_price, Data.terms.gold,
-                                              Data.terms.inn_a_greeting_2])
-      Game_Message.texts.push Data.terms.inn_a_greeting_3
+      Game_Message.texts.push('%s %d %s%s' % [Data.term.inn_a_greeting_1,
+                                              Game_Temp.inn_price, Data.term.gold,
+                                              Data.term.inn_a_greeting_2])
+      Game_Message.texts.push Data.term.inn_a_greeting_3
     when 1
-      Game_Message.texts.push('%s %d %s%s' % [Data.terms.inn_b_greeting_1,
-                                              Game_Temp.inn_price, Data.terms.gold,
-                                              Data.terms.inn_b_greeting_2])
-      Game_Message.texts.push Data.terms.inn_b_greeting_3
+      Game_Message.texts.push('%s %d %s%s' % [Data.term.inn_b_greeting_1,
+                                              Game_Temp.inn_price, Data.term.gold,
+                                              Data.term.inn_b_greeting_2])
+      Game_Message.texts.push Data.term.inn_b_greeting_3
     end
 
     Game_Message.choice_start = Game_Message.texts.length
 
     case com[0]
     when 0
-      Game_Message.texts.push Data.terms.inn_a_accept
-      Game_Message.texts.push Data.terms.inn_a_cancel
+      Game_Message.texts.push Data.term.inn_a_accept
+      Game_Message.texts.push Data.term.inn_a_cancel
     when 1
-      Game_Message.texts.push Data.terms.inn_b_accept
-      Game_Message.texts.push Data.terms.inn_b_cancel
+      Game_Message.texts.push Data.term.inn_b_accept
+      Game_Message.texts.push Data.term.inn_b_cancel
     else
       return false
     end

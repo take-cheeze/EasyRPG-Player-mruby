@@ -108,6 +108,10 @@ mrb_value substitudte_down(mrb_state* M, mrb_value const self) {
 	return get<Tilemap>(M, self).SubstituteDown(old_id, new_id), self;
 }
 
+mrb_value update(mrb_state* M, mrb_value const self) {
+	return get<Tilemap>(M, self).Update(), self;
+}
+
 #define define_int_property(name, cxx_name)								\
 	mrb_value get_ ## name(mrb_state* M, mrb_value const self) {		\
 		return mrb_fixnum_value(get<Tilemap>(M, self).Get ## cxx_name()); \
@@ -142,6 +146,7 @@ void EasyRPG::register_tilemap(mrb_state* M) {
 		property_methods(animation_speed), property_methods(animation_type),
 		{ "substitudte_down", &substitudte_down, MRB_ARGS_REQ(2) },
 		{ "substitudte_up", &substitudte_up, MRB_ARGS_REQ(2) },
+		{ "update", &update, MRB_ARGS_NONE() },
 		method_info_end };
 	register_methods(M, define_class<Tilemap>(M, "Tilemap"), methods);
 }

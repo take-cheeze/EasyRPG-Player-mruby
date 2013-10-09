@@ -94,7 +94,7 @@ class Window_Selectable < Window_Base
   end
 
   def update
-    if (active && @item_max > 0 && @index >= 0)
+    if active && @item_max > 0 && !@index.nil?
       if (Input.repeat?(Input::DOWN))
         if ((@column_max == 1 && Input.trigger?(Input::DOWN)) || @index < @item_max - @column_max)
           Game_System.se_play Game_System::SFX_Cursor
@@ -120,10 +120,9 @@ class Window_Selectable < Window_Base
         end
       end
     end
-    if (active && help_window != nil)
-      UpdateHelp()
-    end
-    update_cursor_rect()
+
+    update_help if active && !help_window.nil?
+    update_cursor_rect
   end
 
   def update_help; end

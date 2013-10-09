@@ -22,12 +22,12 @@ class Window_NumberInput < Window_Selectable
   # @param iy window y position.
   # @param iwidth window width.
   # @param iheight window height.
-  def initialize(x, y, w = 320, h = 80)
-    super ix, iy, iw, ih
+  def initialize(ix, iy, w = 320, h = 80)
+    super ix, iy, w, h
     @max_digits = 6
     @number = 0
 
-    self.contents = Bitmap.new iw - 16, ih - 16
+    self.contents = Bitmap.new w - 16, h - 16
     @cursor_width = 14
     self.z = 10001
     @opacity = 0
@@ -41,9 +41,9 @@ class Window_NumberInput < Window_Selectable
   # Updates the Window's contents.
   def refresh
     contents.clear
-    str = "%0#{@max_digits}" % @number
+    str = "%0#{@max_digits}d" % @number
     for i in 0...@max_digits
-      contents.draw_text_2k i * (cursor_width - 2) + 12, 2, str[i], Font::ColorDefault
+      contents.draw_text_2k i * (@cursor_width - 2) + 12, 2, str[i], Font::ColorDefault
     end
   end
 

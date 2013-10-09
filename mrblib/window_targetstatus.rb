@@ -31,7 +31,7 @@ class Window_TargetStatus < Window_Base
 
     return if id < 0
 
-    contents.draw_text_2k 0, 0, use_item ? Data.terms.possessed_items : Data.terms.sp_cost, 1
+    contents.draw_text_2k 0, 0, use_item ? Data.term.possessed_items : Data.term.sp_cost, 1
     msg = (@use_item ? Game_Party.item_number(id) : Data.skills[id].sp_cost).to_s
     contents.draw_text_2k contents.width - contents.text_size(msg).width, 0, msg, Font::ColorDefault, Text::AlignRight
   end

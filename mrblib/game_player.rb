@@ -16,6 +16,8 @@
 # Game Player class
 class Game_Player < Game_Character
   def initialize
+    super
+
     @teleporting = false
     @vehicle_type = nil
     @vehicle_getting_on = false
@@ -62,17 +64,17 @@ class Game_Player < Game_Character
   end
 
   def center(x, y)
-    @center_x = (Graphics.screen_buffer.width / 2 - 16) * 8
-    @center_y = (Graphics.screen_buffer.height / 2 - 8) * 8
+    @center_x = (SCREEN_TARGET_WIDTH / 2 - 16) * 8
+    @center_y = (SCREEN_TARGET_HEIGHT / 2 - 8) * 8
 
-    max_x = (Game_Map.width - Graphics.screen_buffer.width / 16) * 128
-    max_y = (Game_Map.height - Graphics.screen_buffer.height / 16) * 128
-    Game_Map.display_x = [0, [x * 128 - center_x, max_x].min].max
-    Game_Map.display_y = [0, [y * 128 - center_y, max_y].min].max
+    max_x = (Game_Map.width - SCREEN_TARGET_WIDTH / 16) * 128
+    max_y = (Game_Map.height - SCREEN_TARGET_HEIGHT / 16) * 128
+    Game_Map.display_x = [0, [x * 128 - @center_x, max_x].min].max
+    Game_Map.display_y = [0, [y * 128 - @center_y, max_y].min].max
   end
 
   def move_to(x, y)
-    Game_Character.move_to x, y
+    super x, y
     center x, y
   end
 
@@ -176,24 +178,24 @@ class Game_Player < Game_Character
   end
 
   def update_scroll(last_real_x, last_real_y)
-    center_x = (Graphics.screen_buffer.width / 2 - 16) * 8
-    center_y = (Graphics.screen_buffer.height / 2 - 8) * 8
+    @center_x = (SCREEN_TARGET_WIDTH / 2 - 16) * 8
+    @center_y = (SCREEN_TARGET_HEIGHT / 2 - 8) * 8
 
     return if Game_Map.pan_locked?
 
     if Game_Map.pan_x != 0 || Game_Map.pan_y != 0
-      int dx = real_x - center_x + Game_Map.pan_x - Game_Map.display_x
-      int dy = real_y - center_y + Game_Map.pan_y - Game_Map.display_y
+      int dx = real_x - @center_x + Game_Map.pan_x - Game_Map.display_x
+      int dy = real_y - @center_y + Game_Map.pan_y - Game_Map.display_y
 
       Game_Map.scroll_right(dx) if (dx > 0)
       Game_Map.scroll_left(-dx) if (dx < 0)
       Game_Map.scroll_down(dy) if (dy > 0)
       Game_Map.scroll_up(-dy) if (dy < 0)
     else
-      Game_Map.scroll_down(real_y - last_real_y) if (real_y > last_real_y && real_y - Game_Map.display_y > center_y)
-      Game_Map.scroll_left(last_real_x - real_x) if (real_x < last_real_x && real_x - Game_Map.display_x < center_x)
-      Game_Map.scroll_right(real_x - last_real_x) if (real_x > last_real_x && real_x - Game_Map.display_x > center_x)
-      Game_Map.scroll_up(last_real_y - real_y) if (real_y < last_real_y && real_y - Game_Map.display_y < center_y)
+      Game_Map.scroll_down(real_y - last_real_y) if (real_y > last_real_y && real_y - Game_Map.display_y > @center_y)
+      Game_Map.scroll_left(last_real_x - real_x) if (real_x < last_real_x && real_x - Game_Map.display_x < @center_x)
+      Game_Map.scroll_right(real_x - last_real_x) if (real_x > last_real_x && real_x - Game_Map.display_x > @center_x)
+      Game_Map.scroll_up(last_real_y - real_y) if (real_y < last_real_y && real_y - Game_Map.display_y < @center_y)
     end
   end
 

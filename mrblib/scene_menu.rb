@@ -24,6 +24,15 @@ class Scene_Menu < Scene
     @command_options = []
   end
 
+  def self.create_background
+    ret = Sprite.new
+    ret.bitmap = Bitmap.new SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT
+    ret.bitmap.stretch_blt(ret.bitmap.rect, Cache.system(Game_System.system_name),
+                            Rect.new(0, 32, 16, 16), 255)
+    ret.z = -1000
+    ret
+  end
+
   def start
     create_command_window
 
@@ -34,7 +43,7 @@ class Scene_Menu < Scene
     @menustatus_window = Window_MenuStatus.new 88, 0, 232, 240
     @menustatus_window.active = false
 
-    @background = create_background
+    @background = Scene_Menu.create_background
   end
 
   def continue
@@ -64,22 +73,22 @@ class Scene_Menu < Scene
 
     # Add all menu items
     options = []
-    @command_options.each { |v|
+    @command_options.each do |v|
       case v
-      when Item; options.push(Data.terms.command_item)
-      when Skill; options.push(Data.terms.command_skill)
-      when Equipment; options.push(Data.terms.menu_equipment)
-      when Save; options.push(Data.terms.menu_save)
-      when Status; options.push(Data.terms.status)
-      when Row; options.push(Data.terms.row)
-      when Order; options.push(Data.terms.order)
-      when Wait; options.push(Game_Temp::battle_wait ? Data.terms.wait_on : Data.terms.wait_off)
-      else; options.push(Data.terms.menu_quit)
+      when Item; options.push(Data.term.command_item)
+      when Skill; options.push(Data.term.command_skill)
+      when Equipment; options.push(Data.term.menu_equipment)
+      when Save; options.push(Data.term.menu_save)
+      when Status; options.push(Data.term.status)
+      when Row; options.push(Data.term.row)
+      when Order; options.push(Data.term.order)
+      when Wait; options.push(Game_Temp::battle_wait ? Data.term.wait_on : Data.term.wait_off)
+      else; options.push(Data.term.menu_quit)
       end
-    }
+    end
 
     @command_window = Window_Command.new options, 88
-    @command_window.index = menu_index
+    @command_window.index = @menu_index
 
     # Disable items
     @command_options.each_with_index { |v,i|
@@ -103,9 +112,9 @@ class Scene_Menu < Scene
       Game_System.se_play Game_System::SFX_Cancel
       Scene.pop
     elsif Input.trigger? Input::DECISION
-      menu_index = @command_window.index
+      @menu_index = @command_window.index
 
-      case @command_options[menu_index]
+      case @command_options[@menu_index]
       when Item
         if Game_Party.actors.empty?
           Game_System.se_play Game_System::SFX_Buzzer
@@ -139,7 +148,7 @@ class Scene_Menu < Scene
       when Wait
         Game_System.se_play Game_System::SFX_Decision
         Game_Temp.battle_wait = !Game_Temp.battle_wait
-        @command_window.set_item_text menu_index, Game_Temp.battle_wait ? Data.terms.wait_on : Data.terms.wait_off
+        @command_window.set_item_text @menu_index, Game_Temp.battle_wait ? Data.term.wait_on : Data.term.wait_off
       when Quit
         Game_System.se_play Game_System::SFX_Decision
         Scene.push Scene_End.new
@@ -184,13 +193,4 @@ class Scene_Menu < Scene
   Order = 7
   Wait = 8
   Quit = 9
-
-  def self.create_background
-    ret = Sprite.new
-    ret.bitmap = Bitmap.new SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT
-    ret.bitmap.stretch_blit(ret.bitmap.rect, Cache.system(Game_System.system_name),
-                            Rect.new(0, 32, 16, 16), 255)
-    ret.z = -1000
-    ret
-  end
 end

@@ -68,9 +68,9 @@ void change_name(mrb_state* M) {
 
 	char const* const changed_name = "Alexander";
 	LCF::key_list const key =
-			list_of<LCF::key_type>(string("character"))(1)(string("name"));
+			list_of<LCF::key_type>(string("actor"))(1)(string("name"));
 
-	easyrpg_verify(ldb["character"][1]["name"].s() == "Alex");
+	easyrpg_verify(ldb["actor"][1]["name"].s() == "Alex");
 	ldb.get(key, tmp);
 	easyrpg_verify(tmp.s() == "Alex");
 	ldb.set(key, picojson(changed_name));
@@ -83,7 +83,7 @@ void change_name(mrb_state* M) {
 	ios->seekg(0);
 
 	LCF::lcf_file changed_ldb(ios);
-	easyrpg_verify(changed_ldb["character"][1]["name"].s() == changed_name);
+	easyrpg_verify(changed_ldb["actor"][1]["name"].s() == changed_name);
 	changed_ldb.get(key, tmp);
 	easyrpg_verify(tmp.s() == changed_name);
 }

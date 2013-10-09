@@ -24,19 +24,19 @@ class Scene_Map < Scene
 
   def start
     @spriteset = Spriteset_Map.new
-    @message_window = Window_Message 0, 240 - 80, 320, 80
+    @message_window = Window_Message.new 0, 240 - 80, 320, 80
     $game_screen.reset
     Graphics.frame_reset
   end
 
   def transition_in
     super
-    # Graphics.transition_2k Data.system.transition_in, 12
+    Graphics.transition_2k Data.system.transition_in, 12
   end
 
   def transition_out
     super
-    # Graphics.transition_2k Data.system.transition_in, 12, true
+    Graphics.transition_2k Data.system.transition_in, 12, true
   end
 
   def update

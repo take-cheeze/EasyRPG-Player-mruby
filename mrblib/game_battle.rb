@@ -63,21 +63,21 @@ class << Game_Battle
     enemy_attack_ally active_enemy, target
   end
   def enemy_defend
-    msg = Data.terms.defending.empty? ? " is defending" : Data.terms.defending
+    msg = Data.term.defending.empty? ? " is defending" : Data.term.defending
     scene.message(active_enemy.rpg_enemy.name + msg)
     active_enemy.defending = true
   end
   def enemy_observe
-    msg = Data.terms.observing.empty? ? " is observing" : Data.terms.observing
+    msg = Data.term.observing.empty? ? " is observing" : Data.term.observing
     scene.message(active_enemy.rpg_enemy.name + msg)
   end
   def enemy_charge
-    msg = Data.terms.focus.empty? ? " is charging" : Data.terms.focus
+    msg = Data.term.focus.empty? ? " is charging" : Data.term.focus
     scene.message(active_enemy.rpg_enemy.name + msg)
     active_enemy.charged = true
   end
   def enemy_destruct
-    msg = Data.terms.autodestruction.empty? ? "self-destruct" : Data.terms.autodestruction
+    msg = Data.term.autodestruction.empty? ? "self-destruct" : Data.term.autodestruction
     scene.message msg
     enemy.charged = true
     @allies.each { |v| enemy_attack v }
@@ -265,7 +265,7 @@ class << Game_Battle
       enemy.game_enemy.hp = enemy.game_enemy.hp - effect
       scene.floater enemy.sprite, Font::ColorDefault, effect, 60
     else
-      scene.floater enemy.sprite, Font::ColorDefault, Data.terms.miss, 60
+      scene.floater enemy.sprite, Font::ColorDefault, Data.term.miss, 60
     end
   end
 
@@ -349,7 +349,7 @@ class << Game_Battle
       end
     }
 
-    scene.floater target.sprite, Font::ColorDefault, Data.terms.miss, 60 if miss
+    scene.floater target.sprite, Font::ColorDefault, Data.term.miss, 60 if miss
   end
 
   def use_skill_enemy(user, skill, target)
@@ -387,7 +387,7 @@ class << Game_Battle
       end
     }
 
-    scene.floater target.sprite, Font::ColorDefault, Data.terms.miss, 60 if miss
+    scene.floater target.sprite, Font::ColorDefault, Data.term.miss, 60 if miss
   end
 
   def enemy_action_valid(action, enemy)
@@ -456,7 +456,7 @@ class << Game_Battle
       ally.actor.hp = ally.actor.hp - effect
       scene.floater ally.sprite, Font::ColorDefault, effect, 60
     else
-      scene.floater ally.sprite, Font::ColorDefault, Data.terms.miss, 60
+      scene.floater ally.sprite, Font::ColorDefault, Data.term.miss, 60
     end
   end
 

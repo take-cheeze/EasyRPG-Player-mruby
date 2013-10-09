@@ -96,19 +96,19 @@ class Window_EquipStatus < Window_Base
   def drawparameter(cx, cy, type)
     case (type)
     when 0
-      name = Data.terms.attack
+      name = Data.term.attack
       value = Game_Actors.actor(actor_id).attack
       new_value = @attack
     when 1
-      name = Data.terms.defense
+      name = Data.term.defense
       value = Game_Actors.actor(actor_id).defence
       new_value = @defence
     when 2
-      name = Data.terms.spirit
+      name = Data.term.spirit
       value = Game_Actors.actor(actor_id).spirit
       new_value = @spirit
     when 3
-      name = Data.terms.agility
+      name = Data.term.agility
       value = Game_Actors.actor(actor_id).agility
       new_value = @agility
     else; return

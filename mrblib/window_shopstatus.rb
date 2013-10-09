@@ -31,8 +31,8 @@ class Window_ShopStatus < Window_Base
     contents.clear
 
     if item_id != 0
-      contents.draw_text_2k 0, 2, Data.terms.possessed_items, 1
-      contents.draw_text_2k 0, 18, Data.terms.equipped_items, 1
+      contents.draw_text_2k 0, 2, Data.term.possessed_items, 1
+      contents.draw_text_2k 0, 18, Data.term.equipped_items, 1
 
       contents.draw_text_2k 120, 2, Game_Party.item_number(item_id).to_s, Font::ColorDefault, Text::AlignRight
       contents.draw_text_2k 120, 18, Game_Party.item_number(item_id, true).to_s, Font::ColorDefault, Text::AlignRight

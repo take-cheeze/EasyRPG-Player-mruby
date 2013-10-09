@@ -30,8 +30,8 @@ class Spriteset_Map
 
     @panorama.z = -1000
 
-    Game_Map.events.each { |k,v| @character_sprites.push Sprite_Character.new(v) }
-    @character_sprites.push Sprite_Character.new($game_player)
+    Game_Map.events.each { |v| @character_sprites << Sprite_Character.new(v) unless v.nil? }
+    @character_sprites << Sprite_Character.new($game_player)
 
     update
   end
@@ -42,12 +42,12 @@ class Spriteset_Map
 
     @character_sprites.each { |v| v.update }
 
-    name = Game_Map.parallax_name
+    name = Game_Map.panorama_name
     if name != @panorama_name
       @panorama_name = name
       @panorama.bitmap = Cache.panorama @panorama_name
     end
-    @panorama.ox, @panorama.oy = Game_Map.parallax_x, Game_Map.parallax_y
+    @panorama.ox, @panorama.oy = Game_Map.panorama_x, Game_Map.panorama_y
   end
 
   # Finds the sprite for a specific character.

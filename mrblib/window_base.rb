@@ -22,7 +22,7 @@ class Window_Base < Window
   # @param w window width.
   # @param h window height.
   def initialize(ix, iy, iw, ih)
-    super
+    super()
     @windowskin_name = Game_System.system_name
     self.windowskin = Cache.system @windowskin_name
     self.x, self.y = ix, iy
@@ -55,14 +55,14 @@ class Window_Base < Window
 
   def draw_actor_level(actor, cx, cy)
     # Draw LV-String
-    contents.draw_text_2k cx, cy, Data.terms.lvl_short, 1
+    contents.draw_text_2k cx, cy, Data.term.lvl_short, 1
 
     # Draw Level of the Actor
     contents.draw_text_2k cx + 24, cy, actor.level.to_s, Font::ColorDefault, Text::AlignRight
   end
 
   def draw_actor_state(actor, cx, cy)
-    if actor.states.empty?; contents.draw_text_2k cx, cy, Data.terms.normal_status, Font::ColorDefault
+    if actor.states.empty?; contents.draw_text_2k cx, cy, Data.term.normal_status, Font::ColorDefault
     else
       state = actor.significant_state
       contents.draw_text_2k cx, cy, state.name, state.color
@@ -71,7 +71,7 @@ class Window_Base < Window
 
   def draw_actor_exp(actor, cx, cy)
     # Draw EXP-String
-    contents.draw_text_2k cx, cy, Data.terms.exp_short, 1
+    contents.draw_text_2k cx, cy, Data.term.exp_short, 1
 
     # Current Exp of the Actor
     # ------/------
@@ -81,7 +81,7 @@ class Window_Base < Window
 
   def draw_actor_hp(actor, cx, cy, draw_max)
     # Draw HP-String
-    contents.draw_text_2k cx, cy, Data.terms.hp_short, 1
+    contents.draw_text_2k cx, cy, Data.term.hp_short, 1
 
     # Draw Current HP of the Actor
     cx += 12
@@ -105,7 +105,7 @@ class Window_Base < Window
 
   def draw_actor_sp(actor, cx, cy, draw_max)
     # Draw SP-String
-    contents.draw_text_2k cx, cy, Data.terms.sp_short, 1
+    contents.draw_text_2k cx, cy, Data.term.sp_short, 1
 
     # Draw Current SP of the Actor
     cx += 12
@@ -128,16 +128,16 @@ class Window_Base < Window
   def draw_actor_parameter(actor, cx, cy, type)
     case type
     when 0
-      name = Data.terms.attack
+      name = Data.term.attack
       value = actor.attack
     when 1
-      name = Data.terms.defense
+      name = Data.term.defense
       value = actor.defence
     when 2
-      name = Data.terms.spirit
+      name = Data.term.spirit
       value = actor.spirit
     when 3
-      name = Data.terms.agility
+      name = Data.term.agility
       value = actor.agility
     else; return
     end
@@ -152,19 +152,19 @@ class Window_Base < Window
   def draw_equipment_type(actor, cx, cy, type)
     case type
     when 0
-      name = Data.terms.weapon
+      name = Data.term.weapon
     when 1
       if actor.two_swords_style?
-        name = Data.terms.weapon
+        name = Data.term.weapon
       else
-        name = Data.terms.shield
+        name = Data.term.shield
       end
     when 2
-      name = Data.terms.armor
+      name = Data.term.armor
     when 3
-      name = Data.terms.helmet
+      name = Data.term.helmet
     when 4
-      name = Data.terms.accessory
+      name = Data.term.accessory
     else; return
     end
 
@@ -182,8 +182,8 @@ class Window_Base < Window
   def draw_currency_value(money, cx, cy)
     # This function draws right aligned because of the dynamic with of the
     # gold output (cx and cy define the right border)
-    gold_text_size = contents.text_size Data.terms.gold
-    contents.draw_text_2k cx, cy, Data.terms.gold, 1, Text::AlignRight
+    gold_text_size = contents.text_size Data.term.currency
+    contents.draw_text_2k cx, cy, Data.term.currency, 1, Text::AlignRight
 
     contents.draw_text_2k cx - gold_text_size.width, cy, money.to_s, Font::ColorDefault, Text::AlignRight
   end

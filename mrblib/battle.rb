@@ -60,7 +60,7 @@ module Battle
     def initialize(game_actor, id)
       super id
       @game_actor = game_actor
-      @rpg_actor = Data.actors[@game_actor.index]
+      @rpg_actor = Data.actor[@game_actor.index]
       @sprite_frame = nil
       @sprite_file = ""
       @anime_state = Idle

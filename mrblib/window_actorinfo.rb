@@ -57,7 +57,7 @@ class Window_ActorInfo < Window_Base
     draw_actor_state Game_Actors.actor(@actor_id), 36, 155
 
     # Draw Level
-    contents.draw_text_2k 3, 170, Data.terms.lvl_short, 1
+    contents.draw_text_2k 3, 170, Data.term.lvl_short, 1
     contents.draw_text_2k 79, 170, Game_Actors.actor(actor_id).level.to_s, Font::ColorDefault, Text::AlignRight
   end
 end

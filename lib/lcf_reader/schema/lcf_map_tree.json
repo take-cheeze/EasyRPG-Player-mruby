@@ -24,7 +24,7 @@
       {"index": 41, "type": "array2d", "name": "encount", "value": [
         {"index": 1, "type": "integer", "name": "enemy_group_id"}
       ]},
-      {"index": 44, "type": "integer", "name": "encount_step", "value": 25},
+      {"index": 44, "type": "integer", "name": "encounter_steps", "value": 25},
 
       {"index": 51, "type": "int32array", "name": "area_range"}
     ]},

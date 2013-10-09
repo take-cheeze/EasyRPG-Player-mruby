@@ -28,8 +28,9 @@ end
 class Hash
   def method_missing(sym, *args)
     case args.length
-    when 0; return self[sym]
-    when 1;
+    when 0
+      return self[sym]
+    when 1
       name = sym.to_s
       if name[-1] == ?=
         return self[name[0, name.length - 1].to_sym] = args[0]
@@ -38,3 +39,6 @@ class Hash
     BasicObject.method_missing(sym, *args)
   end
 end
+
+SCREEN_TARGET_HEIGHT = 240
+SCREEN_TARGET_WIDTH = 320

@@ -16,33 +16,17 @@
 module Game_Party end
 
 class << Game_Party
-  # Initializes Game_Party.
-  def init
-    @data = $game_data.inventory
-    @data.setup
-  end
-
-  # Setups initial party.
-  # void SetupStartingMembers()
-
-  # Setups battle test party.
-  # void SetupBattleTestMembers()
-
-  # Refreshes party members.
-  # void Refresh()
-
-  # Gets maximum level.
-  #
-  # @return max party level.
-  # int MaxLevel()
+  def data; $game_data.inventory ||= {
+      :party => [],
+      :gold => 0 }; end
 
   # Adds an actor to the party.
   #
   # @param actor_id database actor ID.
   def add_actor(actor_id)
     return if actor_in_party? actor_id
-    return if @data.party.length >= 4
-    @data.party.psuh actor_id
+    return if data.party.length >= 4
+    data.party.psuh actor_id
     $game_player.refresh
   end
 
@@ -52,7 +36,7 @@ class << Game_Party
   def remove_actor(actor_id)
     return if not actor_in_party? actor_id
 
-    @data.party.delete @data.party.index(actor_id)
+    data.party.delete data.party.index(actor_id)
     $game_player.refresh
   end
 
@@ -60,22 +44,22 @@ class << Game_Party
   #
   # @param actor_id database actor ID.
   # @return whether the actor is in party.
-  def actor_in_party?(actor_id) not @data.find(actor_id).nil? end
+  def actor_in_party?(actor_id) not data.find(actor_id).nil? end
 
   # Gains gold.
   #
   # @param value gained gold.
   def gain_gold(value)
-    @data.gold += value
-    @data.gold = [0, [@data.gold, 999999].min].max
+    data.gold += value
+    data.gold = [0, [data.gold, 999999].min].max
   end
 
   # Loses gold.
   #
   # @param value lost gold.
   def lose_gold(value)
-    @data.gold -= value
-    @data.gold = [0, [@data.gold, 999999].min].max
+    data.gold -= value
+    data.gold = [0, [data.gold, 999999].min].max
   end
 
   # Increases steps in 1.
@@ -84,7 +68,7 @@ class << Game_Party
   # Returns all items of the party.
   #
   # @param item_list vector to fill.
-  def items; @data.item_ids.dup;  end
+  def items; data.item_ids.dup;  end
 
   # Gets number of possessed or equipped items.
   #
@@ -95,7 +79,7 @@ class << Game_Party
   def item_number(item_id, get_equipped = false)
     if (get_equipped && item_id != 0)
       number = 0
-      @data.party.each { |v|
+      data.party.each { |v|
         actor = Game_Actors.actor(v)
         number += 1 if actor.weapon_id == item_id
         number += 1 if actor.shiled_id == item_id
@@ -105,8 +89,8 @@ class << Game_Party
       }
       return number
     else
-      idx = @data.item_ids.index item_id
-      return @data.item_counts[idx] if not idx.nil?
+      idx = data.item_ids.index item_id
+      return data.item_counts[idx] if not idx.nil?
     end
     0
   end
@@ -121,21 +105,21 @@ class << Game_Party
       return
     end
 
-    idx = @data.item_ids.index item_id
+    idx = data.item_ids.index item_id
     if idx.nil? # Item isn't in the inventory yet
       if amount > 0
-        @data.item_ids.push item_id
-        @data.item_counts.push [amount, 99].min
-        @data.item_usage.push Data.items[item_id].uses
+        data.item_ids.push item_id
+        data.item_counts.push [amount, 99].min
+        data.item_usage.push Data.items[item_id].uses
       end
     else
-      total_items = @data.item_counts[idx] + amount
+      total_items = data.item_counts[idx] + amount
 
       if total_items <= 0
-        @data.item_ids.delete idx
-        @data.item_counts.delete idx
-        @data.item_usage.delete idx
-      else @data.item_counts[idx] = [0, [total_items, 99].min].max
+        data.item_ids.delete idx
+        data.item_counts.delete idx
+        data.item_usage.delete idx
+      else data.item_counts[idx] = [0, [total_items, 99].min].max
       end
     end
   end
@@ -158,7 +142,7 @@ class << Game_Party
       # elsif (Data.items[item_id - 1].type == RPG::Item::Type_switch)
       #   return Data.items[item_id - 1].ocassion_battle
       # else
-      if (not @data.party.empty? &&
+      if (not data.party.empty? &&
           (Data.items[item_id].type == RPG::Item::Type_medicine ||
            Data.items[item_id].type == RPG::Item::Type_material ||
            Data.items[item_id].type == RPG::Item::Type_book))
@@ -202,45 +186,45 @@ class << Game_Party
   # Gets gold possessed.
   #
   # @return gold possessed.
-  def gold; @data.gold; end
+  def gold; data.gold; end
 
   # Gets steps walked.
   #
   # @return steps walked.
-  def steps; @data.steps; end
+  def steps; data.steps; end
 
   # Gets actors in party list.
   #
   # @return actors in party list.
-  def actors; @data.party.map { |v| Game_Actors.actor v }; end
+  def actors; data.party.map { |v| Game_Actors.actor v }; end
 
   # Gets number of battles.
   #
   # @return number of battles.
-  def battle_count; @data.battles; end
+  def battle_count; data.battles; end
 
   # Gets number of battles wins.
   #
   # @return number of battles wins.
-  def win_count; @data.victories; end
+  def win_count; data.victories; end
 
   # Gets number of battles defeats.
   #
   # @return number of battles defeats.
-  def defeat_count; @data.defeats; end
+  def defeat_count; data.defeats; end
 
   # Gets number of battles escapes.
   #
   # @return number of battles escapes.
-  def run_count; @data.escapes end
+  def run_count; data.escapes end
 
   Timer1 = 0
   Timer2 = 1
 
   def set_timer(which, seconds)
     case which
-    when Timer1; @data.timer1_secs = seconds * DEFAULT_FPS
-    when Timer2; @data.timer2_secs = seconds * DEFAULT_FPS
+    when Timer1; data.timer1_secs = seconds * DEFAULT_FPS
+    when Timer2; data.timer2_secs = seconds * DEFAULT_FPS
     end
     Game_Map.need_refresh = true
   end
@@ -248,43 +232,43 @@ class << Game_Party
   def stop_timer(which)
     case which
     when Timer1
-      @data.timer1_active = false
-      @data.timer1_visible = false
+      data.timer1_active = false
+      data.timer1_visible = false
     when Timer2
-      @data.timer2_active = false
-      @data.timer2_visible = false
+      data.timer2_active = false
+      data.timer2_visible = false
     end
   end
 
   def start_timer(which, visible, battle)
     case which
     when Timer1
-      @data.timer1_active = true
-      @data.timer1_visible = visible
-      @data.timer1_battle = battle
+      data.timer1_active = true
+      data.timer1_visible = visible
+      data.timer1_battle = battle
     when Timer2
-      @data.timer2_active = true
-      @data.timer2_visible = visible
-      @data.timer2_battle = battle
+      data.timer2_active = true
+      data.timer2_visible = visible
+      data.timer2_battle = battle
     end
   end
 
   def update_timers
     battle = !Game_Battle.scene.nil?
-    if (@data.timer1_active && (!@data.timer1_battle || !battle) && @data.timer1_secs > 0)
-      @data.timer1_secs -= 1
+    if (data.timer1_active && (!data.timer1_battle || !battle) && data.timer1_secs > 0)
+      data.timer1_secs -= 1
       Game_Map.need_refresh = true
     end
-    if (@data.timer2_active && (!@data.timer2_battle || !battle) && @data.timer2_secs > 0)
-      @data.timer2_secs -= 1
+    if (data.timer2_active && (!data.timer2_battle || !battle) && data.timer2_secs > 0)
+      data.timer2_secs -= 1
       Game_Map.need_refresh = true
     end
   end
 
   def read_timer(which)
     case which
-    when Timer1; return @data.timer1_secs
-    when Timer2; return @data.timer2_secs
+    when Timer1; return data.timer1_secs
+    when Timer2; return data.timer2_secs
     end
   end
 end

@@ -21,17 +21,17 @@ module RPG
 
   class MoveCommand
     class Code
-      move_up = 0, move_right = 1, move_down = 2, move_left = 3,
-      move_upright = 4, move_downright = 5, move_downleft = 6, move_upleft = 7,
-      move_random = 8, move_towards_hero = 9, move_away_from_hero = 10, move_forward = 11,
-      face_up = 12, face_right = 13, face_down = 14, face_left = 15,
-      turn_90_degree_right = 16, turn_90_degree_left = 17, turn_180_degree = 18, turn_90_degree_random = 19,
-      face_random_direction = 20, face_hero = 21, face_away_from_hero = 22, wait = 23,
-      begin_jump = 24, end_jump = 25, lock_facing = 26, unlock_facing = 27,
-      increase_movement_speed = 28, decrease_movement_speed = 29, increase_movement_frequence = 30, decrease_movement_frequence = 31,
-      switch_on = 32, switch_off = 33, change_graphic = 34, play_sound_effect = 35,
-      walk_everywhere_on = 36, walk_everywhere_off = 37, stop_animation = 38, start_animation = 39,
-      increase_transp = 40, decrease_transp = 41
+      MoveUp = 0, MoveRight = 1, MoveDown = 2, MoveLeft = 3,
+      MoveUpright = 4, MoveDownright = 5, MoveDownleft = 6, MoveUpleft = 7,
+      MoveRandom = 8, MoveTowardsHero = 9, MoveAwayFromHero = 10, MoveForward = 11,
+      FaceUp = 12, FaceRight = 13, FaceDown = 14, FaceLeft = 15,
+      Turn90DegreeRight = 16, Turn90DegreeLeft = 17, Turn180Degree = 18, Turn90DegreeRandom = 19,
+      FaceRandomDirection = 20, FaceHero = 21, FaceAwayFromHero = 22, Wait = 23,
+      BeginJump = 24, EndJump = 25, LockFacing = 26, UnlockFacing = 27,
+      IncreaseMovementSpeed = 28, DecreaseMovementSpeed = 29, IncreaseMovementFrequence = 30, DecreaseMovementFrequence = 31,
+      SwitchOn = 32, SwitchOff = 33, ChangeGraphic = 34, PlaySoundEffect = 35,
+      WalkEverywhereOn = 36, WalkEverywhereOff = 37, StopAnimation = 38, StartAnimation = 39,
+      IncreaseTransp = 40, DecreaseTransp = 41
     end
   end
 
@@ -64,3 +64,22 @@ module RPG
     MoveSpeed_double = 5, MoveSpeed_fourfold = 6
   end
 end
+
+module Passable
+  Down = 0x01
+  Left = 0x02
+  Right = 0x04
+  Up = 0x08
+
+  Above = 0x10
+  Wall = 0x20
+  Counter = 0x40
+end
+
+BLOCK_C = 3000
+BLOCK_D = 4000
+BLOCK_D_BLOCKS = 12
+BLOCK_E = 5000
+BLOCK_E_TILES = 144
+BLOCK_F = 10000
+BLOCK_F_TILES = 144

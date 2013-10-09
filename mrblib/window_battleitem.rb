@@ -47,7 +47,7 @@ class Window_BattleItem < Window_Item
     return false if @actor_id <= 0
     return true if actor_id >= item.actor_set.length || item.actor_set[@actor_id]
     return false if Player.rpg2k?
-    actor = Data.actors[@actor_id]
+    actor = Data.actor[@actor_id]
     return false if actor.class_id < 0
     return true if actor.class_id >= item.class_set.length || item.class_set[actor.class_id]
     false

@@ -17,7 +17,7 @@
 class Scene_Load < Scene_File
   # Constructor.
   def initialize
-    super 'Load', Data.terms.load_game_message
+    super 'Load', Data.term.load_game_message
   end
 
   def action(index)

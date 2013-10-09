@@ -73,7 +73,7 @@ class << Game_System
   def bgm_play(bgm)
     if bgm.name != '(OFF)'
       if bgm.name != data.current_music.name
-        Audio.bgm_play bgm.name, bgm.volume, bgm.tempo
+        Audio.bgm_play bgm.name, bgm.volume || 100, bgm.tempo || 100
       else
         Audio.bgm_volume bgm.volume if bgm.volume != data.current_music.volume
         Audio.bgm_pitch bgm.tempo if bgm.tempo != data.current_music.tempo

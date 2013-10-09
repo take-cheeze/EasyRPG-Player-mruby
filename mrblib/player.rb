@@ -44,7 +44,6 @@ class << Player
   end
 
   def run
-    Scene.push Scene.create_null_scene
     if FileFinder.rpg2k_project? FileFinder.project_tree
       Scene.push debug_flag ? Scene_Title.new : Scene_Logo.new
     else
@@ -56,7 +55,7 @@ class << Player
     # Reset frames before starting
     Graphics.frame_reset
 
-    until Scene.instance.nil?
+    until Scene.instances.empty?
       Scene.instance.main_function
       for i in 0...Scene.old_instances.length; Graphics.pop; end
       Scene.old_instances.clear

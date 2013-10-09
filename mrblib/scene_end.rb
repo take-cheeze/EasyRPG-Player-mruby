@@ -49,7 +49,7 @@ class Scene_End < Scene
   # Creates the Window displaying the yes and no option.
   def create_command_window
     # Create Options Window
-    @command_window = Window_Command.new [Data.terms.yes, Data.terms.no]
+    @command_window = Window_Command.new [Data.term.yes, Data.term.no]
     @command_window.x = 160 - @command_window.width / 2
     @command_window.y = 72 + 48
   end
@@ -57,10 +57,10 @@ class Scene_End < Scene
   # Creates the Window displaying the confirmation
   # text.
   def create_help_window
-    text_size = Font.default.size(Data.terms.exit_game_message).width
+    text_size = Bitmap.new(1, 1).text_size(Data.term.exit_game_message).width
 
     @help_window = Window_Help.new 160 - (text_size + 16)/ 2, 72, text_size + 16, 32
-    @help_window.text = Data.terms.exit_game_message
+    @help_window.text = Data.term.exit_game_message
 
     @command_window.help_window = @help_window
   end

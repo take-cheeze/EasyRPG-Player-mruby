@@ -31,9 +31,12 @@ class Game_Event < Game_Character
 
   # Constructor.
   def initialize(map_id, event)
+    super()
+
     @starting = false
     @map_id = id
     @event = event
+    @pages = event.page
     @erased = false
     @page = nil
     @id = event.index
@@ -48,7 +51,8 @@ class Game_Event < Game_Character
 
   # Does refresh.
   def refresh
-    new_page = @erased ? nil : @event.reverse.find { |v| are_conditions_met v }
+    new_page = @erased ? nil : @pages[@pages.keys.reverse!.find { |v|
+                                        are_conditions_met @pages[v] }]
 
     if new_page != @page
       clear_starting
@@ -59,7 +63,7 @@ class Game_Event < Game_Character
 
   def setup(new_page)
     @page = new_page
-    if page.nil?
+    if @page.nil?
       @tile_id = 0
       @character_name = ''
       @character_index = 0
@@ -69,93 +73,89 @@ class Game_Event < Game_Character
       @list = []
       @interpreter = nil
     else
-      @character_name = page.character_name
-      @character_index = page.character_index
+      @character_name = @page[:charset]
+      @character_index = @page.charset_pos
 
-      @tile_id = page.character_name.empty? ? page.character_index : 0
+      @tile_id = @character_name.nil? ? @character_index : 0
 
-      if @original_direction != page.character_direction
-        @direction = page.character_direction
+      if @original_direction != @page.charset_dir
+        @direction = @page.charset_dir
         @original_direction = direction
         @prelock_direction = nil
       end
 
-      if @original_pattern != page.character_pattern
-        @pattern = page.character_pattern
+      if @original_pattern != @page.charset_pat
+        @pattern = @page.charset_pat
         @original_pattern = pattern
       end
-      # opacity = page.opacity
-      # opacity = page.translucent ? 192 : 255
-      # blend_type = page.blend_type
-      @move_type = page.move_type
-      @move_speed = page.move_speed
-      @move_frequency = page.move_frequency
-      @move_route = page.move_route
+      # opacity = @page.opacity
+      # opacity = @page.translucent ? 192 : 255
+      # blend_type = @page.blend_type
+      @move_type = @page.action
+      @move_speed = @page.speed
+      @move_frequency = @page.frequency
+      self.move_route = @page.move
       @move_route_index = 0
       @move_route_forcing = false
-      # @animation_type = page.animation_type
+      # @animation_type = @page.animation_type
       # @through = page
-      # @always_on_top = page.overlap
-      @priority_type = page.priority_type
-      @trigger = page.trigger
-      @list = page.event_commands
+      # @always_on_top = @page.overlap
+      @priority_type = @page.priority_type
+      @trigger = @page.trigger
+      @list = @page.event
       @through = false
 
-      # Free resources if needed
-      interpreter = nil
-      if @trigger == RPG::EventPage::Trigger_parallel
-        interpreter= Game_Interpreter_Map.new
-      end
+      interpreter = Game_Interpreter_Map.new if @trigger == RPG::EventPage::Trigger_parallel
       check_event_trigger_auto
     end
   end
 
+  FlagSwitch1 = 0x1 << 0
+  FlagSwitch2 = 0x1 << 1
+  FlagVariable = 0x01 << 2
+  FlagItem = 0x01 << 3
+  FlagActor = 0x01 << 4
+  FlagTimer1 = 0x01 << 5
+  FlagTimer2 = 0x01 << 6
+
+  CompareOperator = [:==, :>=, :<=, :>, :<, '!='.to_sym]
+
   def are_conditions_met(page)
+    term = page.term
+    flags = term.flags
+
     # First switch (A)
-    return false if page.condition.flags.switch_a && !Game_Switches[@page.condition.switch_a_id]
+    return false if (flags & FlagSwitch1) != 0 && !Game_Switches[term.switch_id1]
 
     # Second switch (B)
-    return false if page.condition.flags.switch_b && !Game_Switches[page.condition.switch_b_id]
+    return false if (flags & FlagSwitch2) != 0 && !Game_Switches[term.switch_id2]
 
     # Variable
-    if Player.rpg2k? and page.condition.flags.variable && !(Game_Variables[page.condition.variable_id] >= page.condition.variable_value)
+    if Player.rpg2k? and (flags & FlagVariable) != 0 && !(Game_Variables[term.variable_id] >= term.variable_value)
       return false
     else
-      if (page.condition.flags.variable)
-        case page.condition.compare_operator
-        when 0 # ==
-          return false if (!(Game_Variables[page.condition.variable_id] == page.condition.variable_value))
-        when 1 # >=
-          return false if (!(Game_Variables[page.condition.variable_id] >= page.condition.variable_value))
-        when 2 # <=
-          return false if (!(Game_Variables[page.condition.variable_id] <= page.condition.variable_value))
-        when 3 # >
-          return false if (!(Game_Variables[page.condition.variable_id] > page.condition.variable_value))
-        when 4 # <
-          return false if (!(Game_Variables[page.condition.variable_id] < page.condition.variable_value))
-        when 5 # !=
-          return false if (!(Game_Variables[page.condition.variable_id] != page.condition.variable_value))
-        end
+      if (flags & FlagVariable) != 0
+        return false unless Game_Variables[term.variable_id].
+          send(CompareOperator[term.compare_operator], term.variable_value)
       end
     end
 
     # Item in possession?
-    return false if page.condition.flags.item && !Game_Party::ItemNumber(page.condition.item_id)
+    return false if (flags & FlagItem) != 0 && !Game_Party.item_number(term.item_id)
 
     # Actor in party?
-    return false if page.condition.flags.actor and
-      !Game_Party::IsActorInParty(page.condition.actor_id)
+    return false if (flags & FlagActor) != 0 and not Game_Party.actor_in_party?(term.actor_id)
 
     # Timer
-    return false if page.condition.flags.timer and
-      Game_Party.read_timer(Game_Party::Timer1) > page.condition.timer_sec * DEFAULT_FPS
+    return false if (flags & FlagTimer1) != 0 and
+      Game_Party.read_timer(Game_Party::Timer1) > term.timer_sec * DEFAULT_FPS
 
     # Timer2
-    return false if page.condition.flags.timer2 and
-      Game_Party.read_timer(Game_Party::Timer2) > page.condition.timer2_sec * DEFAULT_FPS
+    return false if (flags & FlagTimer2) != 0 and
+      Game_Party.read_timer(Game_Party::Timer2) > term.timer_sec * DEFAULT_FPS
 
     # All conditions met :D
-    return true
+    true
   end
 
   def update

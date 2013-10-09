@@ -13,15 +13,16 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-module Game_Message end
+module Game_Message
+  MAX_LINE = 4
+end
 
 class << Game_Message
-  MAX_LINE = 4
 
   def init
     @background = true
     @position = 2
-    @text = []
+    @texts = []
 
     full_clear
   end
@@ -56,7 +57,8 @@ class << Game_Message
               :face_left_position, :background, :choice_max,
               :choice_cancel_type, :num_input_variable_id,
               :num_input_digits_max, :position, :fixed_position,
-              :dont_halt, :message_waiting, :visible, :choice_result)
+              :dont_halt, :visible, :choice_result)
+  attr_accessor :choice_start, :num_input_start, :message_waiting
 
   # Number of lines before the start
   # of selection options.
@@ -68,7 +70,6 @@ class << Game_Message
   # +-----------------------------------+
   # In this case, choice_start would be 1.
   # Same with num_input_start.
-  attr_accessor :choice_start, :num_input_start
 
   # Disabled choices:
   # choice_disabled is true if choice is disabled (zero-based).

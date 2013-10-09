@@ -21,7 +21,7 @@ class Window_BattleOption < Window_Base
 
     self.contents = Bitmap.new iw - 16, ih - 16
 
-    # @commands = [Data.terms.battle_fight, Data.terms.battle_auto, Data.terms.battle_escape]
+    # @commands = [Data.term.battle_fight, Data.term.battle_auto, Data.term.battle_escape]
     @commands = ["Victory", "Defeat", "Escape"]
 
 

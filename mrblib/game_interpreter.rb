@@ -15,10 +15,11 @@
 
 # Game_Interpreter class
 class Game_Interpreter
-  def initialize(_depth = 0, _main_flag = false)
+  def initialize(depth = 0, main_flag = false)
     @depth = depth
-    @main_flag = _main_flag
+    @main_flag = main_flag
     @active = false
+    @list = []
 
     Output.warning "Too many events calls (over 9000)" if depth > 100
 
@@ -35,6 +36,7 @@ class Game_Interpreter
     @child_interpreter = nil      # child interpreter for common events, etc
     @continuation = nil           # function to execute to resume command
     @button_timer = 0
+    @list.clear
   end
 
   def setup(list, id, dbg_x = nil, dbg_y = nil)
@@ -58,7 +60,7 @@ class Game_Interpreter
     for loop_count in 0...10000
       # If map is different than event startup time
       # set event_id to 0
-      event_id = 0 if Game_Map::map_id != map_id
+      event_id = 0 if Game_Map::map_id != @map_id
 
       # If there's any active child interpreter, update it
       if @child_interpreter
@@ -107,7 +109,7 @@ class Game_Interpreter
 
       if @list.empty?
         Game_Map.refresh if
-          !$game_player.teleporting? and main_flag and Game_Map.need_refresh?
+          !$game_player.teleporting? and @main_flag and Game_Map.need_refresh?
 
         return if @list.empty?
       end

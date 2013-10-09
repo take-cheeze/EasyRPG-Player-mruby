@@ -30,13 +30,14 @@ for a MsgBox call and keeps the MsgBox open when it finds one.
 # This class displays the message boxes from
 # ShowMessageBox command code.
 class Window_Message < Window_Selectable
-  speed_table = [0, 0, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
+  SpeedTable = [0, 0, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
                  7, 7, 8, 8, 9, 9, 10, 10, 11]
 
   def alpha?(v); (?a[0] <= v and v <= ?z[0]) or (?A[0] <= v and v <= ?Z[0]); end
 
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
+
     @contents_x, @contents_y = 0, 0
     @line_count = 0
     @text = []
@@ -203,7 +204,7 @@ class Window_Message < Window_Selectable
       @number_input_window.visible = false
     end
 
-    gold_window.visible = false
+    @gold_window.visible = false
     # The other flag resetting is done in Game_Interpreter::CommandEnd
     Game_Message.semi_clear
   end
@@ -213,7 +214,7 @@ class Window_Message < Window_Selectable
   # @return If the text output can start.
   def next_message_possible?
     return true if Game_Message.num_input_variable_id > 0
-    return false if Gmae::texts.empty?
+    return false if Game_Message.texts.empty?
     true
   end
 
@@ -236,12 +237,11 @@ class Window_Message < Window_Selectable
     elsif @pause; wait_for_input
     elsif @active; input_choice
     elsif @number_input_window.visible; input_number
-    elsif !text.empty?; update_message # Output the remaining text for the current page
+    elsif !@text.empty?; update_message # Output the remaining text for the current page
     elsif next_message_possible?
       # Output a new page
       start_message_processing
-      #printf("Text: %s\n", text.c_str())
-      if !visible
+      unless visible
         # The MessageBox is not open yet but text output is needed
         self.open_animation = 5
         self.visible = true
@@ -267,13 +267,13 @@ class Window_Message < Window_Selectable
 
     instant_speed = false
     loop_count = 0
-    loop_max = speed_table[@speed_modifier] == 0 ? 2 : 1
+    loop_max = SpeedTable[@speed_modifier] == 0 ? 2 : 1
 
     while instant_speed || loop_count < loop_max
       # It's assumed that speed_modifier is between 0 and 20
       @speed_frame_counter += 1
 
-      break if speed_table[@speed_modifier] != 0 && speed_table[@speed_modifier] != @speed_frame_counter
+      break if SpeedTable[@speed_modifier] != 0 && SpeedTable[@speed_modifier] != @speed_frame_counter
 
       @speed_frame_counter = 0
 
@@ -503,7 +503,7 @@ class Window_Message < Window_Selectable
 
   # Stub. For choice.
   def update_cursor_rect
-    if (@index >= 0)
+    unless @index.nil?
       x_pos = 2
       y_pos = (Game_Message.choice_start + @index) * 16
       width = contents.width

@@ -27,9 +27,7 @@ class Window_MenuStatus < Window_Selectable
     # DisplayUi->SetBackcolor(Cache().system_info.bg_color)
 
     y = 0
-    for i in 0...Game_Party.actor.length
-      actor = Game_Party.actors[i]
-
+    Game_Party.actors.each_with_index do |actor, i|
       face_x = 0
       face_x = actor.battle_row == 1 ? 5 : 0 if Player.rpg2k3?
       draw_actor_face actor, face_x, i*48 + y

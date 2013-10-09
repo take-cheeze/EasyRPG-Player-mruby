@@ -93,10 +93,10 @@ class Window_BattleCommand < Window_Base
 
     if (@actor_id == 0)
       @commands = [
-                   !Data.terms.command_attack.empty? ? Data.terms.command_attack : "Attack",
-                   !Data.terms.command_defend.empty? ? Data.terms.command_defend : "Defend",
-                   !Data.terms.command_item.empty? ? Data.terms.command_item : "Item",
-                   !Data.terms.command_skill.empty? ? Data.terms.command_skill : "Skill",
+                   !Data.term.command_attack.empty? ? Data.term.command_attack : "Attack",
+                   !Data.term.command_defend.empty? ? Data.term.command_defend : "Defend",
+                   !Data.term.command_item.empty? ? Data.term.command_item : "Item",
+                   !Data.term.command_skill.empty? ? Data.term.command_skill : "Skill",
                   ]
     else
       @commands = Game_Actors.actor(@actor_id).battle_commands.map { |v|

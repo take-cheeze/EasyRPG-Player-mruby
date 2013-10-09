@@ -116,8 +116,7 @@ class Scene_Title < Scene
   def create_game_objects
     Game_Temp.init
     $game_screen = Game_Screen.new
-    Game_Actors.init
-    Game_Party.init
+    Game_Actors.load
     Game_Message.init
     Game_Map.init
     $game_player = Game_Player.new
@@ -128,7 +127,7 @@ class Scene_Title < Scene
   # @return true if there are any, false otherwise.
   def check_continue
     for i in 1..15
-      return true if not FileFinder.find_default('Save%02d.lsd' % i).nil?
+      return true if not FileFinder.find_default('Save%02d.lsd' % i).empty?
     end
     false
   end
@@ -145,7 +144,7 @@ class Scene_Title < Scene
   # Creates the Window displaying the options.
   def create_command_window
     # Create Options Window
-    options = [Data.terms.new_game, Data.terms.load_game, Data.terms.exit_game]
+    options = [Data.term.new_game, Data.term.load_game, Data.term.exit_game]
     @command_window = Window_Command.new options
     @command_window.x = 160 - @command_window.width / 2
     @command_window.y = 224 - @command_window.height
@@ -189,9 +188,11 @@ class Scene_Title < Scene
       Audio.bgm_stop
       Graphics.frame_count = 0
       create_game_objects
-      Game_Map.setup Data.treemap.start.party_map_id
-      $game_player.move_to Data.treemap.start.party_x, Data.treemap.start.party_y
-      $game_player.Refresh()
+
+      start_pos = Data.treemap.root 2
+      Game_Map.setup start_pos.party_map_id
+      $game_player.move_to start_pos.party_x, start_pos.party_y
+      $game_player.refresh
       Game_Map.autoplay
       Scene.push Scene_Map.new
     end

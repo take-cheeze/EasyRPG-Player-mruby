@@ -18,34 +18,40 @@ module Game_Map; end
 class << Game_Map
   attr_reader :interpreter
 
+  def map_info; $game_data.map_info; end
+  def location; $game_data.party; end
+
   # Initialize Game_Map.
   def init
-    @map_info = $game_data.map_info
-    @location = $game_data.party_location
+    $game_data.map_info ||= {
+      :lower => Array.new(144),
+      :upper => Array.new(144) }
+    $game_data.party ||= {}
 
     @display_x = 0
     @display_y = 0
     @need_refresh = true
 
     @map = nil
-    @loaction.map_id = 0
+    location.map_id = 0
     @scroll_direction = 0
     @scroll_rest = 0
     @scroll_speed = 0
     @interpreter = Game_Interpreter_Map.new 0, true
-    @map_info.encounter_rate = 0
+    map_info.encounter_rate = 0
 
-    @vehicle = Array.new 3
-    @vehicle.each_index { |i| @vehicle[i] = Game_Vehicle.new i }
+    @vehicles = Array.new(3) { |i| Game_Vehicle.new i }
 
-    @events = {}
-    @common_events = {}
+    @events = []
+    @common_events = []
 
     @pan_locked = false
     @pan_wait = false
     @pan_speed = 0
-    @location.pan_finish_x, @location.pan_finish_y = 0, 0
-    @location.pan_current_x, @location.pan_current_y = 0, 0
+    location.pan_finish_x, location.pan_finish_y = 0, 0
+    location.pan_current_x, location.pan_current_y = 0, 0
+
+    @panorama_x, @panorama_y = 0, 0
   end
 
   # Quits (frees) Game_Map.
@@ -72,63 +78,64 @@ class << Game_Map
     update
     dispose
 
-    @location.map_id = map_id
-    @map = LMU_Reader.load FileFinder.find_default('Map%04d.lmu' % @location.map_id)
-    Output.error LcfReader.error if map.nil?
+    location.map_id = map_id
+    @map = LCF::LcfFile.new FileFinder.find_default('Map%04d.lmu' % location.map_id)
+    Output.error('lmu load error: ' + @map.error) unless @map.error.nil?
+    @map = @map.root 0
 
-    if @map.parallax_flag
-      self.parallax_name = @map.parallax_name
-      self.set_parallax_scroll(@map.parallax_loop_x, @map.parallax_loop_y,
-                               @map.parallax_auto_loop_x, @map.parallax_auto_loop_y,
-                               @map.parallax_sx, @map.parallax_sy)
-    else; self.parallax_name = ''; end
+    if @map.use_panorama
+      self.panorama_name = @map.panorama_name
+      self.set_panorama_scroll(@map.panorama_loop_x, @map.panorama_loop_y,
+                               @map.panorama_auto_loop_x, @map.panorama_auto_loop_y,
+                               @map.panorama_sx, @map.panorama_sy)
+    else; self.panorama_name = ''; end
 
     self.chipset = @map.chipset_id
     @display_x, @display_y = 0, 0
     @need_refresh = true
 
-    @map.events.each { |k,v| @events[k] = Game_Event.new @location.map_id, v }
+    @map.event.each { |k,v| @events[k] = Game_Event.new location.map_id, v }
     @common_events.each { |k,v| @common_events[k] = Game_CommonEvent.new k }
 
     @scroll_direction = 2
     @scroll_rest = 0
     @scroll_speed = 4
-    @map_info.encounter_rate = Data.treemap.maps[location.map_id].encounter_steps
+    map_info.encounter_rate = Data.treemap[location.map_id].encounter_steps
 
-    @vehicle.each { |v| v.refresh }
+    @vehicles.each { |v| v.refresh }
 
     @pan_locked = false
     @pan_wait = false
     @pan_speed = 0
-    @location.pan_finish_x = 0
-    @location.pan_finish_y = 0
-    @location.pan_current_x = 0
-    @location.pan_current_y = 0
+    location.pan_finish_x = 0
+    location.pan_finish_y = 0
+    location.pan_current_x = 0
+    location.pan_current_y = 0
   end
 
   # Runs map.
   def autoplay
     parent_index = 0
-    current_index = @location.map_id
+    current_index = location.map_id
 
-    if ((current_index > 0) && !Data.treemap.maps[current_index].music.name.empty())
-      case(Data.treemap.maps[current_index].music_type)
+    if (current_index > 0) && !Data.treemap[current_index].music.name.empty?
+      case Data.treemap[current_index].music_type
       when 0 # inherits music from parent
-        parent_index = Data.treemap.maps[current_index].parent_map
-        if Data.treemap.maps[parent_index].music.name != "(OFF)" && Data.treemap.maps[parent_index].music != Game_Temp.map_bgm
-          Game_Temp.map_bgm = Data.treemap.maps[parent_index].music
+        parent_index = Data.treemap[current_index].parent
+        if Data.treemap[parent_index].music.name != "(OFF)" && Data.treemap[parent_index].music != Game_Temp.map_bgm
+          Game_Temp.map_bgm = Data.treemap[parent_index].music
           Game_System.bgm_play Game_Temp.map_bgm
         end
       when 1  # No Change
       when 2  # specific map music
-        if (Data.treemap.maps[current_index].music != Game_Temp.map_bgm)
+        if (Data.treemap[current_index].music != Game_Temp.map_bgm)
           unless Game_Temp.map_bgm.nil?
-            if (Data.treemap.maps[current_index].music.name == Game_Temp.map_bgm.name)
+            if (Data.treemap[current_index].music.name == Game_Temp.map_bgm.name)
               # TODO: Here the volume and pitch must be updated if the song is the same
               return
             end
           end
-          Game_Temp.map_bgm = Data.treemap.maps[current_index].music
+          Game_Temp.map_bgm = Data.treemap[current_index].music
           Game_System.bgm_play Game_Temp.map_bgm
         end
       end
@@ -137,9 +144,9 @@ class << Game_Map
 
   # Refreshes the map.
   def refresh
-    if @location.map_id > 0
-      @events.each { |k,v| v.refresh }
-      @common_events.each { |k,v| v.refresh }
+    if location.map_id > 0
+      @events.each { |v| v and v.refresh }
+      @common_events.each { |v| v and v.refresh }
     end
     @need_refresh = false
   end
@@ -203,7 +210,7 @@ class << Game_Map
 
     if (self_event)
       for evnt in events
-        if evnt != self_event && evnt.x == x && evnt.y == y and !evnt.through
+        if !evnt.nil? and evnt != self_event && evnt.x == x && evnt.y == y and !evnt.through
           if (evnt.priority_type == RPG::EventPage::Layers_same)
             return false
           elsif evnt.tile_id >= 0 && evnt.priority_type == RPG::EventPage::Layers_below
@@ -217,14 +224,14 @@ class << Game_Map
     tile_index = x + y * width
 
     tile_id = @map.upper_layer[tile_index] - BLOCK_F
-    tile_id = @map_info.upper_tiles[tile_id]
+    tile_id = map_info.upper[tile_id]
 
     return false if ((passages_up[tile_id] & bit) == 0)
     return true if ((passages_up[tile_id] & Passable::Above) == 0)
 
     if @map.lower_layer[tile_index] >= BLOCK_E
       tile_id = @map.lower_layer[tile_index] - BLOCK_E
-      tile_id = @map_info.lower_tiles[tile_id]
+      tile_id = map_info.lower[tile_id]
       tile_id += 18
 
       return false if ((passages_down[tile_id] & bit) == 0)
@@ -268,8 +275,8 @@ class << Game_Map
     return false if !Game_Map.valid?(x, y)
     tile_id = @map.upper_layer[x + y * width]
     return false if tile_id < BLOCK_F
-    index = @map_info.lower_tiles[passages_up[tile_id - BLOCK_F]]
-    (Data.chipsets[@map_info.chipset_id].passable_data_upper[index] & Passable::Counter) != 0
+    index = map_info.lower[passages_up[tile_id - BLOCK_F]]
+    (Data.chipset[map_info.chipset_id].passable_data_upper[index] & Passable::Counter) != 0
   end
 
   # Gets designated tile terrain tag.
@@ -287,7 +294,7 @@ class << Game_Map
       (chipID <  5000)?  6 + (chipID-4000)/50 :
       (chipID <  5144)? 18 + passages_up[chipID-5000] :
       0
-    Data.chipsets[@map_info.chipset_id].terrain_data[chip_index]
+    Data.chipset[map_info.chipset_id].terrain_data[chip_index]
   end
 
   # Gets if a tile can land airship.
@@ -328,11 +335,11 @@ class << Game_Map
     refresh if @need_refresh
     update_scroll
     update_pan
-    update_parallax
+    update_panorama
 
-    events.each { |v| v.update }
-    common_events.each { |v| v.update }
-    vehicles.each { |v| v.update }
+    events.each { |v| v and v.update }
+    common_events.each { |v| v and v.update }
+    @vehicles.each { |v| v.update }
   end
 
   # Updates the scroll state.
@@ -340,7 +347,7 @@ class << Game_Map
     return if @scroll_rest > 0
 
     distance = (1 << @scroll_speed) / 2
-    case (scroll_direction)
+    case (@scroll_direction)
     when 2; scroll_down distance
     when 4; scroll_left distance
     when 6; scroll_right distance
@@ -357,7 +364,7 @@ class << Game_Map
   # Gets current map ID.
   #
   # @return current map ID.
-  def map_id; @location.map_id; end
+  def map_id; location.map_id; end
 
   # Gets current map width.
   #
@@ -373,32 +380,32 @@ class << Game_Map
   #
   # @return battle encounters list.
   def encounter_list
-    Data.treemap.maps[map_index(@location.map_id)].encounters
+    Data.treemap[map_index(location.map_id)].encounters
   end
 
   # Gets battle encounter rate.
   #
   # @return battle encounter left steps.
-  def encounter_rate; @map_info.encounter_rate; end
+  def encounter_rate; map_info.encounter_rate; end
 
   # Sets battle encounter rate.
   #
   # @param step encounter steps.
-  def encounter_rate=(step) @map_info.encounter_rate = step; end
+  def encounter_rate=(step) map_info.encounter_rate = step; end
 
   # Gets encounter steps.
   #
   # @return number of steps scaled by terrain encounter rate percentage.
-  def encounter_steps; @location.encounter_steps; end
+  def encounter_steps; location.encounter_steps; end
 
   # Updates encounter steps according to terrain.
   def update_encounter_steps
     terrain_id = terrain_tag($game_player.x, $game_player.y)
-    @location.encounter_steps += Data.terrains[terrain_id].encounter_rate
+    location.encounter_steps += Data.terrains[terrain_id].encounter_rate
   end
 
   # Resets encounter step counter.
-  def reset_encounter_steps; @location.encounter_steps = 0; end
+  def reset_encounter_steps; location.encounter_steps = 0; end
 
   # Gets lower layer map data.
   #
@@ -412,14 +419,16 @@ class << Game_Map
 
   attr_accessor :display_x, :display_y, :need_refresh, :chipset_name, :battleback_name
 
+  def need_refresh?; @need_refresh; end
+
   # Gets terrain tags list.
   #
   # @return terrain tags list.
-  def terrain_tags; Data.chipsets[@map_info.chipset_id].terrain_data; end
+  def terrain_tags; Data.chipset[map_info.chipset_id].terrain_data; end
 
   attr_reader :events, :common_events, :passages_up, :passages_down
 
-  def events_xy(x, y) events.select { |v| v.x == x and v.y == y } end
+  def events_xy(x, y) events.select { |v| v and v.x == x and v.y == y } end
 
   def loop_horizontal?; @map.scroll_type == 2 or @map.scroll_type == 3 end
   def loop_vertical?; @map.scroll_type == 1 or @map.scroll_type == 3 end
@@ -436,54 +445,52 @@ class << Game_Map
                  direction == RPG::EventPage::Direction_up ? -1 : 0)
   end
 
-  def parallax_name=(name); @map_info.parallax_name = name; end
+  def panorama_name=(name); map_info.panorama_name = name; end
 
-  def set_parallax_scroll(horz, vert, horz_auto, vert_auto, horz_speed, vert_speed)
-    @map_info.parallax_horz = horz
-    @map_info.parallax_vert = vert
-    @map_info.parallax_horz_auto = horz_auto
-    @map_info.parallax_vert_auto = vert_auto
-    @map_info.parallax_horz_speed = horz_speed
-    @map_info.parallax_vert_speed = vert_speed
-    @parallax_auto_x = 0
-    @parallax_auto_y = 0
-    @parallax_x = 0
-    @parallax_y = 0
+  def set_panorama_scroll(horz, vert, horz_auto, vert_auto, horz_speed, vert_speed)
+    map_info.panorama_horz = horz
+    map_info.panorama_vert = vert
+    map_info.panorama_horz_auto = horz_auto
+    map_info.panorama_vert_auto = vert_auto
+    map_info.panorama_horz_speed = horz_speed
+    map_info.panorama_vert_speed = vert_speed
+    @panorama_auto_x = 0
+    @panorama_auto_y = 0
+    @panorama_x = 0
+    @panorama_y = 0
   end
 
   # Gets the map index from MapInfo vector using map ID.
   #
   # @param id map ID.
   # @return map index from MapInfo vector.
-  def map_index(id)
-    Data.treemap.find { |v| v.index == id }
-  end
+  def map_index(id); Data.treemap.find { |v| v.index == id }; end
 
   # Sets the chipset.
   #
   # @param id new chipset ID.
   def chipset=(id)
-    @map_info.chipset_id = id
-    chipset = Data.chipsets[@map_info.chipset_id]
-    @chipset_name = chipset.chipset_name
-    @passages_down = chipset.passable_data_lower
-    @passages_up = chipset.passable_data_upper
+    map_info.chipset_id = id
+    chipset = Data.chipset[map_info.chipset_id]
+    @chipset_name = chipset.chipset
+    @passages_down = chipset.lower.to_ary
+    @passages_up = chipset.upper.to_ary
     @passages_down.concat Array.new(162 - @passages_down.length, 0x0F) if
       @passages_down.length < 162
     @passages_up.concat Array.new(144 - @passages_up.length, 0x0F) if
       @passages_up.length < 162
     for i in 0...144
-      @map_info.lower_tiles[i] = i
-      @map_info.upper_tiles[i] = i
+      map_info.lower[i] = i
+      map_info.upper[i] = i
     end
   end
 
   def vechicle(which) @vehicle[which] end
   def substitute_down(old_id, new_id)
-    @map_info.lower_tiles[old_id] = new_id
+    map_info.lower[old_id] = new_id
   end
   def substitute_up(old_id, new_id)
-    @map_info.upper_tiles[old_id] = new_id
+    map_info.upper[old_id] = new_id
   end
 
   PanUp = 0
@@ -497,18 +504,18 @@ class << Game_Map
   def start_pan(direction, distance, speed, wait)
     distance *= 128
     case (direction)
-    when PanUp   ; @location.pan_finish_y -= distance
-    when PanRight; @location.pan_finish_x += distance
-    when PanDown ; @location.pan_finish_y += distance
-    when PanLeft ; @location.pan_finish_x -= distance
+    when PanUp   ; location.pan_finish_y -= distance
+    when PanRight; location.pan_finish_x += distance
+    when PanDown ; location.pan_finish_y += distance
+    when PanLeft ; location.pan_finish_x -= distance
     end
     @pan_speed = speed
     @pan_wait = wait
   end
 
   def reset_pan(speed, wait)
-    @location.pan_finish_x = 0
-    @location.pan_finish_y = 0
+    location.pan_finish_x = 0
+    location.pan_finish_y = 0
     @pan_speed = speed
     @pan_wait = wait
   end
@@ -517,13 +524,13 @@ class << Game_Map
     return if pan_active?
 
     step = 1 << (@pan_speed - 1)
-    dx = @location.pan_finish_x - @location.pan_current_x
-    dy = @location.pan_finish_y - @location.pan_current_y
+    dx = location.pan_finish_x - location.pan_current_x
+    dy = location.pan_finish_y - location.pan_current_y
 
     if (dx > 0)
-      @location.pan_current_x += [step, dx].min
+      location.pan_current_x += [step, dx].min
     elsif (dx < 0)
-      @location.pan_current_x -= [step, -dx].min
+      location.pan_current_x -= [step, -dx].min
     end
 
     if (dy > 0)
@@ -534,50 +541,50 @@ class << Game_Map
   end
 
   def pan_active?
-    @location.pan_current_x != @location.pan_finish_x or
-      @location.pan_current_y != @location.pan_finish_y
+    location.pan_current_x != location.pan_finish_x or
+      location.pan_current_y != location.pan_finish_y
   end
   def pan_waiting?; pan_active? and @pan_wait; end
   def pan_locked?; @pan_locked; end
 
-  def pan_x; @location.pan_current_x; end
-  def pan_y; @location.pan_current_y; end
+  def pan_x; location.pan_current_x; end
+  def pan_y; location.pan_current_y; end
 
-  def update_parallax
-    return if @map_info.parallax_name.nil?
+  def update_panorama
+    return if map_info.panorama_name.nil?
 
-    if (@map_info.parallax_horz)
-      if (@map_info.parallax_horz_auto)
+    if (map_info.panorama_horz)
+      if (map_info.panorama_horz_auto)
         step =
-          (@map_info.parallax_horz_speed > 0) ? 1 << @map_info.parallax_horz_speed :
-          (@map_info.parallax_horz_speed < 0) ? 1 << -@map_info.parallax_horz_speed :
+          (map_info.panorama_horz_speed > 0) ? 1 << map_info.panorama_horz_speed :
+          (map_info.panorama_horz_speed < 0) ? 1 << -map_info.panorama_horz_speed :
           0
-        @parallax_auto_x += step
+        @panorama_auto_x += step
       end
-      @parallax_x = @display_x * 4 + @parallax_auto_x
-    else; @parallax_x = 0; end
+      @panorama_x = @display_x * 4 + @panorama_auto_x
+    else; @panorama_x = 0; end
 
-    if (map_info.parallax_vert)
-      if (map_info.parallax_vert_auto)
+    if (map_info.panorama_vert)
+      if (map_info.panorama_vert_auto)
         int step =
-          (map_info.parallax_vert_speed > 0) ? 1 << map_info.parallax_vert_speed :
-          (map_info.parallax_vert_speed < 0) ? 1 << -map_info.parallax_vert_speed :
+          (map_info.panorama_vert_speed > 0) ? 1 << map_info.panorama_vert_speed :
+          (map_info.panorama_vert_speed < 0) ? 1 << -map_info.panorama_vert_speed :
           0
-        parallax_auto_y += step
+        panorama_auto_y += step
       end
-      @parallax_y = @display_y * 4 + @parallax_auto_y
-    else; parallax_y = 0; end
+      @panorama_y = @display_y * 4 + @panorama_auto_y
+    else; panorama_y = 0; end
 
   end
 
-  def parallax_x
-    px = @parallax_x - @displax_x * 8
+  def panorama_x
+    px = @panorama_x - @display_x * 8
     px < 0 ? -(-px / 16) : (px / 64)
   end
-  def parallax_y
-    py = @parallax_y - @display_y * 8
+  def panorama_y
+    py = @panorama_y - @display_y * 8
     py < 0 ? -(-py / 16) : (py / 64)
   end
 
-  def parallax_name; @map_info.parallax_name; end
+  def panorama_name; map_info.panorama_name; end
 end

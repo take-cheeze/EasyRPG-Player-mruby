@@ -58,6 +58,8 @@ class Game_Character
               :pattern, :direction, :real_x, :real_y, :character_name, :character_index,
               :x, :y, :tile_id)
 
+  def flash_pending?; @flash_pending; end
+
   # Gets if character is moving.
   #
   # @return whether the character is moving.
@@ -87,8 +89,8 @@ class Game_Character
     return false if !Game_Map.valid? new_x, new_y
     return true if @through
 
-    return false if !Game_Map.passable? x, y, d, this
-    return false if (!Game_Map::IsPassable(new_x, new_y, (d + 2) % 4, this))
+    return false unless Game_Map.passable? x, y, d, self
+    return false unless Game_Map.passable? new_x, new_y, (d + 2) % 4, self
 
     return false if $game_player.x == new_x and
       $game_player.x == new_y and
@@ -113,9 +115,7 @@ class Game_Character
   # Updates character state and actions.
   def update
     # if jumping?; update_jump; end
-    if moving?; update_move
-    else update_stop
-    end
+    moving? ? update_move : update_stop
 
     if @anime_count > 18 - @move_speed * 2
       if @stop_count > 0
@@ -147,7 +147,7 @@ class Game_Character
 
     if @move_route_forcing
       move_type_custom
-    elsif !@locked
+    elsif not @locked
       update_self_movement
     end
   end
@@ -206,87 +206,100 @@ class Game_Character
     end
   end
 
+  def next_move_command
+    ret = @move_route_data[@move_route_index]
+    @move_route_index += 1
+    ret
+  end
+
+  def move_command_string
+    size = next_move_command
+    Array.new(size).map! { |v| next_move_command.chr }.join('')
+  end
+
+  def move_route=(v)
+    @move_route = v
+    @move_route_data = v.data
+  end
+
   # Walks around on a custom move route.
   def move_type_custom
     return if not stopping?
     @move_failed = false
 
-    if @move_route_index >= @move_route.move_commands.length
+    if @move_route_index >= @move_route_data.length
       # End of Move list
       if move_route.repeat
         move_route_index = 0
       elsif move_route_forcing
         @move_route_forcing = false
-        @move_route_owner.end_move_route(move_route) if not @move_route_owner.nil?
-        @move_route = original_move_route
+        @move_route_owner.end_move_route(move_route) unless @move_route_owner.nil?
+        self.move_route = original_move_route
         @move_route_index = original_move_route_index
         @original_move_route = nil
       end
     else
-      move_command = @move_route.move_commands[@move_route_index]
-
-      case move_command.command_id
-      when RPG::MoveCommand::Code::move_up; move_up
-      when RPG::MoveCommand::Code::move_right; move_right
-      when RPG::MoveCommand::Code::move_down; move_down
-      when RPG::MoveCommand::Code::move_left; move_left
-      when RPG::MoveCommand::Code::move_upright; move_up_right
-      when RPG::MoveCommand::Code::move_downright; move_down_right
-      when RPG::MoveCommand::Code::move_downleft; move_down_left
-      when RPG::MoveCommand::Code::move_upleft; move_up_left
-      when RPG::MoveCommand::Code::move_random; move_random
-      when RPG::MoveCommand::Code::move_towards_hero; move_towards_player
-      when RPG::MoveCommand::Code::move_away_from_hero; move_away_from_player
-      when RPG::MoveCommand::Code::move_forward; move_forward
-      when RPG::MoveCommand::Code::face_up; turn_up
-      when RPG::MoveCommand::Code::face_right; turn_right
-      when RPG::MoveCommand::Code::face_down; turn_down
-      when RPG::MoveCommand::Code::face_left; turn_left
-      when RPG::MoveCommand::Code::turn_90_degree_right; turn_90degrees_right
-      when RPG::MoveCommand::Code::turn_90_degree_left; turn_90degrees_left
-      when RPG::MoveCommand::Code::turn_180_degree; turn_1800degrees
-      when RPG::MoveCommand::Code::turn_90_degree_random; turn_90degrees_left_or_right
-      when RPG::MoveCommand::Code::face_random_direction; face_random_direction
-      when RPG::MoveCommand::Code::face_hero; face_towards_hero
-      when RPG::MoveCommand::Code::face_away_from_hero; face_away_from_hero
-      when RPG::MoveCommand::Code::wait; wait
-      when RPG::MoveCommand::Code::begin_jump; begin_jump
-      when RPG::MoveCommand::Code::end_jump; end_jump
-      when RPG::MoveCommand::Code::lock_facing; lock
-      when RPG::MoveCommand::Code::unlock_facing; unlock
-      when RPG::MoveCommand::Code::increase_movement_speed
-        @move_speed = [move_speed + 1, 6].min
-      when RPG::MoveCommand::Code::decrease_movement_speed
-        @move_speed = [move_speed - 1, 1].max
-      when RPG::MoveCommand::Code::increase_movement_frequence
+      case next_move_command
+      when RPG::MoveCommand::Code::MoveUp; move_up
+      when RPG::MoveCommand::Code::MoveRight; move_right
+      when RPG::MoveCommand::Code::MoveDown; move_down
+      when RPG::MoveCommand::Code::MoveLeft; move_left
+      when RPG::MoveCommand::Code::MoveUpright; move_up_right
+      when RPG::MoveCommand::Code::MoveDownright; move_down_right
+      when RPG::MoveCommand::Code::MoveDownleft; move_down_left
+      when RPG::MoveCommand::Code::MoveUpleft; move_up_left
+      when RPG::MoveCommand::Code::MoveRandom; move_random
+      when RPG::MoveCommand::Code::MoveTowards_hero; move_towards_player
+      when RPG::MoveCommand::Code::MoveAway_from_hero; move_away_from_player
+      when RPG::MoveCommand::Code::MoveForward; move_forward
+      when RPG::MoveCommand::Code::FaceUp; turn_up
+      when RPG::MoveCommand::Code::FaceRight; turn_right
+      when RPG::MoveCommand::Code::FaceDown; turn_down
+      when RPG::MoveCommand::Code::FaceLeft; turn_left
+      when RPG::MoveCommand::Code::Turn90DegreeRight; turn_90degrees_right
+      when RPG::MoveCommand::Code::Turn90DegreeLeft; turn_90degrees_left
+      when RPG::MoveCommand::Code::Turn180Degree; turn_1800degrees
+      when RPG::MoveCommand::Code::Turn90DegreeRandom; turn_90degrees_left_or_right
+      when RPG::MoveCommand::Code::FaceRandomDirection; face_random_direction
+      when RPG::MoveCommand::Code::FaceHero; face_towards_hero
+      when RPG::MoveCommand::Code::FaceAwayFromHero; face_away_from_hero
+      when RPG::MoveCommand::Code::Wait; wait
+      when RPG::MoveCommand::Code::BeginJump; begin_jump
+      when RPG::MoveCommand::Code::EndJump; end_jump
+      when RPG::MoveCommand::Code::LockFacing; lock
+      when RPG::MoveCommand::Code::UnlockFacing; unlock
+      when RPG::MoveCommand::Code::IncreaseMovement_speed
+        @move_speed = [@move_speed + 1, 6].min
+      when RPG::MoveCommand::Code::DecreaseMovement_speed
+        @move_speed = [@move_speed - 1, 1].max
+      when RPG::MoveCommand::Code::IncreaseMovement_frequence
         @move_frequency = [move_frequency - 1, 1].min
-      when RPG::MoveCommand::Code::decrease_movement_frequence
+      when RPG::MoveCommand::Code::DecreaseMovement_frequence
         @move_frequency = [move_frequency - 1, 1].max
-      when RPG::MoveCommand::Code::switch_on # Parameter A: Switch to turn on
-        Game_Switches[move_command.parameter_a] = true
+      when RPG::MoveCommand::Code::SwitchOn # Parameter A: Switch to turn on
+        Game_Switches[next_move_command] = true
         Game_Map.needs_refresh = true
-      when RPG::MoveCommand::Code::switch_off # Parameter A: Switch to turn off
-        Game_Switches[move_command.parameter_a] = false
+      when RPG::MoveCommand::Code::SwitchOff # Parameter A: Switch to turn off
+        Game_Switches[next_move_command] = false
         Game_Map.needs_refresh = true
-      when RPG::MoveCommand::Code::change_graphic # String: File, Parameter A: index
-        @character_name = move_command.parameter_string
-        @character_index = move_command.parameter_a
-      when RPG::MoveCommand::Code::play_sound_effect # String: File, Parameters: Volume, Tempo, Balance
-        if (move_command.parameter_string != "(OFF)")
-          Audio.se_play(move_command.parameter_string,
-                        move_command.parameter_a, move_command.parameter_b)
-        end
-      when RPG::MoveCommand::Code::walk_everywhere_on; @through = true
-      when RPG::MoveCommand::Code::walk_everywhere_off; @through = false
-      when RPG::MoveCommand::Code::stop_animation; @walk_animation = false
-      when RPG::MoveCommand::Code::start_animation; @walk_animation = true
-      when RPG::MoveCommand::Code::increase_transp
+      when RPG::MoveCommand::Code::ChangeGraphic # String: File, Parameter A: index
+        @character_name = move_command_string
+        @character_index = next_move_command
+      when RPG::MoveCommand::Code::PlaySoundEffect # String: File, Parameters: Volume, Tempo, Balance
+        file = move_command_string
+        vol, pitch, balance = next_move_command, next_move_command, next_move_command
+        Audio.se_play file, vol, pitch if (file != "(OFF)")
+      when RPG::MoveCommand::Code::WalkEverywhere_on; @through = true
+      when RPG::MoveCommand::Code::WalkEverywhere_off; @through = false
+      when RPG::MoveCommand::Code::StopAnimation; @walk_animation = false
+      when RPG::MoveCommand::Code::StartAnimation; @walk_animation = true
+      when RPG::MoveCommand::Code::IncreaseTransp
         self.opacity = [40, opacity - 45].max
-      when RPG::MoveCommand::Code::decrease_transp
+      when RPG::MoveCommand::Code::DecreaseTransp
         self.opacity = opacity + 45
       end
 
-      move_route_index += 1 if @move_route.skippable || !@move_failed
+      @move_route_index += 1 if @move_route.skippable || !@move_failed
     end
   end
 
@@ -393,28 +406,28 @@ class Game_Character
 
   # Turns the character down.
   def turn_down
-    return if direction_fix
+    return if @direction_fix
     @direction = RPG::EventPage::Direction_down
     @stop_count = 0
   end
 
   # Turns the character left.
   def turn_left
-    return if direction_fix
+    return if @direction_fix
     @direction = RPG::EventPage::Direction_left
     @stop_count = 0
   end
 
   # Turns the character right.
   def turn_right
-    return if direction_fix
+    return if @direction_fix
     @direction = RPG::EventPage::Direction_right
     @stop_count = 0
   end
 
   # Turns the character up.
   def turn_up
-    return if direction_fix
+    return if @direction_fix
     @direction = RPG::EventPage::Direction_up
     @stop_count = 0
   end
@@ -514,7 +527,7 @@ class Game_Character
       @original_move_route_index = @move_route_index
       @original_move_frequency = @move_frequency
     end
-    @move_route = new_route
+    self.move_route = new_route
     @move_route_index = 0
     @move_route_forcing = true
     @move_frequency = frequency
@@ -535,7 +548,7 @@ class Game_Character
 
     @move_route_forcing = false
     @move_route_owner = nil
-    @move_route = @original_move_route
+    self.move_route = @original_move_route
     @move_route_index = @original_move_route_index
     @original_move_route = nil
   end
@@ -630,7 +643,7 @@ class Game_Character
 
 
   def update_move
-    distance = (1 << move_speed)
+    distance = (1 << @move_speed)
     @real_y = [@real_y + distance, @y * 128].min if @y * 128 > @real_y
     @real_x = [@real_x - distance, @x * 128].max if @x * 128 < @real_x
     @real_x = [@real_x + distance, @x * 128].min if @x * 128 > @real_x
@@ -670,8 +683,8 @@ class Game_Character
   end
 
   def update_self_movement
-    return if not (stop_count > 30 * (5 - move_frequency))
-    case move_type
+    return if not (@stop_count > 30 * (5 - @move_frequency))
+    case @move_type
     when RPG::EventPage::MoveType_random; move_type_random
     when RPG::EventPage::MoveType_vertical; move_type_cycle_up_down
     when RPG::EventPage::MoveType_horizontal; move_type_cycle_left_right
@@ -682,7 +695,7 @@ class Game_Character
   end
 
   def update_stop
-    anime_count += 1.5 if (pattern != original_pattern)
-    stop_count += 1 # if (!starting || !IsLock())
+    @anime_count += 1.5 if (pattern != @original_pattern)
+    @stop_count += 1 # if (!starting || !@locked)
   end
 end

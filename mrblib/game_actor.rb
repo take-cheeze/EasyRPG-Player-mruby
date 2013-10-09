@@ -22,11 +22,39 @@ class Game_Actor < Game_Battler
   # @param actor_id database actor ID.
   def initialize(actor_id)
     @actor_id = actor_id
-    @data = Data.game_data.actors[actor_id]
-    @data.setup actor_id
+    @actor = Data.actor[@actor_id]
+    $game_data.actor[@actor_id] ||= {
+      :changed_class => false,
+      :skill => [],
+      :hp_mod => 0, :sp_mod => 0, :defense_mod => 0, :spirit_mod => 0,
+      :agility_mod => 0, :attack_mod => 0,
+      :level => @actor.start_level }
+    @klass = data.changed_class ? Data.class_1[class_id] : nil
+    self.base_parameter = (data.changed_class ? @klass : @actor).parameter
 
     make_exp_list
+
+    @actor.skill.each do |k,v|
+      learn_skill v.skill_id if v.level <= level
+    end
+    hp = max_hp
+    sp = max_sp
+    exp = @exp_list[level - 1]
   end
+
+  def base_parameter=(v)
+    max_lv = self.max_level
+    @base_parameter = Array.new(6) { |idx| Array.new max_lv }
+
+    (0..5).each do |param_type|
+      (0...max_lv).each do |idx|
+        @base_parameter[param_type][idx] = v[max_lv * param_type + idx]
+      end
+    end
+    @base_parameter
+  end
+
+  def data; $game_data.actor[@actor_id]; end
 
   def max_exp
     Player.rpg2k3? ? 9999999 : 999999
@@ -36,14 +64,12 @@ class Game_Actor < Game_Battler
   def make_exp_list
     @exp_list = Array.new max_level, 0
 
-    src = data.changed_class ? Data.classes[class_id] : Data.actors[data.index]
-    base = src.exp_base
-    inflation = src.exp_inflation
+    src = data.changed_class ? @klass : @actor
+    base = src[:exp_base] || (Player.rpg2k? ? 30 : 300)
+    inflation = src[:exp_inflation] || (Player.rpg2k? ? 30 : 300)
     correction = src.exp_correction
 
-    if Player.rpg2k?
-      inflation = 1.5 + inflation * 0.01
-    end
+    inflation = 1.5 + inflation * 0.01 if Player.rpg2k?
 
     current_exp = 0
     for i in 0...@exp_list.length
@@ -56,21 +82,7 @@ class Game_Actor < Game_Battler
       end
 
       current_exp = [current_exp, max_exp].min
-      @exp_list = current_exp
-    end
-  end
-
-  # Initializes the game actor to the database state.
-  # Sets the skills, HP, SP and experience.
-  # If save_data is passed it overwrites the values with it.
-  def load(save_data)
-    Data.actors[data.index].skills.each do |v|
-      if (v.level <= level())
-        learn_skill(v.skill_id)
-      end
-      hp = max_hp
-      sp = max_sp
-      exp = exp_list[level - 1]
+      @exp_list[i] = current_exp
     end
   end
 
@@ -80,8 +92,8 @@ class Game_Actor < Game_Battler
   # @return If skill was learned (fails if already had the skill)
   def learn_skill(skill_id)
     if skill_id > 0 and not skill_learned?(skill_id)
-      data.skills.push skill_id
-      data.skills.sort
+      data.skill.push skill_id
+      data.skill.sort
       true
     else
       false
@@ -93,8 +105,8 @@ class Game_Actor < Game_Battler
   # @param skill_id database skill ID.
   # @return If skill was unlearned (fails if didn't had the skill)
   def forget_skill(skill_id)
-    idx = data.skills.find_index skill_id
-    data.skills[idx] = nil if not idx.nil?
+    idx = data.skill.index skill_id
+    data.skill[idx] = nil if not idx.nil?
     not idx.nil?
   end
 
@@ -103,7 +115,7 @@ class Game_Actor < Game_Battler
   # @param skill_id ID of skill to check.
   # @return true if skill has been learned.
   def skill_learned?(skill_id)
-    not data.find_index(skill_id).nil?
+    not data.skill.index(skill_id).nil?
   end
 
   # Checks if the actor can use the skill.
@@ -118,7 +130,7 @@ class Game_Actor < Game_Battler
   #
   # @return Actor ID
   def id
-    data.index
+    @actor_id
   end
 
   # Calculates the Exp needed for a level up.
@@ -200,7 +212,7 @@ class Game_Actor < Game_Battler
   #
   # @return final level
   def max_level
-    Data.actors[data.index].final_level
+    @actor[:final_level] || (Player.rpg2k? ? 50 : 100)
   end
 
   # Gets actor current experience points.
@@ -262,15 +274,15 @@ class Game_Actor < Game_Battler
 
     if new_level > old_level
       if level_up_message
-        Game_Message::texts.push("%s %s%d%s" % [name, Data.tems.level, new_level, Data.terms.level_up])
+        Game_Message::texts.push("%s %s%d%s" % [name, Data.tems.level, new_level, Data.term.level_up])
         level_up = true
       end
 
       # Learn new skills
-      Data.actors[data.index].skills.each do |v|
+      @actor.skill.each do |v|
         # Skill learning, up to current level
         if learn_skill(v.skill_id) and level_up_message
-          Game_Message::texts.push("%s%s" % [Data.skills[v.skill_id].name, Data.terms.skill_learned])
+          Game_Message::texts.push("%s%s" % [Data.skill[v.skill_id].name, Data.term.skill_learned])
           level_up = true
         end
       end
@@ -315,10 +327,10 @@ class Game_Actor < Game_Battler
       false
       # If the actor ID is out of range this is an optimization in the ldb file
       # (all actors missing can equip the item)
-    elsif Data.items[item_id].actor_set.length <= (data.index - 1)
+    elsif Data.items[item_id].actor_set.length <= (@actor_id - 1)
       true
     else
-      Data.items[item_id].actor_set[data.index - 1]
+      Data.items[item_id].actor_set[@actor_id - 1]
     end
   end
 
@@ -368,7 +380,7 @@ class Game_Actor < Game_Battler
   # Gets learned skills list.
   #
   # @return learned skills list.
-  def skills; data.skills end
+  def skills; data.skill end
 
   # Gets actor states list.
   #
@@ -389,42 +401,40 @@ class Game_Actor < Game_Battler
   #
   # @param mod include the modifier bonus.
   def base_max_hp
-    r = (data.changed_class ? Data.classes[class_id] : Data.actors[data.index]).parameters.maxhp[level - 1]
-    [1, [r + data.hp_mod, 999].min].max
+    [1, [@base_parameter[0][level - 1] + data.hp_mod, Player.rpg2k? ? 999 : 9999].min].max
   end
 
   # Gets the max SP for the current level.
   #
   # @param mod include the modifier bonus.
   def base_max_sp
-    r = (data.changed_class ? Data.classes[class_id] : Data.actors[data.index]).parameters.maxsp[level - 1]
-    [1, [r + data.sp_mod, 999].min].max
+    [1, [@base_parameter[1][level - 1] + data.sp_mod, 999].min].max
   end
 
   # Gets the attack for the current level.
   def base_attack
-    r = (data.changed_class ? Data.classes[class_id] : Data.actors[data.index]).parameters.attack[level - 1]
+    r = @base_parameter[2][level - 1]
     data.equiped.each { |v| r += Data.items[v].attack }
     [1, [r + data.attack_mod, 999].min].max
   end
 
   # Gets the defense for the current level.
   def base_defense
-    r = (data.changed_class ? Data.classes[class_id] : Data.actors[data.index]).parameters.defense[level - 1]
+    r = @base_parameter[3][level - 1]
     data.equiped.each { |v| r += Data.items[v].defense }
     [1, [r + data.defense_mod, 999].min].max
   end
 
   # Gets the spirit for the current level.
   def base_spirit
-    r = (data.changed_class ? Data.classes[class_id] : Data.actors[data.index]).parameters.spirit[level - 1]
+    r = @base_parameter[4][level - 1]
     data.equiped.each { |v| r += Data.items[v].spirit }
     [1, [r + data.spirit_mod, 999].min].max
   end
 
   # Gets the agility for the current level.
   def base_agility
-    r = (data.changed_class ? Data.classes[class_id] : Data.actors[data.index]).parameters.agility[level - 1]
+    r = @base_parameter[5][level - 1]
     data.equiped.each { |v| r += Data.items[v].agility }
     [1, [r + data.agility_mod, 999].min].max
   end
@@ -509,13 +519,13 @@ class Game_Actor < Game_Battler
   # @param id command to add/remove, 0 to remove all commands.
   def change_battle_commands(add, id)
     if add
-      if not data.battle_commands.find_index(id).nil?
+      if not data.battle_commands.index(id).nil?
         data.battle_commands.push id
         data.battle_commands.sort
       end
     elsif id == 0; data.battle_commands = []
     else
-      idx = data.battle_commands.find_index id
+      idx = data.battle_commands.index id
       data.battle_commands.delete idx if not idx.nil?
     end
   end
@@ -530,6 +540,10 @@ class Game_Actor < Game_Battler
   # @param class_id mew Rpg2k3 hero class.
   def class_id=(v)
     data.class_id = v
+    data.changed_class = true
+    @klass = Data.class_1[v]
+
+    self.base_parameter = @klass.parameter
     make_exp_list
   end
 
@@ -537,7 +551,7 @@ class Game_Actor < Game_Battler
   #
   # @return Rpg2k3 hero class name
   def class_name
-    class_id == 0 ? "" : Data.classes[class_id].name
+    class_id == 0 ? "" : @klass.name
   end
 
   # Gets battle commands.

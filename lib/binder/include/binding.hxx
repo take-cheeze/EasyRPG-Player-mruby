@@ -99,7 +99,8 @@ struct disposer_newer<T, typename boost::enable_if<is_disposable<T> >::type> {
 	static void deleter(mrb_state* M, void* ptr) {
 		ptr_type* const ref = reinterpret_cast<ptr_type*>(ptr);
 		if(ref->use_count() > 1)
-			mrb_raise(M, mrb_class_get(M, "RuntimeError"), "cannot dispose object");
+			mrb_warn(M, "possible leak of object: %S\n",
+					 mrb_str_new_cstr(M, mruby_data_type<T>::data.struct_name));
 		ref->~ptr_type();
 		mrb_free(M, ptr);
 	}
@@ -108,7 +109,7 @@ struct disposer_newer<T, typename boost::enable_if<is_disposable<T> >::type> {
 		ptr_type& ptr = get_ptr<T>(M, self);
 		if(ptr) {
 			if(ptr.use_count() > 1)
-				mrb_raisef(M, mrb_class_get(M, "RuntimeError"), "cannot dispose %s", self);
+				mrb_raisef(M, mrb_class_get(M, "RuntimeError"), "cannot dispose %S", self);
 			ptr.reset();
 		}
 		return self;

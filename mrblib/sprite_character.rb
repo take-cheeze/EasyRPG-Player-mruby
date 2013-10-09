@@ -19,14 +19,16 @@ class Sprite_Character < Sprite
   #
   # @param c game character to display
   def initialize(c)
-    @character = c
+    super()
+
     @tile_id = 0
     @character_name = nil
     @character_index = 0
     @chara_width, @chara_height = 0, 0
-
-    update
+    @character = c
   end
+
+  attr_accessor :character
 
   # Updates sprite state.
   def update
@@ -59,7 +61,7 @@ class Sprite_Character < Sprite
 
     self.src_rect = Rect.new(@character.pattern * @chara_width,
                              @character.direction * @chara_height,
-                             @chara_width, @chara_height) if @tile_id == 0
+                             @chara_width, @chara_height) if @tile_id.nil?
 
     if @character.flash_pending?
       col, dur = @character.flash_paramaters
@@ -68,12 +70,10 @@ class Sprite_Character < Sprite
 
     self.opacity = @character.opacity if @character.visible
 
-    self.x self.y = @character.screen_x, @character_screen_y
+    self.x, self.y = @character.screen_x, @character_screen_y
     self.z = @character.screen_z @chara_height
 
     # self.blend_type = @character.blend_type
     # self.bush_depth = @character.bush_depth
   end
-
-  attr_accessor :character
 end

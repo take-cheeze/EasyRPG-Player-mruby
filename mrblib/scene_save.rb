@@ -16,7 +16,7 @@
 # Scene_Item class.
 class Scene_Save < Scene_File
   # Constructor.
-  def initialize; super "Save", Data.terms.save_game_message; end
+  def initialize; super "Save", Data.term.save_game_message; end
 
   def action(index)
     # TODO: Maybe find a better place to setup the save file?
