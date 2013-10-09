@@ -15,7 +15,6 @@ MRuby::Build.new do |conf|
     cc.command = com[0]
     cc.flags = com[1, com.length - 1].concat cc.flags
     cc.flags << "-DMRB_DEBUG=1"
-    cc.include_paths << '/opt/local/include'
   }
   conf.cxx { |cxx|
     cxx.command = ENV['CXX'] || 'c++'
@@ -23,7 +22,6 @@ MRuby::Build.new do |conf|
     com = cxx.command.split ' '
     cxx.command = com[0]
     cxx.flags = com[1, com.length - 1].concat cxx.flags
-    cxx.include_paths << '/opt/local/include'
     cxx.flags << "-DMRB_DEBUG=1"
   }
 
@@ -31,7 +29,6 @@ MRuby::Build.new do |conf|
   conf.linker { |linker|
     linker.command = conf.cxx.command
     linker.flags = conf.cxx.flags
-    linker.library_paths << '/opt/local/lib'
   }
 
   conf.cxx.flags << '-DUSE_SDL=1' << "-DHAVE_SDL_MIXER=1"
@@ -39,5 +36,12 @@ MRuby::Build.new do |conf|
     conf.cxx.flags += [`pkg-config #{v} --cflags`.chomp]
     conf.linker.flags += [`pkg-config #{v} --libs`.chomp]
   }
-  conf.linker.libraries << 'SDL_mixer' << 'iconv'
+  conf.linker.libraries << 'SDL_mixer'
+
+  if `uname`.chomp.downcase == 'darwin'
+    conf.cxx.include_paths << '/opt/local/include'
+    conf.cc.include_paths << '/opt/local/include'
+    conf.linker.library_paths << '/opt/local/lib'
+    conf.linker.libraries << 'iconv'
+  end
 end
