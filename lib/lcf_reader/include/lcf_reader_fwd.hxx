@@ -7,6 +7,8 @@
 #include <boost/container/container_fwd.hpp>
 #include <boost/variant/variant_fwd.hpp>
 
+#include <stdint.h>
+
 
 namespace LCF {
 
