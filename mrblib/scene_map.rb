@@ -30,13 +30,11 @@ class Scene_Map < Scene
   end
 
   def transition_in
-    super
     Graphics.transition_2k Data.system.transition_in, 12
   end
 
   def transition_out
-    super
-    Graphics.transition_2k Data.system.transition_in, 12, true
+    Graphics.transition_2k Data.system.transition_out, 12, true
   end
 
   def update
