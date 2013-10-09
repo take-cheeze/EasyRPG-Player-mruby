@@ -4,7 +4,7 @@ cd $(dirname $0)
 SCRIPT_PATH=$(pwd)
 
 if [ ! -d $SCRIPT_PATH/mruby ] ; then
-		git clone git@github.com:mruby/mruby.git $SCRIPT_PATH/mruby
+		git clone --depth 1 git@github.com:EasyRPG/mruby.git $SCRIPT_PATH/mruby
 fi
 
 cd $SCRIPT_PATH/mruby
