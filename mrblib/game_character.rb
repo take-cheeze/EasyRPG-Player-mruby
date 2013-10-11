@@ -196,7 +196,7 @@ class Game_Character
   def move_type_away_from_player
     return if not stopping?
     sx, sy = @x - $game_player.x, @y - $game_player.y
-    if sx.abs + abs.y >= 20; move_random
+    if sx.abs + sy.abs >= 20; move_random
     else
       case rand % 6
       when 0; move_random
