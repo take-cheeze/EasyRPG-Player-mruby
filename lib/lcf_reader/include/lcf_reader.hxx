@@ -16,8 +16,6 @@ namespace LCF {
 	picojson const& get_schema(picojson_string const& name);
 	bool has_default(picojson const& sch);
 
-	struct change;
-
 	namespace detail {
 		template<class T>
 		struct array {
@@ -181,9 +179,6 @@ namespace LCF {
 		picojson const* schema_;
 	}; // class array2d
 
-	bool is_related(LCF::key_list const& a, LCF::key_list const& b);
-	bool contains(LCF::key_list const& a, LCF::key_list const& b);
-
 	struct lcf_file {
 		lcf_file();
 		lcf_file(istream_ref const& is);
@@ -208,15 +203,6 @@ namespace LCF {
 
 		void swap(lcf_file& x);
 
-		vector<change> const& changes(size_t root) const;
-
-		void get(key_list const& k, picojson& ret, size_t root = 0) const;
-
-		void undo(size_t r = 0);
-		void set(key_list const& k, picojson const& v, size_t root = 0);
-
-		void save(std::ostream& os);
-
 	private:
 		void init();
 
@@ -227,7 +213,6 @@ namespace LCF {
 		std::string error_;
 
 		vector<element> elem_;
-		vector<vector<change> > changes_;
 	}; // struct lcf_file
 
 	size_t calculate_size(picojson const& data, picojson const& schema);
@@ -238,11 +223,6 @@ namespace LCF {
 	picojson const& actual_schema(picojson const& sch, picojson_string const& type);
 	picojson const& find_schema(picojson const& sch, uint32_t k);
 	picojson const& find_schema(picojson const& sch, picojson_string const& k);
-
-	bool operator==(change const& lhs, change const& rhs);
-	inline bool operator!=(change const& lhs, change const& rhs) {
-		return !(lhs == rhs);
-	}
 
 	bool operator==(array1d const& lhs, array1d const& rhs);
 	bool operator==(array2d const& lhs, array2d const& rhs);

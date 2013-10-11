@@ -59,35 +59,6 @@ void open_ldb(mrb_state* M) {
 }
 */
 
-void change_name(mrb_state* M) {
-	LCF::lcf_file ldb(ldb_path);
-
-	picojson tmp;
-
-	typedef picojson::string string;
-
-	char const* const changed_name = "Alexander";
-	LCF::key_list const key =
-			list_of<LCF::key_type>(string("actor"))(1)(string("name"));
-
-	easyrpg_verify(ldb["actor"][1]["name"].s() == "Alex");
-	ldb.get(key, tmp);
-	easyrpg_verify(tmp.s() == "Alex");
-	ldb.set(key, picojson(changed_name));
-	ldb.get(key, tmp);
-	easyrpg_verify(tmp.s() == changed_name);
-
-	boost::shared_ptr<std::stringstream> const ios =
-			boost::make_shared<std::stringstream>(stream_flag);
-	ldb.save(*ios);
-	ios->seekg(0);
-
-	LCF::lcf_file changed_ldb(ios);
-	easyrpg_verify(changed_ldb["actor"][1]["name"].s() == changed_name);
-	changed_ldb.get(key, tmp);
-	easyrpg_verify(tmp.s() == changed_name);
-}
-
 void test_ber(mrb_state* M) {
 	easyrpg_verify(LCF::ber_size(0) == 1);
 	easyrpg_verify(LCF::ber_size(0x81) == 2);
@@ -110,5 +81,4 @@ extern "C" void mrb_lcf_reader_gem_test(mrb_state* M) {
 	test_ber(M);
 	open_lmt(M);
 	// open_ldb(M);
-	change_name(M);
 }

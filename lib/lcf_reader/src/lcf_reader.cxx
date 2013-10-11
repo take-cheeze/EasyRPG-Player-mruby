@@ -1,7 +1,6 @@
 #include "lcf_reader.hxx"
 #include "lcf_stream.hxx"
 #include "lcf_sym.hxx"
-#include "lcf_change.hxx"
 #include "picojson.hxx"
 
 #include <boost/bind.hpp>
@@ -447,7 +446,6 @@ void LCF::lcf_file::init() {
 
 	picojson::array const& root = (*schema_)[sym::root].a();
 	elem_.reserve(root.size());
-	changes_.resize(root.size());
 	for(size_t i = 0; i < root.size(); ++i) {
 		size_t const pos = stream_->tellg();
 
@@ -471,259 +469,10 @@ bool LCF::lcf_file::valid() const {
 	return(schema_ != NULL && stream_);
 }
 
-void LCF::lcf_file::undo(size_t r) { changes_[r].pop_back(); }
-
-bool LCF::contains(LCF::key_list const& a, LCF::key_list const& b) {
-	return a.size() < b.size() and std::equal(a.begin(), a.end(), b.begin());
-}
-
-bool LCF::is_related(LCF::key_list const& a, LCF::key_list const& b) {
-	size_t const s = std::min(a.size(), b.size());
-	return std::equal(a.begin(), a.begin() + s, b.begin());
-}
-
-namespace {
-
-bool contains(LCF::key_list const& a, optional<LCF::change const&> const& b) {
-	return LCF::contains(a, b->key);
-}
-
-bool is_related(LCF::key_list const& a, LCF::change const& b) {
-	return LCF::is_related(a, b.key);
-}
-
-typedef LCF::key_list::const_iterator key_iterator;
-
-void find(LCF::element const& e, key_iterator i, key_iterator const& end, picojson& ret);
-void find(LCF::array1d const& e, key_iterator i, key_iterator const& end, picojson& ret) {
-	uint32_t const* integer;
-	picojson::string const* str;
-
-	if(i == end) { e.to_json(ret); }
-	else if((str = boost::get<picojson::string>(&(*i)))) {
-		find(e[*str], ++i, end, ret);
-	}
-	else if((integer = boost::get<uint32_t>(&(*i)))) {
-		find(e[*integer], ++i, end, ret);
-	} else { assert(false); }
-}
-void find(LCF::element const& e, key_iterator i, key_iterator const& end, picojson& ret) {
-	uint32_t const* integer;
-	picojson::string const* str;
-
-	if(i == end) { e.to_json(ret); }
-	else if((integer = boost::get<uint32_t>(&(*i)))) {
-		find(e[*integer], ++i, end, ret);
-	}
-	else if((str = boost::get<picojson::string>(&(*i)))) {
-		find(e[*str], ++i, end, ret);
-	} else { assert(false); }
-}
-
-picojson const& find(picojson const& e, key_iterator i, key_iterator const& end) {
-	uint32_t const* integer;
-	picojson::string const* str;
-	static picojson const s_null;
-
-	return i == end? e:
-			(integer = boost::get<uint32_t>(&(*i)))? find(e[*integer], ++i, end):
-			(str = boost::get<picojson::string>(&(*i)))? find(e[*str], ++i, end):
-			s_null;
-}
-picojson& create_parent(picojson& e, key_iterator i, key_iterator const& end) {
-	if(i == end) { return e; }
-	else {
-		uint32_t const* integer;
-		picojson::string const* str;
-		static picojson s_null;
-
-		picojson& child =
-				i == end? e:
-				(integer = boost::get<uint32_t>(&(*i)))? e[*integer]:
-				(str = boost::get<picojson::string>(&(*i)))? e[*str]:
-				s_null;
-		assert(not child.is<picojson::null>());
-
-		if(child.is<picojson::null>()) {
-			picojson(picojson::object_type, bool()).swap(child);
-		}
-		return create_parent(child, ++i, end);
-	}
-}
-
-typedef LCF::vector<optional<LCF::change const&> > change_list;
-void apply_changes(picojson& ret, change_list const& ch_list, LCF::key_list const& k) {
-	for(change_list::const_iterator i = ch_list.begin(); i != ch_list.end(); ++i) {
-		if((*i)->key.size() >= k.size()) {
-			create_parent(ret, (*i)->key.begin() + k.size(), (*i)->key.end()) = (*i)->value;
-		} else {
-			ret = find((*i)->value, k.begin() + (*i)->key.size(), k.end());
-		}
-	}
-}
-
-using boost::container::list;
-
-bool remove_function(change_list const& ch, optional<LCF::change const&> const& p) {
-	return boost::find(ch, p) != ch.end();
-}
-
-void save_element(std::ostream& os, LCF::element const& e,
-				  LCF::key_list& k, list<optional<LCF::change const&> >& ch)
-{
-	picojson const& schema = LCF::get_schema(e.type());
-	picojson::string const type =
-			e.type() == sym::array1d? sym::array1d:
-			e.type() == sym::array2d? sym::array2d:
-			not schema.is<picojson::null>()? schema[sym::type].s():
-			e.type();
-
-	change_list ch_list;
-	boost::remove_copy_if(ch, std::back_inserter(ch_list),
-						  bind(contains, boost::cref(k), _1) == false);
-
-	if(ch_list.empty()) { e.write(os); }
-	else if(ch_list.back()->key.size() == k.size()) {
-		LCF::save_element(ch_list.back()->value, e.schema(), os);
-		ch.remove_if(bind(remove_function, boost::cref(ch_list), _1));
-	}
-	else if(ch_list.back()->key.size() > k.size()) {
-		if(type == sym::array1d) {
-			LCF::array1d const ary = e.a1d();
-
-			bool use_json = false;
-			for(change_list::const_iterator i = ch_list.begin(); i != ch_list.end(); ++i) {
-				if((*i)->key.size() == k.size() + 1) { use_json = true; break; }
-			}
-
-			if(use_json) {
-				picojson jsn;
-				ary.to_json(jsn);
-				apply_changes(jsn, ch_list, k);
-				LCF::save_array1d(jsn, e.schema(), os);
-				ch.remove_if(bind(remove_function, boost::cref(ch_list), _1));
-			} else {
-				for(LCF::array1d::const_iterator i = ary.begin(); i != ary.end(); ++i) {
-					k.push_back(i->second.schema()[sym::name].s());
-
-					std::ostringstream tmp(write_flag);
-					save_element(tmp, i->second, k, ch);
-					std::string const res = tmp.str();
-
-					LCF::ber(os, i->first);
-					LCF::ber(os, res.size());
-					os.write(res.data(), res.size());
-
-					k.pop_back();
-				}
-				LCF::ber(os, 0);
-			}
-		} else if(type == sym::array2d) {
-			LCF::array2d const ary = e.a2d();
-
-			bool use_json = false;
-			for(change_list::const_iterator i = ch_list.begin(); i != ch_list.end(); ++i) {
-				int const d = (*i)->key.size() - k.size();
-				assert(d > 0);
-				if(d <= 2) { use_json = true; break; }
-			}
-
-			if(use_json) {
-				picojson jsn;
-				ary.to_json(jsn);
-				apply_changes(jsn, ch_list, k);
-				LCF::save_array2d(jsn, e.schema(), os);
-				ch.remove_if(bind(remove_function, boost::cref(ch_list), _1));
-			} else {
-				LCF::ber(os, ary.size());
-
-				for(LCF::array2d::const_iterator i = ary.begin(); i != ary.end(); ++i) {
-					k.push_back(i->first);
-					LCF::ber(os, i->first);
-					k.push_back(i->first);
-					for(LCF::array1d::const_iterator j = i->second.begin(); j != i->second.end(); ++j) {
-						k.push_back(j->second.schema()[sym::name].s());
-
-						std::ostringstream tmp(write_flag);
-						save_element(tmp, j->second, k, ch);
-						std::string const res = tmp.str();
-
-						LCF::ber(os, j->first);
-						LCF::ber(os, res.size());
-						os.write(res.data(), res.size());
-
-						k.pop_back();
-					}
-					k.pop_back();
-				}
-			}
-		} else {
-			assert(false);
-		}
-	} else { assert(false); }
-}
-
-}
-
-void LCF::lcf_file::get(key_list const& k, picojson& ret, size_t r) const {
-	vector<change> const& ch = changes(r);
-	vector<change>::const_reverse_iterator const c =
-			std::find_if(ch.rbegin(), ch.rend(), bind(& ::is_related, boost::cref(k), _1));
-
-	if(c == ch.rend()) { find(root(r), k.begin(), k.end(), ret); }
-	else if(c->key.size() <= k.size()) {
-		ret = find(c->value, k.begin() + c->key.size(), k.end());
-	}
-	else if(c->key.size() > k.size()) {
-		change_list ch_list;
-		boost::remove_copy_if(ch, std::back_inserter(ch_list),
-							  bind(& ::is_related, boost::cref(k), _1) == false);
-
-		picojson(picojson::object_type, bool()).swap(ret);
-		apply_changes(ret, ch_list, k);
-	}
-	else { assert(false); }
-}
-
-void LCF::lcf_file::set(key_list const& k, picojson const& v, size_t r) {
-	changes_[r].push_back(change(k, v));
-}
-
-void LCF::lcf_file::save(std::ostream& os) {
-	boost::shared_ptr<std::ostringstream> tmp =
-			boost::make_shared<std::ostringstream>(write_flag);
-
-	write_string(*tmp, signature_);
-	for(size_t i = 0; i < elem_.size(); ++i) {
-		vector<change> const& ch = changes_[i];
-
-		list<optional<change const&> > ch_list;
-		boost::copy(ch, std::back_inserter(ch_list));
-
-		key_list key;
-		::save_element(*tmp, elem_[i], key, ch_list);
-		assert(ch_list.empty());
-	}
-
-	os << tmp->str();
-
-	stream_ = boost::make_shared<std::istringstream>(tmp->str(), read_flag);
-	changes_.clear();
-	elem_.clear();
-	init();
-}
-
 LCF::lcf_file::~lcf_file() {}
-
-LCF::change::change(key_list const& k, picojson const& v)
-		: key(k), value(v) {}
 
 LCF::element const& LCF::lcf_file::root(size_t const index) const {
 	return elem_[index];
-}
-
-LCF::vector<LCF::change> const& LCF::lcf_file::changes(size_t const index) const {
-	return changes_[index];
 }
 
 boost::optional<LCF::element> LCF::lcf_file::get(picojson::string const& n) const {
@@ -751,8 +500,4 @@ bool LCF::operator==(LCF::array1d const& lhs, LCF::array1d const& rhs) {
 }
 bool LCF::operator==(LCF::array2d const& lhs, LCF::array2d const& rhs) {
 	return to_json(lhs) == to_json(rhs);
-}
-
-bool LCF::operator==(LCF::change const& lhs, LCF::change const& rhs) {
-	return (lhs.key == rhs.key) and (lhs.value == rhs.value);
 }

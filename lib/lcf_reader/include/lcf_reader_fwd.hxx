@@ -30,9 +30,6 @@ namespace LCF {
 		typedef boost::container::flat_multimap<uint32_t, array1d> array2d_base;
 	} // namespace detail
 
-	typedef boost::variant<uint32_t, picojson_string> key_type;
-	typedef vector<key_type> key_list;
-
 	typedef detail::array<uint8_t> int8_array;
 	typedef detail::array<int16_t> int16_array;
 	typedef detail::array<int32_t> int32_array;
