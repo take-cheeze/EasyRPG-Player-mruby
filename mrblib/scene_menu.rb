@@ -91,19 +91,18 @@ class Scene_Menu < Scene
     @command_window.index = @menu_index
 
     # Disable items
-    @command_options.each_with_index { |v,i|
+    @command_options.each_with_index do |v,i|
       case v
       when Save
         # If save is forbidden disable this item
-        @command_window.disable_item i if !Game_System.allow_save?
+        @command_window.disable_item i unless Game_System.allow_save?
       when Wait, Quit
       when Order
         @command_window.disable_item i if Game_Party.actors.length <= 1
-        break
       else
         @command_window.disable_item i if Game_Party.actors.empty?
       end
-    }
+    end
   end
 
   # Update function if command window is active.
