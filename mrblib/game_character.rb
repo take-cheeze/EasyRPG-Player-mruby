@@ -594,17 +594,13 @@ class Game_Character
 
   def distance_x_from_player
     sx = @x - $game_player.x
-    if Game_Map.loop_horizontal
-      sx -= Game_Map.width if sx.abs > Game_Map.width / 2
-    end
+    sx -= Game_Map.width if sx.abs > Game_Map.width / 2 if Game_Map.loop_horizontal?
     sx
   end
 
   def distance_y_from_player
     sy = @y - $game_player.y
-    if Game_Map.loop_horizontal
-      sy -= Game_Map.width if sy.abs > Game_Map.width / 2
-    end
+    sy -= Game_Map.width if sy.abs > Game_Map.width / 2 if Game_Map.loop_vertical?
     sy
   end
 
