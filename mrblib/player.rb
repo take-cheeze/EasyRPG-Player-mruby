@@ -47,7 +47,7 @@ class << Player
 
   def pop_until(type)
     pop_count = @instances.rindex { |v| v.type == type }
-    pop_count = pop_count.nil? ? 0 : pop_count + 1
+    pop_count = pop_count.nil? ? 0 : @instances.length - pop_count + 1
     @old_instances.concat @instances.pop(pop_count).reverse!
     @push_pop_operation = ScenePopped
   end
@@ -96,9 +96,10 @@ class << Player
       inst = self.instance
       case @push_pop_operation
       when ScenePushed
+        Graphics.push
         inst.start
         inst.transition_in
-      when ScenePopped; continue
+      when ScenePopped; inst.continue
       when SceneNop
       else raise 'invalid operation %d' % @push_pop_operation
       end
@@ -115,13 +116,6 @@ class << Player
       Graphics.update
       inst.suspend
       inst.transition_out
-
-      case @push_pop_operation
-      when ScenePushed; Graphics.push
-      when ScenePopped
-      when SceneNop
-      else raise 'invalid operation %d' % @push_pop_operation
-      end
 
       for i in 0...@old_instances.length; Graphics.pop; end
       @old_instances.clear
