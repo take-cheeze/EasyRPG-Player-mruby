@@ -175,7 +175,7 @@ class Scene_Title < Scene
     # Game_Troop.can_escape = true
     Game_System.bgm_play Data.system.battle_music
 
-    Player.push Scene_Battle, true
+    Player.replace_top Scene_Battle.new
   end
 
   # Option New Game.

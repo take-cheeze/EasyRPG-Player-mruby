@@ -30,10 +30,14 @@ class << Player
     not idx.nil?
   end
 
-  def push(new_scene, pop_stack_top = false)
-    @old_instances.push @instances.pop if pop_stack_top
+  def push(new_scene)
     @instances.push new_scene
     @push_pop_operation = ScenePushed
+  end
+
+  def replace_top(new_scene)
+    @old_instances.push @instances.pop
+    push new_scene
   end
 
   def pop

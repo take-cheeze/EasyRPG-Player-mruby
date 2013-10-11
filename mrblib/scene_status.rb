@@ -55,11 +55,11 @@ class Scene_Status < Scene
     elsif Game_Party.actors.length > 1 && Input.trigger?(Input::RIGHT)
       Game_System.se_play Game_System::SFX_Cursor
       @actor_index = (@actor_index + 1) % Game_Party.actors.length
-      Player.push Scene_Status.new(@actor_index), true
+      Player.replace_top Scene_Status.new(@actor_index)
     elsif Game_Party.actors.length > 1 && Input.trigger?(Input::LEFT)
       Game_System.se_play Game_System::SFX_Cursor
       @actor_index = (@actor_index + Game_Party.actors.length - 1) % Game_Party.actors.length
-      Player.push Scene_Status.new(@actor_index), true
+      Player.replace_top Scene_Status.new(@actor_index)
     end
   end
 end
