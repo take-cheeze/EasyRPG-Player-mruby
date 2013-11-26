@@ -20,6 +20,7 @@ MRuby::Build.new do |conf|
     com = cxx.command.split ' '
     cxx.command = com[0]
     cxx.flags = com[1, com.length - 1].concat cxx.flags
+    cxx.defines << 'BOOST_NO_CXX11_SMART_PTR'
   }
 
   # use C++ linker
