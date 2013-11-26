@@ -51,8 +51,8 @@ class Game_Event < Game_Character
 
   # Does refresh.
   def refresh
-    new_page = @erased ? nil : @pages[@pages.keys.reverse!.find { |v|
-                                        are_conditions_met @pages[v] }]
+    new_page_key = @erased ? nil : @pages.keys.reverse!.find { |v| are_conditions_met @pages[v] }
+    new_page = new_page_key && @pages[new_page_key]
 
     if new_page != @page
       clear_starting
