@@ -1,6 +1,7 @@
 MRuby::Build.new do |conf|
   # load specific toolchain settings
   toolchain :gcc
+  enable_debug
 
   # include the default GEMs
   conf.gembox 'default'
@@ -8,13 +9,10 @@ MRuby::Build.new do |conf|
   ENV['PLAYER_BASE'] = File.expand_path '..'
   conf.gembox "#{ENV['PLAYER_BASE']}/player"
 
-  conf.mrbc.compile_options += ' -g'
-
   conf.cc { |cc|
     com = cc.command.split ' '
     cc.command = com[0]
     cc.flags = com[1, com.length - 1].concat cc.flags
-    cc.flags << "-DMRB_DEBUG=1"
   }
   conf.cxx { |cxx|
     cxx.command = ENV['CXX'] || 'c++'
@@ -22,7 +20,6 @@ MRuby::Build.new do |conf|
     com = cxx.command.split ' '
     cxx.command = com[0]
     cxx.flags = com[1, com.length - 1].concat cxx.flags
-    cxx.flags << "-DMRB_DEBUG=1"
   }
 
   # use C++ linker
