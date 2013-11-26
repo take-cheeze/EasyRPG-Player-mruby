@@ -48,7 +48,7 @@
 #ifdef __MINGW32__
 #  include <dirent.h>
 #elif defined(_MSC_VER)
-#  include "dirent_win.h"
+#  include "platform/dirent_win.h"
 #endif
 
 #ifdef _WIN32

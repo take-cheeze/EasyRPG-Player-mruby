@@ -13,4 +13,10 @@ MRuby::Gem::Specification.new 'EasyRPG_Player' do |spec|
   ].each { |v| spec.add_dependency v }
 
   spec.bins = ['EasyRPG_Player']
+
+  task "#{dir}/doc" => ["#{dir}/src/Doxyfile"] do
+    Dir.chdir dir do
+      `doxygen ./Doxyfile`
+    end
+  end
 end

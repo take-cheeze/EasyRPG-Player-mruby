@@ -9,4 +9,4 @@ fi
 
 cd $SCRIPT_PATH/mruby
 
-MRUBY_CONFIG=$SCRIPT_PATH/build_config.rb rake $@
+MRUBY_CONFIG=$SCRIPT_PATH/config.rb rake $@
