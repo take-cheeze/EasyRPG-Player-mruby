@@ -1,6 +1,9 @@
 class Game_Unit
 end
 
+class Game_Battler
+end
+
 class Window_Base < Window
 end
 

@@ -13,9 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with EasyRPG Player. If not, see <http://www.gnu.org/licenses/>.
 
-class Game_Battler
-end
-
 class Game_Actor < Game_Battler
   # Constructor.
   #
