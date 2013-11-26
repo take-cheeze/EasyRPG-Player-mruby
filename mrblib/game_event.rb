@@ -105,7 +105,7 @@ class Game_Event < Game_Character
       @list = @page.event
       @through = false
 
-      interpreter = Game_Interpreter_Map.new if @trigger == RPG::EventPage::Trigger_parallel
+      @interpreter = Game_Interpreter_Map.new if @trigger == RPG::EventPage::Trigger_parallel
       check_event_trigger_auto
     end
   end
