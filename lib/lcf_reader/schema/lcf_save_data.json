@@ -205,8 +205,8 @@
         {"index": 91, "type": "bool", "name": "double_hand"}
       ]},
 
-      {"index": 109, "type": "array1d", "name": "status", "value": [
-        {"index": 1, "type": "integer", "name": "member_num", "value": 0},
+      {"index": 109, "type": "array1d", "name": "inventory", "value": [
+        {"index": 1, "type": "integer", "name": "member", "value": 0},
         {"index": 2, "type": "int16array", "name": "member"},
 
         {"index": 11, "type": "integer", "name": "item_type_num", "value": 0},

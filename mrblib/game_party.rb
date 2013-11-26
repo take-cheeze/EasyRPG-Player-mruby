@@ -17,16 +17,15 @@ module Game_Party end
 
 class << Game_Party
   def data; $game_data.inventory ||= {
-      :party => [],
+      :member => Data.system.member.to_ary,
       :gold => 0 }; end
 
   # Adds an actor to the party.
   #
   # @param actor_id database actor ID.
   def add_actor(actor_id)
-    return if actor_in_party? actor_id
-    return if data.party.length >= 4
-    data.party.psuh actor_id
+    return if actor_in_party? actor_id or data.member.length >= 4
+    data.member.push actor_id
     $game_player.refresh
   end
 
@@ -36,7 +35,7 @@ class << Game_Party
   def remove_actor(actor_id)
     return if not actor_in_party? actor_id
 
-    data.party.delete data.party.index(actor_id)
+    data.member.delete data.member.index(actor_id)
     $game_player.refresh
   end
 
@@ -79,7 +78,7 @@ class << Game_Party
   def item_number(item_id, get_equipped = false)
     if (get_equipped && item_id != 0)
       number = 0
-      data.party.each { |v|
+      data.member.each { |v|
         actor = Game_Actors.actor(v)
         number += 1 if actor.weapon_id == item_id
         number += 1 if actor.shiled_id == item_id
@@ -142,7 +141,7 @@ class << Game_Party
       # elsif (Data.items[item_id - 1].type == RPG::Item::Type_switch)
       #   return Data.items[item_id - 1].ocassion_battle
       # else
-      if (not data.party.empty? &&
+      if (not data.member.empty? &&
           (Data.items[item_id].type == RPG::Item::Type_medicine ||
            Data.items[item_id].type == RPG::Item::Type_material ||
            Data.items[item_id].type == RPG::Item::Type_book))
@@ -196,7 +195,7 @@ class << Game_Party
   # Gets actors in party list.
   #
   # @return actors in party list.
-  def actors; data.party.map { |v| Game_Actors.actor v }; end
+  def actors; data.member.map { |v| Game_Actors.actor v }; end
 
   # Gets number of battles.
   #

@@ -106,7 +106,7 @@ class Game_Player < Game_Character
     end
 
     actor = Game_Party.actors[0]
-    @character_name, @character_index = actor.character_name, actor.character_index
+    @character_name, @character_index = actor.charset, actor.charset_index
   end
 
   def check_event_trigger_touch(x, y)

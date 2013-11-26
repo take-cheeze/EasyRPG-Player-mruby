@@ -4,8 +4,8 @@
     {"index": 11, "type": "array2d", "name": "actor", "value": [
       {"index": 1, "type": "string", "name": "name", "value": ""},
       {"index": 2, "type": "string", "name": "title"},
-      {"index": 3, "type": "string", "name": "char_set"},
-      {"index": 4, "type": "integer", "name": "char_set_pos", "value": 0},
+      {"index": 3, "type": "string", "name": "charset"},
+      {"index": 4, "type": "integer", "name": "charset_index", "value": 0},
       {"index": 5, "type": "bool", "name": "semi_trans", "value": false},
 
       {"index": 7, "type": "integer", "name": "start_level", "value": 1},

@@ -37,9 +37,9 @@ class Game_Actor < Game_Battler
     @actor.skill.each do |k,v|
       learn_skill v.skill_id if v.level <= level
     end
-    hp = max_hp
-    sp = max_sp
-    exp = @exp_list[level - 1]
+    self.hp = max_hp
+    self.sp = max_sp
+    self.exp = @exp_list[level - 1]
   end
 
   def base_parameter=(v)
@@ -54,7 +54,7 @@ class Game_Actor < Game_Battler
     @base_parameter
   end
 
-  def data; $game_data.actor[@actor_id]; end
+  def data; $game_data.actor[@actor_id] end
 
   def max_exp
     Player.rpg2k3? ? 9999999 : 999999
