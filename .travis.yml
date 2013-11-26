@@ -7,9 +7,7 @@ before_script:
   - sudo apt-get install -qq libarchive-dev libboost1.48-dev libsdl1.2-dev libsdl-mixer1.2-dev libpixman-1-dev
   - gem install libarchive iconv
 script:
-  - CXX="$CXX $WORKAROUND_CXX_FLAGS" ./build_mruby.sh all
-after_script:
-  - ./build_mruby.sh test
+  - CXX="$CXX $WORKAROUND_CXX_FLAGS" ./build.sh all test
 env:
   global:
     - WORKAROUND_CXX_FLAGS="-DBOOST_NO_CXX11_SMART_PTR -DBOOST_NO_CXX11_HDR_ARRAY -DBOOST_NO_RTTI -DBOOST_NO_TYPEID"
