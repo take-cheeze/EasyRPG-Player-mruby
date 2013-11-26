@@ -1,7 +1,7 @@
 require 'fileutils'
 
 MRuby::Gem::Specification.new('shinonome') { |spec|
-  spec.license = 'GPL2'
+  spec.license = 'public domain'
   spec.authors = 'take-cheeze'
 
   file "#{dir}/include/shinonome.hxx" => ["#{dir}/generate_cxx_font.rb",
