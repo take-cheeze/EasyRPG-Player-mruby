@@ -120,7 +120,7 @@ struct pixman_releaser {
 pixman_image_ptr create_color_mask(Color const& c) {
 	static Color const ignore_color(0, 0, 0, 255);
 
-	pixman_color_t const col = to_pixman(c);
+	pixman_color_t col = to_pixman(c);
 	return pixman_image_ptr(
 		c == ignore_color? NULL : pixman_image_create_solid_fill(&col),
 		pixman_releaser());
@@ -141,7 +141,7 @@ pixman_op_t const pixman_operation = PIXMAN_OP_OVER;
 
 pixman_image_ptr create_image(size_t w, size_t h, void* data, size_t stride) {
 	pixman_image_ptr const ret(
-		pixman_image_create_bits_no_clear(
+		pixman_image_create_bits(
 			pixman_format, w, h, reinterpret_cast<uint32_t*>(data), stride),
 		pixman_releaser());
 
@@ -496,7 +496,7 @@ BitmapRef Bitmap::sub_image(Rect const& rect) const {
 }
 
 void Bitmap::fill(Rect const& r, Color const& c) {
-	pixman_color_t const color = to_pixman(c);
+	pixman_color_t color = to_pixman(c);
 	pixman_rectangle16_t const rect = to_pixman(r);
 	pixman_image_fill_rectangles(
 		pixman_operation, ref_.get(), &color, 1, &rect);
@@ -505,7 +505,7 @@ void Bitmap::fill(Rect const& r, Color const& c) {
 }
 
 void Bitmap::clear() {
-	pixman_color_t const c = to_pixman(Color(0, 0, 0, 0));
+	pixman_color_t c = to_pixman(Color(0, 0, 0, 0));
 	pixman_rectangle16_t const r = to_pixman(rect());
 	pixman_image_fill_rectangles(PIXMAN_OP_CLEAR, ref_.get(), &c, 1, &r);
 
