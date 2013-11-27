@@ -413,7 +413,7 @@ void SdlUi::UpdateDisplay() {
 	}
 
 	pixman_image_ptr const img(
-		pixman_image_create_bits_no_clear(
+		pixman_image_create_bits(
 			to_pixman_format(*screen->format), screen->w, screen->h,
 			reinterpret_cast<uint32_t*>(screen->pixels),
 			screen->pitch),
