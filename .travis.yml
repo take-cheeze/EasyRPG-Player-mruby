@@ -6,7 +6,7 @@ before_script:
   - gem install libarchive iconv
   - git clone --depth 1 "https://github.com/EasyRPG/TestGame.git" "$RPG_TEST_GAME_PATH"
   - export RPG_TEST_GAME_PATH="$RPG_TEST_GAME_PATH/TestGame-2000"
-  - git clone --depth 1 "https://github.com/EasyRPG/RTP.git" "$RPG_RTP_PATH"
+  - git clone --branch dummy --depth 1 "https://github.com/take-cheeze/RTP.git" "$RPG_RTP_PATH"
 script:
   - CXX="$CXX $WORKAROUND_CXX_FLAGS" ./build.sh all test
 after_script:
