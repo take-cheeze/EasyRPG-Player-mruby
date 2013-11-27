@@ -29,6 +29,7 @@
 #include <sstream>
 #include <fstream>
 
+#include <boost/format.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/math/constants/constants.hpp>
