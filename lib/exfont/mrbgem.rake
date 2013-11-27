@@ -10,7 +10,7 @@ MRuby::Gem::Specification.new('exfont') { |spec|
 
   file "#{dir}/include/exfont.hxx" => ["#{dir}/exfont.png", "#{dir}/exfont2cxx.rb"] do |t|
     create_src_and_include_dir
-    Dir.chdir("#{dir}") { load "#{dir}/exfont2cxx.rb" }
+    Dir.chdir("#{dir}") { `#{dir}/exfont2cxx.rb` }
   end
   file "#{dir}/src/exfont.cxx" => ["#{dir}/include/exfont.hxx"]
 
