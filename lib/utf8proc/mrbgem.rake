@@ -12,6 +12,10 @@ MRuby::Gem::Specification.new('utf8proc') do |spec|
   header = "#{dir}/include/utf8proc.h"
   src = "#{utf8proc_dir}/utf8proc.c"
 
+  task :clean do
+    FileUtils.rm_rf [utf8proc_dir, header]
+  end
+
   file header do |t|
     create_src_and_include_dir
 

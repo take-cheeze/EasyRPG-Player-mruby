@@ -4,6 +4,10 @@ MRuby::Gem::Specification.new('shinonome') { |spec|
   spec.license = 'public domain'
   spec.authors = 'take-cheeze'
 
+  task :clean do
+    FileUtils.rm_f ["#{dir}/include/shinonome.hxx", "#{dir}/src/mincho.cxx", "#{dir}/src/gothic.cxx"]
+  end
+
   file "#{dir}/include/shinonome.hxx" => ["#{dir}/generate_cxx_font.rb",
                                           "#{dir}/latin1/font_src.bit",
                                           "#{dir}/hankaku/font_src_diff.bit",

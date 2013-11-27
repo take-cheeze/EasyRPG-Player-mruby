@@ -1,6 +1,12 @@
+require 'fileutils'
+
 MRuby::Gem::Specification.new('exfont') { |spec|
   spec.license = 'GPL2'
   spec.authors = 'EasyRPG Developer Team'
+
+  task :clean do
+    FileUtils.rm_f ["#{dir}/src/exfont.cxx", "#{dir}/include/exfont.hxx"]
+  end
 
   file "#{dir}/include/exfont.hxx" => ["#{dir}/exfont.png", "#{dir}/exfont2cxx.rb"] do |t|
     create_src_and_include_dir

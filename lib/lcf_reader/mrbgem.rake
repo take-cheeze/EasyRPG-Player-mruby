@@ -1,6 +1,12 @@
+require 'fileutils'
+
 MRuby::Gem::Specification.new 'lcf_reader' do |spec|
   spec.license = 'BSD'
   spec.authors = 'take-cheeze'
+
+  task :clean do
+    FileUtils.rm_f ["#{dir}/src/schema.cxx"]
+  end
 
   file "#{dir}/src/schema.cxx" => (Dir.glob("#{dir}/schema/*.json") << "#{dir}/to_cxx.rb") do |t|
     print "generating LCF schema\n"
