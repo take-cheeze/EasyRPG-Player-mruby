@@ -4,7 +4,8 @@ before_script:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libarchive-dev libboost1.48-dev libsdl1.2-dev libsdl-mixer1.2-dev libpixman-1-dev
   - gem install libarchive iconv
-  - git clone --depth 1 "https://github.com/EasyRPG/TestGame.git" "$RPG_TEST_GAME_PATH/.."
+  - git clone --depth 1 "https://github.com/EasyRPG/TestGame.git" "$RPG_TEST_GAME_PATH"
+  - export RPG_TEST_GAME_PATH="$RPG_TEST_GAME_PATH/TestGame-2000"
   - git clone --depth 1 "https://github.com/EasyRPG/RTP.git" "$RPG_RTP_PATH"
 script:
   - CXX="$CXX $WORKAROUND_CXX_FLAGS" ./build.sh all test
@@ -14,4 +15,4 @@ env:
   global:
     - WORKAROUND_CXX_FLAGS="-DBOOST_NO_CXX11_SMART_PTR -DBOOST_NO_CXX11_HDR_ARRAY -DBOOST_NO_RTTI -DBOOST_NO_TYPEID"
     - RPG_RTP_PATH="$PWD/lib/RTP"
-    - RPG_TEST_GAME_PATH="$PWD/lib/TestGame/TestGame-2000"
+    - RPG_TEST_GAME_PATH="$PWD/lib/TestGame"
