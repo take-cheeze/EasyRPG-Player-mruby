@@ -40,6 +40,7 @@ MRuby::Gem::Specification.new('utf8proc') do |spec|
 
     FileUtils.copy "#{utf8proc_dir}/utf8proc.h", header
   end
+  file src => header
 
   utf8proc_obj = objfile_from_src src
   objs << utf8proc_obj
