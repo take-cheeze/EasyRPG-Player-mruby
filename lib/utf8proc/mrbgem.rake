@@ -6,7 +6,7 @@ require 'fileutils'
 MRuby::Gem::Specification.new('utf8proc') do |spec|
   spec.license = 'MIT'
   spec.authors = ''
-  version = "1.1.5"
+  version = "1.1.6"
 
   utf8proc_dir = "#{dir}/utf8proc-v#{version}"
   header = "#{dir}/include/utf8proc.h"
