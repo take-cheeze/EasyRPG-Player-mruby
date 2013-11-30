@@ -9,7 +9,7 @@ namespace {
 using namespace EasyRPG;
 
 mrb_value initialize(mrb_state* M, mrb_value const self) {
-	mrb_iv_set(M, self, mrb_intern(M, "@bitmap"), mrb_nil_value());
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@bitmap"), mrb_nil_value());
 	return init_ptr<Sprite>(M, self, new Sprite()), self;
 }
 
@@ -24,13 +24,13 @@ mrb_value flash(mrb_state* M, mrb_value const self) {
 }
 
 mrb_value get_bitmap(mrb_state* M, mrb_value const self) {
-	return mrb_iv_get(M, self, mrb_intern(M, "@bitmap"));
+	return mrb_iv_get(M, self, mrb_intern_cstr(M, "@bitmap"));
 }
 mrb_value set_bitmap(mrb_state* M, mrb_value const self) {
 	mrb_value bmp;
 	mrb_get_args(M, "o", &bmp);
 	get<Sprite>(M, self).SetBitmap(get_ptr<Bitmap>(M, bmp));
-	return mrb_iv_set(M, self, mrb_intern(M, "@bitmap"), bmp), bmp;
+	return mrb_iv_set(M, self, mrb_intern_cstr(M, "@bitmap"), bmp), bmp;
 }
 
 mrb_value get_src_rect(mrb_state* M, mrb_value const self) {

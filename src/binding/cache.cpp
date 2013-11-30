@@ -27,7 +27,7 @@ struct CacheReferenceTable {
 	static CacheReferenceTable& get(mrb_state* M) {
 		return EasyRPG::get<CacheReferenceTable>(
 			M, mrb_mod_cv_get(M, mrb_class_get(M, "Player"),
-							  mrb_intern(M, "_cache_reference_table")));
+							  mrb_intern_cstr(M, "_cache_reference_table")));
 	}
 
 	static void set(mrb_state* M) {
@@ -37,7 +37,7 @@ struct CacheReferenceTable {
 		mrb_value const ruby_val = clone<CacheReferenceTable>(M, CacheReferenceTable());
 		CacheReferenceTable& v = EasyRPG::get<CacheReferenceTable>(M, ruby_val);
 		v.M = M;
-		mrb_mod_cv_set(M, player, mrb_intern(M, "_cache_reference_table"), ruby_val);
+		mrb_mod_cv_set(M, player, mrb_intern_cstr(M, "_cache_reference_table"), ruby_val);
 	}
 };
 

@@ -10,10 +10,10 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_float r, g, b, a = 255;
 	mrb_get_args(M, "fff|f", &r, &g, &b, &a);
-	mrb_iv_set(M, self, mrb_intern(M, "@red"), mrb_float_value(M, r));
-	mrb_iv_set(M, self, mrb_intern(M, "@green"), mrb_float_value(M, g));
-	mrb_iv_set(M, self, mrb_intern(M, "@blue"), mrb_float_value(M, b));
-	mrb_iv_set(M, self, mrb_intern(M, "@alpha"), mrb_float_value(M, a));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@red"), mrb_float_value(M, r));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@green"), mrb_float_value(M, g));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@blue"), mrb_float_value(M, b));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@alpha"), mrb_float_value(M, a));
 	return new(data_make_struct<Color>(M, self)) Color(r, g, b, a), self;
 }
 
@@ -22,16 +22,16 @@ mrb_value set(mrb_state* M, mrb_value const self) {
 	mrb_get_args(M, "fff|f", &r, &g, &b, &a);
 	Color& rect = get<Color>(M, self);
 	rect.red = r; rect.green = g; rect.blue = b; rect.alpha = a;
-	mrb_iv_set(M, self, mrb_intern(M, "@red"), mrb_float_value(M, r));
-	mrb_iv_set(M, self, mrb_intern(M, "@green"), mrb_float_value(M, g));
-	mrb_iv_set(M, self, mrb_intern(M, "@blue"), mrb_float_value(M, b));
-	mrb_iv_set(M, self, mrb_intern(M, "@alpha"), mrb_float_value(M, a));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@red"), mrb_float_value(M, r));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@green"), mrb_float_value(M, g));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@blue"), mrb_float_value(M, b));
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@alpha"), mrb_float_value(M, a));
 	return self;
 }
 
 #define define_property(name)										\
 	mrb_value get_ ## name(mrb_state* M, mrb_value const self) {	\
-		return mrb_iv_get(M, self, mrb_intern(M, "@" #name));		\
+		return mrb_iv_get(M, self, mrb_intern_cstr(M, "@" #name));	\
 	}																\
 																	\
 	mrb_value set_ ## name(mrb_state* M, mrb_value const self) {	\
@@ -40,7 +40,7 @@ mrb_value set(mrb_state* M, mrb_value const self) {
 		v = std::max<mrb_float>(0, std::min<mrb_float>(v, 255));	\
 		get<Color>(M, self).name = v;								\
 		mrb_value const ret = mrb_float_value(M, v);				\
-		mrb_iv_set(M, self, mrb_intern(M, "@" #name), ret);			\
+		mrb_iv_set(M, self, mrb_intern_cstr(M, "@" #name), ret);	\
 		return ret;													\
 	}																\
 

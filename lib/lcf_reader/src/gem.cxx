@@ -63,7 +63,7 @@ mrb_value to_mrb(mrb_state* mrb, picojson::array const& ary) {
 mrb_value to_mrb(mrb_state* mrb, picojson::object const& obj) {
 	mrb_value ret = mrb_hash_new_capa(mrb, obj.size());
 	for(picojson::object::const_iterator i = obj.begin(); i != obj.end(); ++i) {
-		mrb_hash_set(mrb, ret, mrb_symbol_value(mrb_intern(mrb, i->first.get().c_str())),
+		mrb_hash_set(mrb, ret, mrb_symbol_value(mrb_intern_cstr(mrb, i->first.get().c_str())),
 					 to_mrb(mrb, i->second));
 	}
 	return ret;
@@ -111,7 +111,7 @@ void to_cxx(mrb_state* mrb, mrb_value const& v, picojson::value& ret) {
 			}
 		} break;
 		default:
-			if(mrb_respond_to(mrb, v, mrb_intern(mrb, "to_picojson"))) {
+			if(mrb_respond_to(mrb, v, mrb_intern_cstr(mrb, "to_picojson"))) {
 				to_cxx(mrb, mrb_funcall(mrb, v, "to_picojson", 0), ret);
 			} else {
 				mrb_raisef(mrb, mrb_class_get(mrb, "TypeError"),

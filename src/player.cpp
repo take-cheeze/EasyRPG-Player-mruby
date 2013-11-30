@@ -65,7 +65,7 @@ mrb_value get_player(mrb_state* M) {
 ModuleInternal& internal(mrb_state* M) {
 	M = get_vm(M);
 	return EasyRPG::get<ModuleInternal>(
-		M, mrb_mod_cv_get(M, mrb_class_get(M, "Player"), mrb_intern(M, "_module_internal")));
+		M, mrb_mod_cv_get(M, mrb_class_get(M, "Player"), mrb_intern_cstr(M, "_module_internal")));
 }
 
 }
@@ -83,11 +83,11 @@ void Player::register_player(mrb_state* M) {
 	assert(data);
 	new(ptr) ModuleInternal(M);
 
-	mrb_mod_cv_set(M, mrb_class_get(M, "Player"), mrb_intern(M, "_module_internal"), mrb_obj_value(data));
+	mrb_mod_cv_set(M, mrb_class_get(M, "Player"), mrb_intern_cstr(M, "_module_internal"), mrb_obj_value(data));
 #ifdef NDEBUG
-	mrb_gv_set(M, mrb_intern(M, "$DEBUG"), mrb_false_value());
+	mrb_gv_set(M, mrb_intern_cstr(M, "$DEBUG"), mrb_false_value());
 #else
-	mrb_gv_set(M, mrb_intern(M, "$DEBUG"), mrb_true_value());
+	mrb_gv_set(M, mrb_intern_cstr(M, "$DEBUG"), mrb_true_value());
 #endif
 	make_current(M);
 }

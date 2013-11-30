@@ -21,12 +21,12 @@ mrb_value viewport(mrb_state*, mrb_value) {
 }
 
 mrb_value get_bitmap(mrb_state* M, mrb_value const self) {
-	return mrb_iv_get(M, self, mrb_intern(M, "@bitmap"));
+	return mrb_iv_get(M, self, mrb_intern_cstr(M, "@bitmap"));
 }
 mrb_value set_bitmap(mrb_state* M, mrb_value const self) {
 	mrb_value bmp;
 	mrb_get_args(M, "o", &bmp);
-	mrb_iv_set(M, self, mrb_intern(M, "@bitmap"), bmp);
+	mrb_iv_set(M, self, mrb_intern_cstr(M, "@bitmap"), bmp);
 	return get<Plane>(M, self).SetBitmap(get_ptr<Bitmap>(M, bmp)), self;
 }
 

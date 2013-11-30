@@ -42,13 +42,13 @@ mrb_value buffer(mrb_state* M, mrb_value) {
 	mrb_value const ret = mrb_ary_new_capa(M, buf.size());
 	for(Output_::buffer_type::const_iterator i = buf.begin(); i != buf.end(); ++i) {
 		mrb_value const h = mrb_hash_new_capa(M, 4);
-		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "time")),
+		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern_cstr(M, "time")),
 					 to_mrb(M, Output(M).local_time(i->time, true)));
-		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "type")),
+		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern_cstr(M, "type")),
 					 mrb_fixnum_value(i->type));
-		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "message")),
+		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern_cstr(M, "message")),
 					 to_mrb(M, i->message));
-		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern(M, "screenshot")),
+		mrb_hash_set(M, h, mrb_symbol_value(mrb_intern_cstr(M, "screenshot")),
 					 to_mrb_opt(M, i->screenshot));
 		mrb_ary_push(M, ret, h);
 	}
