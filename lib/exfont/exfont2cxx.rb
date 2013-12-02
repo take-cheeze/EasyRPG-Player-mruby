@@ -57,7 +57,7 @@ EOS
 #ifndef EASYRPG_EXFONT_HXX
 #define EASYRPG_EXFONT_HXX
 
-#include <stdint.h>
+#include <cstdint>
 
 extern uint16_t const EASYRPG_EXFONT[26 * 2][12];
 

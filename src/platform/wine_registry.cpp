@@ -19,7 +19,7 @@
 #include "output.h"
 #include "filefinder.h"
 
-#include <stdint.h>
+#include <cstdint>
 #include <cassert>
 #include <cctype>
 #include <ciso646>

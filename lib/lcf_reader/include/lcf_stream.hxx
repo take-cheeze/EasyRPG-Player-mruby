@@ -2,7 +2,7 @@
 #define LCF_STREAM_HXX
 
 #include <iosfwd>
-#include <stdint.h>
+#include <cstdint>
 
 
 namespace LCF {

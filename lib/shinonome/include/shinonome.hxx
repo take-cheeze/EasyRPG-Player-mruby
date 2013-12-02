@@ -1,7 +1,7 @@
 #ifndef _INC_SHINONOME_HXX_
 #define _INC_SHINONOME_HXX_
 
-#include <stdint.h>
+#include <cstdint>
 
 struct ShinonomeGlyph {
 	uint16_t code;

@@ -1,11 +1,11 @@
 #ifndef LCF_READER_HXX
 #define LCF_READER_HXX
 
+#include <cstdint>
 #include <istream>
 #include <vector>
 #include <string>
 
-#include <boost/cstdint.hpp>
 #include <boost/container/flat_map.hpp>
 #include <boost/optional.hpp>
 

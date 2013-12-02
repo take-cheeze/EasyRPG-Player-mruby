@@ -147,7 +147,7 @@ File.new('./include/shinonome.hxx', 'w').write <<EOS
 #ifndef _INC_SHINONOME_HXX_
 #define _INC_SHINONOME_HXX_
 
-#include <stdint.h>
+#include <cstdint>
 
 struct ShinonomeGlyph {
 	uint#{code_max < 0x10000 ? 16 : 32}_t code;

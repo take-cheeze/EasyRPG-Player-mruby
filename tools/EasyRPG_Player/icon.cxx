@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include <cstdint>
 
 extern uint32_t EasyRPGAppIcon[];
 

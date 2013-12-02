@@ -19,7 +19,7 @@ Devil.with_image("#{script_path}/icon.png") do |img|
   pixels.each_slice(72) { |r| rows << r.join(', ') }
 
   IO.write "#{script_path}/icon.cxx", <<EOS
-#include <stdint.h>
+#include <cstdint>
 
 extern uint32_t EasyRPGAppIcon[];
 

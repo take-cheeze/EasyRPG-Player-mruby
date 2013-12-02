@@ -20,7 +20,7 @@
 
 // Headers
 #include <boost/static_assert.hpp>
-#include <stdint.h>
+#include <cstdint>
 
 /**
  * Color class.
