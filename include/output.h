@@ -157,8 +157,10 @@ struct Output_ : boost::noncopyable {
 	 */
 	void Update();
 
+	void EnableStdout(bool v);
+
   private:
-	bool ignore_pause_;
+	bool ignore_pause_, enable_stdout_;
 	std::ofstream log_file_;
 
 	buffer_type buffer_;

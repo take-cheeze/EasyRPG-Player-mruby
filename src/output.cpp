@@ -73,7 +73,7 @@ Output_::buffer_type const& Output_::buffer() const {
 }
 
 Output_::Output_()
-		: ignore_pause_(false)
+		: ignore_pause_(false), enable_stdout_(true)
 		, log_file_(OUTPUT_FILENAME, std::ios_base::out | std::ios_base::app)
 		, buffer_(BUFFER_SIZE)
 {}
@@ -105,6 +105,10 @@ std::ostream& Output_::output_time(std::time_t const t) {
 			<< "UTC: " << utc_time(t) << std::endl;
 }
 
+void Output_::EnableStdout(bool v) {
+	enable_stdout_ = v;
+}
+
 void Output_::IgnorePause(bool const val) {
 	ignore_pause_ = val;
 }
@@ -117,7 +121,9 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 	Message const& m = buffer_.back();
 
 	output_time(m.time) << Type2String(m.type) << ":" << endl << "  " << msg << endl;
-	std::cout << Type2String(m.type) << " : " << msg << endl;
+	if(enable_stdout_) {
+		std::cout << Type2String(m.type) << " : " << msg << endl;
+	}
 
 	if(ignore_pause_) { return; }
 
