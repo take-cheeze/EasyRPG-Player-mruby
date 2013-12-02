@@ -41,4 +41,6 @@ MRuby::Build.new do |conf|
     conf.linker.library_paths << '/opt/local/lib'
     conf.linker.libraries << 'iconv'
   end
+
+  conf.cxx.defines << 'HAVE_WINE=1' if Dir.exists? "#{ENV["HOME"]}/.wine"
 end
