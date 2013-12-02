@@ -208,11 +208,21 @@ void SdlUi::Resize(long width, long height) {
 
 void SdlUi::SetFullscreen(bool f) {
 	is_full_screen_ = f;
+
 	SDL_SetWindowFullscreen(window_.get(), f? SDL_WINDOW_FULLSCREEN : 0);
+	if(f) {
+		SDL_SetWindowSize(window_.get(), initial_width_, initial_height_);
+	} else {
+		SetZoom(is_zoomed_);
+	}
 }
 
 void SdlUi::SetZoom(bool z) {
 	is_zoomed_ = z;
+
+	// don't change window size when full screen mode is enabled
+	if(is_full_screen_) { return; }
+
 	int const p = z? 2 : 1;
 	SDL_SetWindowSize(window_.get(), initial_width_ * p, initial_height_ * p);
 	SDL_SetWindowPosition(window_.get(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
