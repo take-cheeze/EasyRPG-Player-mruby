@@ -20,9 +20,3 @@
 #include "platform/sdl_ui.cpp"
 #include "platform/sdl_audio.cpp"
 #endif
-
-#ifdef EASYRPG_IS_ANDROID
-#include "platform/android_main.cpp"
-#include "platform/android_ui.cpp"
-#include "platform/al_audio.cpp"
-#endif
