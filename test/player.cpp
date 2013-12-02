@@ -39,7 +39,7 @@ void CheckSize(mrb_state* M) {
 }
 
 void CheckIsRPG2kProject(mrb_state* M) {
-	EASYRPG_SHARED_PTR<FileFinder_::ProjectTree> const
+	std::shared_ptr<FileFinder_::ProjectTree> const
 			tree = FileFinder(M).CreateProjectTree(getenv("RPG_TEST_GAME_PATH"));
 	easyrpg_assert(FileFinder(M).IsRPG2kProject(*tree));
 }
