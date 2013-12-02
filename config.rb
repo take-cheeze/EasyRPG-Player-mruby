@@ -20,7 +20,6 @@ MRuby::Build.new do |conf|
     com = cxx.command.split ' '
     cxx.command = com[0]
     cxx.flags = com[1, com.length - 1].concat cxx.flags
-    cxx.defines << 'BOOST_NO_CXX11_SMART_PTR'
   }
 
   # use C++ linker
@@ -29,7 +28,7 @@ MRuby::Build.new do |conf|
     linker.flags = conf.cxx.flags
   }
 
-  conf.cxx.flags << '-DUSE_SDL=1' << "-DHAVE_SDL_MIXER=1"
+  conf.cxx.defines << 'USE_SDL=1' << "HAVE_SDL_MIXER=1"
   ['sdl2', 'freetype2', 'pixman-1', 'libpng', 'zlib'].each { |v|
     conf.cxx.flags += [`pkg-config #{v} --cflags`.chomp]
     conf.linker.flags += [`pkg-config #{v} --libs`.chomp]
