@@ -96,9 +96,6 @@ class Scene_Title < Scene
     end
   end
 
-  DATABASE_NAME = "RPG_RT.ldb"
-  TREEMAP_NAME = "RPG_RT.lmt"
-
   # Loads all databases.
   def load_database
   # Load Database

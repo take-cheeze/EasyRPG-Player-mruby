@@ -16,11 +16,7 @@
 #include <boost/optional.hpp>
 
 #include <cassert>
-
-#ifndef EASYRPG_SHARED_PTR
-#  include <boost/shared_ptr.hpp>
-#  define EASYRPG_SHARED_PTR boost::shared_ptr
-#endif
+#include <memory>
 
 extern "C" {
 	void mrb_EasyRPG_Player_gem_init(mrb_state* M);
@@ -78,23 +74,23 @@ template<class T> std::string mruby_data_type<T>::outer;
 template<class T, class Enable = void> struct disposer_newer;
 
 template<class T>
-EASYRPG_SHARED_PTR<T>& get_ptr(mrb_state* M, mrb_value const& v,
-							  typename boost::enable_if<is_disposable<T> >::type* = 0)
+std::shared_ptr<T>& get_ptr(mrb_state* M, mrb_value const& v,
+							typename boost::enable_if<is_disposable<T> >::type* = 0)
 {
-	static EASYRPG_SHARED_PTR<T> nil_ptr;
+	static std::shared_ptr<T> nil_ptr;
 	assert(not nil_ptr);
 	if(mrb_nil_p(v)) { return nil_ptr; }
 
 	void* const ptr = mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 	assert(ptr);
-	return *reinterpret_cast<EASYRPG_SHARED_PTR<T>*>(ptr);
+	return *reinterpret_cast<std::shared_ptr<T>*>(ptr);
 }
 
 template<class T>
 struct disposer_newer<T, typename boost::enable_if<is_disposable<T> >::type> {
-	typedef EASYRPG_SHARED_PTR<T> cxx_type;
+	typedef std::shared_ptr<T> cxx_type;
 
-	typedef EASYRPG_SHARED_PTR<T> ptr_type;
+	typedef std::shared_ptr<T> ptr_type;
 
 	static void deleter(mrb_state* M, void* ptr) {
 		ptr_type* const ref = reinterpret_cast<ptr_type*>(ptr);
@@ -155,7 +151,7 @@ T& get(mrb_state* M, mrb_value const& v, typename boost::enable_if<is_disposable
 	check_dispose<T>(M, v);
 	void* const ptr = mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 	assert(ptr);
-	return *(*reinterpret_cast<EASYRPG_SHARED_PTR<T>*>(ptr));
+	return *(*reinterpret_cast<std::shared_ptr<T>*>(ptr));
 }
 
 template<class T>
@@ -276,12 +272,12 @@ RClass* define_class_with_copy(mrb_state* M, char const* name) {
 }
 
 template<class T>
-void init_ptr(mrb_state* M, mrb_value const& v, EASYRPG_SHARED_PTR<T> const& ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
-	new(data_make_struct<T>(M, v)) EASYRPG_SHARED_PTR<T>(ptr);
+void init_ptr(mrb_state* M, mrb_value const& v, std::shared_ptr<T> const& ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+	new(data_make_struct<T>(M, v)) std::shared_ptr<T>(ptr);
 }
 template<class T>
 void init_ptr(mrb_state* M, mrb_value const& v, T* ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
-	new(data_make_struct<T>(M, v)) EASYRPG_SHARED_PTR<T>(ptr);
+	new(data_make_struct<T>(M, v)) std::shared_ptr<T>(ptr);
 }
 
 template<class T>
@@ -306,12 +302,12 @@ mrb_value swap(mrb_state* M, T& v, typename boost::disable_if<is_disposable<T> >
 }
 
 template<class T>
-mrb_value create(mrb_state* M, EASYRPG_SHARED_PTR<T> const& v, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+mrb_value create(mrb_state* M, std::shared_ptr<T> const& v, typename boost::enable_if<is_disposable<T> >::type* = 0) {
 	if(not v) { return mrb_nil_value(); }
 
 	RData* data = NULL;
 	void* const ptr = data_make_struct<T>(M, mruby_data_type<T>::get_class(M), data);
-	new(ptr) EASYRPG_SHARED_PTR<T>(v);
+	new(ptr) std::shared_ptr<T>(v);
 	return mrb_obj_value(data);
 }
 

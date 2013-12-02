@@ -107,9 +107,9 @@ private:
 	 */
 	void ResetKeys();
 
-	EASYRPG_SHARED_PTR<SDL_Texture> screen_;
-	EASYRPG_SHARED_PTR<SDL_Window> window_;
-	EASYRPG_SHARED_PTR<SDL_Renderer> renderer_;
+	std::shared_ptr<SDL_Texture> screen_;
+	std::shared_ptr<SDL_Window> window_;
+	std::shared_ptr<SDL_Renderer> renderer_;
 
 	bool is_full_screen_, is_zoomed_;
 

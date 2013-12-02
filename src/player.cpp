@@ -26,6 +26,7 @@
 #include "font.h"
 #include "binding.hxx"
 #include "player.h"
+#include "options.h"
 
 #include <mruby/variable.h>
 #include <mruby/array.h>
@@ -75,6 +76,12 @@ void Player::make_current(mrb_state* M) {
 mrb_state* Player::current_vm() { return current_vm_; }
 
 void Player::register_player(mrb_state* M) {
+	mrb_mod_cv_set(M, M->object_class, mrb_intern_lit(M, "DATABASE_NAME"), mrb_str_new_cstr(M, DATABASE_NAME));
+	mrb_mod_cv_set(M, M->object_class, mrb_intern_lit(M, "TREEMAP_NAME"), mrb_str_new_cstr(M, TREEMAP_NAME));
+	mrb_mod_cv_set(M, M->object_class, mrb_intern_lit(M, "SCREEN_TARGET_WIDTH"), mrb_fixnum_value(SCREEN_TARGET_WIDTH));
+	mrb_mod_cv_set(M, M->object_class, mrb_intern_lit(M, "SCREEN_TARGET_HEIGHT"), mrb_fixnum_value(SCREEN_TARGET_HEIGHT));
+	mrb_mod_cv_set(M, M->object_class, mrb_intern_lit(M, "DEFAULT_FPS"), mrb_fixnum_value(DEFAULT_FPS));
+
 	RClass* const cls = EasyRPG::define_class<ModuleInternal>(M, "_ModuleInternal");
 
 	RData* data = NULL;

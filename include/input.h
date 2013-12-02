@@ -21,8 +21,7 @@
 // Headers
 #include <vector>
 #include <bitset>
-
-#include "memory_management.h"
+#include <array>
 
 #include <boost/noncopyable.hpp>
 
@@ -174,7 +173,7 @@ struct Input_ : boost::noncopyable {
 	std::vector<Button> GetAllReleased();
 
 	/** Buttons press time (in frames). */
-	EASYRPG_ARRAY<int, BUTTON_COUNT> press_time;
+	std::array<int, BUTTON_COUNT> press_time;
 
 	/** Buttons trigger state. */
 	std::bitset<BUTTON_COUNT> triggered;
@@ -209,10 +208,10 @@ struct Input_ : boost::noncopyable {
 	void WaitInput(bool val);
 
 	/** Buttons list of equivalent keys. */
-	static EASYRPG_ARRAY<std::vector<int>, BUTTON_COUNT> buttons;
+	static std::array<std::vector<int>, BUTTON_COUNT> buttons;
 
 	/** Direction buttons list of equivalent buttons. */
-	static EASYRPG_ARRAY<std::vector<int>, 10> dir_buttons;
+	static std::array<std::vector<int>, 10> dir_buttons;
 
   private:
 	bool wait_input;

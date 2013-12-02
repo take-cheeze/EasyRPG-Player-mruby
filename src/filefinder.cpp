@@ -31,12 +31,12 @@
 
 #include <boost/format.hpp>
 
-#include "options.h"
 #include "utils.h"
 #include "filefinder.h"
 #include "output.h"
 #include "player.h"
 #include "registry.h"
+#include "options.h"
 
 #ifdef _MSC_VER
 #  include "rtp_table_bom.h"
@@ -154,10 +154,10 @@ boost::optional<std::string> FileFinder_::FindFile(FileFinder_::ProjectTree cons
 	return boost::none;
 }
 
-EASYRPG_SHARED_PTR<FileFinder_::ProjectTree> FileFinder_::CreateProjectTree(std::string const& p) {
-	if(! (Exists(p) && IsDirectory(p))) { return EASYRPG_SHARED_PTR<ProjectTree>(); }
+std::unique_ptr<FileFinder_::ProjectTree> FileFinder_::CreateProjectTree(std::string const& p) {
+	if(! (Exists(p) && IsDirectory(p))) { return std::unique_ptr<ProjectTree>(); }
 
-	EASYRPG_SHARED_PTR<ProjectTree> tree = EASYRPG_MAKE_SHARED<ProjectTree>();
+	std::unique_ptr<ProjectTree> tree(new ProjectTree());
 	tree->project_path = p;
 
 	Directory mem = GetDirectoryMembers(tree->project_path, ALL);
@@ -264,7 +264,7 @@ std::string FileFinder_::FindFont(const std::string& name) {
 
 FileFinder_::ProjectTree const& FileFinder_::GetProjectTree() {
 	if(tree_.project_path != project_path) {
-		EASYRPG_SHARED_PTR<ProjectTree> t = CreateProjectTree(project_path);
+		std::unique_ptr<ProjectTree> t = CreateProjectTree(project_path);
 		if(! t) {
 			Output().Error(boost::format("invalid project path: %s") % project_path);
 			return tree_;
@@ -285,10 +285,10 @@ FileFinder_::FileFinder_()
 }
 
 void FileFinder_::add_rtp_path(std::string const& p) {
-	EASYRPG_SHARED_PTR<ProjectTree> tree(CreateProjectTree(p));
+	std::unique_ptr<ProjectTree> tree(CreateProjectTree(p));
 	if(tree) {
 		Output().Debug(boost::format("Adding %s to RTP path") % p);
-		search_paths.push_back(tree);
+		search_paths.push_back(std::move(tree));
 	}
 }
 
@@ -333,17 +333,17 @@ FILE* FileFinder_::fopenUTF8(const std::string& name_utf8, char const* mode) {
 #endif
 }
 
-EASYRPG_SHARED_PTR<std::fstream> FileFinder_::openUTF8(const std::string& name,
-													  std::ios_base::openmode m)
+std::unique_ptr<std::fstream> FileFinder_::openUTF8(const std::string& name,
+													std::ios_base::openmode m)
 {
-	EASYRPG_SHARED_PTR<std::fstream> ret(new std::fstream(
+	std::unique_ptr<std::fstream> ret(new std::fstream(
 #ifdef _MSC_VER
 		Utils::ToWideString(name).c_str(),
 #else
 		name.c_str(),
 #endif
 		m));
-	return (*ret)? ret : EASYRPG_SHARED_PTR<std::fstream>();
+	return (*ret)? std::move(ret) : std::unique_ptr<std::fstream>();
 }
 
 std::string FileFinder_::FindImage(const std::string& dir, const std::string& name) {
@@ -441,7 +441,7 @@ FileFinder_::Directory FileFinder_::GetDirectoryMembers(const std::string& path,
 #  define wpath path
 #endif
 
-	EASYRPG_SHARED_PTR< ::DIR> dir(::opendir(wpath.c_str()), ::closedir);
+	std::unique_ptr< ::DIR, int(*)(DIR*)> dir(::opendir(wpath.c_str()), ::closedir);
 	if (!dir) {
 		Output().Error(boost::format("Error opening dir %s: %s") % path % ::strerror(errno));
 		return result;

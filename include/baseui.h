@@ -21,11 +21,11 @@
 // Headers
 #include <string>
 #include <bitset>
+#include <memory>
 
 #include "color.h"
 #include "rect.h"
 #include "keys.h"
-#include "memory_management.h"
 
 struct AudioInterface;
 
@@ -200,6 +200,6 @@ protected:
 };
 
 /** Global DisplayUi variable. */
-extern EASYRPG_SHARED_PTR<BaseUi> DisplayUi;
+extern std::unique_ptr<BaseUi> DisplayUi;
 
 #endif

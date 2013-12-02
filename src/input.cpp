@@ -23,8 +23,8 @@
 #include <algorithm>
 #include <boost/lambda/lambda.hpp>
 
-EASYRPG_ARRAY<std::vector<int>, Input_::BUTTON_COUNT> Input_::buttons;
-EASYRPG_ARRAY<std::vector<int>, 10> Input_::dir_buttons;
+std::array<std::vector<int>, Input_::BUTTON_COUNT> Input_::buttons;
+std::array<std::vector<int>, 10> Input_::dir_buttons;
 
 bool Input_::IsWaitingInput() { return wait_input; }
 void Input_::WaitInput(bool v) { wait_input = v; }

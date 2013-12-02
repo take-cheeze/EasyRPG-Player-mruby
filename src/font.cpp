@@ -44,7 +44,7 @@ bool operator<(ShinonomeGlyph const& lhs, uint32_t const code) {
 
 // Static variables.
 namespace {
-	typedef std::map<std::string, EASYRPG_WEAK_PTR<boost::remove_pointer<FT_Face>::type> > face_cache_type;
+	typedef std::map<std::string, std::weak_ptr<boost::remove_pointer<FT_Face>::type> > face_cache_type;
 	face_cache_type face_cache;
 
 	template<size_t size>
@@ -113,17 +113,17 @@ namespace {
 		void Render(Bitmap& bmp, int x, int y, unsigned glyph);
 
 	private:
-		static EASYRPG_WEAK_PTR<boost::remove_pointer<FT_Library>::type> library_checker_;
-		EASYRPG_SHARED_PTR<boost::remove_pointer<FT_Library>::type> library_;
-		EASYRPG_SHARED_PTR<boost::remove_pointer<FT_Face>::type> face_;
+		static std::weak_ptr<boost::remove_pointer<FT_Library>::type> library_checker_;
+		std::shared_ptr<boost::remove_pointer<FT_Library>::type> library_;
+		std::shared_ptr<boost::remove_pointer<FT_Face>::type> face_;
 		std::string face_name_;
 		unsigned current_size_;
 
 		bool check_face();
 	}; // class FTFont
 
-	FontRef const gothic = EASYRPG_MAKE_SHARED<ShinonomeFont>(&find_gothic_glyph);
-	FontRef const mincho = EASYRPG_MAKE_SHARED<ShinonomeFont>(&find_mincho_glyph);
+	FontRef const gothic = std::make_shared<ShinonomeFont>(&find_gothic_glyph);
+	FontRef const mincho = std::make_shared<ShinonomeFont>(&find_mincho_glyph);
 
 	void append_font_size(Rect& result, Rect const& r) {
 		result.width += r.width;
@@ -206,7 +206,7 @@ void ShinonomeFont::Render(Bitmap& bmp, int const x, int const y, unsigned code)
 	}
 }
 
-EASYRPG_WEAK_PTR<boost::remove_pointer<FT_Library>::type> FTFont::library_checker_;
+std::weak_ptr<boost::remove_pointer<FT_Library>::type> FTFont::library_checker_;
 
 FTFont::FTFont(const std::string& name, int size, bool bold, bool italic)
 	: Font(name, size, bold, italic), current_size_(0) {}
@@ -260,7 +260,7 @@ FontRef Font::Shinonome(bool const m) {
 }
 
 FontRef Font::Create(const std::string& name, int size, bool bold, bool italic) {
-	return EASYRPG_MAKE_SHARED<FTFont>(name, size, bold, italic);
+	return std::make_shared<FTFont>(name, size, bold, italic);
 }
 
 void Font::Dispose() {

@@ -27,7 +27,7 @@
 #include "graphics.h"
 #include "bitmap.h"
 
-EASYRPG_SHARED_PTR<BaseUi> DisplayUi;
+std::unique_ptr<BaseUi> DisplayUi;
 
 BaseUi::BaseUi() {}
 

@@ -60,7 +60,7 @@ Graphics_::Graphics_()
 		, frozen(false)
 		, screen_erased(false)
 		, drawable_creation(0)
-		, state(EASYRPG_MAKE_SHARED<State>())
+		, state(new State())
 		, screen_buffer_(Bitmap::Create(SCREEN_TARGET_WIDTH,
 										SCREEN_TARGET_HEIGHT,
 										Color(0, 0, 0, 255)))
@@ -93,7 +93,7 @@ void Graphics_::UpdateTitle(double const fps) {
 
 	if (DisplayUi->IsFullscreen()) return;
 
-	std::ostringstream title(GAME_TITLE, std::ios::out | std::ios::ate);
+	std::ostringstream title("EasyRPG Player", std::ios::out | std::ios::ate);
 	if (not fps_on_screen) {
 		title << " - FPS " << std::setprecision(4) << current_fps_;
 	}
@@ -117,10 +117,9 @@ void Graphics_::DrawFrame() {
 
 	CleanScreen();
 
-	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
-	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
-		Drawable* const d = (*it_zlist)->GetId();
-		if(d->visible) { d->Draw((*it_zlist)->GetZ()); }
+	for (auto const& i : state->zlist) {
+		Drawable* const d = i->GetId();
+		if(d->visible) { d->Draw(i->GetZ()); }
 	}
 
 	if (overlay_visible) {
@@ -141,10 +140,9 @@ void Graphics_::DrawOverlay() {
 BitmapRef Graphics_::SnapToBitmap() {
 	CleanScreen();
 
-	std::list<EASYRPG_SHARED_PTR<ZObj> >::iterator it_zlist;
-	for (it_zlist = state->zlist.begin(); it_zlist != state->zlist.end(); it_zlist++) {
-		Drawable* const d = (*it_zlist)->GetId();
-		if(d->visible) { d->Draw((*it_zlist)->GetZ()); }
+	for (auto const& i : state->zlist) {
+		Drawable* const d = i->GetId();
+		if(d->visible) { d->Draw(i->GetZ()); }
 	}
 
 	return Bitmap::Create(screen_buffer_);
@@ -417,17 +415,17 @@ void Graphics_::SetFrameRate(int v) {
 }
 
 ZObj* Graphics_::RegisterZObj(int z, Drawable* ID) {
-	state->zlist.push_back(EASYRPG_MAKE_SHARED<ZObj>(z, drawable_creation++, ID));
+	state->zlist.push_back(std::unique_ptr<ZObj>(new ZObj(z, drawable_creation++, ID)));
 	state->zlist_dirty = true;
 	return state->zlist.back().get();
 }
 
 void Graphics_::RegisterZObj(int z, Drawable* ID, bool /* multiz */) {
-	state->zlist.push_back(EASYRPG_MAKE_SHARED<ZObj>(z, 999999, ID));
+	state->zlist.push_back(std::unique_ptr<ZObj>(new ZObj(z, 999999, ID)));
 	state->zlist_dirty = true;
 }
 
-static bool check_id(EASYRPG_SHARED_PTR<ZObj> const& z, Drawable* const ID) {
+static bool check_id(std::unique_ptr<ZObj> const& z, Drawable* const ID) {
 	return z->GetId() == ID;
 }
 
@@ -440,20 +438,20 @@ void Graphics_::UpdateZObj(ZObj* zobj, int z) {
 	state->zlist_dirty = true;
 }
 
-inline bool Graphics_::SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second) {
+inline bool Graphics_::SortZObj(std::unique_ptr<ZObj> const& first, std::unique_ptr<ZObj> const& second) {
 	if (first->GetZ() < second->GetZ()) return true;
 	else if (first->GetZ() > second->GetZ()) return false;
 	else return first->GetCreation() < second->GetCreation();
 }
 
 void Graphics_::Push() {
-	stack.push_back(state);
-	state.reset(new State());
+	stack.push_back(std::move(state));
+	state = std::unique_ptr<State>(new State());
 }
 
 void Graphics_::Pop() {
 	if (stack.size() > 0) {
-		state = stack.back();
+		state = std::move(stack.back());
 		stack.pop_back();
 	}
 }

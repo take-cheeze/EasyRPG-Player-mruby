@@ -23,27 +23,6 @@
 #include <boost/format.hpp>
 
 
-#ifdef _WIN32
-// FIXME: A bug in sdl_mixer causes that the player is muted forever when a
-// fadeout happened.
-// Fade out on Vista and higher has been disabled until this is fixed.
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-static int GetWindowsVersion() {
-	static DWORD major_version = 0;
-	if (major_version != 0) {
-		return major_version;
-	}
-
-	OSVERSIONINFO osvi;
-	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&osvi);
-
-	return osvi.dwMajorVersion;
-}
-#endif
-
 SdlAudio::SdlAudio() :
 	bgm_volume(0),
 	bgs_channel(0),
@@ -55,11 +34,7 @@ SdlAudio::SdlAudio() :
 			Output().Error(boost::format("couldn't initialize audio: %s") % SDL_GetError());
 		}
 	}
-#ifdef GEKKO
-	int const frequency = 32000;
-#else
 	int const frequency = MIX_DEFAULT_FREQUENCY;
-#endif
 	if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) < 0) {
 		Output().Error(boost::format("couldn't initialize audio: %s") % Mix_GetError());
 	}
@@ -116,12 +91,6 @@ void SdlAudio::BGM_Pitch(int /* pitch */) {
 }
 
 void SdlAudio::BGM_Fade(int fade) {
-#ifdef _WIN32
-	if (GetWindowsVersion() >= 6) {
-		BGM_Stop();
-		return;
-	}
-#endif
 	Mix_FadeOutMusic(fade);
 	me_stopped_bgm = false;
 }
@@ -202,7 +171,7 @@ void SdlAudio::SE_Play(std::string const& file, int volume, int /* pitch */) {
 		Output().Warning(boost::format("No such file or directory - %s") % file);
 		return;
 	}
-	EASYRPG_SHARED_PTR<Mix_Chunk> sound(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
+	std::shared_ptr<Mix_Chunk> sound(Mix_LoadWAV(path.c_str()), &Mix_FreeChunk);
 	if (!sound) {
 		Output().Warning(boost::format("couldn't load SE: %s (%s)") % file % Mix_GetError());
 		return;

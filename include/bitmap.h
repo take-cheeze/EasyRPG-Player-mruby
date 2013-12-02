@@ -42,7 +42,7 @@ struct BlitCommon {
 	Rect src_rect;
 };
 
-typedef EASYRPG_SHARED_PTR<pixman_image> pixman_image_ptr;
+typedef std::shared_ptr<pixman_image> pixman_image_ptr;
 
 class Bitmap : public boost::equality_comparable<Bitmap> {
   public:

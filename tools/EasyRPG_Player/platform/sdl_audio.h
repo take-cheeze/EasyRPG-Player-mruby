@@ -22,6 +22,7 @@
 #include "audio.h"
 
 #include <map>
+#include <memory>
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -48,15 +49,15 @@ struct SdlAudio : public AudioInterface {
 	void Update();
 
  private:
-	EASYRPG_SHARED_PTR<Mix_Music> bgm;
+	std::shared_ptr<Mix_Music> bgm;
 	int bgm_volume;
-	EASYRPG_SHARED_PTR<Mix_Chunk> bgs;
+	std::shared_ptr<Mix_Chunk> bgs;
 	int bgs_channel;
-	EASYRPG_SHARED_PTR<Mix_Chunk> me;
+	std::shared_ptr<Mix_Chunk> me;
 	int me_channel;
 	bool me_stopped_bgm;
 
-	typedef std::map<int, EASYRPG_SHARED_PTR<Mix_Chunk> > sounds_type;
+	typedef std::map<int, std::shared_ptr<Mix_Chunk> > sounds_type;
 	sounds_type sounds;
 }; // class SdlAudio
 

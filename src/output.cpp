@@ -190,8 +190,7 @@ boost::optional<std::string> Output_::TakeScreenshot() {
 }
 
 bool Output_::TakeScreenshot(std::string const& file) {
-	EASYRPG_SHARED_PTR<std::fstream> ret =
-		FileFinder().openUTF8(file, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
+	auto ret = FileFinder().openUTF8(file, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
 	return ret? Output_::TakeScreenshot(*ret) : false;
 }
 

@@ -7,6 +7,7 @@
 #include <png.h>
 #include <zlib.h>
 
+#include <array>
 #include <fstream>
 
 #include <boost/scope_exit.hpp>
@@ -49,7 +50,7 @@ uint32_t get_4(std::istream& is) {
 			(unsigned(is.get()) << 16) | (unsigned(is.get()) << 24) ;
 }
 
-typedef EASYRPG_ARRAY<uint8_t, 4> RawPngColor;
+typedef std::array<uint8_t, 4> RawPngColor;
 Color to_color(RawPngColor const& c) {
 	return Color(c[0], c[1], c[2], c[3]);
 }
@@ -69,7 +70,7 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 
 	static char const SIGNATURE[] = "BM";
 	enum { SIGNATURE_SIZE = sizeof(SIGNATURE) - 1 };
-	EASYRPG_ARRAY<char, SIGNATURE_SIZE> signature_buf;
+	std::array<char, SIGNATURE_SIZE> signature_buf;
 	is.read(signature_buf.data(), SIGNATURE_SIZE);
 	if (std::string(signature_buf.begin(), signature_buf.end()) == SIGNATURE) {
 		return Output().Debug("Not a valid BMP file."), BitmapRef();
@@ -127,7 +128,7 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 	}
 
 	int const num_colors = std::min(256U, get_4(is));
-	boost::container::vector<EASYRPG_ARRAY<uint8_t, 4> > palette(num_colors);
+	boost::container::vector<std::array<uint8_t, 4> > palette(num_colors);
 	is.read(reinterpret_cast<char*>(palette.data()), num_colors * 4);
 
 	// Ensure no palette entry is an exact duplicate of #0
@@ -150,7 +151,7 @@ BitmapRef ImageIO::ReadBMP(std::istream& is, bool const transparent) {
 		is.seekg(start_pos + bits_offset + (vflip ? height - 1 - y : y) * aligned_width);
 		for (int x = 0; x < width; x++) {
 			uint8_t const idx = is.get();
-			EASYRPG_ARRAY<uint8_t, 4> const& pal = palette[idx];
+			std::array<uint8_t, 4> const& pal = palette[idx];
 			ret->set_pixel(x, y, Color(
 				pal[2], pal[1], pal[0], (transparent && idx == 0)? 0x00 : 0xff));
 		}
@@ -256,7 +257,7 @@ BitmapRef ImageIO::ReadPNG(std::istream& is, bool const transparent) {
 BitmapRef ImageIO::ReadXYZ(std::istream& is, bool const transparent) {
 	static char const SIGNATURE[] = "XYZ1";
 	enum { SIGNATURE_SIZE = sizeof(SIGNATURE) - 1 };
-	EASYRPG_ARRAY<char, SIGNATURE_SIZE> signature_buf;
+	std::array<char, SIGNATURE_SIZE> signature_buf;
 	is.read(signature_buf.data(), SIGNATURE_SIZE);
 	if (std::string(signature_buf.begin(), signature_buf.end()) == SIGNATURE) {
 		return Output().Debug("Not a valid XYZ file."), BitmapRef();

@@ -562,7 +562,7 @@ void Bitmap::effect_blit(BlitCommon const& info,
 						 int waver_depth, double waver_phase)
 {
 	Rect src_rect = info.src_rect;
-	EASYRPG_SHARED_PTR<Bitmap const> draw(&info.src, null_deleter());
+	std::shared_ptr<Bitmap const> draw(&info.src, null_deleter());
 
 	// apply tone
 	if (not tone.IsEmpty()) {

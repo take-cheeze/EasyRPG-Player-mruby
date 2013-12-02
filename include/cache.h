@@ -53,10 +53,10 @@ struct Cache_ : boost::noncopyable {
 	typedef std::pair<std::string,std::string> string_pair;
 	typedef std::pair<std::string, int> tile_pair;
 
-	typedef boost::container::flat_map<string_pair, EASYRPG_WEAK_PTR<Bitmap> > cache_type;
+	typedef boost::container::flat_map<string_pair, std::weak_ptr<Bitmap> > cache_type;
 	cache_type cache;
 
-	typedef boost::container::flat_map<tile_pair, EASYRPG_WEAK_PTR<Bitmap> > cache_tiles_type;
+	typedef boost::container::flat_map<tile_pair, std::weak_ptr<Bitmap> > cache_tiles_type;
 	cache_tiles_type cache_tiles;
 
 	struct Material {

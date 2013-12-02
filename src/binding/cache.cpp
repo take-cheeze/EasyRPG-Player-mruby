@@ -12,7 +12,7 @@ using namespace EasyRPG;
 struct CacheReferenceTable {
 	struct value {
 		mrb_value ruby_ref;
-		EASYRPG_WEAK_PTR<Bitmap> cxx_ref;
+		std::weak_ptr<Bitmap> cxx_ref;
 	};
 	mrb_state* M;
 	typedef boost::container::flat_map<Bitmap*, value> data_type;

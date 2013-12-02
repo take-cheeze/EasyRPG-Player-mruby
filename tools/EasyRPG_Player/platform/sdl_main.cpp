@@ -179,11 +179,9 @@ extern "C" int main(int argc, char* argv[]) {
 #endif
 
 	if(! DisplayUi) {
-		DisplayUi = EASYRPG_MAKE_SHARED<SdlUi>
-			(SCREEN_TARGET_WIDTH,
-			 SCREEN_TARGET_HEIGHT,
-			 GAME_TITLE,
-			 !Player::window_flag(M));
+		DisplayUi.reset(new SdlUi(
+			SCREEN_TARGET_WIDTH, SCREEN_TARGET_HEIGHT,
+			"EasyRPG Player", !Player::window_flag(M)));
 	}
 
 	Player::run(M);

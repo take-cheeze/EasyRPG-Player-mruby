@@ -23,11 +23,11 @@
 #include <list>
 
 #include "color.h"
+#include "zobj.h"
 #include "memory_management.h"
 
 #include <boost/noncopyable.hpp>
 
-class ZObj;
 class Drawable;
 
 /**
@@ -199,13 +199,13 @@ struct Graphics_ : boost::noncopyable {
 
 	struct State {
 		State() : zlist_dirty(false) {}
-		std::list<EASYRPG_SHARED_PTR<ZObj> > zlist;
+		std::list<std::unique_ptr<ZObj> > zlist;
 		bool zlist_dirty;
 	};
-	EASYRPG_SHARED_PTR<State> state;
-	std::vector<EASYRPG_SHARED_PTR<State> > stack;
+	std::unique_ptr<State> state;
+	std::vector<std::unique_ptr<State> > stack;
 
-	static bool SortZObj(EASYRPG_SHARED_PTR<ZObj> const& first, EASYRPG_SHARED_PTR<ZObj> const& second);
+	static bool SortZObj(std::unique_ptr<ZObj> const& first, std::unique_ptr<ZObj> const& second);
 
 	BitmapRef const screen_buffer_;
 

@@ -12,7 +12,7 @@ struct FontHandle {
 	bool italic;
 
   private:
-	EASYRPG_WEAK_PTR<Font> impl_;
+	std::weak_ptr<Font> impl_;
 };
 
 }

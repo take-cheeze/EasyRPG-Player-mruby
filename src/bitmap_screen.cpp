@@ -24,7 +24,7 @@
 #include "graphics.h"
 
 BitmapScreenRef BitmapScreen::Create(BitmapRef const& source) {
-	return EASYRPG_MAKE_SHARED<BitmapScreen>(source);
+	return std::make_shared<BitmapScreen>(source);
 }
 
 BitmapScreenRef BitmapScreen::Create() {

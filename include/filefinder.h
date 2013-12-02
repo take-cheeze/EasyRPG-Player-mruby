@@ -116,7 +116,7 @@ struct FileFinder_ : boost::noncopyable {
 	 * @param m stream mode.
 	 * @return NULL if open failed.
 	 */
-	EASYRPG_SHARED_PTR<std::fstream> openUTF8(const std::string& name, std::ios::openmode m);
+	std::unique_ptr<std::fstream> openUTF8(const std::string& name, std::ios::openmode m);
 
 	/*
 	 * { case lowered path, real path }
@@ -193,7 +193,7 @@ struct FileFinder_ : boost::noncopyable {
 	}; // struct ProjectTree
 
 	ProjectTree const& GetProjectTree();
-	EASYRPG_SHARED_PTR<ProjectTree> CreateProjectTree(std::string const& p);
+	std::unique_ptr<ProjectTree> CreateProjectTree(std::string const& p);
 	bool IsRPG2kProject(ProjectTree const& dir);
 	bool IsRPG2kProject(string_map const& dir);
 
@@ -217,7 +217,7 @@ struct FileFinder_ : boost::noncopyable {
 	std::string const& translate_rtp(std::string const& dir, std::string const& name);
 	void add_rtp_path(std::string const& p);
 
-	typedef std::vector<EASYRPG_SHARED_PTR<ProjectTree> > search_path_list;
+	typedef std::vector<std::unique_ptr<ProjectTree> > search_path_list;
 	search_path_list search_paths;
 	std::string fonts_path;
 

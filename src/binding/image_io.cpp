@@ -14,7 +14,7 @@ using namespace EasyRPG;
 		char* str; int str_len; mrb_bool t;								\
 		mrb_get_args(M, "sb", &str, &str_len, &t);						\
 																		\
-		EASYRPG_SHARED_PTR<std::fstream> const is = FileFinder().openUTF8(std::string(str, str_len), \
+		std::unique_ptr<std::fstream> const is = FileFinder().openUTF8(std::string(str, str_len), \
 																		  std::ios::in | std::ios::binary);	\
 		if(not is) { return mrb_nil_value(); }							\
 																		\
