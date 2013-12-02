@@ -3,11 +3,10 @@
 
 #include <fstream>
 #include <sstream>
+#include <memory>
 #include <cstdlib>
 
 #include <boost/assign/list_of.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
 
 #include "binding.hxx"
@@ -33,8 +32,8 @@ void open_lmt(mrb_state* M) {
 	picojson tmp;
 	lmt.to_json(tmp);
 
-	boost::shared_ptr<std::stringstream> const ios =
-			boost::make_shared<std::stringstream>(stream_flag);
+	std::shared_ptr<std::stringstream> const ios =
+			std::make_shared<std::stringstream>(stream_flag);
 	bool const result = LCF::save_lcf(tmp, *ios);
 	easyrpg_verify(result);
 	ios->seekg(0);
@@ -49,8 +48,8 @@ void open_ldb(mrb_state* M) {
 	picojson tmp;
 	ldb.to_json(tmp);
 
-	boost::shared_ptr<std::stringstream> const ios =
-			boost::make_shared<std::stringstream>(stream_flag);
+	std::shared_ptr<std::stringstream> const ios =
+			std::make_shared<std::stringstream>(stream_flag);
 	bool const result = LCF::save_lcf(tmp, *ios);
 	easyrpg_verify(result);
 	ios->seekg(0);

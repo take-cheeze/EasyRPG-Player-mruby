@@ -3,16 +3,16 @@
 
 #include "picojson_fwd.hxx"
 
-#include <boost/shared_ptr.hpp>
 #include <boost/container/container_fwd.hpp>
 #include <boost/variant/variant_fwd.hpp>
 
 #include <stdint.h>
+#include <memory>
 
 
 namespace LCF {
 
-	typedef boost::shared_ptr<std::istream> istream_ref;
+	typedef std::shared_ptr<std::istream> istream_ref;
 	using boost::container::vector;
 
 	struct event_command;

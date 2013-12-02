@@ -1,13 +1,12 @@
 #include <iconv.h>
 #include <istream>
+#include <memory>
 
 #include <boost/assert.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 #include <boost/type_traits/function_traits.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/container/vector.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 
 #include "lcf_stream.hxx"
 #include "lcf_reader_fwd.hxx"

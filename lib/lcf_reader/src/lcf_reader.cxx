@@ -414,7 +414,7 @@ LCF::lcf_file::lcf_file(std::string const& file) {
 	vector<char> tmp(ifs.tellg());
 	ifs.seekg(0, std::ios::beg);
 	ifs.read(tmp.data(), tmp.size());
-	stream_ = boost::make_shared<std::istringstream>(
+	stream_ = std::make_shared<std::istringstream>(
 		std::string(tmp.data(), tmp.size()), read_flag);
 
 	init();
