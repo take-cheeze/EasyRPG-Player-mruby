@@ -117,6 +117,7 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 	Message const& m = buffer_.back();
 
 	output_time(m.time) << Type2String(m.type) << ":" << endl << "  " << msg << endl;
+	std::cout << Type2String(m.type) << " : " << msg << endl;
 
 	if(ignore_pause_) { return; }
 
@@ -124,8 +125,6 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 			exit
 			? "EasyRPG Player will close now.\nPress any key to exit..."
 			: "Press any key to continue...";
-
-	std::cout << Type2String(m.type) << " : " << msg << endl;
 
 	if(DisplayUi and Player::current_vm()) {
 		std::ostringstream ss;
