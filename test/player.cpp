@@ -5,6 +5,7 @@
 #include "player.h"
 #include "font.h"
 #include "rect.h"
+#include "output.h"
 
 #include "binding.hxx"
 
@@ -56,6 +57,8 @@ void CheckEnglishFilename(mrb_state* M) {
 
 extern "C" void mrb_EasyRPG_Player_gem_test(mrb_state* M) {
 	Player::register_player(M);
+
+	Output(M).EnableStdout(false);
 
 	FileFinder(M).UpdateRtpPaths();
 
