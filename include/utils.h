@@ -19,7 +19,6 @@
 #define _EASYRPG_UTILS_H_
 
 #include <string>
-#include "system.h"
 
 namespace Utils {
 	typedef std::basic_string<uint16_t> utf16_string;

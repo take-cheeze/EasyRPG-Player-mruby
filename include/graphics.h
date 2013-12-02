@@ -22,7 +22,6 @@
 #include <vector>
 #include <list>
 
-#include "system.h"
 #include "color.h"
 #include "memory_management.h"
 

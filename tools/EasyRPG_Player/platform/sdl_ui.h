@@ -20,14 +20,9 @@
 
 // Headers
 #include "baseui.h"
-#include "system.h"
 
 #include <boost/scoped_ptr.hpp>
-
-extern "C" {
-	union SDL_Event;
-	struct SDL_Surface;
-}
+#include <SDL.h>
 
 struct AudioInterface;
 
@@ -44,7 +39,7 @@ public:
 	 * @param title window title.
 	 * @param fullscreen start in fullscreen flag.
 	 */
-	SdlUi(long width, long height, const std::string& title, bool fullscreen);
+	SdlUi(unsigned width, unsigned height, const std::string& title, bool fullscreen);
 
 	/**
 	 * Destructor.
@@ -56,18 +51,25 @@ public:
 	 */
 	/** @{ */
 
-	void BeginDisplayModeChange();
-	void EndDisplayModeChange();
 	void Resize(long width, long height);
-	void ToggleFullscreen();
-	void ToggleZoom();
+	bool IsFullscreen() const;
+	void SetFullscreen(bool f);
+	bool IsZoomed() const;
+	void SetZoom(bool z);
 	void UpdateDisplay();
 	void SetTitle(const std::string &title);
-	bool ShowCursor(bool flag);
+
+	void ShowCursor(bool flag);
+	bool CursorVisible() const;
 
 	void ProcessEvents();
 
-	bool IsFullscreen();
+	unsigned GetWidth() const;
+	unsigned GetHeight() const;
+
+	bool GetMouseFocus() const;
+	int GetMousePosX() const;
+	int GetMousePosY() const;
 
 	uint32_t GetTicks() const;
 	void Sleep(uint32_t time_milli);
@@ -81,13 +83,6 @@ public:
 
 private:
 	/**
-	 * Refreshes the display mode after it was changed.
-	 *
-	 * @return whether the change was successful.
-	 */
-	bool RefreshDisplayMode();
-
-	/**
 	 * Processes a SDL Event.
 	 */
 	/** @{ */
@@ -99,9 +94,6 @@ private:
 	void ProcessKeyUpEvent(SDL_Event &evnt);
 	void ProcessMouseMotionEvent(SDL_Event &evnt);
 	void ProcessMouseButtonEvent(SDL_Event &evnt);
-	void ProcessJoystickButtonEvent(SDL_Event &evnt);
-	void ProcessJoystickHatEvent(SDL_Event &evnt);
-	void ProcessJoystickAxisEvent(SDL_Event &evnt);
 
 	/** @} */
 
@@ -115,19 +107,16 @@ private:
 	 */
 	void ResetKeys();
 
-	bool zoom_available;
-	bool toggle_fs_available;
+	EASYRPG_SHARED_PTR<SDL_Texture> screen_;
+	EASYRPG_SHARED_PTR<SDL_Window> window_;
+	EASYRPG_SHARED_PTR<SDL_Renderer> renderer_;
 
-	bool RequestVideoMode(int width, int height, bool fullscreen);
+	bool is_full_screen_, is_zoomed_;
 
-	/** Last display mode. */
-	DisplayMode last_display_mode;
+	bool mouse_focus_;
+	int mouse_x_, mouse_y_;
 
-	/** Mode is being changing flag */
-	bool mode_changing;
-
-	/** Main SDL window. */
-	SDL_Surface* screen;
+	unsigned initial_width_, initial_height_;
 
 	boost::scoped_ptr<AudioInterface> audio_;
 };

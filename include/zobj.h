@@ -19,7 +19,7 @@
 #define _ZOBJ_H_
 
 // Headers
-#include "system.h"
+#include <stdint.h>
 
 class Drawable;
 

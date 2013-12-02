@@ -16,7 +16,6 @@
  */
 
 // Headers
-#include "system.h"
 #include "output.h"
 #include "audio.h"
 #include "graphics.h"

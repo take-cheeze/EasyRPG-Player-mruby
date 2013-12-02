@@ -17,7 +17,6 @@
 
 // Headers
 #include "audio.h"
-#include "system.h"
 #include "baseui.h"
 
 AudioInterface& Audio() {

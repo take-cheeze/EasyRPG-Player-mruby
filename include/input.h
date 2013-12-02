@@ -22,7 +22,6 @@
 #include <vector>
 #include <bitset>
 
-#include "system.h"
 #include "memory_management.h"
 
 #include <boost/noncopyable.hpp>

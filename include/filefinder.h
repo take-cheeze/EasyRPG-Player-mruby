@@ -19,14 +19,14 @@
 #define _FILEFINDER_H_
 
 // Headers
-#include "system.h"
-
 #include <string>
 #include <ios>
 #include <vector>
 #include <boost/container/flat_map.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
+
+#include "memory_management.h"
 
 /**
  * FileFinder contains helper methods for finding case

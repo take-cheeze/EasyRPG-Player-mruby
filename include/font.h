@@ -19,8 +19,8 @@
 #define _FONT_H_
 
 // Headers
-#include "system.h"
 #include <string>
+#include "memory_management.h"
 
 #include <mruby.h>
 

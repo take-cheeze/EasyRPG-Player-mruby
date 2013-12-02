@@ -19,7 +19,7 @@
 #define _WINDOW_H_
 
 // Headers
-#include "system.h"
+#include "memory_management.h"
 #include "drawable.h"
 #include "rect.h"
 

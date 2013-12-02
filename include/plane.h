@@ -19,7 +19,7 @@
 #define _PLANE_H_
 
 // Headers
-#include "system.h"
+#include "memory_management.h"
 #include "drawable.h"
 
 class ZObj;

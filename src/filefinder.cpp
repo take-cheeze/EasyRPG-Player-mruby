@@ -31,7 +31,6 @@
 
 #include <boost/format.hpp>
 
-#include "system.h"
 #include "options.h"
 #include "utils.h"
 #include "filefinder.h"

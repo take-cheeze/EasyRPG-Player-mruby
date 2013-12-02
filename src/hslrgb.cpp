@@ -18,6 +18,7 @@
 // Headers
 #include "hslrgb.h"
 #include "color.h"
+#include <algorithm>
 
 struct ColorHSL {
 	double h;

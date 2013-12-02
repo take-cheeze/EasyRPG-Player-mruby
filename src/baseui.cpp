@@ -23,44 +23,16 @@
 
 // Headers
 #include "baseui.h"
-#include "system.h"
 #include "font.h"
 #include "graphics.h"
 #include "bitmap.h"
 
 EASYRPG_SHARED_PTR<BaseUi> DisplayUi;
 
-BaseUi::BaseUi()
-	: mouse_focus(false)
-	, mouse_x(0)
-	, mouse_y(0)
-	, cursor_visible(false)
-{
-	keys.reset();
-}
+BaseUi::BaseUi() {}
 
 BaseUi::KeyStatus& BaseUi::GetKeyStates() {
 	return keys;
-}
-
-long BaseUi::GetWidth() const {
-	return current_display_mode.width;
-}
-
-long BaseUi::GetHeight() const {
-	return current_display_mode.height;
-}
-
-bool BaseUi::GetMouseFocus() const {
-	return mouse_focus;
-}
-
-int BaseUi::GetMousePosX() const {
-	return mouse_x;
-}
-
-int BaseUi::GetMousePosY() const {
-	return mouse_y;
 }
 
 void BaseUi::DrawScreenText(const std::string &text) {

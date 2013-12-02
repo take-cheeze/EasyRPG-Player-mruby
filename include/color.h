@@ -19,8 +19,8 @@
 #define _COLOR_H_
 
 // Headers
-#include "system.h"
 #include <boost/static_assert.hpp>
+#include <stdint.h>
 
 /**
  * Color class.

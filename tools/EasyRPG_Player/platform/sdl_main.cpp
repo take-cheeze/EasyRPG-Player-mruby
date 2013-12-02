@@ -16,6 +16,7 @@
  */
 
 // Headers
+#include "options.h"
 #include "player.h"
 #include "graphics.h"
 #include "input.h"

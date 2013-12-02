@@ -19,7 +19,6 @@
 #include <cmath>
 #include <ciso646>
 
-#include "system.h"
 #include "bitmap_screen.h"
 #include "bitmap.h"
 #include "graphics.h"

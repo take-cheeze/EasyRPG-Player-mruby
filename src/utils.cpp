@@ -17,6 +17,7 @@
 
 // Headers
 #include "utils.h"
+#include "memory_management.h"
 #include "utf8proc.h"
 #include <algorithm>
 #include <cctype>

@@ -22,10 +22,10 @@
 #include <string>
 #include <bitset>
 
-#include "system.h"
 #include "color.h"
 #include "rect.h"
 #include "keys.h"
+#include "memory_management.h"
 
 struct AudioInterface;
 
@@ -40,16 +40,6 @@ public:
 	virtual ~BaseUi() {}
 
 	/**
-	 * Begins a display mode change.
-	 */
-	virtual void BeginDisplayModeChange() = 0;
-
-	/**
-	 * Ends a display mode change.
-	 */
-	virtual void EndDisplayModeChange() = 0;
-
-	/**
 	 * Resizes display.
 	 *
 	 * @param width display client width.
@@ -58,14 +48,25 @@ public:
 	virtual void Resize(long width, long height) = 0;
 
 	/**
-	 * Toggles fullscreen.
+	 * change fullscreen state
+	 *
+	 * @param f whether to enable fullscreen
 	 */
-	virtual void ToggleFullscreen() = 0;
+	virtual void SetFullscreen(bool f) = 0;
 
 	/**
-	 * Toggles zoom.
+	 * change zoom state
+	 *
+	 * @param z whether to enable zoom
 	 */
-	virtual void ToggleZoom() = 0;
+	virtual void SetZoom(bool z) = 0;
+
+	/**
+	 * Check whether zoom mode is enabled.
+	 *
+	 * @return zoom state
+	 */
+	virtual bool IsZoomed() const = 0;
 
 	/**
 	 * Processes events queue.
@@ -108,14 +109,21 @@ public:
 	 * @param flag cursor visibility flag.
 	 * @return previous state.
 	 */
-	virtual bool ShowCursor(bool flag) = 0;
+	virtual void ShowCursor(bool flag) = 0;
+
+	/**
+	 * Check whether mouse cursor is visible.
+	 *
+	 * @return current mouse cursor visible state
+	 */
+	virtual bool CursorVisible() const = 0;
 
 	/**
 	 * Gets if fullscreen mode is active.
 	 *
 	 * @return whether fullscreen mode is active.
 	 */
-	virtual bool IsFullscreen() = 0;
+	virtual bool IsFullscreen() const = 0;
 
 	/**
 	 * Gets ticks in ms for time measurement.
@@ -143,35 +151,35 @@ public:
 	 *
 	 * @return client width size.
 	 */
-	long GetWidth() const;
+	virtual unsigned GetWidth() const = 0;
 
 	/**
 	 * Gets client height size.
 	 *
 	 * @return client height size.
 	 */
-	long GetHeight() const;
+	virtual unsigned GetHeight() const = 0;
 
 	/**
 	 * Gets whether mouse is hovering the display.
 	 *
 	 * @return whether mouse is hovering the display.
 	 */
-	bool GetMouseFocus() const;
+	virtual bool GetMouseFocus() const = 0;
 
 	/**
 	 * Gets mouse x coordinate.
 	 *
 	 * @return mouse x coordinate.
 	 */
-	int GetMousePosX() const;
+	virtual int GetMousePosX() const = 0;
 
 	/**
 	 * Gets mouse y coordinate.
 	 *
 	 * @return mouse y coordinate.
 	 */
-	int GetMousePosY() const;
+	virtual int GetMousePosY() const = 0;
 
 	typedef std::bitset<Keys::KEYS_COUNT> KeyStatus;
 
@@ -188,35 +196,7 @@ protected:
 	 */
 	BaseUi();
 
-	/**
-	 * Display mode data struct.
-	 */
-	struct DisplayMode {
-		DisplayMode() : effective(false), zoom(false), width(0), height(0), bpp(0), flags(0) {}
-		bool effective;
-		bool zoom;
-		int width;
-		int height;
-		uint8_t bpp;
-		uint32_t flags;
-	};
-
-	/** Current display mode. */
-	DisplayMode current_display_mode;
-
 	KeyStatus keys;
-
-	/** Mouse hovering the window flag. */
-	bool mouse_focus;
-
-	/** Mouse x coordinate on screen relative to the window. */
-	int mouse_x;
-
-	/** Mouse y coordinate on screen relative to the window. */
-	int mouse_y;
-
-	/** Cursor visibility flag. */
-	bool cursor_visible;
 };
 
 /** Global DisplayUi variable. */

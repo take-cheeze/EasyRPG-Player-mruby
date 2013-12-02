@@ -18,10 +18,10 @@
 #ifndef _EASYRPG_TEXT_H_
 #define _EASYRPG_TEXT_H_
 
-#include "system.h"
 #include <string>
 
 class Color;
+class Bitmap;
 
 namespace Text {
 	/** TextDraw alignment options. */

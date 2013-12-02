@@ -30,11 +30,11 @@ MRuby::Build.new do |conf|
   }
 
   conf.cxx.flags << '-DUSE_SDL=1' << "-DHAVE_SDL_MIXER=1"
-  ['sdl', 'freetype2', 'pixman-1', 'libpng', 'zlib'].each { |v|
+  ['sdl2', 'freetype2', 'pixman-1', 'libpng', 'zlib'].each { |v|
     conf.cxx.flags += [`pkg-config #{v} --cflags`.chomp]
     conf.linker.flags += [`pkg-config #{v} --libs`.chomp]
   }
-  conf.linker.libraries << 'SDL_mixer'
+  conf.linker.libraries << 'SDL2_mixer'
 
   if `uname`.chomp.downcase == 'darwin'
     conf.cxx.include_paths << '/opt/local/include'

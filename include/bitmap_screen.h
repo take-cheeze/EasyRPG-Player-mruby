@@ -19,10 +19,10 @@
 #define _BITMAP_SCREEN_H_
 
 // Headers
-#include "system.h"
 #include "tone.h"
 #include "rect.h"
 #include "color.h"
+#include "memory_management.h"
 
 /**
  * Base BitmapScreen class.

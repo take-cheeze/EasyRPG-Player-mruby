@@ -19,7 +19,6 @@
 #define _SDL_AUDIO_H_
 
 // Headers
-#include "system.h"
 #include "audio.h"
 
 #include <map>

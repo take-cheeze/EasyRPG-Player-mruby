@@ -23,6 +23,7 @@
 #include "drawable.h"
 #include "rect.h"
 #include "tone.h"
+#include "memory_management.h"
 
 class ZObj;
 

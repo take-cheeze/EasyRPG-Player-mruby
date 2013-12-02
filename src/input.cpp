@@ -18,7 +18,6 @@
 // Headers
 #include "input.h"
 #include "player.h"
-#include "system.h"
 #include "baseui.h"
 
 #include <algorithm>

@@ -22,6 +22,7 @@
 #include <map>
 #include <iomanip>
 
+#include "options.h"
 #include "output.h"
 #include "graphics.h"
 #include "bitmap.h"
