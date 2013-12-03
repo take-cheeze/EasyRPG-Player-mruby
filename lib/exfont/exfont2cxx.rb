@@ -14,7 +14,7 @@ Devil.with_image(script_path + '/exfont.png') { |img|
   raise "width error" unless img.width == 12 * 13
   raise "height error" unless img.height == 12 * 4
 
-  blb = img.to_blob.bytes
+  blb = img.to_blob.bytes.to_a
   glyphs = []
 
   for y in 0...4
