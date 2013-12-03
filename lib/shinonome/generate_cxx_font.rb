@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby -Ku
+#!/usr/bin/env ruby
 # encoding: utf-8
 
 FONT_SIZE = 12
