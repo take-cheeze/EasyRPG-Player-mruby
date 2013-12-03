@@ -9,7 +9,7 @@ before_script:
   - export RPG_TEST_GAME_PATH="$RPG_TEST_GAME_PATH/TestGame-2000"
   - git clone --branch dummy --depth 1 "https://github.com/take-cheeze/RTP.git" "$RPG_RTP_PATH"
 script:
-  - CXX="$CXX -std=c++11" ./build.sh all test
+  - CXX="$CXX -std=c++11" ./build.sh clean all test
 after_script:
   - cat ./mruby/easyrpg_log.txt
 env:
