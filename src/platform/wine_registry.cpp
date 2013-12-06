@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
+#include <functional>
 
 #include <boost/variant.hpp>
 #include <boost/container/flat_map.hpp>
@@ -63,6 +64,7 @@ typedef vector<uint8_t> binary_type;
 typedef boost::variant<std::string, binary_type, uint32_t> section_value;
 typedef boost::container::flat_map<std::string, section_value> section;
 typedef boost::container::flat_map<std::string, section> section_list;
+typedef std::function<bool(std::string const&, std::string const&, section_value&& val)> value_hooker;
 
 namespace spirit = boost::spirit;
 namespace qi = spirit::qi;
@@ -72,9 +74,13 @@ namespace phoenix = boost::phoenix;
 struct parse_registry {
 	std::string line;
 	unsigned line_number;
-	section_list result;
 	std::string::const_iterator i, end;
-	std::ifstream stream;
+	std::istream& stream;
+	qi::symbols<char, char> escape;
+	qi::uint_parser<uint16_t, 8, 1, 3> octal;
+	qi::uint_parser<uint16_t, 16, 1, 4> hex;
+	qi::uint_parser<uint8_t, 16, 2, 2> octet;
+	qi::uint_parser<uint32_t, 16, 8, 8> dword;
 
 	void error(format const& fmt) {
 		if(line_number > 0) {
@@ -88,16 +94,16 @@ struct parse_registry {
 
 	std::istream& getline() {
 		line.clear();
-		std::string tmp;
 		do {
-			if(not line.empty() and *line.rbegin() == '\\')
-			{ line.resize(line.size() - 1); }
+			if(not line.empty() and line.back() == '\\') { line.pop_back(); }
+			std::string tmp;
 			std::getline(stream, tmp);
 			++line_number;
-			line += tmp;
-		} while(stream and not tmp.empty() and *tmp.rbegin() == '\\');
+			if(line.empty()) { tmp.swap(line); }
+			else { line.append(tmp); }
+		} while(stream and not line.empty() and line.back() == '\\');
 
-		if(not line.empty()) { assert(*line.rbegin() != '\\'); }
+		if(not line.empty()) { assert(line.back() != '\\'); }
 		line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 		i = line.begin(), end = line.end();
 
@@ -106,20 +112,10 @@ struct parse_registry {
 
 	template<char term> std::string parse_str() {
 		using qi::phrase_parse;
-		using qi::char_;
-		using qi::symbols;
-		using qi::uint_parser;
-
-		symbols<char, char> escape;
-		escape.add
-				("\\a", '\a')("\\b", '\b')("\\e", '\e')("\\f", '\f')
-				("\\n", '\n')("\\r", '\r')("\\t", '\t')("\\v", '\v')
-				("\\\\", '\\')("\\\"", '"');
 
 		std::string ret;
 		if(not phrase_parse(
-			   i, end, *(escape | ~char_(term)) >> term, ~char_, ret)) {
-
+			   i, end, *(escape | ~qi::char_(term)) >> term, ~qi::char_, ret)) {
 			error(format("string parse error"));
 			return std::string();
 		}
@@ -139,13 +135,11 @@ struct parse_registry {
 		escaped.reserve(utf16.size());
 		vector<uint16_t>::const_iterator
 				escaping = utf16.begin(), escaping_end = utf16.end();
-		uint_parser<uint16_t, 8, 1, 3> octal;
-		uint_parser<uint16_t, 16, 1, 4> hex;
 
 		if(not phrase_parse(
 			   escaping, escaping_end,
-			   *(('\\' >> (('x' >> hex) | octal)) | char_),
-			   ~char_, escaped) or escaping != utf16.end()) {
+			   *(('\\' >> (('x' >> hex) | octal)) | qi::char_),
+			   ~qi::char_, escaped) or escaping != utf16.end()) {
 			Output().Debug("unicode escaping error");
 		}
 
@@ -160,14 +154,11 @@ struct parse_registry {
 	section_value parse_value() {
 		using qi::phrase_parse;
 		using qi::_1;
-		using qi::uint_parser;
-		using qi::char_;
-		using qi::uint_;
 		using spirit::ascii::space;
 		using phoenix::push_back;
 
 		enum { STRING, BINARY, INTEGER };
-		struct prefix {
+		static struct prefix {
 			std::string pre;
 			int type;
 		} const prefixes[] = {
@@ -191,17 +182,15 @@ struct parse_registry {
 					return (*i == '\'')? std::string() : parse_str<'\"'>();
 				case BINARY: {
 					binary_type ret;
-					uint_parser<uint8_t, 16, 2, 2> octed;
-					if(not phrase_parse(i, end, -("(" >> uint_ >> ")") >> ":" >>
-										octed[push_back(phoenix::ref(ret), _1)] % ',' >>
-										-char_(')'), space)) {
+					if(not phrase_parse(i, end, -("(" >> qi::uint_ >> ")") >> ":" >>
+										octet[push_back(phoenix::ref(ret), _1)] % ',' >>
+										-qi::char_(')'), space)) {
 						error(format("cannot parse %s") % pre->pre);
 					}
 					return ret;
 				}
 				case INTEGER: {
 					uint32_t ret;
-					uint_parser<uint32_t, 16, 8, 8> dword;
 					if(not phrase_parse(i, end, dword, space, ret)) {
 						error(format("cannot parse %s") % pre->pre);
 					}
@@ -218,14 +207,15 @@ struct parse_registry {
 		while(i < end and std::isspace(*i)) { ++i; }
 	}
 
-	parse_registry(std::string const& name, bool const is_wine_registry = true)
-			: line_number(0)
-			, stream(name.c_str(), std::ios_base::binary | std::ios_base::in)
+	// break parsing when hook returned true
+	parse_registry(std::istream& strm, value_hooker const& hook, bool const is_wine_registry)
+			: line_number(0) , stream(strm)
 	{
-		if(not stream) {
-			error(format("file open error: \"%s\"") % name);
-			return;
-		}
+		// init escape
+		escape.add
+				("\\a", '\a')("\\b", '\b')("\\e", '\e')("\\f", '\f')
+				("\\n", '\n')("\\r", '\r')("\\t", '\t')("\\v", '\v')
+				("\\\\", '\\')("\\\"", '"');
 
 		if(is_wine_registry) {
 			getline();
@@ -235,8 +225,7 @@ struct parse_registry {
 			}
 		}
 
-		section current_section;
-		std::string current_section_name;
+		std::string current_section;
 
 		while(getline()) {
 			skip_space();
@@ -244,21 +233,17 @@ struct parse_registry {
 
 			switch(*i) {
 				case '[':
-					if(not current_section_name.empty()) {
-						assert(result.find(current_section_name) == result.end());
-						result[current_section_name].swap(current_section);
-					}
 					++i; // skip '['
-					parse_str<']'>().swap(current_section_name);
+					parse_str<']'>().swap(current_section);
 					break;
 				case '@': break; // skip
 				case '\"': {
-					if(current_section_name.empty()) {
+					if(current_section.empty()) {
 						error(format("value without key"));
 						return;
 					}
 					++i; // skip '\"'
-					std::string const val_name = parse_str<'\"'>();
+					std::string const var_name = parse_str<'\"'>();
 					skip_space();
 					if(i >= line.end() or *i != '=') {
 						error(format("unexpected char or end of line"));
@@ -267,19 +252,19 @@ struct parse_registry {
 					assert(*i == '=');
 					++i; // skip '='
 					skip_space();
-					parse_value().swap(current_section[val_name]);
+					if(hook(current_section, var_name, parse_value())) { return; }
 				} break;
 				case '#': break; // skip
 				case ';': break; // comment line
 
 				default:
 					if(not is_wine_registry and std::isalpha(*i)) {
-						if(current_section_name.empty()) {
+						if(current_section.empty()) {
 							error(format("value without key"));
 							return;
 						}
-						current_section[parse_str<'='>()] =
-								std::string(i, static_cast<std::string const&>(line).end());
+						if(hook(current_section, parse_str<'='>(),
+								std::string(i, line.cend()))) { return; }
 						break;
 					} else {
 						error(format("invalid line"));
@@ -287,57 +272,45 @@ struct parse_registry {
 					}
 			}
 		}
-		current_section.swap(result[current_section_name]);
 	}
 };
 
-section_list const& get_section(HKEY key) {
-	static section_list const empty_sec;
-	static section_list local_machine, current_user;
+struct section_list_creater : public section_list {
+	bool operator()(std::string const& section, std::string const& var, section_value const& v) {
+		(*this)[section][var] = v;
+		return false;
+	}
+};
 
-	std::string const prefix = get_wine_prefix();
+struct section_finder {
+	boost::optional<section_value> result;
+
+	std::string const section, variable;
+	section_finder(std::string const& s, std::string const& v)
+			: section(s), variable(v) {}
+
+	bool operator()(std::string const& s, std::string const& var, section_value const& val) {
+		if(s == section and var == variable) {
+			result = val;
+			return true;
+		}
+		return false;
+	}
+};
+
+std::string get_registry_filename(HKEY key) {
+	std::string prefix = get_wine_prefix();
 
 	if(prefix.empty() or not FileFinder().Exists(prefix)) {
 		Output().Debug(boost::format("wine prefix not found: \"%s\"") % prefix);
-		return empty_sec;
+		return std::string();
 	}
 
 	switch(key) {
-		case HKEY_LOCAL_MACHINE:
-			if(local_machine.empty()) {
-				parse_registry(prefix + "/system.reg").result.swap(local_machine);
-			}
-			return local_machine;
-		case HKEY_CURRENT_USER:
-			if(current_user.empty()) {
-				parse_registry(prefix + "/user.reg").result.swap(current_user);
-			}
-			return current_user;
-		default: assert(false); return empty_sec;
+		case HKEY_LOCAL_MACHINE: return prefix.append("/system.reg");
+		case HKEY_CURRENT_USER: return prefix.append("/user.reg");
+		default: assert(false); return std::string();
 	}
-}
-
-typedef boost::optional<section_value const&> section_value_opt;
-section_value_opt get_value(section_list const& sec, std::string const& key, std::string const& val) {
-	section_list::const_iterator sec_list_i = sec.find(key);
-	if(sec_list_i == sec.end()) { return boost::none; }
-	section::const_iterator sec_i = sec_list_i->second.find(val);
-	if(sec_i == sec_list_i->second.end()) { return boost::none; }
-	return section_value_opt(sec_i->second);
-}
-template<class T>
-T const& get_value_with_type(HKEY hkey, std::string const& key, std::string const& val) {
-	static T const err_val;
-	section_value_opt const v = get_value(get_section(hkey), key, val);
-	if(v == boost::none) {
-		Output().Debug(boost::format("registry not found: %s, %s") % key % val);
-		return err_val;
-	}
-	if(not boost::get<T>(&*v)) {
-		Output().Debug(boost::format("type mismatch: %s, %s") % key % val);
-		return err_val;
-	}
-	return boost::get<T const>(*v);
 }
 
 bool is_wine_path(std::string const& p) {
@@ -361,28 +334,53 @@ std::string from_wine_path(std::string const& p) {
 
 	return ret;
 }
+
+template<class T>
+T get_value_with_type(std::string const& file, std::string const& key, std::string const& var, bool is_wine_registry) {
+	static T const err_val;
+
+	std::ifstream ifs(file, std::ios::binary | std::ios::in);
+	if(not ifs) {
+		Output().Debug(boost::format("registry file open error: %s") % file);
+		return err_val;
+	}
+
+	section_finder finder(key, var);
+	parse_registry(ifs, std::ref(finder), is_wine_registry);
+	if(finder.result == boost::none) {
+		Output().Debug(boost::format("registry not found: %s, %s") % key % var);
+		return err_val;
+	}
+
+	if(T* ret = boost::get<T>(&*finder.result)) { return *ret; }
+	else {
+		Output().Debug(boost::format("type mismatch: %s, %s") % key % var);
+		return err_val;
+	}
+}
 }
 
-std::string Registry::ReadStrValue(HKEY hkey, std::string const& key, std::string const& val) {
-	std::string const ret = get_value_with_type<std::string>(hkey, key, val);
+std::string Registry::ReadStrValue(HKEY hkey, std::string const& key, std::string const& var) {
+	std::string const ret = get_value_with_type<std::string>(
+		get_registry_filename(hkey), key, var, true);
 	if(not is_wine_path(ret)) { return ret; }
 
 	std::string const path = from_wine_path(ret);
-	Output().Debug(boost::format("Path registry %s, %s: \"%s\"") % key % val % path);
+	Output().Debug(boost::format("Path registry %s, %s: \"%s\"") % key % var % path);
 	return path;
 }
-int Registry::ReadBinValue(HKEY hkey, std::string const& key, std::string const& val, unsigned char* out) {
-	binary_type const bin = get_value_with_type<binary_type>(hkey, key, val);
+int Registry::ReadBinValue(HKEY hkey, std::string const& key, std::string const& var, unsigned char* out) {
+	binary_type const bin = get_value_with_type<binary_type>(
+		get_registry_filename(hkey), key, var, true);
 	std::copy(bin.begin(), bin.end(), out);
 	return bin.size();
 }
 
 std::string Registry::ReadStrValue(
-	std::string const& file, std::string const& section, std::string const& key)
+	std::string const& file, std::string const& key, std::string const& var)
 {
 	if(not FileFinder().Exists(file)) { return std::string(); }
 
-	std::string const ret = boost::get<std::string>(
-		parse_registry(file, false).result[section][key]);
+	std::string const ret = get_value_with_type<std::string>(file, key, var, true);
 	return is_wine_path(ret)? from_wine_path(ret) : ret;
 }
