@@ -11,7 +11,7 @@ namespace {
 using namespace EasyRPG;
 
 mrb_value initialize(mrb_state* M, mrb_value const self) {
-	mrb_iv_set(M, self, mrb_intern_cstr(M, "@chipset"), mrb_nil_value());
+	mrb_iv_set(M, self, mrb_intern_lit(M, "@chipset"), mrb_nil_value());
 	return new(data_make_struct<Tilemap>(M, self)) Tilemap(), self;
 }
 
@@ -79,13 +79,13 @@ mrb_value set_properties(mrb_state* M, mrb_value const self) {
 */
 
 mrb_value get_chipset(mrb_state* M, mrb_value const self) {
-	return mrb_iv_get(M, self, mrb_intern_cstr(M, "@chipset"));
+	return mrb_iv_get(M, self, mrb_intern_lit(M, "@chipset"));
 }
 mrb_value set_chipset(mrb_state* M, mrb_value const self) {
 	mrb_value v;
 	mrb_get_args(M, "o", &v);
 	get<Tilemap>(M, self).SetChipset(get_ptr<Bitmap>(M, v));
-	return mrb_iv_set(M, self, mrb_intern_cstr(M, "@chipset"), v), v;
+	return mrb_iv_set(M, self, mrb_intern_lit(M, "@chipset"), v), v;
 }
 
 mrb_value get_visible(mrb_state* M, mrb_value const self) {

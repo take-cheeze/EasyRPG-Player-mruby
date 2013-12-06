@@ -11,8 +11,8 @@ using namespace EasyRPG;
 mrb_value initialize(mrb_state* M, mrb_value const self) {
 	mrb_value* argv; int argc;
 	mrb_get_args(M, "*", &argv, &argc);
-	mrb_iv_set(M, self, mrb_intern_cstr(M, "@windowskin"), mrb_nil_value());
-	mrb_iv_set(M, self, mrb_intern_cstr(M, "@contents"), mrb_nil_value());
+	mrb_iv_set(M, self, mrb_intern_lit(M, "@windowskin"), mrb_nil_value());
+	mrb_iv_set(M, self, mrb_intern_lit(M, "@contents"), mrb_nil_value());
 	return init_ptr<Window>(M, self, new Window()), self;
 }
 
@@ -25,25 +25,25 @@ mrb_value update(mrb_state* M, mrb_value const self) {
 }
 
 mrb_value get_windowskin(mrb_state* M, mrb_value const self) {
-	return mrb_iv_get(M, self, mrb_intern_cstr(M, "@windowskin"));
+	return mrb_iv_get(M, self, mrb_intern_lit(M, "@windowskin"));
 }
 mrb_value set_windowskin(mrb_state* M, mrb_value const self) {
 	mrb_value v;
 	mrb_get_args(M, "o", &v);
 	BitmapRef const ref = get_ptr<Bitmap>(M, v);
-	mrb_iv_set(M, self, mrb_intern_cstr(M, "@windowskin"), v);
+	mrb_iv_set(M, self, mrb_intern_lit(M, "@windowskin"), v);
 	get<Window>(M, self).SetWindowskin(ref);
 	return v;
 }
 
 mrb_value get_contents(mrb_state* M, mrb_value const self) {
-	return mrb_iv_get(M, self, mrb_intern_cstr(M, "@contents"));
+	return mrb_iv_get(M, self, mrb_intern_lit(M, "@contents"));
 }
 mrb_value set_contents(mrb_state* M, mrb_value const self) {
 	mrb_value v;
 	mrb_get_args(M, "o", &v);
 	BitmapRef const ref = get_ptr<Bitmap>(M, v);
-	mrb_iv_set(M, self, mrb_intern_cstr(M, "@contents"), v);
+	mrb_iv_set(M, self, mrb_intern_lit(M, "@contents"), v);
 	get<Window>(M, self).SetContents(ref);
 	return v;
 }
