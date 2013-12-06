@@ -19,7 +19,6 @@ class Window_BattleCommand < Window_Base
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
 
-    self.contents = Bitmap.new iw - 16, ih - 16
     self.actor = 0
 
     @disabled = Array.new @commands.length
@@ -207,8 +206,6 @@ class Window_BattleOption < Window_Base
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
 
-    self.contents = Bitmap.new iw - 16, ih - 16
-
     # @commands = [Data.term.battle_fight, Data.term.battle_auto, Data.term.battle_escape]
     @commands = ["Victory", "Defeat", "Escape"]
 
@@ -321,7 +318,6 @@ class Window_BattleStatus < Window_Base
     super 0, 172, 244, 68
     self.border_x = 4
     self.border_y = 4
-    self.contents = Bitmap.new width - 8, height - 8
     @index = nil
 
     refresh

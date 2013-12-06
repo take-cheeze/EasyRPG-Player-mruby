@@ -21,7 +21,6 @@ class Window_ActorInfo < Window_Base
   def initialize(ix, iy, iw, ih, actor_id)
     super ix, iy, iw, ih
     @actor_id = actor_id
-    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 
@@ -70,7 +69,6 @@ class Window_ActorStatus < Window_Base
   def initialize(ix, iy, iw, ih, actor_id)
     super ix, iy, iw, ih
     @actor_id = actor_id
-    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 
@@ -117,7 +115,6 @@ class Window_ActorTarget < Window_Selectable
   # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
-    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 

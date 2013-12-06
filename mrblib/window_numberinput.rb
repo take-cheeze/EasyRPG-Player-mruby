@@ -27,7 +27,6 @@ class Window_NumberInput < Window_Selectable
     @max_digits = 6
     @number = 0
 
-    self.contents = Bitmap.new w - 16, h - 16
     @cursor_width = 14
     self.z = 10001
     @opacity = 0

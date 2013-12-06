@@ -100,7 +100,6 @@ class Window_SkillStatus < Window_Base
   def initialize(ix, iy, iwidth, iheight)
     super(ix, iy, iwidth, iheight)
     @actor_id = nil
-    contents = Bitmap.new(width - 16, height - 16)
   end
 
   # Sets the actor whose stats are displayed.

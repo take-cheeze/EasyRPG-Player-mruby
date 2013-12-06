@@ -31,7 +31,6 @@ class Window_Keyboard < Window_Base
     @row_spacing = 16
     @col_spacing = (contents.width - 2 * border_x) / col_max
 
-    self.contents = Bitmap.new iw - 16, ih - 16
     self.z = 9999
 
     refresh

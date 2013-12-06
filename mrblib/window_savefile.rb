@@ -23,7 +23,6 @@ class Window_SaveFile < Window_Base
     @hero_level = 0
     @corrupted = false
 
-    self.contents = Bitmap.new w - 8, h - 16
     self.z = 9999
 
     refresh

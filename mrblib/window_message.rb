@@ -48,7 +48,6 @@ class Window_Message < Window_Selectable
     @number_input_window = Window_NumberInput.new 0, 0
     @gold_window = Window_Gold.new 232, 0, 88, 32
 
-    self.contents = Bitmap.new iw - 16, ih - 16
     @visible = false
     self.z = 10000
 

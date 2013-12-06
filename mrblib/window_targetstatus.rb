@@ -21,7 +21,6 @@ class Window_TargetStatus < Window_Base
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @use_item = false
-    self.contents = Bitmap.new iwidth - 16, iheight - 16
   end
 
   # Renders the current item quantity/spell costs on

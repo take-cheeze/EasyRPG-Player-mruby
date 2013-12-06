@@ -15,12 +15,6 @@
 
 # Window Face Class.
 class Window_Face < Window_Base
-  # Constructor.
-  def initialize(ix, iy, iw, ih)
-    super ix, iy, iw, ih
-    self.contents = Bitmap.new iw - 16, ih - 16
-  end
-
   # Renders the current face on the window.
   def refresh
     contents.clear

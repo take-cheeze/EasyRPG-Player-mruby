@@ -27,6 +27,7 @@ class Window_Base < Window
     self.windowskin = Cache.system @windowskin_name
     self.x, self.y = ix, iy
     self.width, self.height = iw, ih
+    self.contents = Bitmap.new iw - 16, ih - 16
     self.z = 100
   end
 

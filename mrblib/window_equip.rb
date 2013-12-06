@@ -26,7 +26,6 @@ class Window_Equip < Window_Selectable
   def initialize(ix, iy, iw, ih, actor_id)
     super ix, iy, iw, ih
     @actor_id = actor_id
-    self.contents = Bitmap.new iw - 16, ih - 16
     @index = 0
     @data = []
     refresh
@@ -142,7 +141,6 @@ class Window_EquipStatus < Window_Base
 
     @attack, @defence, @spirit, @agility = 0, 0, 0, 0
 
-    self.contents = Bitmap.new iw - 16, ih - 16
     refresh
   end
 

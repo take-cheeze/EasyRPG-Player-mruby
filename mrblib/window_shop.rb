@@ -19,8 +19,6 @@ class Window_Shop < Window_Base
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
 
-    contents = Bitmap.new iw - 16, ih - 16
-
     case(Game_Temp.shop_type)
     when 0
       @greeting = Data.term.shop_greeting1
@@ -234,8 +232,6 @@ class Window_ShopNumber < Window_Base
     @price = 0
     @number = 1
     @item_id = 0
-
-    contents = Bitmap.new iw - 16, ih - 16
   end
 
   # Updates the Windows contents.
@@ -302,8 +298,6 @@ class Window_ShopParty < Window_Base
   # Constructor.
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
-
-    contents = Bitmap.new iw - 16, ih - 16
 
     @cycle = 0
     @item_id = 0
@@ -411,8 +405,6 @@ class Window_ShopStatus < Window_Base
   def initialize(ix, iy, iw, ih)
     super ix, iy, iw, ih
     @item_id = 0
-
-    contents = Bitmap.new iw - 16, ih - 16
 
     refresh
   end

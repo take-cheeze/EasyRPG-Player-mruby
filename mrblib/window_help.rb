@@ -21,7 +21,6 @@ class Window_Help < Window_Base
     super ix, iy, iw, ih
     @align = Text::AlignLeft
     @text = ''
-    self.contents = Bitmap.new iw - 16, ih - 16
   end
 
   # Sets the text that will be shown.

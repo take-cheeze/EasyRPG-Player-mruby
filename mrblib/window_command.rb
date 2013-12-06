@@ -30,8 +30,6 @@ class Window_Command < Window_Selectable
     @index = 0
     @item_max = @commands.length
 
-    self.contents = Bitmap.new self.width - 16, @item_max * 16
-
     refresh
   end
 
