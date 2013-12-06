@@ -116,3 +116,58 @@ class Scene_File < Scene
     }
   end
 end
+
+class Scene_Save < Scene_File
+  # Constructor.
+  def initialize; super "Save", Data.term.save_game_message; end
+
+  def action(index)
+    # TODO: Maybe find a better place to setup the save file?
+    title = {}
+
+    size = Game_Party.actors.length
+
+    if size >= 4
+      actor = Game_Party.actors[3]
+      title.face4_id = actor.face_index
+      title.face4_name = actor.face_name
+    end
+    if size >= 3
+      actor = Game_Party.actors[2]
+      title.face3_id = actor.face_index
+      title.face3_name = actor.face_name
+    end
+    if size >= 2
+      actor = Game_Party.actors[1]
+      title.face2_id = actor.face_index
+      title.face2_name = actor.face_name
+    end
+    if size >= 1
+      actor = Game_Party.actors[0]
+      title.face1_id = actor.face_index
+      title.face1_name = actor.face_name
+
+      title.hero_hp = actor.hp
+      title.hero_level = actor.level
+      title.hero_name = actor.name
+    end
+
+    $game_data.title = title
+
+    $game_data.system.save_slot = index + 1
+    $game_data.system.save_count += 1
+
+    LSD_Reader.save FileFinder.find_default('Save%02d.sd' % (index + 1)), $game_data
+  end
+end
+
+class Scene_Load < Scene_File
+  # Constructor.
+  def initialize
+    super 'Load', Data.term.load_game_message
+  end
+
+  def action(index)
+    # TODO load game
+  end
+end

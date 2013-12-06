@@ -160,3 +160,283 @@ class Window_Shop < Window_Base
     cursor_rect = rect
   end
 end
+
+# Window Shop Buy Class
+# The shop item list window.
+class Window_ShopBuy < Window_Selectable
+  # Constructor.
+  def initialize(x, y, w = 320, h = 80)
+    super ix, iy, iw, ih
+    @index = 0
+  end
+
+  # Gets item ID of the selected item.
+  #
+  # @return current selected item ID.
+  def item_id
+    index < 0 ? 0 : data[index]
+  end
+
+  # Refreshes the item list.
+  def refresh
+    @data = Game_Temp.shop_goods
+    @item_max = data.length
+
+    create_contents
+    contents.clear
+
+    for i in 0...data.length; draw_item i; end
+  end
+
+  # Draws an item together with the price.
+  #
+  # @param index index of item to draw.
+  def draw_item(index)
+    id = data[index]
+    enabled = Data.items[id].price <= Game_Party.gold
+    rect = item_rect(index)
+    contents.fill rect, Color.new()
+    draw_item_name Data.items[id], rect.x, rect.y, enabled
+
+    contents.draw_text_2k rect.width + 4, rect.y, Data.items[id].price.to_s, enabled ? Font::ColorDefault : Font::ColorDisabled, Text::AlignRight
+  end
+
+  # Updates the help window.
+  def update_help
+    help_window.text = item_id == 0 ? ""  : Data.items[item_id].description
+  end
+
+  # Checks if the item should be enabled.
+  #
+  # @param item_id item id to check.
+  # @return true if it is enabled.
+  def check_enable(id)
+    id > 0 and
+      Data.items[id].price <= Game_Party.gold and
+      Game_Party.item_number(id) < 99
+  end
+end
+
+# Window Shop Number Class.
+# The number input window for the shop.
+class Window_ShopNumber < Window_Base
+  attr_reader :number
+
+  # Constructor.
+  #
+  # @param x window x position.
+  # @param y window y position.
+  # @param w window width.
+  # @param h window height.
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
+    @item_max = 1
+    @price = 0
+    @number = 1
+    @item_id = 0
+
+    contents = Bitmap.new iw - 16, ih - 16
+  end
+
+  # Updates the Windows contents.
+  def refresh
+    contents.clear
+
+    y = 34
+    draw_item_name Data.items[item_id], 0, y
+
+    contents.draw_text_2k 132, y, "x", Font::ColorDefault
+    contents.draw_text_2k 132 + 30, y, @number.to_s, Font::ColorDefault, Text::AlignRight
+    cursor_rect = Rect.new 132 + 14, y - 2, 20, 16
+
+    draw_currency_value(total, contents.width, y + 32)
+  end
+
+  # Updates number value according to user input.
+  def update
+    super
+
+    if active
+        int last_number = number
+      if Input.repeat?(Input::RIGHT) && number < item_max
+        number += 1
+      elsif Input.repeat?(Input::LEFT) && number > 1
+        number -= 1
+      elsif Input.repeat?(Input::UP) && number < item_max
+        number = [number + 10, item_max].min
+      elsif Input.repeat?(Input::DOWN) && number > 1
+        number = [number - 10, 1].max
+      end
+    end
+
+    if last_number != number
+      Game_System.se_play Game_System::SFX_Cursor
+      refresh
+    end
+  end
+
+  # Sets all data needed for the window.
+  #
+  # @param id item to buy.
+  # @param max item maximum quantity.
+  # @param price Price of the item.
+  # @return the currently input number.
+  def set_data(id, max, price)
+    @item_id = id
+    @item_max = max
+    @price = price
+    @number = 1
+  end
+
+  # Returns the total costs.
+  #
+  # @return total costs to buy the item.
+  def total
+    Data.items[@item_id].price * @number
+  end
+end
+
+# Window ShopParty Class.
+# Displays the party in the shop scene.
+class Window_ShopParty < Window_Base
+  # Constructor.
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
+
+    contents = Bitmap.new iw - 16, ih - 16
+
+    @cycle = 0
+    @item_id = 0
+
+    @bitmaps = Array.new(4) { Array.new(3) { Array.new(2) } }
+
+    Game_Party.actors.each { |actor|
+      sprite_id = actor.charset_index
+      bm = Cache.charset actor.charset
+      width = bm.width / 4 / 3
+      height = bm.height / 2 / 4
+      for j in 0...3
+          sx = ((sprite_id % 4) * 3 + j) * width
+          sy = ((sprite_id / 4) * 4 + 2) * height
+          Rect src(sx, sy, width, height)
+          for k in 0...2
+            bm2 = Bitmap.new width, height
+            bm2.blit 0, 0, bm, src, 255
+            if k == 0
+              bm2.tone_blit BlitCommon.new(0, 0, bm2, bm2.rect), Tone.new(0, 0, 0, 255)
+              bitmaps[i][j][k] = bm2
+            end
+          end
+      end
+    }
+
+    refresh
+  end
+
+  # Renders the current party on the window.
+  def refresh
+    contents.clear
+
+    system = Cache.system Game_System.system_name
+
+    Game_Party.actors.each { |actor|
+      phase = (@cycle / @anim_rate) % 4
+      phase = 1 if phase == 3
+      equippable = @item_id == 0 || actor.equippable?(item_id)
+      bm = bitmaps[i][phase][equippable ? 1 : 0]
+      contents.blit i * 32, 0, bm, bm.rect, 255
+
+      if equippable
+        # check if item is equipped by each member
+        is_equipped = false
+        for j in 0...5; is_equipped |= (actor.equipment(j) == item_id); end
+        if is_equipped
+          contents.blit i * 32 + 20, 24, system, Rect.new(128 + 8 * phase, 24, 8, 8), 255
+        else
+          new_item = Data.items[@item_id]
+          new_item_id = actor.equipment(new_item.type - RPG::Item::Type_weapon)
+          current_item = new_item_id != 0 ? Data.items[new_item_id] : Data.items[1]
+
+          if not current_item.nil?
+            diff_atk = new_item.atk_points1 - current_item.atk_points1
+            diff_def = new_item.def_points1 - current_item.def_points1
+            diff_spi = new_item.spi_points1 - current_item.spi_points1
+            diff_agi = new_item.agi_points1 - current_item.agi_points1
+            if diff_atk > 0 || diff_def > 0 || diff_spi > 0 || diff_agi > 0
+              contents.blit i * 32 + 20, 24, system, Rect.new(128 + 8 * phase, 0, 8, 8), 255
+            elsif diff_atk < 0 || diff_def < 0 || diff_spi < 0 || diff_agi < 0
+              contents.blit i * 32 + 20, 24, system, Rect.new(128 + 8 * phase, 16, 8, 8), 255
+            else
+              contents.blit i * 32 + 20, 24, system, Rect.new(128 + 8 * phase, 8, 8, 8), 255
+            end
+          end
+        end
+      end
+    }
+  end
+
+  # Updates the window state.
+  def update
+    @cycle += 1
+    refresh if @cycle % @anim_rate == 0
+  end
+
+  # Sets the reference item.
+  def item_id=(id)
+    if id != @item_id
+      @item_id = nitem_idid
+      refresh
+    end
+  end
+
+  # Animation rate.
+  @anim_rate = 12
+end
+
+# Window ShopSell class.
+# Displays all items of the party and allows to sell them.
+class Window_ShopSell < Window_Item
+  # Chechs if item should be enabled.
+  #
+  # @param item_id item to check.
+  def check_enable(item_id)
+    Data.items[item_id].price > 0
+  end
+end
+
+# Window ShopStatus Class.
+# Displays possessed and equipped items.
+class Window_ShopStatus < Window_Base
+  # Constructor.
+  def initialize(ix, iy, iw, ih)
+    super ix, iy, iw, ih
+    @item_id = 0
+
+    contents = Bitmap.new iw - 16, ih - 16
+
+    refresh
+  end
+
+  # Renders the current total on the window.
+  def refresh
+    contents.clear
+
+    if item_id != 0
+      contents.draw_text_2k 0, 2, Data.term.possessed_items, 1
+      contents.draw_text_2k 0, 18, Data.term.equipped_items, 1
+
+      contents.draw_text_2k 120, 2, Game_Party.item_number(item_id).to_s, Font::ColorDefault, Text::AlignRight
+      contents.draw_text_2k 120, 18, Game_Party.item_number(item_id, true).to_s, Font::ColorDefault, Text::AlignRight
+    end
+  end
+
+  # Sets the item to display.
+  #
+  # @param item_id ID of item to use.
+  def item_id=(new_item_id)
+    if new_item_id != @item_id
+      @item_id = new_item_id
+      refresh()
+    end
+  end
+end
