@@ -90,10 +90,10 @@ void Player::register_player(mrb_state* M) {
 	new(ptr) ModuleInternal(M);
 
 	mrb_mod_cv_set(M, mrb_class_get(M, "Player"), mrb_intern_lit(M, "_module_internal"), mrb_obj_value(data));
-#ifdef NDEBUG
-	mrb_gv_set(M, mrb_intern_lit(M, "$DEBUG"), mrb_false_value());
-#else
+#ifdef MRB_DEBUG
 	mrb_gv_set(M, mrb_intern_lit(M, "$DEBUG"), mrb_true_value());
+#else
+	mrb_gv_set(M, mrb_intern_lit(M, "$DEBUG"), mrb_false_value());
 #endif
 	make_current(M);
 }
