@@ -25,10 +25,6 @@
 #include <sstream>
 #include <exception>
 
-#ifdef GEKKO
-	#include <unistd.h>
-#endif
-
 #include "audio.h"
 #include "filefinder.h"
 #include "graphics.h"
@@ -162,12 +158,7 @@ void Output_::HandleScreenOutput(std::string const& msg, bool exit) {
 	} else {
 		// Fallback to Console if the display is not ready yet
 		std::cout << endl << wait_message;
-#ifdef GEKKO
-		// Wii stdin is non-blocking
-		sleep(5);
-#else
 		std::cin.get();
-#endif
 	}
 }
 

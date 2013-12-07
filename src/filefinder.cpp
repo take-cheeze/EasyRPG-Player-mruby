@@ -310,12 +310,6 @@ void FileFinder_::UpdateRtpPaths() {
 
 	rtp_path = Registry::ReadStrValue(HKEY_LOCAL_MACHINE, "Software\\" + company + "\\RPG" + version_str, "RuntimePackagePath");
 	if(! rtp_path.empty()) { add_rtp_path(rtp_path); }
-#ifdef GEKKO
-	add_rtp_path("sd:/data/rtp/" + version_str + "/");
-	add_rtp_path("usb:/data/rtp/" + version_str + "/");
-#else
-	add_rtp_path("/data/rtp/" + version_str + "/");
-#endif
 
 	if (Player::is_rpg2k() && getenv("RPG2K_RTP_PATH"))
 		add_rtp_path(getenv("RPG2K_RTP_PATH"));
