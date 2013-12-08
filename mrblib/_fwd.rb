@@ -42,8 +42,3 @@ class Hash
     BasicObject.method_missing(sym, *args)
   end
 end
-
-SCREEN_TARGET_HEIGHT = 240
-SCREEN_TARGET_WIDTH = 320
-
-DEFAULT_FPS = 60
