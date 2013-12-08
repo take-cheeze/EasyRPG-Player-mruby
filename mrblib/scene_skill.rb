@@ -58,7 +58,7 @@ class Scene_Skill < Scene
           Game_Map.needs_refresh = true
         elsif Data.skills[skill_id].type == RPG::Skill::Type_normal
           Player.push Scene_ActorTarget.new(skill_id, @actor_index, @skill_window.index)
-          skill_index = @skill_window.index
+          @skill_index = @skill_window.index
         elsif Data.skills[skill_id].type == RPG::Skill::Type_teleport
           # TODO: Displays the teleport target scene/window
         elsif Data.skills[skill_id].type == RPG::Skill::Type_escape

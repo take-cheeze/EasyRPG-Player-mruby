@@ -57,10 +57,10 @@ class Game_Interpreter
 
   def update
     # 10000 based on: https://gist.github.com/4406621
-    for loop_count in 0...10000
+    for _ in 0...10000
       # If map is different than event startup time
       # set event_id to 0
-      event_id = 0 if Game_Map::map_id != @map_id
+      @event_id = 0 if Game_Map::map_id != @map_id
 
       # If there's any active child interpreter, update it
       if @child_interpreter

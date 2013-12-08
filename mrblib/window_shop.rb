@@ -78,15 +78,15 @@ class Window_Shop < Window_Base
       idx += 1
 
       contents.draw_text_2k 12, 4 + idx * 16, buy_msg, Font::ColorDefault
-      buy_index = idx
+      @buy_index = idx
       idx += 1
 
       contents.draw_text_2k 12, 4 + idx * 16, sell_msg, Font::ColorDefault
-      sell_index = idx
+      @sell_index = idx
       idx += 1
 
       contents.draw_text_2k 12, 4 + idx * 16, leave_msg, Font::ColorDefault
-      leave_index = idx
+      @leave_index = idx
       idx += 1
     when Scene_Shop::Buy
       contents.draw_text_2k 2, 2, buy_select, Font::ColorDefault
@@ -126,7 +126,7 @@ class Window_Shop < Window_Base
         end
         if Input.trigger? Input::DECISION
           Game_System.se_play Game_System::SFX_Decision
-          if index == buy_index
+          if index == @buy_index
             choice = Scene_Shop::Buy
           elsif index == sell_index
             choice = Scene_Shop::Sell
@@ -155,7 +155,7 @@ class Window_Shop < Window_Base
       rect = Rect.new
     end
 
-    cursor_rect = rect
+    self.cursor_rect = rect
   end
 end
 
@@ -243,7 +243,7 @@ class Window_ShopNumber < Window_Base
 
     contents.draw_text_2k 132, y, "x", Font::ColorDefault
     contents.draw_text_2k 132 + 30, y, @number.to_s, Font::ColorDefault, Text::AlignRight
-    cursor_rect = Rect.new 132 + 14, y - 2, 20, 16
+    self.cursor_rect = Rect.new 132 + 14, y - 2, 20, 16
 
     draw_currency_value(total, contents.width, y + 32)
   end

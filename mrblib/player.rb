@@ -117,7 +117,7 @@ class << Player
       inst.suspend
       inst.transition_out
 
-      for i in 0...@old_instances.length; Graphics.pop; end
+      @old_instances.each { |_| Graphics.pop }
       @old_instances.clear
     end
   end

@@ -489,22 +489,20 @@ class Scene_Battle < Scene
     self.state = State_EnemyAction
   end
 
+  def basic_attack
+    Game_Battle.target_random_ally
+    ally = Game_Battle.target_ally
+    actions.push Battle::WaitAction.new(20)
+    actions.push Battle::AnimationAction.new(ally.sprite, Data.animations[0])
+    actions.push Battle::CommandAction.new(ally) { |v| Game_Battle.enemy_attack v }
+  end
+
   def enemy_action_basic
     case @enemy_action.basic
     when RPG::EnemyAction::Basic_attack
-      Game_Battle.target_random_ally
-      ally = Game_Battle.target_ally
-      actions.push Battle::WaitAction.new(20)
-      actions.push Battle::AnimationAction.new(ally.sprite, Data.animations[0])
-      actions.push Battle::CommandAction.new(ally) { |v| Game_Battle.enemy_attack v }
+      basic_attack
     when RPG::EnemyAction::Basic_dual_attack
-      (0...2).each { |v|
-        Game_Battle.target_random_ally
-        ally = Game_Battle.target_ally
-        actions.push Battle::WaitAction.new(20)
-        actions.push Battle::AnimationAction.new(ally.sprite, Data.animations[0])
-        actions.push Battle::CommandAction.new(ally) { |v| Game_Battle.enemy_attack }
-      }
+      (0...2).each { |v| basic_attack }
     when RPG::EnemyAction::Basic_defense
       actions.push Battle::WaitAction.new(20)
       actions.push Battle::CommandAction.new { Game_Battle.enemy_defend }

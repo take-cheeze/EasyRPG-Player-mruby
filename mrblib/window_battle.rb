@@ -360,7 +360,7 @@ class Window_BattleStatus < Window_Base
         for i in (num_actors - 1)...0
           new_index = (@index + i) % num_actors
           if Game_Battle.ally(new_index).ready?
-            index = new_index
+            @index = new_index
             break
           end
         end
@@ -432,7 +432,7 @@ class Window_BattleStatus < Window_Base
 
     ally = Game_Battle.ally idx
     full = ally.ready?
-    gauge_w = ally.gauge * 25 / Game_Battle.gauge_full
+    gauge_w = ally.gauge * 25 / Game_Battle::GaugeFull
     speed = 2
     gauge_y = 32 + speed * 16
 

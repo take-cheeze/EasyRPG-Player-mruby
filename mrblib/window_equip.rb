@@ -62,11 +62,11 @@ end
 # Displays the available equipment of a specific type.
 class Window_EquipItem < Window_Item
   # Enum containing the different equipment types.
-  weapon = 0
-  shield = 1
-  armor = 2
-  helmet = 3
-  other = 4
+  WEAPON = 0
+  SHIELD = 1
+  ARMOR = 2
+  HELMET = 3
+  OTHER = 4
 
   # Constructor.
   #
@@ -77,9 +77,7 @@ class Window_EquipItem < Window_Item
 
     @actor_id = actor_id
     @equip_type = equip_type
-    @equip_type = other if equip_type > 4 or equip_type < 0
-
-    @equip_type = weapon if @equip_type == shield and Game_Actors.actor(@actor_id).two_swords_style?
+    @equip_type = WEAPON if @equip_type == SHIELD and Game_Actors.actor(@actor_id).two_swords_style?
   end
 
   # Checks if the item should be in the list based on
@@ -93,11 +91,11 @@ class Window_EquipItem < Window_Item
     result = false
 
     case (equip_type)
-    when Window_EquipItem::weapon; result = (Data.items[item_id].type == RPG::Item::Type_weapon)
-    when Window_EquipItem::shield; result = (Data.items[item_id].type == RPG::Item::Type_shield)
-    when Window_EquipItem::armor; result = (Data.items[item_id].type == RPG::Item::Type_armor)
-    when Window_EquipItem::helmet; result = (Data.items[item_id].type == RPG::Item::Type_helmet)
-    when Window_EquipItem::other; result = (Data.items[item_id].type == RPG::Item::Type_accessory)
+    when Window_EquipItem::WEAPON; result = (Data.items[item_id].type == RPG::Item::Type_weapon)
+    when Window_EquipItem::SHIELD; result = (Data.items[item_id].type == RPG::Item::Type_shield)
+    when Window_EquipItem::ARMOR; result = (Data.items[item_id].type == RPG::Item::Type_armor)
+    when Window_EquipItem::HELMET; result = (Data.items[item_id].type == RPG::Item::Type_helmet)
+    when Window_EquipItem::OTHER; result = (Data.items[item_id].type == RPG::Item::Type_accessory)
     else; return false
     end
 

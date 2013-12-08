@@ -20,7 +20,7 @@ class Picture
     transition 0
   end
 
-  waver_speed = 10
+  WaverSpeed = 10
 
   def show(name)
     @data.name = name
@@ -111,8 +111,7 @@ class Picture
     return if @sprite.nil?
     return if @data.name.empty?
 
-    @sprite.x = @data.current_x
-    @sprite,y = @data.current_y
+    @sprite.x, @sprite.y = @data.current_x, @data.current_y
     @sprite.z = 1000 + data.index
 
     @sprite.zoom_x = @data.current_magnify / 100.0

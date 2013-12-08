@@ -239,13 +239,13 @@ class << Game_Battle
     (has_active_ally ? active_ally : ally(0)).game_actor.id
   end
 
-  def turns; @turn_fragments / @turn_length; end
+  def turns; @turn_fragments / TurnLength; end
 
   def choose_enemy
     @target_enemy = 0 if @target_enemy.nil?
     return if target_enemy.game_enemy.exists?
 
-    for i in 1...@enemies.length
+    for _ in 1...@enemies.length
       target_next_enemy
       break if target_enemy.game_enemy.exists?
     end
@@ -477,8 +477,8 @@ class << Game_Battle
     item.state_set.each_with_index { |v,i| actor.remove_state i + 1 if v }
   end
 
-  gauge_full = Battle::Battler::gauge_full
-  turn_length = 333 # frames
+  GaugeFull = Battle::Battler.gauge_full
+  TurnLength = 333 # frames
 
   def init(s)
     @scene = s

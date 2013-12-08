@@ -29,7 +29,7 @@ class Game_Interpreter_Map < Game_Interpreter
   def decode_string(idx)
     len, idx = decode_int(idx)
     ret = ''
-    for i in 0...len
+    for _ in 0...len
       ret << @list[@index][idx]
       idx += 1
     end
@@ -39,7 +39,7 @@ class Game_Interpreter_Map < Game_Interpreter
   def decode_move(idx)
     com = @list[@index]
     ret = {}
-    ret[:id] = idx
+    ret[:id] = com
     idx += 1
 
     case ret[:id]
@@ -87,13 +87,13 @@ class Game_Interpreter_Map < Game_Interpreter
 
   def command_change_exp(com)
     v = operate_value com[2], com[3], com[4]
-    actors(com[0], com[1]).each { |v| v.change_exp actor.exp + v, com[5] != 0 }
+    actors(com[0], com[1]).each { |actor| actor.change_exp actor.exp + v, com[5] != 0 }
     true
   end
 
   def command_change_parameters(com)
     v = operate_value com[2], com[4], com[5]
-    actors(com[0], com[1]).each { |v|
+    actors(com[0], com[1]).each { |actor|
       case com[3]
       when 0; actor.base_max_hp = actor.base_max_hp + v
       when 1; actor.base_max_sp = actor.base_max_sp + v

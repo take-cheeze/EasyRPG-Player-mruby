@@ -29,7 +29,7 @@ class Window_Keyboard < Window_Base
     @play_cursor = false
     @row, @col = 0, 0
     @row_spacing = 16
-    @col_spacing = (contents.width - 2 * border_x) / col_max
+    @col_spacing = (contents.width - 2 * BORDER_X) / COL_MAX
 
     self.z = 9999
 
@@ -48,22 +48,22 @@ class Window_Keyboard < Window_Base
     if @active
       if Input.repeat? Input::DOWN
         @play_cursor = true
-        @row = (@row + 1) % @row_max
+        @row = (@row + 1) % @ROW_MAX
         @col -= 1 if(@col > 0 and selected.nil? and not items[@mode][@row][@col - 1].nil?)
       end
 
       if Input.repeat? Input::UP
         @play_cursor = true
-        @row = (@row + @row_max - 1) % @row_max
+        @row = (@row + @ROW_MAX - 1) % @ROW_MAX
         @col -= 1 if(@col > 0 and selected.nil? and not items[@mode][@row][@col - 1].nil?)
       end
 
       if Input.repeat? Input::RIGHT
         @play_cursor = true
         @col += 1
-        if (@col >= @col_max)
+        if (@col >= @COL_MAX)
           @col = 0
-          @row = (@row + 1) % @row_max if mode == Letter
+          @row = (@row + 1) % @ROW_MAX if mode == Letter
         end
       end
 
@@ -71,8 +71,8 @@ class Window_Keyboard < Window_Base
         @play_cursor = true
         @col -= 1
         if (@col < 0)
-          @col = @col_max - 1
-          row = (row + row_max - 1) % row_max if @mode == Letter
+          @col = @COL_MAX - 1
+          row = (row + ROW_MAX - 1) % ROW_MAX if @mode == Letter
         end
       end
     end
@@ -91,8 +91,8 @@ class Window_Keyboard < Window_Base
 
   def refresh
     contents.clear
-    for j in 0...@row_max
-      for i in 0...@col_max
+    for j in 0...@ROW_MAX
+      for i in 0...@COL_MAX
         r = item_rect j, i
         contents.draw_text_2k r.x + 4, r.y, items[@mode][j][i], Font::ColorDefault
       end
@@ -106,7 +106,7 @@ class Window_Keyboard < Window_Base
   end
 
   def item_rect(r, c)
-    Rect.new(c * @col_spacing + border_x, r * @row_spacing + border_y,
+    Rect.new(c * @col_spacing + BORDER_X, r * @row_spacing + BORDER_Y,
              contents.text_size(items[@mode][r][c]).width + 8, @row_spacing)
   end
 
@@ -117,11 +117,11 @@ class Window_Keyboard < Window_Base
   end
   def selected; items[@mode][@row][@col]; end
 
-  border_x = 8
-  border_y = 4
-  row_max = 9
-  col_max = 10
-  min_width = 2
+  BORDER_X = 8
+  BORDER_Y = 4
+  ROW_MAX = 9
+  COL_MAX = 10
+  MIN_WIDTH = 2
 
   TO_SYMBOL = 'Symbol'
   TO_LETTER = 'Letter'
@@ -135,12 +135,12 @@ class Window_Keyboard < Window_Base
   # hiragana -> katakana -> letter -> symbol -> hiragana -> ...
   items = [
            # Hiragana
-           Array.new(row_max) { Array.new col_max },
+           Array.new(ROW_MAX) { Array.new COL_MAX },
 
            [ # Katakana
-            Array.new(col_max),Array.new(col_max),Array.new(col_max),
-            Array.new(col_max),Array.new(col_max),Array.new(col_max),
-            Array.new(col_max),Array.new(col_max),
+            Array.new(COL_MAX),Array.new(COL_MAX),Array.new(COL_MAX),
+            Array.new(COL_MAX),Array.new(COL_MAX),Array.new(COL_MAX),
+            Array.new(COL_MAX),Array.new(COL_MAX),
             [nil,nil,nil,nil,nil,nil,Window_Keyboard::TO_LETTER,],
            ],
 
@@ -163,8 +163,8 @@ class Window_Keyboard < Window_Base
             ['$P','$Q','$R','$S','$T','$p','$q','$r','$s','$t'],
             ['$U','$V','$W','$X','$Y','$u','$v','$w','$x','$y'],
             ['$Z',nil  ,nil  ,nil  ,nil  ,'$z'],
-            Array.new(col_max),
-            Array.new(col_max),
+            Array.new(COL_MAX),
+            Array.new(COL_MAX),
             [nil,nil,nil,nil,nil,nil,nil,nil,Window_Keyboard::DONE],
            ]
           ]

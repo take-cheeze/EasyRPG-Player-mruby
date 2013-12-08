@@ -256,7 +256,7 @@ class Game_Player < Game_Character
     # TODO:
     # else
     #   ForceMoveForward()
-    pwalking_bgm = Game_System.current_bgmm
+    @walking_bgm = Game_System.current_bgmm
     Game_Map.vehicle(type).get_on
     true
   end
@@ -276,7 +276,7 @@ class Game_Player < Game_Character
     else
       # TODO
       # ForceMoveForward()
-      popacity = 255
+      @opacity = 255
     end
 
     @vehicle_getting_off = true

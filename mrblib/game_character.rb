@@ -109,7 +109,7 @@ class Game_Character
     @y = y % Game_Map.height
     @real_x = x * 128
     @real_y = y * 128
-    prelock_direction = -1
+    @prelock_direction = nil
   end
 
   # Updates character state and actions.

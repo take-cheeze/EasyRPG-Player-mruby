@@ -14,7 +14,7 @@ class << Game_Switches
 
     if prev_len < idx
       $game_data.system.switch_count = idx
-      d.map! { |v| v.nil? ? 0 : v } 
+      d.map! { |v| v.nil? ? 0 : v }
     end
 
     val
