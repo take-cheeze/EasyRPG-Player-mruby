@@ -26,7 +26,7 @@ Source code generated documentation is available at:
 Requirements
 ------------
 
-* Toola
+* Tools
   * pkg-config
     * used to find the following libraries
   * clang
