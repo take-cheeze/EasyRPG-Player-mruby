@@ -26,14 +26,32 @@ Source code generated documentation is available at:
 Requirements
 ------------
 
-EasyRPG Readers library. https://github.com/EasyRPG/Readers
-SDL for screen backend support.
-SDL_mixer for audio mixing.
-Freetype for custom font support.
-Pixman for low level pixel manipulation.
-libpng for PNG image support.
-libjpeg (with jpeg_mem_src) for JPEG image support.
-zlib for XYZ image support.
+* Toola
+  * pkg-config
+    * used to find the following libraries
+  * clang
+    * or C++ compiler that can use full feature of c++11
+  * ruby and following gems
+    * rake
+    * devil
+    * libarchive
+    * iconv
+* Libraries
+  * SDL2
+  * SDL2_mixer
+  * pixman
+  * freetype2
+  * libpng
+  * zlib
+
+
+Optional Requirements
+---------------------
+
+* wine
+  * for finding RTP installed to wine
+* Doxygen
+  * for C++ API document generation
 
 
 Daily builds
@@ -56,30 +74,9 @@ Project files are available in Git repositories.
 Building
 --------
 
-* Autotools method:
-
-  Requirements:
-  autoconf >= 2.68, automake >= 1.11, pkg-config
-
-  Compile with:
-  ./autogen.sh && ./configure CPPFLAGS=-DUNIX --with-readers=/ABSOLUTE/PATH/TO/Readers/build && make
-
-
-* Cmake method:
-
-  Requirements:
-  cmake >= 2.8
-
-  Compile with:
-  cmake PATH/TO/Player/builds/cmake && make
-  If you want to build it with debug mode pass "-D CMAKE_BUILD_TYPE=Debug" to cmake.
-
-
-* Visual Studio method:
-
-  Read detailed instructions at:
-  
-  https://easy-rpg.org/wiki/development/compiling/player/windows/visual-studio
+Use *build.sh* like *rake*.
+It will pipe options to mruby's *Rakefile* with EasyRPG configuration.
+Basic target is *all*, *test*, *clean*.
 
 
 License
