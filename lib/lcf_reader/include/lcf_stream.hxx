@@ -21,6 +21,7 @@ namespace LCF {
 
 	size_t writing_string_size(std::string const& s);
 
+	void set_codepage(unsigned cp);
 }
 
 #endif

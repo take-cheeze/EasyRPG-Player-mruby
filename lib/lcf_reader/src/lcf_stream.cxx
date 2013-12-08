@@ -94,16 +94,25 @@ iconv_wrap::~iconv_wrap() {
 	BOOST_VERIFY(iconv_close(handle_) == 0);
 }
 
-::iconv_wrap convert_to_sys("CP932", "UTF-8");
+char const LCF_ENCODING[] = "UTF-8";
+
+std::unique_ptr<::iconv_wrap> convert_to_sys(new iconv_wrap("CP932", LCF_ENCODING));
+std::unique_ptr<::iconv_wrap> convert_to_lcf(new iconv_wrap(LCF_ENCODING, "CP932"));
 
 }
 
-std::string LCF::read_string(std::istream& is, size_t const s) {
-	static ::iconv_wrap convert("UTF-8", "CP932");
+void LCF::set_codepage(unsigned cp) {
+	std::ostringstream oss("CP");
+	oss << cp;
+	std::string const cp_name = oss.str();
+	convert_to_sys.reset(new iconv_wrap(cp_name.c_str(), LCF_ENCODING));
+	convert_to_lcf.reset(new iconv_wrap(LCF_ENCODING, cp_name.c_str()));
+}
 
+std::string LCF::read_string(std::istream& is, size_t const s) {
 	vector<char> ret(s);
 	is.read(ret.data(), ret.size());
-	return convert(std::string(ret.begin(), ret.end()));
+	return (*convert_to_lcf)(std::string(ret.begin(), ret.end()));
 }
 
 std::string LCF::read_string(std::istream& is) {
@@ -115,16 +124,16 @@ std::string LCF::convert(std::string const& data, char const* to, char const* fr
 }
 
 void LCF::write_string(std::ostream& os, std::string const& str) {
-	std::string const sjis = convert_to_sys(str);
+	std::string const sjis = (*convert_to_sys)(str);
 	ber(os, sjis.size());
 	os.write(sjis.c_str(), sjis.size());
 }
 
 void LCF::write_string_without_size(std::ostream& os, std::string const& str) {
-	std::string const sjis = convert_to_sys(str);
+	std::string const sjis = (*convert_to_sys)(str);
 	os.write(sjis.c_str(), sjis.size());
 }
 
 size_t LCF::writing_string_size(std::string const& str) {
-	return convert_to_sys(str).size();
+	return (*convert_to_sys)(str).size();
 }
