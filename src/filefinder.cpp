@@ -161,9 +161,9 @@ std::unique_ptr<FileFinder_::ProjectTree> FileFinder_::CreateProjectTree(std::st
 	tree->project_path = p;
 
 	Directory mem = GetDirectoryMembers(tree->project_path, ALL);
-	for(string_map::const_iterator i = mem.members.begin(); i != mem.members.end(); ++i) {
+	for(string_map::iterator i = mem.members.begin(); i != mem.members.end(); ++i) {
 		(IsDirectory(MakePath(tree->project_path, i->second))?
-		 tree->directories : tree->files)[i->first] = i->second;
+		 tree->directories : tree->files)[i->first].swap(i->second);
 	}
 
 	for(string_map::const_iterator i = tree->directories.begin(); i != tree->directories.end(); ++i) {
