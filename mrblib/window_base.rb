@@ -40,23 +40,23 @@ class Window_Base < Window
     self.windowskin = Cache.system @windowskin_name
   end
 
-  def draw_face(face_name, face_index, cx, cy, flip)
+  def draw_face(face_name, face_index, cx, cy, flip = false)
     faceset = Cache.faceset face_name
 
     r = Rect.new((face_index % 4) * 48, face_index / 4 * 48, 48, 48)
     if flip; contents.flip_blit BlitCommon.new(cx, cy, faceset, r), true, false
-    else; contents.blit cx, cy, faceset, r, 255
+    else; contents.blt cx, cy, faceset, r, 255
     end
   end
 
-  def draw_actor_face(actor, cx, cy); draw_face actor.face_name, actor.face_index, cx, cy; end
+  def draw_actor_face(actor, cx, cy); draw_face actor.faceset, actor.faceset_index, cx, cy; end
   def draw_actor_name(actor, cx, cy); contents.draw_text_2k cx, cy, actor.name, Font::ColorDefault; end
   def draw_actor_title(actor, cx, cy); contents.draw_text_2k cx, cy, actor.title, Font::ColorDefault; end
   def draw_actor_class(actor, cx, cy); contents.draw_text_2k cx, cy, actor.class_name, Font::ColorDefault; end
 
   def draw_actor_level(actor, cx, cy)
     # Draw LV-String
-    contents.draw_text_2k cx, cy, Data.term.lvl_short, 1
+    contents.draw_text_2k cx, cy, Data.term.level_short, 1
 
     # Draw Level of the Actor
     contents.draw_text_2k cx + 24, cy, actor.level.to_s, Font::ColorDefault, Text::AlignRight
@@ -80,7 +80,7 @@ class Window_Base < Window
     contents.draw_text_2k cx + 12, cy, str, Font::ColorDefault, Text::AlignLeft
   end
 
-  def draw_actor_hp(actor, cx, cy, draw_max)
+  def draw_actor_hp(actor, cx, cy, draw_max = true)
     # Draw HP-String
     contents.draw_text_2k cx, cy, Data.term.hp_short, 1
 
@@ -104,7 +104,7 @@ class Window_Base < Window
     contents.draw_text_2k cx + 18, cy, actor.max_hp.to_s, Font::ColorDefault, Text::AlignRight
   end
 
-  def draw_actor_sp(actor, cx, cy, draw_max)
+  def draw_actor_sp(actor, cx, cy, draw_max = true)
     # Draw SP-String
     contents.draw_text_2k cx, cy, Data.term.sp_short, 1
 
@@ -172,11 +172,11 @@ class Window_Base < Window
     contents.draw_text_2k cx, cy, name, 1
   end
 
-  def draw_item_name(item, cx, cy, enabled)
+  def draw_item_name(item, cx, cy, enabled = true)
     contents.draw_text_2k cx, cy, item.name, enabled ? Font::ColorDefault : Font::ColorDisabled
   end
 
-  def draw_skill_name(skill, cx, cy, enabled)
+  def draw_skill_name(skill, cx, cy, enabled = true)
     contents.draw_text_2k cx, cy, skill.name, enabled ? Font::ColorDefault : Font::ColorDisabled
   end
 

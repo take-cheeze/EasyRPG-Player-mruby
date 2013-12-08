@@ -22,7 +22,7 @@ class Game_Actor < Game_Battler
     @actor = Data.actor[@actor_id]
     $game_data.actor[@actor_id] ||= {
       :changed_class => false,
-      :skill => [],
+      :skill => [], :states => [],
       :hp_mod => 0, :sp_mod => 0, :defense_mod => 0, :spirit_mod => 0,
       :agility_mod => 0, :attack_mod => 0,
       :level => @actor.start_level }
@@ -173,7 +173,7 @@ class Game_Actor < Game_Battler
   # Gets actor name.
   #
   # @return name.
-  def name; data.name end
+  def name; data.name || @actor.name end
 
   # Gets actor character graphic filename.
   #
@@ -188,17 +188,17 @@ class Game_Actor < Game_Battler
   # Gets actor face graphic filename.
   #
   # @return face graphic filename.
-  def faceset; data.faceset end
+  def faceset; data.faceset || @actor.faceset end
 
   # Gets actor face graphic index.
   #
   # @return face graphic index.
-  def faceset_index; data.faceset_index end
+  def faceset_index; data.faceset_index || @actor.faceset_index end
 
   # Gets actor title.
   #
   # @return title.
-  def title; data.title end
+  def title; data.title || @actor.title end
 
   # Gets actor current level.
   #

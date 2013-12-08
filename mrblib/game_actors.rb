@@ -19,7 +19,7 @@ class << Game_Actors
   # Initializes Game Actors.
   def load
     $game_data.actor ||= []
-    Data.actor.each { |k,v| actor k }
+    @objects = []
   end
 
   def data; $game_data.actor; end
@@ -27,6 +27,7 @@ class << Game_Actors
   # Disposes Game Actors.
   def clear
     data.clear
+    @objects.clear
   end
 
   # Gets an actor by its ID.
@@ -38,7 +39,7 @@ class << Game_Actors
       Output.warning("Actor ID %d is invalid" % id)
       nil
     else
-      data[id] ||= Game_Actor.new id
+      @objects[id] ||= Game_Actor.new id
     end
   end
 

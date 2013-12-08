@@ -19,7 +19,7 @@ class Sprite_Character < Sprite
   #
   # @param c game character to display
   def initialize(c)
-    super()
+    super
 
     @tile_id = 0
     @character_name = nil
@@ -46,7 +46,7 @@ class Sprite_Character < Sprite
           self.bitmap = nil
         else
           self.bitmap = Cache.charset @character_name
-          @chara_width, @chara_height = bitmap.width / 4 /3, bitmap.height / 2 / 4
+          @chara_width, @chara_height = bitmap.width / 4 / 3, bitmap.height / 2 / 4
           self.ox, self.oy = @chara_width / 2, @chara_height
           self.sprite_rect = Rect.new((@character_index % 4) * @chara_width * 3,
                                       (@character_index / 4) * @chara_height * 4,
@@ -70,7 +70,7 @@ class Sprite_Character < Sprite
 
     self.opacity = @character.opacity if @character.visible
 
-    self.x, self.y = @character.screen_x, @character_screen_y
+    self.x, self.y = @character.screen_x, @character.screen_y
     self.z = @character.screen_z @chara_height
 
     # self.blend_type = @character.blend_type
