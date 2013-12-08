@@ -1,6 +1,7 @@
 #include <iconv.h>
 #include <istream>
 #include <memory>
+#include <sstream>
 
 #include <boost/assert.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
