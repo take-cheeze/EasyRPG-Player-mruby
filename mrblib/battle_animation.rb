@@ -38,7 +38,7 @@ class BattleAnimation < Sprite
       graphic = Cache.Battle2 name
     else
       Output.warning("Couldn't find animation: %s" % name)
-      screen = nil
+      self.visible = false
       return
     end
 

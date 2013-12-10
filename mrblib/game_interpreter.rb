@@ -263,7 +263,7 @@ class Game_Interpreter
       next if @list[i].indent > max_indent or
         (@list[i].code != code && @list[i].code != code2)
 
-      index = i
+      @index = i
       return true
     end
 

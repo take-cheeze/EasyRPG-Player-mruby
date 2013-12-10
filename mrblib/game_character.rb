@@ -288,6 +288,7 @@ class Game_Character
       when RPG::MoveCommand::Code::PlaySoundEffect # String: File, Parameters: Volume, Tempo, Balance
         file = move_command_string
         vol, pitch, balance = next_move_command, next_move_command, next_move_command
+        # TODO: balance
         Audio.se_play file, vol, pitch if (file != "(OFF)")
       when RPG::MoveCommand::Code::WalkEverywhere_on; @through = true
       when RPG::MoveCommand::Code::WalkEverywhere_off; @through = false
