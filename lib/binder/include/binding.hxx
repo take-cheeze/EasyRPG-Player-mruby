@@ -17,11 +17,6 @@
 #include <cassert>
 #include <memory>
 
-extern "C" {
-	void mrb_EasyRPG_Player_gem_init(mrb_state* M);
-	void mrb_EasyRPG_Player_gem_final(mrb_state* M);
-}
-
 class Bitmap;
 class Drawable;
 
