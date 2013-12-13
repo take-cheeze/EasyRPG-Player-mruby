@@ -381,6 +381,6 @@ std::string Registry::ReadStrValue(
 {
 	if(not FileFinder().Exists(file)) { return std::string(); }
 
-	std::string const ret = get_value_with_type<std::string>(file, key, var, true);
+	std::string const ret = get_value_with_type<std::string>(file, key, var, false);
 	return is_wine_path(ret)? from_wine_path(ret) : ret;
 }
