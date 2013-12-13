@@ -41,6 +41,7 @@ void register_tilemap(mrb_state* M);
 void register_tone(mrb_state* M);
 void register_utils(mrb_state* M);
 void register_window(mrb_state* M);
+void register_registry(mrb_state* M);
 
 template<class T>
 struct user_defined_disposable : public boost::mpl::false_ {};

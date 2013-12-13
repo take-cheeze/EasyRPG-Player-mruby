@@ -43,7 +43,7 @@ mrb_value exists(mrb_state* M, mrb_value) {
 }
 
 mrb_value make_path(mrb_state* M, mrb_value) {
-	char* dir, name; int dir_len, name_len;
+	char* dir; char* name; int dir_len, name_len;
 	mrb_get_args(M, "ss", &dir, &dir_len, &name, &name_len);
 	return to_mrb(M, FileFinder(M).MakePath(std::string(dir, dir_len),
 											   std::string(name, name_len)));
@@ -69,9 +69,10 @@ string_map hash_to_map(mrb_state* M, mrb_value h) {
 mrb_value is_rpg2k_project(mrb_state* M, mrb_value) {
 	mrb_value v;
 	mrb_get_args(M, "o", &v);
-	return mrb_bool_value(mrb_hash_p(v)
-						  ? FileFinder(M).IsRPG2kProject(hash_to_map(M, v))
-						  : FileFinder(M).IsRPG2kProject(get<ProjectTree>(M, v)));
+	return mrb_bool_value(
+      mrb_hash_p(v)? FileFinder(M).IsRPG2kProject(hash_to_map(M, v)):
+      mrb_string_p(v)? FileFinder(M).IsRPG2kProject(EasyRPG::to_cxx_str(M, v)):
+      FileFinder(M).IsRPG2kProject(get<ProjectTree>(M, v)));
 }
 
 mrb_value get_project_path(mrb_state* M, mrb_value) {
@@ -127,6 +128,13 @@ mrb_value fullpath(mrb_state* M, mrb_value) {
 	return to_mrb(M, FileFinder(M).fullpath(std::string(str, str_len)));
 }
 
+mrb_value directory_members(mrb_state* M, mrb_value) {
+  char* dir; int dir_len; mrb_int opt;
+  mrb_get_args(M, "si", &dir, &dir_len, &opt);
+  return map_to_hash(M, FileFinder(M).GetDirectoryMembers(
+      std::string(dir, dir_len), FileFinder_::Mode(opt)).members);
+}
+
 mrb_value project_tree(mrb_state* M, mrb_value) {
 	return clone(M, FileFinder(M).GetProjectTree());
 }
@@ -171,6 +179,7 @@ void EasyRPG::register_filefinder(mrb_state* M) {
 		{ "create_project_tree", &create_project_tree, MRB_ARGS_REQ(1) },
 		{ "rpg2k_project?", &is_rpg2k_project, MRB_ARGS_REQ(1) },
 		{ "fullpath", &fullpath, MRB_ARGS_REQ(1) },
+    { "directory_members", &directory_members, MRB_ARGS_REQ(2) },
 		property_methods(project_path),
 		method_info_end };
 	RClass* const mod = define_module(M, "FileFinder", methods);

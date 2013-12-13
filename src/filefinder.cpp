@@ -31,6 +31,9 @@
 
 #include <boost/format.hpp>
 
+#include <mruby.h>
+#include <mruby/variable.h>
+
 #include "utils.h"
 #include "filefinder.h"
 #include "output.h"
@@ -275,12 +278,16 @@ FileFinder_::ProjectTree const& FileFinder_::GetProjectTree() {
 	return tree_;
 }
 
-FileFinder_::FileFinder_()
-		: project_path(
-			  getenv("RPG_TEST_GAME_PATH")? getenv("RPG_TEST_GAME_PATH"):
-			  getenv("RPG_GAME_PATH")? getenv("RPG_GAME_PATH"):
-			  ".")
- {
+FileFinder_::FileFinder_() {
+  if(getenv("RPG_TEST_GAME_PATH")) {
+    project_path = getenv("RPG_TEST_GAME_PATH");
+  }
+  if(not Exists(project_path) and getenv("RPG_GAME_PATH")) {
+    project_path = getenv("RPG_GAME_PATH");
+  }
+  if(not Exists(project_path)) {
+    project_path = ".";
+  }
 	GetProjectTree(); // empty call
 }
 
@@ -364,6 +371,13 @@ bool FileFinder_::IsRPG2kProject(ProjectTree const& dir) {
 bool FileFinder_::IsRPG2kProject(string_map const& dir) {
 	return(dir.find(Utils::LowerCase(DATABASE_NAME)) != dir.end() &&
 		   dir.find(Utils::LowerCase(TREEMAP_NAME)) != dir.end());
+}
+
+bool FileFinder_::IsRPG2kProject(std::string const& dir) {
+  if(not IsDirectory(dir)) { return false; }
+
+  Directory dir_obj = GetDirectoryMembers(dir, FILES);
+  return IsRPG2kProject(dir_obj.members);
 }
 
 std::string FileFinder_::FindMusic(const std::string& name) {

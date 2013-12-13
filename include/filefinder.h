@@ -196,6 +196,7 @@ struct FileFinder_ : boost::noncopyable {
 	std::unique_ptr<ProjectTree> CreateProjectTree(std::string const& p);
 	bool IsRPG2kProject(ProjectTree const& dir);
 	bool IsRPG2kProject(string_map const& dir);
+  bool IsRPG2kProject(std::string const& path);
 
 	/*
 	 * extract relative path to absolute path

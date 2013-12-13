@@ -68,6 +68,7 @@ extern "C" void mrb_EasyRPG_Player_gem_init(mrb_state* M) {
 	EasyRPG::register_tone(M);
 	EasyRPG::register_utils(M);
 	EasyRPG::register_window(M);
+  EasyRPG::register_registry(M);
 
 	mrb_define_method(M, M->array_class, "index", &array_index, MRB_ARGS_OPT(1) | MRB_ARGS_BLOCK());
 	mrb_define_method(M, M->array_class, "rindex", &array_rindex, MRB_ARGS_OPT(1) | MRB_ARGS_BLOCK());

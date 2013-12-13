@@ -98,11 +98,12 @@ class << Player
       when ScenePushed
         Graphics.push
         inst.start
-        inst.transition_in
       when ScenePopped; inst.continue
       when SceneNop
       else raise 'invalid operation %d' % @push_pop_operation
       end
+
+      inst.transition_in
 
       @push_pop_operation = SceneNop
       while @push_pop_operation == SceneNop

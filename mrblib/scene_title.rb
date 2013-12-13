@@ -213,7 +213,7 @@ class Scene_Title < Scene
   # Does a player shutdown.
   def command_shutdown
     Game_System.se_play Game_System::SFX_Decision
-    Audio.bgs_fade(800)
+    Audio.bgm_fade(800)
     Player.pop
   end
 end
