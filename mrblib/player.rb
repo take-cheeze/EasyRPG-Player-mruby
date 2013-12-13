@@ -145,6 +145,7 @@ class << Player
 
     if exit_flag
       @instances.clear
+      @push_pop_operation = ScenePopped
     elsif reset_flag
       @reset_flag = false
       Player.pop_until 'Title'
