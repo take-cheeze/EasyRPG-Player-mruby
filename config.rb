@@ -41,5 +41,6 @@ MRuby::Build.new do |conf|
     conf.linker.libraries << 'iconv'
   end
 
-  conf.cxx.defines << 'HAVE_WINE=1' if Dir.exists? "#{ENV["HOME"]}/.wine"
+  # comment out this if line you want to use wine resources
+  #conf.cxx.defines << 'HAVE_WINE=1' if Dir.exists? "#{ENV["HOME"]}/.wine"
 end
