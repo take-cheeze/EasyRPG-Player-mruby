@@ -47,9 +47,9 @@ class << Player
 
   def pop_until(type)
     pop_count = @instances.rindex { |v| v.type == type }
-    pop_count = pop_count.nil? ? 0 : @instances.length - pop_count + 1
+    pop_count = pop_count.nil? ? 0 : @instances.length - (pop_count + 1)
     @old_instances.concat @instances.pop(pop_count).reverse!
-    @push_pop_operation = ScenePopped
+    @push_pop_operation = ScenePopped if pop_count > 0
   end
 
   def find(type)
@@ -86,8 +86,6 @@ class << Player
     else
       Player.push Scene_ProjectFinder.new
     end
-
-    @reset_flag = false
 
     # Reset frames before starting
     Graphics.frame_reset

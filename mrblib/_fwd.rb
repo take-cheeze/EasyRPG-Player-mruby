@@ -42,3 +42,14 @@ class Hash
     BasicObject.method_missing(sym, *args)
   end
 end
+
+class Array
+  alias :pop_once :pop
+
+  def pop(n = nil)
+    return pop_once if n.nil?
+    ret = []
+    for _ in 0...n; ret.push pop_once; end
+    ret
+  end
+end
