@@ -9,13 +9,11 @@
 #include <mruby/value.h>
 
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/optional.hpp>
 
 #include <cassert>
 #include <memory>
+#include <type_traits>
 
 class Bitmap;
 class Drawable;
@@ -48,8 +46,8 @@ struct user_defined_disposable : public boost::mpl::false_ {};
 
 template<class T>
 struct is_disposable : public boost::mpl::or_<
-	boost::is_base_of<Drawable, T>,
-	boost::is_same<T, Bitmap>,
+	std::is_base_of<Drawable, T>,
+	std::is_same<T, Bitmap>,
 	user_defined_disposable<T> > {};
 
 template<class T> struct mruby_data_type {
@@ -70,7 +68,7 @@ template<class T, class Enable = void> struct disposer_newer;
 
 template<class T>
 std::shared_ptr<T>& get_ptr(mrb_state* M, mrb_value const& v,
-							typename boost::enable_if<is_disposable<T> >::type* = 0)
+                            typename std::enable_if<is_disposable<T>::value>::type* = 0)
 {
 	static std::shared_ptr<T> nil_ptr;
 	assert(not nil_ptr);
@@ -82,22 +80,22 @@ std::shared_ptr<T>& get_ptr(mrb_state* M, mrb_value const& v,
 }
 
 template<class T>
-struct disposer_newer<T, typename boost::enable_if<is_disposable<T> >::type> {
+struct disposer_newer<T, typename std::enable_if<is_disposable<T>::value>::type> {
 	typedef std::shared_ptr<T> cxx_type;
 
-	typedef std::shared_ptr<T> ptr_type;
-
 	static void deleter(mrb_state* M, void* ptr) {
-		ptr_type* const ref = reinterpret_cast<ptr_type*>(ptr);
+		cxx_type* const ref = reinterpret_cast<cxx_type*>(ptr);
+    /*
 		if(ref->use_count() > 1)
 			mrb_warn(M, "possible leak of object: %S\n",
-					 mrb_str_new_cstr(M, mruby_data_type<T>::data.struct_name));
-		ref->~ptr_type();
+               mrb_str_new_cstr(M, mruby_data_type<T>::data.struct_name));
+    */
+		ref->~cxx_type();
 		mrb_free(M, ptr);
 	}
 
 	static mrb_value dispose(mrb_state* M, mrb_value self) {
-		ptr_type& ptr = get_ptr<T>(M, self);
+		cxx_type& ptr = get_ptr<T>(M, self);
 		if(ptr) {
 			if(ptr.use_count() > 1)
 				mrb_raisef(M, mrb_class_get(M, "RuntimeError"), "cannot dispose %S", self);
@@ -117,12 +115,12 @@ struct disposer_newer<T, typename boost::enable_if<is_disposable<T> >::type> {
 };
 
 template<class T>
-struct disposer_newer<T, typename boost::disable_if<is_disposable<T> >::type> {
+struct disposer_newer<T, typename std::enable_if<not is_disposable<T>::value>::type> {
 	typedef T cxx_type;
 
 	static void deleter(mrb_state* M, void* ptr) {
-		T* const ref = reinterpret_cast<T*>(ptr);
-		ref->~T();
+		cxx_type* const ref = reinterpret_cast<cxx_type*>(ptr);
+		ref->~cxx_type();
 		mrb_free(M, ptr);
 	}
 
@@ -142,7 +140,7 @@ void check_dispose(mrb_state* M, mrb_value const& v) {
 }
 
 template<class T>
-T& get(mrb_state* M, mrb_value const& v, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+T& get(mrb_state* M, mrb_value const& v, typename std::enable_if<is_disposable<T>::value>::type* = 0) {
 	check_dispose<T>(M, v);
 	void* const ptr = mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 	assert(ptr);
@@ -150,7 +148,7 @@ T& get(mrb_state* M, mrb_value const& v, typename boost::enable_if<is_disposable
 }
 
 template<class T>
-T& get(mrb_state* M, mrb_value const& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
+T& get(mrb_state* M, mrb_value const& v, typename std::enable_if<not is_disposable<T>::value>::type* = 0) {
 	void* const ptr = mrb_data_get_ptr(M, v, &mruby_data_type<T>::data);
 	assert(ptr);
 	return *reinterpret_cast<T*>(ptr);
@@ -267,16 +265,16 @@ RClass* define_class_with_copy(mrb_state* M, char const* name) {
 }
 
 template<class T>
-void init_ptr(mrb_state* M, mrb_value const& v, std::shared_ptr<T> const& ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+void init_ptr(mrb_state* M, mrb_value const& v, std::shared_ptr<T> const& ptr, typename std::enable_if<is_disposable<T>::value>::type* = 0) {
 	new(data_make_struct<T>(M, v)) std::shared_ptr<T>(ptr);
 }
 template<class T>
-void init_ptr(mrb_state* M, mrb_value const& v, T* ptr, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+void init_ptr(mrb_state* M, mrb_value const& v, T* ptr, typename std::enable_if<is_disposable<T>::value>::type* = 0) {
 	new(data_make_struct<T>(M, v)) std::shared_ptr<T>(ptr);
 }
 
 template<class T>
-mrb_value clone(mrb_state* M, T const& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
+mrb_value clone(mrb_state* M, T const& v, typename std::enable_if<not is_disposable<T>::value>::type* = 0) {
 	RData* data = NULL;
 	void* const ptr = data_make_struct<T>(M, mruby_data_type<T>::get_class(M), data);
 	new(ptr) T(v);
@@ -284,12 +282,12 @@ mrb_value clone(mrb_state* M, T const& v, typename boost::disable_if<is_disposab
 }
 
 template<class T>
-mrb_value clone_opt(mrb_state* M, boost::optional<T> const& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
+mrb_value clone_opt(mrb_state* M, boost::optional<T> const& v, typename std::enable_if<not is_disposable<T>::value>::type* = 0) {
 	return v? clone(M, *v) : mrb_nil_value();
 }
 
 template<class T>
-mrb_value swap(mrb_state* M, T& v, typename boost::disable_if<is_disposable<T> >::type* = 0) {
+mrb_value swap(mrb_state* M, T& v, typename std::enable_if<not is_disposable<T>::value>::type* = 0) {
 	RData* data = NULL;
 	void* const ptr = data_make_struct<T>(M, mruby_data_type<T>::get_class(M), data);
 	(new(ptr) T())->swap(v);
@@ -297,7 +295,7 @@ mrb_value swap(mrb_state* M, T& v, typename boost::disable_if<is_disposable<T> >
 }
 
 template<class T>
-mrb_value create(mrb_state* M, std::shared_ptr<T> const& v, typename boost::enable_if<is_disposable<T> >::type* = 0) {
+mrb_value create(mrb_state* M, std::shared_ptr<T> const& v, typename std::enable_if<is_disposable<T>::value>::type* = 0) {
 	if(not v) { return mrb_nil_value(); }
 
 	RData* data = NULL;
