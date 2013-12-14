@@ -50,14 +50,6 @@ class Scene_Title < Scene
     create_command_window
   end
 
-  def continue
-    # Clear the cache when the game returns to title screen
-    # e.g. by pressing F12
-    Cache.clear
-
-    start
-  end
-
   def transition_in
     unless Player.battle_test_flag
       Graphics.transition_2k Graphics::TransitionErase, 1, true
@@ -69,14 +61,6 @@ class Scene_Title < Scene
     unless Player.battle_test_flag
       Graphics.transition_2k Graphics::TransitionFadeOut, 12, true
     end
-  end
-
-  def suspend
-    @command_window.visible = false
-  end
-
-  def resume
-    @command_window.visible = true
   end
 
   def update
