@@ -46,7 +46,7 @@ mrb_value blt(mrb_state* M, mrb_value const self) {
 mrb_value stretch_blt(mrb_state* M, mrb_value const self) {
 	mrb_value dst_rect, bmp, src_rect;
 	mrb_int opacity = 255;
-	mrb_get_args(M, "ooo|i", &dst_rect, &bmp, &src_rect);
+	mrb_get_args(M, "ooo|i", &dst_rect, &bmp, &src_rect, &opacity);
 	get<Bitmap>(M, self).stretch_blit(
 		get<Rect>(M, dst_rect), get<Bitmap>(M, bmp),
 		get<Rect>(M, src_rect), opacity);
